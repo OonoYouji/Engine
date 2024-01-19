@@ -8,6 +8,9 @@
     <ClCompile Include="Engine\Engine.cpp">
       <Filter>Engine\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DirectXCommon.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -25,6 +28,9 @@
       <Filter>Engine\Include</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Engine.h">
+      <Filter>Engine\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DirectXCommon.h">
       <Filter>Engine\Include</Filter>
     </ClInclude>
   </ItemGroup>

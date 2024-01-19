@@ -139,11 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\DirectXCommon.h" />
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\WinApp.h" />
   </ItemGroup>
