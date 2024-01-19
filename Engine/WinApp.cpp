@@ -2,11 +2,35 @@
 
 
 
-void WinApp::Initialize() {
+void WinApp::CreateGameWindow(const wchar_t* title, UINT windowStyle, int sizeX, int sizeY) {
+
+	// COM初期化
+	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
+	windowStyle_ = windowStyle;
+
 	SetWindowClass();
 	SetWindowSize();
-	CreateGameWindow();
+
+	hwnd_ = CreateWindow(
+		wc_.lpszClassName,
+		title,
+		windowStyle_,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		wrc_.right - wrc_.left,
+		wrc_.bottom - wrc_.top,
+		nullptr,
+		nullptr,
+		wc_.hInstance,
+		nullptr
+	);
+
+	/// windowを表示
+	ShowWindow(hwnd_, SW_SHOW);
+
 }
+
 
 WinApp* WinApp::GetInstance() {
 	static WinApp instance;
@@ -38,30 +62,9 @@ void WinApp::SetWindowClass() {
 
 void WinApp::SetWindowSize() {
 	wrc_ = { 0,0,kClientWidth_, kClientHeight_ };
-
 	AdjustWindowRect(&wrc_, WS_OVERLAPPEDWINDOW, false);
 }
 
-void WinApp::CreateGameWindow() {
-
-	hwnd_ = CreateWindow(
-		wc_.lpszClassName,
-		L"CG2",
-		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
-		wrc_.right - wrc_.left,
-		wrc_.bottom - wrc_.top,
-		nullptr,
-		nullptr,
-		wc_.hInstance,
-		nullptr
-	);
-
-	/// windowを表示
-	ShowWindow(hwnd_, SW_SHOW);
-
-}
 
 UINT WinApp::ProcessMessage() {
 	

@@ -6,7 +6,7 @@
 class Engine {
 public:
 
-	static void Initialize();
+	static void Initialize(const std::string& title, int width, int height);
 	static void Finalize();
 
 public:

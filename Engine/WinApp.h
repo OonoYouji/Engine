@@ -23,11 +23,12 @@ private:
 	RECT wrc_;
 	HWND hwnd_;
 	MSG msg_;
+	UINT windowStyle_;
 
 
 public:
 
-	void Initialize();
+	void CreateGameWindow(const wchar_t* title, UINT windowStyle, int sizeX, int sizeY);
 
 	static WinApp* GetInstance();
 
@@ -36,9 +37,6 @@ public:
 	void SetWindowClass();
 
 	void SetWindowSize();
-
-	void CreateGameWindow();
-
 
 	UINT ProcessMessage();
 
