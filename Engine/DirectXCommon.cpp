@@ -1,4 +1,4 @@
-#include "DirectXCommon.h"
+#include <DirectXCommon.h>
 
 DirectXCommon* DirectXCommon::GetInstance() {
 	static DirectXCommon instance;

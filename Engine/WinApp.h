@@ -16,8 +16,6 @@ private:
 
 private:
 
-	const int32_t kClientWidth_ = 1280;
-	const int32_t kClientHeight_ = 720;
 
 	WNDCLASS wc_;
 	RECT wrc_;
@@ -35,8 +33,6 @@ public:
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	void SetWindowClass();
-
-	void SetWindowSize();
 
 	UINT ProcessMessage();
 

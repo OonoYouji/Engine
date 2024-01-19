@@ -1,4 +1,4 @@
-#include "WinApp.h"
+#include <WinApp.h>
 
 
 
@@ -10,7 +10,10 @@ void WinApp::CreateGameWindow(const wchar_t* title, UINT windowStyle, int sizeX,
 	windowStyle_ = windowStyle;
 
 	SetWindowClass();
-	SetWindowSize();
+	//SetWindowSize();
+
+	wrc_ = { 0,0,sizeX, sizeY };
+	AdjustWindowRect(&wrc_, WS_OVERLAPPEDWINDOW, false);
 
 	hwnd_ = CreateWindow(
 		wc_.lpszClassName,
@@ -59,12 +62,6 @@ void WinApp::SetWindowClass() {
 	/// windowClassを登録
 	RegisterClass(&wc_);
 }
-
-void WinApp::SetWindowSize() {
-	wrc_ = { 0,0,kClientWidth_, kClientHeight_ };
-	AdjustWindowRect(&wrc_, WS_OVERLAPPEDWINDOW, false);
-}
-
 
 UINT WinApp::ProcessMessage() {
 	
