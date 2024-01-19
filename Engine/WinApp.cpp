@@ -77,3 +77,11 @@ UINT WinApp::ProcessMessage() {
 
 	return false;
 }
+
+void WinApp::TerminateGameWindow() {
+	// ウィンドウクラスを登録解除
+	UnregisterClass(wc_.lpszClassName, wc_.hInstance);
+
+	// COM 終了
+	CoUninitialize();
+}

@@ -1,17 +1,17 @@
 #include <Windows.h>
 
-#include "WinApp.h"
+#include "Engine.h"
 
 
 /// windowsアプリでエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
-	WinApp* winApp = WinApp::GetInstance();
-	winApp->Initialize();
+	Engine::Initialize();
 	
-	while (!winApp->ProcessMessage()) {
-
+	while (!Engine::ProcessMessage()) {
+		
 	}
 
 	return 0;
 }
+

@@ -42,5 +42,6 @@ public:
 
 	UINT ProcessMessage();
 
+	void TerminateGameWindow();
 
 };

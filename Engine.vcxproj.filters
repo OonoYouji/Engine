@@ -5,6 +5,9 @@
     <ClCompile Include="Engine\WinApp.cpp">
       <Filter>Engine\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Engine.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -19,6 +22,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\WinApp.h">
+      <Filter>Engine\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Engine.h">
       <Filter>Engine\Include</Filter>
     </ClInclude>
   </ItemGroup>
