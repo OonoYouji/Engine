@@ -13,6 +13,7 @@ public:
 public:
 
 	static void ConsolePrint(const std::string& message);
+	static void ConsolePrint(const std::wstring& message);
 
 	static int ProcessMessage();
 

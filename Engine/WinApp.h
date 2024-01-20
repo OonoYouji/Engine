@@ -9,11 +9,6 @@ private:
 	WinApp() = default;
 	~WinApp() = default;
 
-	/// 代入演算子、コピーコンストラクタの禁止;
-	WinApp(const WinApp& other) = delete;
-	WinApp(WinApp&& other) = delete;
-	const WinApp& operator= (const WinApp& other) = delete;
-
 private:
 
 
@@ -37,5 +32,12 @@ public:
 	UINT ProcessMessage();
 
 	void TerminateGameWindow();
+
+private:
+
+	/// 代入演算子、コピーコンストラクタの禁止;
+	WinApp(const WinApp& other) = delete;
+	WinApp(WinApp&& other) = delete;
+	const WinApp& operator= (const WinApp& other) = delete;
 
 };

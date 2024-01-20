@@ -25,7 +25,7 @@ Vector2Int::Vector2Int(Vector2Int&& other) {
 	this->y = other.y;
 }
 
-Vector2Int::Vector2Int(float x, float y) {
+Vector2Int::Vector2Int(int x, int y) {
 	this->x = x;
 	this->y = y;
 }

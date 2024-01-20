@@ -4,18 +4,22 @@
 #include <dxgi1_6.h>
 #include <cassert>
 
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
-
 class DirectXCommon final {
 private:
 
 	DirectXCommon() = default;
 	~DirectXCommon() = default;
 
+private:
+
+	IDXGIFactory7* dxgiFactory_ = nullptr;
+	ID3D12Device* device_ = nullptr;
+
 public:
 
 	static DirectXCommon* GetInstance();
+
+	void InitializeDXGIDevice();
 
 private:
 
