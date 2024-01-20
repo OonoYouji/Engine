@@ -4,6 +4,10 @@
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "Winmm.lib")
+
+using namespace Microsoft::WRL;
 
 
 void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t backBufferHeight) {
@@ -24,6 +28,9 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t 
 	/// レンダーターゲット生成
 	CreateFinalRenderTargets();
 
+	/// フェンスの生成
+	CreateFence();
+
 }
 
 DirectXCommon* DirectXCommon::GetInstance() {
@@ -34,7 +41,23 @@ DirectXCommon* DirectXCommon::GetInstance() {
 void DirectXCommon::PreDraw() {
 
 
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
+	//// バリアーを張る -----
+	D3D12_RESOURCE_BARRIER barrier{};
+	/// 今回のバリアはトランジション
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	/// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	/// バリアを張る対象のリソース; 現在のバックバッファに対して行う
+	barrier.Transition.pResource = swapChainResource_[bbIndex];
+	/// 遷移前(現在)のResourceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	/// 遷移後のResourceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+	/// TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier);
 
 	ClearRenderTarget();
 
@@ -43,6 +66,24 @@ void DirectXCommon::PreDraw() {
 
 void DirectXCommon::PostDraw() {
 	HRESULT hr = S_FALSE;
+
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	//// バリアーを張る -----
+	D3D12_RESOURCE_BARRIER barrier{};
+	/// 今回のバリアはトランジション
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	/// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	/// バリアを張る対象のリソース; 現在のバックバッファに対して行う
+	barrier.Transition.pResource = swapChainResource_[bbIndex];
+	/// 遷移前(現在)のResourceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	/// 遷移後のResourceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+
+	/// TransitionBarrierを張る
+	commandList_->ResourceBarrier(1, &barrier);
 
 
 	/// コマンドリストの内容を確定させる(すべてのコマンドを積んでからCloseする)
@@ -56,8 +97,16 @@ void DirectXCommon::PostDraw() {
 	/// GPUとOSに画面の交換を行うよう通知する
 	swapChain_->Present(1, 0);
 
-	
-	
+
+	fenceValue_++;
+	commandQueue_->Signal(fence_, fenceValue_);
+	if (fence_->GetCompletedValue() < fenceValue_) {
+		HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+		assert(fenceEvent != nullptr);
+		fence_->SetEventOnCompletion(fenceValue_, fenceEvent);
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
+
 	/// 次のフレームのコマンドリストを準備
 	hr = commandAllocator_->Reset();
 	assert(SUCCEEDED(hr));
@@ -72,17 +121,30 @@ void DirectXCommon::ClearRenderTarget() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
 	/// 描画先のRTVを設定する
-	commandList_->OMSetRenderTargets(1, &rtvHandle_[bbIndex], false, nullptr);
+	commandList_->OMSetRenderTargets(1, &rtvHandles_[bbIndex], false, nullptr);
 
 	/// 指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f }; /// 青っぽい色, RGBAの順番
-	commandList_->ClearRenderTargetView(rtvHandle_[bbIndex], clearColor, 0, nullptr);
+	commandList_->ClearRenderTargetView(rtvHandles_[bbIndex], clearColor, 0, nullptr);
 
 }
+
 
 void DirectXCommon::InitializeDXGIDevice() {
 	HRESULT hr = S_FALSE;
 
+
+#ifdef _DEBUG
+
+	ID3D12Debug1* debugController = nullptr;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+		/// デバッグレイヤーを有効化する
+		debugController->EnableDebugLayer();
+		/// さらにGPU側でもチェックできるようにする
+		debugController->SetEnableGPUBasedValidation(TRUE);
+	}
+
+#endif // _DEBUG
 
 	/// DXGIファクトリーの生成
 	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory_));
@@ -114,7 +176,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 	}
 
 	/// 適切なアダプタがなければ起動できない
-	assert(useAdapter);
+	assert(useAdapter != nullptr);
 
 
 
@@ -142,14 +204,40 @@ void DirectXCommon::InitializeDXGIDevice() {
 	}
 
 	/// デバイスの生成が失敗したら起動できない
-	assert(device_);
+	assert(device_ != nullptr);
 
 	Engine::ConsolePrint("Complete create D3D12Device!!!!!\n");
+
+#ifdef _DEBUG
+
+	ID3D12InfoQueue* infoQueue = nullptr;
+	if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+		/// ヤバいエラーのとき止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+		/// エラーのときに止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		/// 警告時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+
+		/// 解放
+		infoQueue->Release();
+	}
+
+#endif // _DEBUG
+
 
 }
 
 void DirectXCommon::InitializeCommand() {
 	HRESULT hr = S_FALSE;
+
+
+	/// コマンドキューを生成する ------------------------
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	hr = device_->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue_));
+	/// コマンドキューの生成が上手くいかないと起動できない
+	assert(SUCCEEDED(hr));
+
 
 	/// コマンドアロケータを生成する ----------------------
 	hr = device_->CreateCommandAllocator(
@@ -158,6 +246,7 @@ void DirectXCommon::InitializeCommand() {
 	);
 	/// 生成に失敗したら起動できない
 	assert(SUCCEEDED(hr));
+
 
 	/// コマンドリストを生成 ----------------------------
 	hr = device_->CreateCommandList(
@@ -170,11 +259,6 @@ void DirectXCommon::InitializeCommand() {
 	/// 生成に失敗したら起動できない
 	assert(SUCCEEDED(hr));
 
-	/// コマンドキューを生成する ------------------------
-	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
-	hr = device_->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue_));
-	/// コマンドキューの生成が上手くいかないと起動できない
-	assert(SUCCEEDED(hr));
 
 }
 
@@ -197,6 +281,7 @@ void DirectXCommon::CreateSwapChain() {
 	/// モニタに移したら中身を破棄
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
+
 	//// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
 	hr = dxgiFactory_->CreateSwapChainForHwnd(
 		commandQueue_,
@@ -209,6 +294,8 @@ void DirectXCommon::CreateSwapChain() {
 
 	/// 失敗したら起動できない
 	assert(SUCCEEDED(hr));
+
+
 
 }
 
@@ -231,10 +318,18 @@ void DirectXCommon::CreateFinalRenderTargets() {
 
 
 	/// SwapChainからResourceを引っ張ってくる
-	for (int i = 0; i < 2; i++) {
-		hr = swapChain_->GetBuffer(i, IID_PPV_ARGS(&swapChainResource_[i]));
-		assert(SUCCEEDED(hr));
-	}
+	//for (int i = 0; i < 2; i++) {
+	//	hr = swapChain_->GetBuffer(i, IID_PPV_ARGS(&swapChainResource_[i]));
+	//	assert(SUCCEEDED(hr));
+	//}
+
+	swapChainResource_[0] = nullptr;
+	swapChainResource_[1] = nullptr;
+
+	hr = swapChain_->GetBuffer(0, IID_PPV_ARGS(&swapChainResource_[0]));
+	assert(SUCCEEDED(hr));
+	hr = swapChain_->GetBuffer(1, IID_PPV_ARGS(&swapChainResource_[1]));
+	assert(SUCCEEDED(hr));
 
 
 	/// RTVの設定
@@ -245,16 +340,23 @@ void DirectXCommon::CreateFinalRenderTargets() {
 	/// ディスクリプタの先頭を所得する
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 
-	/// RTVを二つ作るのでディスクリプタを二つ用意
-	rtvHandle_[2];
 
 	/// まず1つ目を作る;1つ目は最初のところに作る;作る場所をこちらで指定してあげる必要がある
-	rtvHandle_[0] = rtvStartHandle;
-	device_->CreateRenderTargetView(swapChainResource_[0], &rtvDesc, rtvHandle_[0]);
+	rtvHandles_[0] = rtvStartHandle;
+	device_->CreateRenderTargetView(swapChainResource_[0], &rtvDesc, rtvHandles_[0]);
 	/// 2つ目のディスクリプタハンドルを得る
-	rtvHandle_[1].ptr = rtvHandle_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	/// 2つ目を作る
-	device_->CreateRenderTargetView(swapChainResource_[1], &rtvDesc, rtvHandle_[1]);
+	device_->CreateRenderTargetView(swapChainResource_[1], &rtvDesc, rtvHandles_[1]);
 
+
+}
+
+void DirectXCommon::CreateFence() {
+
+	HRESULT hr = S_FALSE;
+
+	hr = device_->CreateFence(fenceValue_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
+	assert(SUCCEEDED(hr));
 
 }

@@ -4,7 +4,9 @@
 #include <dxgi1_6.h>
 #include <cassert>
 #include <vector>
-
+#include <chrono>
+#include <wrl.h>
+#include <cstdlib>
 
 #include <WinApp.h>
 
@@ -31,10 +33,15 @@ private:
 	/// スワップチェーン
 	IDXGISwapChain4* swapChain_ = nullptr;
 
-	///
+	/// RTV
 	ID3D12DescriptorHeap* rtvDescriptorHeap_ = nullptr;
 	ID3D12Resource* swapChainResource_[2] = { nullptr };
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle_[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+
+	// Fence
+	ID3D12Fence* fence_ = nullptr;
+	uint64_t fenceValue_ = 0;
+
 
 	/// windowのサイズ
 	int32_t backBufferWidth_ = 0;
@@ -69,6 +76,8 @@ public:
 	/// </summary>
 	void ClearRenderTarget();
 
+	void SetRenderTargets(bool sRGB);
+
 private:
 
 	/// <summary>
@@ -90,6 +99,12 @@ private:
 	/// レンダーターゲット生成
 	/// </summary>
 	void CreateFinalRenderTargets();
+
+	/// <summary>
+	/// フェンスの生成
+	/// </summary>
+	void CreateFence();
+
 
 private:
 
