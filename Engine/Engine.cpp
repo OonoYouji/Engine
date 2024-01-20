@@ -120,6 +120,8 @@ void Engine::Finalize() {
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();
 
+	sDirectXCommon->Finalize();
+
 }
 
 void Engine::BeginFrame() {

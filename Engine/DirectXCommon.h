@@ -2,6 +2,7 @@
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
+#include <dxgidebug.h>
 #include <cassert>
 #include <vector>
 #include <chrono>
@@ -56,6 +57,9 @@ public:
 		int32_t backBufferWidth = WinApp::kWindowWidth_, 
 		int32_t backBufferHeight = WinApp::kWindowHeigth_);
 
+
+	void Finalize();
+
 	/// <summary>
 	///	DirectXCommonクラスへのポインタ
 	/// </summary>
@@ -76,8 +80,7 @@ public:
 	/// </summary>
 	void ClearRenderTarget();
 
-	void SetRenderTargets(bool sRGB);
-
+	
 private:
 
 	/// <summary>
