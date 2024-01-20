@@ -57,7 +57,7 @@ namespace {
 
 
 
-void Engine::Initialize(const std::string& title, int width, int height) {
+void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 
 	assert(!sWinApp);
 	
@@ -67,7 +67,7 @@ void Engine::Initialize(const std::string& title, int width, int height) {
 	sWinApp->CreateGameWindow(
 		titleString.c_str(), 
 		WS_OVERLAPPEDWINDOW & ~(WS_MAXIMIZEBOX | WS_THICKFRAME), 
-		width, height
+		windowSize.x, windowSize.y
 	);
 
 	engineSystem = std::make_unique<EngineSystem>();

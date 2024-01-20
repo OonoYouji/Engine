@@ -2,11 +2,12 @@
 
 #include <string>
 #include <format>
+#include <Vector2.h>
 
 class Engine {
 public:
 
-	static void Initialize(const std::string& title, int width, int height);
+	static void Initialize(const std::string& title, const Vec2& windowSize);
 	static void Finalize();
 
 public:
