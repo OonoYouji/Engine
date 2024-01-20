@@ -4,8 +4,21 @@
 #include <cstdint>
 
 class WinApp final {
+public:
+
+	/// <summary>
+	/// WinAppへのポインタを所得
+	/// </summary>
+	/// <returns></returns>
+	static WinApp* GetInstance();
+
+	/// windowのサイズ
+	static const int kWindowWidth_ = 1280;
+	static const int kWindowHeigth_ = 720;
+
 private:
 
+	/// Constructor & Destructor ///
 	WinApp() = default;
 	~WinApp() = default;
 
@@ -23,8 +36,6 @@ public:
 
 	void CreateGameWindow(const wchar_t* title, UINT windowStyle, int sizeX, int sizeY);
 
-	static WinApp* GetInstance();
-
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	void SetWindowClass();
@@ -32,6 +43,8 @@ public:
 	UINT ProcessMessage();
 
 	void TerminateGameWindow();
+
+	HWND GetHWND() const { return hwnd_; }
 
 private:
 

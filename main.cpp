@@ -11,13 +11,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Engine::Initialize(kWindowTitle, kWindowSize);
 
-
 	while (!Engine::ProcessMessage()) {
+
+
+
 
 
 
 	}
 
+	Engine::Finalize();
 
 	return 0;
 }

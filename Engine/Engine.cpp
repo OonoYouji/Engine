@@ -9,7 +9,6 @@
 
 namespace {
 
-
 	std::wstring ConvertString(const std::string& str) {
 		if (str.empty()) {
 			return std::wstring();
@@ -56,8 +55,9 @@ namespace {
 	WinApp* sWinApp = nullptr;
 	DirectXCommon* sDirectXCommon = nullptr;
 
-	std::unique_ptr<EngineSystem> engineSystem = nullptr;
-}
+	std::unique_ptr<EngineSystem> sEngineSystem = nullptr;
+
+} //// namespace
 
 
 
@@ -80,15 +80,15 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 
 	/// DirectXの初期化
 	sDirectXCommon = DirectXCommon::GetInstance();
-	sDirectXCommon->InitializeDXGIDevice();
+	sDirectXCommon->Initialize(sWinApp, width, height);
 
-	engineSystem = std::make_unique<EngineSystem>();
-	engineSystem->Initialize();
+	sEngineSystem = std::make_unique<EngineSystem>();
+	sEngineSystem->Initialize();
 
 }
 
 void Engine::Finalize() {
-	engineSystem.reset();
+	sEngineSystem.reset();
 
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();
@@ -104,5 +104,5 @@ void Engine::ConsolePrint(const std::wstring& message) {
 }
 
 int Engine::ProcessMessage() {
-	return engineSystem->ProcessMessage();
+	return sEngineSystem->ProcessMessage();
 }
