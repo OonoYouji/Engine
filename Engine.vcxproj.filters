@@ -11,6 +11,9 @@
     <ClCompile Include="Engine\DirectXCommon.cpp">
       <Filter>Engine\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\Math\Vector2.cpp">
+      <Filter>Lib\Math\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -22,6 +25,18 @@
     <Filter Include="Engine\Source">
       <UniqueIdentifier>{91da0505-6055-47be-874a-d1351f3a7a73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{a4dfc9de-888e-48a7-965a-128739c90515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Math">
+      <UniqueIdentifier>{4263c13e-1e95-4a5a-abb3-43380cbaae02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Math\Include">
+      <UniqueIdentifier>{926fb700-cb67-4a78-9688-7d97188355e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\Math\Source">
+      <UniqueIdentifier>{f53ee9c8-a688-4092-bdf1-dc94ec7e6ede}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\WinApp.h">
@@ -32,6 +47,9 @@
     </ClInclude>
     <ClInclude Include="Engine\DirectXCommon.h">
       <Filter>Engine\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Vector2.h">
+      <Filter>Lib\Math\Include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
