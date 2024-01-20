@@ -12,6 +12,10 @@ public:
 
 public:
 
+	static void BeginFrame();
+	static void EndFrame();
+
+
 	static void ConsolePrint(const std::string& message);
 	static void ConsolePrint(const std::wstring& message);
 

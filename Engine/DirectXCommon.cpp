@@ -31,6 +31,55 @@ DirectXCommon* DirectXCommon::GetInstance() {
 	return &instance;
 }
 
+void DirectXCommon::PreDraw() {
+
+
+
+
+	ClearRenderTarget();
+
+
+}
+
+void DirectXCommon::PostDraw() {
+	HRESULT hr = S_FALSE;
+
+
+	/// コマンドリストの内容を確定させる(すべてのコマンドを積んでからCloseする)
+	hr = commandList_->Close();
+	assert(SUCCEEDED(hr));
+
+	/// コマンドリストの実行
+	ID3D12CommandList* commandLists[] = { commandList_ };
+	commandQueue_->ExecuteCommandLists(1, commandLists);
+
+	/// GPUとOSに画面の交換を行うよう通知する
+	swapChain_->Present(1, 0);
+
+	
+	
+	/// 次のフレームのコマンドリストを準備
+	hr = commandAllocator_->Reset();
+	assert(SUCCEEDED(hr));
+	hr = commandList_->Reset(commandAllocator_, nullptr);
+	assert(SUCCEEDED(hr));
+
+}
+
+void DirectXCommon::ClearRenderTarget() {
+
+	/// これから書き込むバックバッファのインデックスを所得(二枚しかないので 0 か 1)
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	/// 描画先のRTVを設定する
+	commandList_->OMSetRenderTargets(1, &rtvHandle_[bbIndex], false, nullptr);
+
+	/// 指定した色で画面全体をクリアする
+	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f }; /// 青っぽい色, RGBAの順番
+	commandList_->ClearRenderTargetView(rtvHandle_[bbIndex], clearColor, 0, nullptr);
+
+}
+
 void DirectXCommon::InitializeDXGIDevice() {
 	HRESULT hr = S_FALSE;
 
@@ -197,15 +246,15 @@ void DirectXCommon::CreateFinalRenderTargets() {
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 
 	/// RTVを二つ作るのでディスクリプタを二つ用意
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle[2];
+	rtvHandle_[2];
 
 	/// まず1つ目を作る;1つ目は最初のところに作る;作る場所をこちらで指定してあげる必要がある
-	rtvHandle[0] = rtvStartHandle;
-	device_->CreateRenderTargetView(swapChainResource_[0], &rtvDesc, rtvHandle[0]);
+	rtvHandle_[0] = rtvStartHandle;
+	device_->CreateRenderTargetView(swapChainResource_[0], &rtvDesc, rtvHandle_[0]);
 	/// 2つ目のディスクリプタハンドルを得る
-	rtvHandle[1].ptr = rtvHandle[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	rtvHandle_[1].ptr = rtvHandle_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	/// 2つ目を作る
-	device_->CreateRenderTargetView(swapChainResource_[1], &rtvDesc, rtvHandle[1]);
+	device_->CreateRenderTargetView(swapChainResource_[1], &rtvDesc, rtvHandle_[1]);
 
 
 }

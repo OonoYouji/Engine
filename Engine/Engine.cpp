@@ -35,8 +35,23 @@ namespace {
 		DirectXCommon* directXCommon_ = nullptr;
 
 	public:
+		
 		void Initialize();
 
+		/// <summary>
+		/// フレームの最初に行う処理
+		/// </summary>
+		void BeginFrame();
+
+		/// <summary>
+		/// フレームの最後に行う処理
+		/// </summary>
+		void EndFrame();
+
+		/// <summary>
+		/// windowが終了したかどうか
+		/// </summary>
+		/// <returns></returns>
 		int ProcessMessage();
 
 	};
@@ -45,6 +60,18 @@ namespace {
 	void EngineSystem::Initialize() {
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
+	}
+
+	void EngineSystem::BeginFrame() {
+		
+		directXCommon_->PreDraw();
+
+	}
+
+	void EngineSystem::EndFrame() {
+
+		directXCommon_->PostDraw();
+
 	}
 
 	int EngineSystem::ProcessMessage() {
@@ -93,6 +120,14 @@ void Engine::Finalize() {
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();
 
+}
+
+void Engine::BeginFrame() {
+	sEngineSystem->BeginFrame();
+}
+
+void Engine::EndFrame() {
+	sEngineSystem->EndFrame();
 }
 
 void Engine::ConsolePrint(const std::string& message) {

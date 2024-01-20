@@ -5,6 +5,7 @@
 #include <cassert>
 #include <vector>
 
+
 #include <WinApp.h>
 
 class DirectXCommon final {
@@ -33,6 +34,7 @@ private:
 	///
 	ID3D12DescriptorHeap* rtvDescriptorHeap_ = nullptr;
 	ID3D12Resource* swapChainResource_[2] = { nullptr };
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle_[2];
 
 	/// windowのサイズ
 	int32_t backBufferWidth_ = 0;
@@ -51,6 +53,21 @@ public:
 	///	DirectXCommonクラスへのポインタ
 	/// </summary>
 	static DirectXCommon* GetInstance();
+
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
+	void PreDraw();
+
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
+	void PostDraw();
+
+	/// <summary>
+	/// レンダーターゲットのクリア
+	/// </summary>
+	void ClearRenderTarget();
 
 private:
 
