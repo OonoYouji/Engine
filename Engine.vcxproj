@@ -151,6 +151,10 @@
     <ClInclude Include="Engine\WinApp.h" />
     <ClInclude Include="Lib\Math\Vector2.h" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Engine\Object3d.PS.hlsl" />
+    <FxCompile Include="Engine\Object3d.VS.hlsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

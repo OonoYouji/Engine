@@ -5,14 +5,14 @@
     <ClCompile Include="Engine\WinApp.cpp">
       <Filter>Engine\Source</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Engine.cpp">
-      <Filter>Engine\Source</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\DirectXCommon.cpp">
       <Filter>Engine\Source</Filter>
     </ClCompile>
     <ClCompile Include="Lib\Math\Vector2.cpp">
       <Filter>Lib\Math\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Engine.cpp">
+      <Filter>Engine\Adapter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -37,12 +37,12 @@
     <Filter Include="Lib\Math\Source">
       <UniqueIdentifier>{f53ee9c8-a688-4092-bdf1-dc94ec7e6ede}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Adapter">
+      <UniqueIdentifier>{19a40bb7-e490-4ba6-a8e6-acd8c78e31a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\WinApp.h">
-      <Filter>Engine\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Engine.h">
       <Filter>Engine\Include</Filter>
     </ClInclude>
     <ClInclude Include="Engine\DirectXCommon.h">
@@ -51,5 +51,16 @@
     <ClInclude Include="Lib\Math\Vector2.h">
       <Filter>Lib\Math\Include</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Engine.h">
+      <Filter>Engine\Adapter</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Engine\Object3d.PS.hlsl">
+      <Filter>Engine\Include</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Object3d.VS.hlsl">
+      <Filter>Engine\Include</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
