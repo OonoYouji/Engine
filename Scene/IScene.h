@@ -13,6 +13,7 @@ public:
 
 protected:
 
+	/// 各シーンのInitで0に初期化する
 	static int frameCount_;
 
 private:

@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <string>
 #include <Vector2.h>
+#include <SafeDelete.h>
 
 class Engine {
 public:

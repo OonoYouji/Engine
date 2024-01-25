@@ -107,7 +107,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game\Scene;$(ProjectDir)Game\Manager;$(ProjectDir)Game;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -127,7 +127,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game\Scene;$(ProjectDir)Game\Manager;$(ProjectDir)Game;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -142,22 +142,25 @@
     <ClCompile Include="Engine\DirectXCommon.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\WinApp.cpp" />
-    <ClCompile Include="Game\Manager\GameManager.cpp" />
-    <ClCompile Include="Game\Scene\IScene.cpp" />
+    <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="Lib\Math\Vector2.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene\IScene.cpp" />
+    <ClCompile Include="Scene\ITransition.cpp" />
+    <ClCompile Include="Scene\Scenes\Scene_Game.cpp" />
+    <ClCompile Include="Scene\Transitions\NormalTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\DirectXCommon.h" />
     <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Engine\SafeDelete.h" />
     <ClInclude Include="Engine\WinApp.h" />
-    <ClInclude Include="Game\Manager\GameManager.h" />
-    <ClInclude Include="Game\Scene\IScene.h" />
+    <ClInclude Include="GameManager\GameManager.h" />
     <ClInclude Include="Lib\Math\Vector2.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Engine\Object3d.PS.hlsl" />
-    <FxCompile Include="Engine\Object3d.VS.hlsl" />
+    <ClInclude Include="Scene\IScene.h" />
+    <ClInclude Include="Scene\ITransition.h" />
+    <ClInclude Include="Scene\Scenes\Scene_Game.h" />
+    <ClInclude Include="Scene\Transitions\NormalTransition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

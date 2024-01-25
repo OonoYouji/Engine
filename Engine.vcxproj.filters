@@ -14,6 +14,21 @@
     <ClCompile Include="Engine\Engine.cpp">
       <Filter>Engine\Adapter</Filter>
     </ClCompile>
+    <ClCompile Include="GameManager\GameManager.cpp">
+      <Filter>GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\IScene.cpp">
+      <Filter>Scene\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ITransition.cpp">
+      <Filter>Scene\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Transitions\NormalTransition.cpp">
+      <Filter>Scene\Transiton\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Scenes\Scene_Game.cpp">
+      <Filter>Scene\Scenes\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -40,6 +55,33 @@
     <Filter Include="Engine\Adapter">
       <UniqueIdentifier>{19a40bb7-e490-4ba6-a8e6-acd8c78e31a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{ec8fc508-e774-444b-8d03-626510fa4b41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameManager">
+      <UniqueIdentifier>{741a5a1a-add4-47d9-bd49-12109f1821b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Interface">
+      <UniqueIdentifier>{1d9a6a34-c5b0-4ab7-960c-a7d935db54fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Scenes">
+      <UniqueIdentifier>{a93eab8d-c52c-495d-a935-c59fd1fcd46b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Transiton">
+      <UniqueIdentifier>{6aaa3196-1dd1-4925-a630-3c43faa906f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Transiton\Include">
+      <UniqueIdentifier>{7646b005-cd88-40a2-9fc8-aa954f0ede86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Transiton\Source">
+      <UniqueIdentifier>{246f6a36-0101-46a8-a9b0-0911abfea24c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Scenes\Include">
+      <UniqueIdentifier>{e7b3a5e5-2503-4a09-b585-0fa224af755d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Scenes\Source">
+      <UniqueIdentifier>{e0e2cb65-69ca-45cf-a029-f1697721fc98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\WinApp.h">
@@ -54,13 +96,23 @@
     <ClInclude Include="Engine\Engine.h">
       <Filter>Engine\Adapter</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Engine\Object3d.PS.hlsl">
+    <ClInclude Include="GameManager\GameManager.h">
+      <Filter>GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\IScene.h">
+      <Filter>Scene\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ITransition.h">
+      <Filter>Scene\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Transitions\NormalTransition.h">
+      <Filter>Scene\Transiton\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\SafeDelete.h">
       <Filter>Engine\Include</Filter>
-    </FxCompile>
-    <FxCompile Include="Engine\Object3d.VS.hlsl">
-      <Filter>Engine\Include</Filter>
-    </FxCompile>
+    </ClInclude>
+    <ClInclude Include="Scene\Scenes\Scene_Game.h">
+      <Filter>Scene\Scenes\Include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
