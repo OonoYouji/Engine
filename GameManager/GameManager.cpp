@@ -8,7 +8,7 @@
 	static member object Initialize
 ----------------------------------------*/
 std::deque<IScene*> GameManager::scene_;
-ITransition* GameManager::transition_;
+ITransition* GameManager::transition_ = nullptr;
 int GameManager::choiceAround_ = 0;
 bool GameManager::isKeep_ = false;
 bool GameManager::isFinished_ = false;
@@ -16,6 +16,8 @@ bool GameManager::isFinished_ = false;
 // Constructor & Destructor -----
 GameManager::GameManager() { Init(); }
 GameManager::~GameManager() { Finalize(); }
+
+
 
 /*===========================================
 	初期化関数
@@ -169,6 +171,7 @@ void GameManager::TransitionUpdate(void) {
 void GameManager::Pop_Back() {
 	// いらないsceneをpopする;
 	while (scene_.size() > 1) {
+		scene_.back()->Finalize();
 		scene_.pop_back();
 	}
 

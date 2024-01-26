@@ -24,7 +24,7 @@
       <Filter>Scene\Interface</Filter>
     </ClCompile>
     <ClCompile Include="Scene\Transitions\NormalTransition.cpp">
-      <Filter>Scene\Transiton\Source</Filter>
+      <Filter>Scene\Transitons\Source</Filter>
     </ClCompile>
     <ClCompile Include="Scene\Scenes\Scene_Game.cpp">
       <Filter>Scene\Scenes\Source</Filter>
@@ -67,20 +67,20 @@
     <Filter Include="Scene\Scenes">
       <UniqueIdentifier>{a93eab8d-c52c-495d-a935-c59fd1fcd46b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Transiton">
-      <UniqueIdentifier>{6aaa3196-1dd1-4925-a630-3c43faa906f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene\Transiton\Include">
-      <UniqueIdentifier>{7646b005-cd88-40a2-9fc8-aa954f0ede86}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene\Transiton\Source">
-      <UniqueIdentifier>{246f6a36-0101-46a8-a9b0-0911abfea24c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scene\Scenes\Include">
       <UniqueIdentifier>{e7b3a5e5-2503-4a09-b585-0fa224af755d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scene\Scenes\Source">
       <UniqueIdentifier>{e0e2cb65-69ca-45cf-a029-f1697721fc98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Transitons">
+      <UniqueIdentifier>{6aaa3196-1dd1-4925-a630-3c43faa906f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Transitons\Include">
+      <UniqueIdentifier>{7646b005-cd88-40a2-9fc8-aa954f0ede86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Transitons\Source">
+      <UniqueIdentifier>{246f6a36-0101-46a8-a9b0-0911abfea24c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -106,7 +106,7 @@
       <Filter>Scene\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Scene\Transitions\NormalTransition.h">
-      <Filter>Scene\Transiton\Include</Filter>
+      <Filter>Scene\Transitons\Include</Filter>
     </ClInclude>
     <ClInclude Include="Engine\SafeDelete.h">
       <Filter>Engine\Include</Filter>
