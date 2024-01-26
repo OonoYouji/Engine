@@ -9,10 +9,11 @@ const std::string kWindowTitle = "大野陽司";
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Engine::Initialize(kWindowTitle, kWindowSize);
-
 	GameManager::Init();
+
 	GameManager::Run();
 
+	GameManager::Finalize();
 	Engine::Finalize();
 
 	return 0;
