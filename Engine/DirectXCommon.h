@@ -39,9 +39,12 @@ private:
 	ID3D12Resource* swapChainResource_[2] = { nullptr };
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
-	// Fence
+	/// Fence
 	ID3D12Fence* fence_ = nullptr;
 	uint64_t fenceValue_ = 0;
+
+	/// 三角形の描画
+
 
 
 	/// windowのサイズ

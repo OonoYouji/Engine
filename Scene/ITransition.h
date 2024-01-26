@@ -28,5 +28,6 @@ public: // accessor
 
 	bool GetIsEnd(void) const { return isEnd_; }
 	bool GetTriggerIsReturn(void) const { return isReturn_ && !preIsReturn_; }
+
 };
 
