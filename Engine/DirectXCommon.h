@@ -8,6 +8,7 @@
 #include <chrono>
 #include <wrl.h>
 #include <cstdlib>
+#include <dxcapi.h>
 
 #include <WinApp.h>
 
@@ -43,21 +44,44 @@ private:
 	ID3D12Fence* fence_ = nullptr;
 	uint64_t fenceValue_ = 0;
 
-	/// 三角形の描画
-
-
-
 	/// windowのサイズ
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
+
+
+
+	/// DXCの初期化
+	IDxcUtils* dxcUtils_ = nullptr;
+	IDxcCompiler3* dxcCompiler_ = nullptr;
+	IDxcIncludeHandler* includeHandler_ = nullptr;
+
+	/// RootSignatureの生成
+	ID3D12RootSignature* rootSignature_ = nullptr;
+
+	/// InputLayout
+	D3D12_INPUT_ELEMENT_DESC inputElemntDescs_[1];
+	D3D12_INPUT_LAYOUT_DESC inputlayoutDesc_;
+	/// BlendState
+	D3D12_BLEND_DESC blendDesc_;
+	/// RasterizerState
+	D3D12_RASTERIZER_DESC rasterizerDesc_{};
+	/// Shader
+	IDxcBlob* vertexShaderBlob_ = nullptr;
+	IDxcBlob* pixelShaderBlob_ = nullptr;
+
+	/// PSO
+	ID3D12PipelineState* graphicsPipelineState_ = nullptr;
+
+	/// VertexResource
+	ID3D12Resource* vertexResource_ = nullptr;
 
 public:
 
 	/// <summary>
 	/// このクラスの初期化
 	/// </summary>
-	void Initialize(WinApp* winApp, 
-		int32_t backBufferWidth = WinApp::kWindowWidth_, 
+	void Initialize(WinApp* winApp,
+		int32_t backBufferWidth = WinApp::kWindowWidth_,
 		int32_t backBufferHeight = WinApp::kWindowHeigth_);
 
 
@@ -83,7 +107,9 @@ public:
 	/// </summary>
 	void ClearRenderTarget();
 
-	
+
+	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
+
 private:
 
 	/// <summary>
@@ -110,6 +136,45 @@ private:
 	/// フェンスの生成
 	/// </summary>
 	void CreateFence();
+
+
+
+	/// <summary>
+	/// DXCの初期化
+	/// </summary>
+	void InitializeDXC();
+
+	/// <summary>
+	/// ルートシグネチャの生成
+	/// </summary>
+	void CreateRootSignature();
+
+	/// <summary>
+	/// インプットレイアウトの設定
+	/// </summary>
+	void SetingInputLayout();
+
+	/// <summary>
+	/// ブレンドステートの設定
+	/// </summary>
+	void SetingBlendState();
+
+	/// <summary>
+	/// ラスタライザーステートの設定
+	/// </summary>
+	void SetingRasterizerState();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void SetingShader();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void CreatePSO();
+
+	
 
 
 private:

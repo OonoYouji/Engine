@@ -115,4 +115,12 @@
       <Filter>Scene\Scenes\Include</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Engine\Object3d.PS.hlsl">
+      <Filter>Engine\Include</Filter>
+    </FxCompile>
+    <FxCompile Include="Engine\Object3d.VS.hlsl">
+      <Filter>Engine\Include</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>
