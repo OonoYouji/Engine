@@ -1,6 +1,7 @@
 #include <DirectXCommon.h>
 
 #include <Engine.h>
+#include <Vector4.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -32,6 +33,57 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t 
 	/// フェンスの生成
 	CreateFence();
 
+
+
+	/// <summary>
+	/// DXCの初期化
+	/// </summary>
+	InitializeDXC();
+
+	/// <summary>
+	/// ルートシグネチャの生成
+	/// </summary>
+	CreateRootSignature();
+
+	/// <summary>
+	/// インプットレイアウトの設定
+	/// </summary>
+	SetingInputLayout();
+
+	/// <summary>
+	/// ブレンドステートの設定
+	/// </summary>
+	SetingBlendState();
+
+	/// <summary>
+	/// ラスタライザーステートの設定
+	/// </summary>
+	SetingRasterizerState();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	SetingShader();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	CreatePSO();
+
+	/// <summary>
+	/// VertexResourceの生成
+	/// </summary>
+	CreateVertexResource();
+
+	/// <summary>
+	/// VertexBufferViewの生成
+	/// </summary>
+	CreateVBV();
+
+	WriteVertexData();
+
+	InitializeViewport();
+
 }
 
 void DirectXCommon::Finalize() {
@@ -48,6 +100,12 @@ void DirectXCommon::Finalize() {
 	commandQueue_->Release();
 	device_->Release();
 	dxgiFactory_->Release();
+
+	vertexResource_->Release();
+	graphicsPipelineState_->Release();
+	rootSignature_->Release();
+	pixelShaderBlob_->Release();
+	vertexShaderBlob_->Release();
 
 
 	//// 解放されていないものがあれば止まる -----
@@ -217,6 +275,24 @@ IDxcBlob* DirectXCommon::CompileShader(const std::wstring& filePath, const wchar
 
 
 	return shaderBlob;
+}
+
+void DirectXCommon::TestDraw() {
+
+	commandList_->RSSetViewports(1, &viewport_);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
+
+	/// RootSignatureを設定; PS0に設定しているけど別途設定が必要
+	commandList_->SetGraphicsRootSignature(rootSignature_);
+	commandList_->SetPipelineState(graphicsPipelineState_);
+	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
+
+	/// 形状を設定; PS0に設定している物とはまた別; 同じものを設定すると考えておけばいい
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	/// 描画! (DrawCall/ドローコール); 3頂点で1つのインスタンス; インスタンスについては今後
+	commandList_->DrawInstanced(3, 1, 0, 0);
+
 }
 
 
@@ -533,10 +609,11 @@ void DirectXCommon::SetingRasterizerState() {
 
 void DirectXCommon::SetingShader() {
 
-	vertexShaderBlob_ = CompileShader(L"Object3D.VS.hlsl", L"vs_6_0");
+	
+	vertexShaderBlob_ = CompileShader(Engine::ConvertString("./Engine/Object3d.VS.hlsl"), L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 
-	pixelShaderBlob_ = CompileShader(L"Object3D.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob_ = CompileShader(Engine::ConvertString("./Engine/Object3d.PS.hlsl"), L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 
 }
@@ -570,7 +647,7 @@ void DirectXCommon::CreatePSO() {
 
 	/// 利用するトロポジ(形状)のタイプ; 三角形
 	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	
+
 	/// どのような画面に色を打ち込むかの設定(気にしなくていい)
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -583,5 +660,86 @@ void DirectXCommon::CreatePSO() {
 	assert(SUCCEEDED(hr));
 
 
+
+}
+
+
+void DirectXCommon::CreateVertexResource() {
+
+	HRESULT hr = S_FALSE;
+
+	/// 頂点リソース用のヒープの設定
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD; // UploadHeapを使う
+
+	/// 頂点リソースのの設定
+	D3D12_RESOURCE_DESC vertexResourceDesc{};
+	/// バッファリソース; テクスチャの場合はまた別の設定を行う
+	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	vertexResourceDesc.Width = sizeof(Vector4) * 3; // リソースのサイズ; 今回はVector4を3頂点分
+
+	/// バッファの場合はこれらは1にする決まり
+	vertexResourceDesc.Height = 1;
+	vertexResourceDesc.DepthOrArraySize = 1;
+	vertexResourceDesc.MipLevels = 1;
+	vertexResourceDesc.SampleDesc.Count = 1;
+
+	/// バッファの場合はこれにする決まり
+	hr = device_->CreateCommittedResource(
+		&uploadHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&vertexResourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&vertexResource_)
+	);
+	assert(SUCCEEDED(hr));
+
+}
+
+void DirectXCommon::CreateVBV() {
+
+	/// 頂点バッファビューを作成
+
+	/// リソースの先頭アドレスから使う
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+
+	/// 使用するリソースのサイズは頂点3つ分のサイズ
+	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 3;
+	/// 1頂点あたりのサイズ
+	vertexBufferView_.StrideInBytes = sizeof(Vector4);
+
+}
+
+void DirectXCommon::WriteVertexData() {
+
+	Vector4* vertexData = nullptr;
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+	// 左下
+	vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
+	// 上
+	vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
+	// 右下
+	vertexData[1] = { 0.5f,-0.5f,0.0f,1.0f };
+
+}
+
+void DirectXCommon::InitializeViewport() {
+
+	/// viewport
+	viewport_.Width = static_cast<float>(backBufferWidth_);
+	viewport_.Height = static_cast<float>(backBufferHeight_);
+
+	viewport_.TopLeftX = 0;
+	viewport_.TopLeftY = 0;
+	viewport_.MinDepth = 0.0f;
+	viewport_.MaxDepth = 1.0f;
+
+	/// シザー矩形
+	scissorRect_.left = 0;
+	scissorRect_.right = static_cast<LONG>(backBufferWidth_);
+	scissorRect_.top = 0;
+	scissorRect_.bottom = static_cast<LONG>(backBufferHeight_);
 
 }

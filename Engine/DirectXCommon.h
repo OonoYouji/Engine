@@ -75,6 +75,14 @@ private:
 	/// VertexResource
 	ID3D12Resource* vertexResource_ = nullptr;
 
+	/// VBV
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+
+	/// ビューポート
+	D3D12_VIEWPORT viewport_;
+	/// シザー矩形
+	D3D12_RECT scissorRect_;
+
 public:
 
 	/// <summary>
@@ -109,6 +117,9 @@ public:
 
 
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
+
+
+	void TestDraw();
 
 private:
 
@@ -174,8 +185,19 @@ private:
 	/// </summary>
 	void CreatePSO();
 
-	
+	/// <summary>
+	/// VertexResourceの生成
+	/// </summary>
+	void CreateVertexResource();
 
+	/// <summary>
+	/// VertexBufferViewの生成
+	/// </summary>
+	void CreateVBV();
+
+	void WriteVertexData();
+
+	void InitializeViewport();
 
 private:
 

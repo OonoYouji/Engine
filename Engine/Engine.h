@@ -19,8 +19,12 @@ public:
 
 	static void ConsolePrint(const std::string& message);
 	static void ConsolePrint(const std::wstring& message);
+	static std::wstring ConvertString(const std::string& string);
 
 	static int ProcessMessage();
+
+
+	static void TestDraw();
 
 private:
 

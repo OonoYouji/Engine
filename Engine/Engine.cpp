@@ -9,24 +9,6 @@
 
 namespace {
 
-	std::wstring ConvertString(const std::string& str) {
-		if (str.empty()) {
-			return std::wstring();
-		}
-
-		auto sizeNeeded = MultiByteToWideChar(
-			CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
-		if (sizeNeeded == 0) {
-			return std::wstring();
-		}
-		std::wstring result(sizeNeeded, 0);
-		MultiByteToWideChar(
-			CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()),
-			&result[0], sizeNeeded);
-		return result;
-	}
-
-
 	class EngineSystem {
 		friend class Engine;
 	private:
@@ -37,22 +19,14 @@ namespace {
 	public:
 		
 		void Initialize();
-
-		/// <summary>
-		/// フレームの最初に行う処理
-		/// </summary>
+		
 		void BeginFrame();
-
-		/// <summary>
-		/// フレームの最後に行う処理
-		/// </summary>
 		void EndFrame();
-
-		/// <summary>
-		/// windowが終了したかどうか
-		/// </summary>
-		/// <returns></returns>
 		int ProcessMessage();
+
+		std::wstring ConvertString(const std::string& str);
+
+		void TestDraw();
 
 	};
 
@@ -76,6 +50,27 @@ namespace {
 
 	int EngineSystem::ProcessMessage() {
 		return winApp_->ProcessMessage() ? true : false;
+	}
+
+	std::wstring EngineSystem::ConvertString(const std::string& str) {
+		if (str.empty()) {
+			return std::wstring();
+		}
+
+		auto sizeNeeded = MultiByteToWideChar(
+			CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
+		if (sizeNeeded == 0) {
+			return std::wstring();
+		}
+		std::wstring result(sizeNeeded, 0);
+		MultiByteToWideChar(
+			CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()),
+			&result[0], sizeNeeded);
+		return result;
+	}
+
+	void EngineSystem::TestDraw() {
+		directXCommon_->TestDraw();
 	}
 
 
@@ -140,6 +135,14 @@ void Engine::ConsolePrint(const std::wstring& message) {
 	OutputDebugStringW(message.c_str());
 }
 
+std::wstring Engine::ConvertString(const std::string& string) {
+	return sEngineSystem->ConvertString(string);
+}
+
 int Engine::ProcessMessage() {
 	return sEngineSystem->ProcessMessage();
+}
+
+void Engine::TestDraw() {
+	sEngineSystem->TestDraw();
 }
