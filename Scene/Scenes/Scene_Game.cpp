@@ -16,7 +16,17 @@ void Scene_Game::Update() {
 void Scene_Game::Draw() {
 
 
-	Engine::TestDraw();
+	Engine::TestDraw(
+		{ -0.5f,-0.5f,0.0f,1.0f },
+		{ 0.0f,0.5f,0.0f,1.0f },
+		{ 0.5f,-0.5f,0.0f,1.0f }
+	);
+
+	/*Engine::TestDraw(
+		{ 0.0f,-0.5f,0.0f,1.0f },
+		{ -0.5f,0.5f,0.0f,1.0f },
+		{ 0.5f,0.5f,0.0f,1.0f }
+	);*/
 
 }
 

@@ -80,7 +80,7 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t 
 	/// </summary>
 	CreateVBV();
 
-	WriteVertexData();
+	//WriteVertexData();
 
 	InitializeViewport();
 
@@ -236,7 +236,7 @@ IDxcBlob* DirectXCommon::CompileShader(const std::wstring& filePath, const wchar
 		filePath.c_str(),			/// コンパイル対象のhlslファイル名
 		L"-E", L"main",				/// エントリーポイントの指定。基本的にmain以外指定しない
 		L"-T", profile,				/// ShaderProfileの設定
-		L"-Zi", L"-Qembeb_debug",	/// デバッグ用の情報を埋め込む
+		L"-Zi", L"-Qembed_debug",	/// デバッグ用の情報を埋め込む
 		L"-Od",						/// 最適化を外しておく	
 		L"-Zpr",					/// メモリのレイアウトは行優先
 	};
@@ -277,7 +277,7 @@ IDxcBlob* DirectXCommon::CompileShader(const std::wstring& filePath, const wchar
 	return shaderBlob;
 }
 
-void DirectXCommon::TestDraw() {
+void DirectXCommon::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
 
 	commandList_->RSSetViewports(1, &viewport_);
 	commandList_->RSSetScissorRects(1, &scissorRect_);
@@ -285,6 +285,8 @@ void DirectXCommon::TestDraw() {
 	/// RootSignatureを設定; PS0に設定しているけど別途設定が必要
 	commandList_->SetGraphicsRootSignature(rootSignature_);
 	commandList_->SetPipelineState(graphicsPipelineState_);
+	
+	WriteVertexData(v1, v2, v3);
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
 	/// 形状を設定; PS0に設定している物とはまた別; 同じものを設定すると考えておけばいい
@@ -685,6 +687,8 @@ void DirectXCommon::CreateVertexResource() {
 	vertexResourceDesc.SampleDesc.Count = 1;
 
 	/// バッファの場合はこれにする決まり
+	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
 	hr = device_->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
@@ -711,17 +715,21 @@ void DirectXCommon::CreateVBV() {
 
 }
 
-void DirectXCommon::WriteVertexData() {
+void DirectXCommon::WriteVertexData(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
 
 	Vector4* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
 	// 左下
-	vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
+	//vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
 	// 上
-	vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
+	//vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
 	// 右下
-	vertexData[1] = { 0.5f,-0.5f,0.0f,1.0f };
+	//vertexData[1] = { 0.5f,-0.5f,0.0f,1.0f };
+
+	vertexData[0] = v1;
+	vertexData[1] = v2;
+	vertexData[2] = v3;
 
 }
 

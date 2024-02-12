@@ -11,6 +11,7 @@
 #include <dxcapi.h>
 
 #include <WinApp.h>
+#include <Vector4.h>
 
 class DirectXCommon final {
 private:
@@ -119,7 +120,7 @@ public:
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 
-	void TestDraw();
+	void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 
 private:
 
@@ -195,7 +196,7 @@ private:
 	/// </summary>
 	void CreateVBV();
 
-	void WriteVertexData();
+	void WriteVertexData(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 
 	void InitializeViewport();
 

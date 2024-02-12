@@ -17,16 +17,16 @@ namespace {
 		DirectXCommon* directXCommon_ = nullptr;
 
 	public:
-		
+
 		void Initialize();
-		
+
 		void BeginFrame();
 		void EndFrame();
 		int ProcessMessage();
 
 		std::wstring ConvertString(const std::string& str);
 
-		void TestDraw();
+		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 
 	};
 
@@ -37,7 +37,7 @@ namespace {
 	}
 
 	void EngineSystem::BeginFrame() {
-		
+
 		directXCommon_->PreDraw();
 
 	}
@@ -69,8 +69,8 @@ namespace {
 		return result;
 	}
 
-	void EngineSystem::TestDraw() {
-		directXCommon_->TestDraw();
+	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
+		directXCommon_->TestDraw(v1, v2, v3);
 	}
 
 
@@ -88,15 +88,15 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 
 	assert(!sWinApp);
 	assert(!sDirectXCommon);
-	
-	
+
+
 	const int width = windowSize.x;
 	const int height = windowSize.y;
 	auto&& titleString = ConvertString(title);
 	sWinApp = WinApp::GetInstance();
 	sWinApp->CreateGameWindow(
-		titleString.c_str(), 
-		WS_OVERLAPPEDWINDOW & ~(WS_MAXIMIZEBOX | WS_THICKFRAME), 
+		titleString.c_str(),
+		WS_OVERLAPPEDWINDOW & ~(WS_MAXIMIZEBOX | WS_THICKFRAME),
 		width, height
 	);
 
@@ -143,6 +143,6 @@ int Engine::ProcessMessage() {
 	return sEngineSystem->ProcessMessage();
 }
 
-void Engine::TestDraw() {
-	sEngineSystem->TestDraw();
+void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
+	sEngineSystem->TestDraw(v1, v2, v3);
 }

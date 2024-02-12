@@ -4,6 +4,7 @@
 #include <string>
 #include <Vector2.h>
 #include <SafeDelete.h>
+#include <Vector4.h>
 
 class Engine {
 public:
@@ -24,7 +25,7 @@ public:
 	static int ProcessMessage();
 
 
-	static void TestDraw();
+	static void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 
 private:
 
