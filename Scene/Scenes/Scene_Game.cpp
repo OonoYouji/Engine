@@ -22,11 +22,11 @@ void Scene_Game::Draw() {
 		{ 0.5f,-0.5f,0.0f,1.0f }
 	);
 
-	/*Engine::TestDraw(
+	Engine::TestDraw(
 		{ 0.0f,-0.5f,0.0f,1.0f },
 		{ -0.5f,0.5f,0.0f,1.0f },
 		{ 0.5f,0.5f,0.0f,1.0f }
-	);*/
+	);
 
 }
 

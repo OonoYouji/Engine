@@ -58,7 +58,7 @@ private:
 
 	/// RootSignatureの生成
 	ID3D12RootSignature* rootSignature_ = nullptr;
-
+	D3D12_ROOT_PARAMETER rootParameters_[1];
 	/// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElemntDescs_[1];
 	D3D12_INPUT_LAYOUT_DESC inputlayoutDesc_;
@@ -83,6 +83,9 @@ private:
 	D3D12_VIEWPORT viewport_;
 	/// シザー矩形
 	D3D12_RECT scissorRect_;
+
+	/// MaterialResource
+	ID3D12Resource* materialResource_ = nullptr;
 
 public:
 
@@ -191,6 +194,8 @@ private:
 	/// </summary>
 	void CreateVertexResource();
 
+	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
+
 	/// <summary>
 	/// VertexBufferViewの生成
 	/// </summary>
@@ -199,6 +204,8 @@ private:
 	void WriteVertexData(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 
 	void InitializeViewport();
+
+	void CreateMaterialResource();
 
 private:
 
