@@ -2,6 +2,7 @@
 
 #include <Engine.h>
 #include <Vector4.h>
+#include <Matrix4x4.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -83,8 +84,16 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t 
 	//WriteVertexData();
 
 	InitializeViewport();
-	
+
 	CreateMaterialResource();
+
+	scale_ = { 1.0f,1.0f,1.0f };
+	rotate_ = { 0.0f,0.0f,0.0f };
+	pos_ = { 0.0f,0.0f,0.0f };
+
+	CreateWVPResource(scale_, rotate_, pos_);
+
+
 
 }
 
@@ -288,7 +297,7 @@ void DirectXCommon::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4
 	/// RootSignatureを設定; PS0に設定しているけど別途設定が必要
 	commandList_->SetGraphicsRootSignature(rootSignature_);
 	commandList_->SetPipelineState(graphicsPipelineState_);
-	
+
 	WriteVertexData(v1, v2, v3);
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
@@ -297,6 +306,37 @@ void DirectXCommon::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4
 
 	/// マテリアルCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+
+	/// wvp用のCBufferの場所を指定
+	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+
+	/// 描画! (DrawCall/ドローコール); 3頂点で1つのインスタンス; インスタンスについては今後
+	commandList_->DrawInstanced(3, 1, 0, 0);
+
+}
+
+
+void DirectXCommon::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
+
+	commandList_->RSSetViewports(1, &viewport_);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
+
+	/// RootSignatureを設定; PS0に設定しているけど別途設定が必要
+	commandList_->SetGraphicsRootSignature(rootSignature_);
+	commandList_->SetPipelineState(graphicsPipelineState_);
+
+	WriteVertexData(v1, v2, v3);
+	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
+
+	/// 形状を設定; PS0に設定している物とはまた別; 同じものを設定すると考えておけばいい
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	/// マテリアルCBufferの場所を設定
+	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+
+	/// wvp用のCBufferの場所を指定
+	CreateWVPResource(scale, rotate, translate);
+	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 
 	/// 描画! (DrawCall/ドローコール); 3頂点で1つのインスタンス; インスタンスについては今後
 	commandList_->DrawInstanced(3, 1, 0, 0);
@@ -473,6 +513,8 @@ void DirectXCommon::CreateSwapChain() {
 
 }
 
+
+
 void DirectXCommon::CreateFinalRenderTargets() {
 	HRESULT hr = S_FALSE;
 
@@ -559,11 +601,16 @@ void DirectXCommon::CreateRootSignature() {
 
 
 	/// RootSignature作成; 複数設定できるので配列; 今回は1つしか設定しないので長さ1の配列;
-	rootParameters_[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	// CBVを使う
+	rootParameters_[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
 	rootParameters_[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	// PixelShaderで使う
-	rootParameters_[0].Descriptor.ShaderRegister = 0;					// レジスタ番号0とバインド
-	descriptionRootSigneture.pParameters = rootParameters_;				// ルートパラメータ配列へのポインタ
-	descriptionRootSigneture.NumParameters = _countof(rootParameters_);	// 配列の長さs
+	rootParameters_[0].Descriptor.ShaderRegister = 0;						// レジスタ番号0とバインド
+
+	rootParameters_[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		// CBVを使う
+	rootParameters_[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	// VertexShaderを使う
+	rootParameters_[1].Descriptor.ShaderRegister = 0;						// レジスタ番号0を使う
+
+	descriptionRootSigneture.pParameters = rootParameters_;					// ルートパラメータ配列へのポインタ
+	descriptionRootSigneture.NumParameters = _countof(rootParameters_);		// 配列の長さs
 
 	/// シリアライズしてバイナリする
 	ID3DBlob* signatureBlob = nullptr;
@@ -625,7 +672,7 @@ void DirectXCommon::SetingRasterizerState() {
 
 void DirectXCommon::SetingShader() {
 
-	
+
 	vertexShaderBlob_ = CompileShader(Engine::ConvertString("./Engine/Object3d.VS.hlsl"), L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 
@@ -814,5 +861,19 @@ void DirectXCommon::CreateMaterialResource() {
 
 	/// 書き込み
 	*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+
+}
+
+
+void DirectXCommon::CreateWVPResource(const Vec3f& scale, const Vec3f& rotate, const Vec3f& translate) {
+
+	wvpResource_ = CreateBufferResource(sizeof(Matrix4x4));
+
+	Matrix4x4* wvpData = nullptr;
+
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+
+	Matrix4x4 worldMatrix = Matrix4x4::MakeAffine(scale, rotate, translate);
+	*wvpData = worldMatrix;
 
 }

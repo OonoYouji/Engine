@@ -12,6 +12,7 @@
 
 #include <WinApp.h>
 #include <Vector4.h>
+#include <Vector3.h>
 
 class DirectXCommon final {
 private:
@@ -58,7 +59,7 @@ private:
 
 	/// RootSignatureの生成
 	ID3D12RootSignature* rootSignature_ = nullptr;
-	D3D12_ROOT_PARAMETER rootParameters_[1];
+	D3D12_ROOT_PARAMETER rootParameters_[2];
 	/// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElemntDescs_[1];
 	D3D12_INPUT_LAYOUT_DESC inputlayoutDesc_;
@@ -86,6 +87,18 @@ private:
 
 	/// MaterialResource
 	ID3D12Resource* materialResource_ = nullptr;
+	/// wvpResource
+	ID3D12Resource* wvpResource_ = nullptr;
+
+
+
+	//// 仮
+	Vec3f scale_;
+	Vec3f rotate_;
+	Vec3f pos_;
+
+
+
 
 public:
 
@@ -124,6 +137,7 @@ public:
 
 
 	void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
+	void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate);
 
 private:
 
@@ -205,7 +219,15 @@ private:
 
 	void InitializeViewport();
 
+	/// <summary>
+	/// マテリアルリソースの生成
+	/// </summary>
 	void CreateMaterialResource();
+
+	/// <summary>
+	/// wvp用のリソース生成
+	/// </summary>
+	void CreateWVPResource(const Vec3f& scale, const Vec3f& rotate, const Vec3f& translate);
 
 private:
 

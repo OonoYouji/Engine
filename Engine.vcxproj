@@ -151,7 +151,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\WinApp.cpp" />
     <ClCompile Include="GameManager\GameManager.cpp" />
+    <ClCompile Include="Lib\Math\Matrix4x4.cpp" />
     <ClCompile Include="Lib\Math\Vector2.cpp" />
+    <ClCompile Include="Lib\Math\Vector3.cpp" />
     <ClCompile Include="Lib\Math\Vector4.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\IScene.cpp" />
@@ -165,7 +167,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\SafeDelete.h" />
     <ClInclude Include="Engine\WinApp.h" />
     <ClInclude Include="GameManager\GameManager.h" />
+    <ClInclude Include="Lib\Math\Matrix4x4.h" />
     <ClInclude Include="Lib\Math\Vector2.h" />
+    <ClInclude Include="Lib\Math\Vector3.h" />
     <ClInclude Include="Lib\Math\Vector4.h" />
     <ClInclude Include="Scene\IScene.h" />
     <ClInclude Include="Scene\ITransition.h" />

@@ -32,6 +32,12 @@
     <ClCompile Include="Lib\Math\Vector4.cpp">
       <Filter>Lib\Math\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Lib\Math\Matrix4x4.cpp">
+      <Filter>Lib\Math\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Vector3.cpp">
+      <Filter>Lib\Math\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -118,6 +124,12 @@
       <Filter>Scene\Scenes\Include</Filter>
     </ClInclude>
     <ClInclude Include="Lib\Math\Vector4.h">
+      <Filter>Lib\Math\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Matrix4x4.h">
+      <Filter>Lib\Math\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Vector3.h">
       <Filter>Lib\Math\Include</Filter>
     </ClInclude>
   </ItemGroup>

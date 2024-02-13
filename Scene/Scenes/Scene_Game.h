@@ -2,6 +2,8 @@
 
 #include <IScene.h>
 
+#include <Vector3.h>
+
 class Scene_Game final
 	: public IScene {
 public:
@@ -16,5 +18,8 @@ public:
 
 private:
 
+	Vec3f scale_;
+	Vec3f rotate_;
+	Vec3f pos_;
 
 };

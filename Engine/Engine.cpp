@@ -27,6 +27,7 @@ namespace {
 		std::wstring ConvertString(const std::string& str);
 
 		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
+		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate);
 
 	};
 
@@ -71,6 +72,10 @@ namespace {
 
 	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
 		directXCommon_->TestDraw(v1, v2, v3);
+	}
+
+	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
+		directXCommon_->TestDraw(v1, v2, v3, scale, rotate, translate);
 	}
 
 
@@ -146,3 +151,9 @@ int Engine::ProcessMessage() {
 void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
 	sEngineSystem->TestDraw(v1, v2, v3);
 }
+
+void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
+	sEngineSystem->TestDraw(v1, v2, v3, scale, rotate, translate);
+}
+
+
