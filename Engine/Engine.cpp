@@ -6,6 +6,7 @@
 
 #include <WinApp.h>
 #include <DirectXCommon.h>
+#include <DXCompile.h>
 #include <Camera.h>
 
 namespace {
@@ -20,6 +21,7 @@ namespace {
 
 		WinApp* winApp_ = nullptr;
 		DirectXCommon* directXCommon_ = nullptr;
+		DXCompile* dxc_ = nullptr;
 		//std::unique_ptr<Camera> camera_ = nullptr;
 		Camera* camera_ = nullptr;
 
@@ -48,6 +50,7 @@ namespace {
 	void EngineSystem::Initialize() {
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
+		dxc_ = DXCompile::GetInstance();
 		//camera_ = std::make_unique<Camera>();
 		camera_ = new Camera();
 	}
@@ -86,11 +89,11 @@ namespace {
 	}
 
 	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
-		directXCommon_->TestDraw(v1, v2, v3);
+		//dxc_->TestDraw(v1, v2, v3);
 	}
 
 	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
-		directXCommon_->TestDraw(v1, v2, v3, scale, rotate, translate);
+		dxc_->TestDraw(v1, v2, v3, scale, rotate, translate);
 	}
 
 	inline Camera* EngineSystem::GetCamera() {
@@ -101,6 +104,7 @@ namespace {
 
 	WinApp* sWinApp = nullptr;
 	DirectXCommon* sDirectXCommon = nullptr;
+	DXCompile* sDXC = nullptr;
 
 	std::unique_ptr<EngineSystem> sEngineSystem = nullptr;
 
@@ -113,6 +117,7 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 
 	assert(!sWinApp);
 	assert(!sDirectXCommon);
+	assert(!sDXC);
 
 
 	const int width = windowSize.x;
@@ -128,6 +133,9 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 	/// DirectXの初期化
 	sDirectXCommon = DirectXCommon::GetInstance();
 	sDirectXCommon->Initialize(sWinApp, width, height);
+
+	sDXC = DXCompile::GetInstance();
+	sDXC->Initialize();
 
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();

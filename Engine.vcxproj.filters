@@ -41,6 +41,9 @@
     <ClCompile Include="Engine\Camera.cpp">
       <Filter>Engine\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\DXCompile.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -136,6 +139,9 @@
       <Filter>Lib\Math\Include</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Camera.h">
+      <Filter>Engine\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\DXCompile.h">
       <Filter>Engine\Include</Filter>
     </ClInclude>
   </ItemGroup>
