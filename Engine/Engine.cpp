@@ -6,15 +6,22 @@
 
 #include <WinApp.h>
 #include <DirectXCommon.h>
+#include <Camera.h>
 
 namespace {
 
 	class EngineSystem {
 		friend class Engine;
+	public:
+
+		~EngineSystem();
+
 	private:
 
 		WinApp* winApp_ = nullptr;
 		DirectXCommon* directXCommon_ = nullptr;
+		//std::unique_ptr<Camera> camera_ = nullptr;
+		Camera* camera_ = nullptr;
 
 	public:
 
@@ -29,12 +36,20 @@ namespace {
 		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate);
 
+		inline Camera* GetCamera();
+
 	};
 
+
+	EngineSystem::~EngineSystem() {
+		SafeDelete(camera_);
+	}
 
 	void EngineSystem::Initialize() {
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
+		//camera_ = std::make_unique<Camera>();
+		camera_ = new Camera();
 	}
 
 	void EngineSystem::BeginFrame() {
@@ -76,6 +91,11 @@ namespace {
 
 	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
 		directXCommon_->TestDraw(v1, v2, v3, scale, rotate, translate);
+	}
+
+	inline Camera* EngineSystem::GetCamera() {
+		//return camera_.get();
+		return camera_;
 	}
 
 
@@ -154,6 +174,10 @@ void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
 
 void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
 	sEngineSystem->TestDraw(v1, v2, v3, scale, rotate, translate);
+}
+
+Camera* Engine::GetCamera() {
+	return sEngineSystem->GetCamera();
 }
 
 

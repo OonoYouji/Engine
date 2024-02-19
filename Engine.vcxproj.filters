@@ -38,6 +38,9 @@
     <ClCompile Include="Lib\Math\Vector3.cpp">
       <Filter>Lib\Math\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Camera.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -131,6 +134,9 @@
     </ClInclude>
     <ClInclude Include="Lib\Math\Vector3.h">
       <Filter>Lib\Math\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Camera.h">
+      <Filter>Engine\Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

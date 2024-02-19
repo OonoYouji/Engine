@@ -34,6 +34,15 @@ public:
 
 	static Matrix4x4 MakeAffine(const Vec3f& scale, const Vec3f& rotate, const Vec3f& translate);
 
+	static Matrix4x4 MakeInverse(const Matrix4x4& m);
+
+	static Matrix4x4 MakeTranspose(const Matrix4x4& m);
+
+
+	static Matrix4x4 MakeOrthographicMatrix(float l, float t, float r, float b, float near, float far);
+	static Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
+	static Matrix4x4 MakeViewportMatrix(float top, float left, float width, float height, float minD, float maxD);
+
 public:
 
 	inline Matrix4x4 operator+ (const Matrix4x4& other) const;

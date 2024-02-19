@@ -87,11 +87,11 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t 
 
 	CreateMaterialResource();
 
-	scale_ = { 1.0f,1.0f,1.0f };
+	/*scale_ = { 1.0f,1.0f,1.0f };
 	rotate_ = { 0.0f,0.0f,0.0f };
 	pos_ = { 0.0f,0.0f,0.0f };
 
-	CreateWVPResource(scale_, rotate_, pos_);
+	CreateWVPResource(scale_, rotate_, pos_);*/
 
 
 
@@ -874,6 +874,7 @@ void DirectXCommon::CreateWVPResource(const Vec3f& scale, const Vec3f& rotate, c
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 
 	Matrix4x4 worldMatrix = Matrix4x4::MakeAffine(scale, rotate, translate);
-	*wvpData = worldMatrix;
+
+	*wvpData = worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
 }
