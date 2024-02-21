@@ -17,7 +17,7 @@ void Scene_Game::Init() {
 
 void Scene_Game::Update() {
 
-	rotate_.y += 0.03f;
+	//rotate_.y += 0.03f;
 
 }
 
@@ -33,11 +33,16 @@ void Scene_Game::Draw() {
 		pos_
 	);
 
-	//Engine::TestDraw(
-	//	{ 0.0f,-0.5f,0.0f,1.0f },
-	//	{ -0.5f,0.5f,0.0f,1.0f },
-	//	{ 0.5f,0.5f,0.0f,1.0f }
-	//);
+
+	Engine::TestDraw(
+		{ 0.0f,-0.5f,0.0f,1.0f },
+		{ -0.5f,0.5f,0.0f,1.0f },
+		{ 0.5f,0.5f,0.0f,1.0f },
+		scale_,
+		rotate_,
+		pos_
+	);
+
 
 }
 

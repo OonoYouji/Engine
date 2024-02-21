@@ -44,6 +44,27 @@
     <ClCompile Include="Engine\DXCompile.cpp">
       <Filter>Engine\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui.cpp">
+      <Filter>ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_demo.cpp">
+      <Filter>ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_draw.cpp">
+      <Filter>ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp">
+      <Filter>ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_tables.cpp">
+      <Filter>ImGui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_widgets.cpp">
+      <Filter>ImGui\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -97,6 +118,15 @@
     <Filter Include="Scene\Transitons\Source">
       <UniqueIdentifier>{246f6a36-0101-46a8-a9b0-0911abfea24c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{02cf35e3-ddc4-4ae7-b85b-4c15ad0be177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui\Include">
+      <UniqueIdentifier>{29b3b52a-5829-4d67-a523-1e931edd10fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui\Source">
+      <UniqueIdentifier>{a986697f-8ecf-4cf2-ab4c-116a581fa598}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\WinApp.h">
@@ -144,6 +174,30 @@
     <ClInclude Include="Engine\DXCompile.h">
       <Filter>Engine\Include</Filter>
     </ClInclude>
+    <ClInclude Include="Externals\imgui\imconfig.h">
+      <Filter>ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui.h">
+      <Filter>ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_impl_dx12.h">
+      <Filter>ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_impl_win32.h">
+      <Filter>ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_internal.h">
+      <Filter>ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_rectpack.h">
+      <Filter>ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_textedit.h">
+      <Filter>ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_truetype.h">
+      <Filter>ImGui\Include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Object3d.PS.hlsl">
@@ -152,5 +206,10 @@
     <FxCompile Include="Engine\Object3d.VS.hlsl">
       <Filter>Engine\Include</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Externals\imgui\LICENSE.txt">
+      <Filter>ImGui\Include</Filter>
+    </Text>
   </ItemGroup>
 </Project>

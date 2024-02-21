@@ -58,7 +58,7 @@ void DirectXCommon::Finalize() {
 #endif // _DEBUG
 
 	//// 解放されていないものがあれば止まる -----
-	IDXGIDebug1* debug;
+	IDXGIDebug1* debug = nullptr;
 	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
 		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
 		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
