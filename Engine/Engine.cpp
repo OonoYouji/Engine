@@ -7,6 +7,7 @@
 #include <WinApp.h>
 #include <DirectXCommon.h>
 #include <DXCompile.h>
+#include <ImGuiManager.h>
 #include <Camera.h>
 
 namespace {
@@ -22,6 +23,8 @@ namespace {
 		WinApp* winApp_ = nullptr;
 		DirectXCommon* directXCommon_ = nullptr;
 		DXCompile* dxc_ = nullptr;
+		ImGuiManager* imGuiManager_ = nullptr;
+
 		//std::unique_ptr<Camera> camera_ = nullptr;
 		Camera* camera_ = nullptr;
 
@@ -51,6 +54,7 @@ namespace {
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
 		dxc_ = DXCompile::GetInstance();
+		imGuiManager_ = ImGuiManager::GetInstance();
 		//camera_ = std::make_unique<Camera>();
 		camera_ = new Camera();
 	}
@@ -58,11 +62,13 @@ namespace {
 	void EngineSystem::BeginFrame() {
 
 		directXCommon_->PreDraw();
+		imGuiManager_->BeginFrame();
 
 	}
 
 	void EngineSystem::EndFrame() {
 
+		imGuiManager_->EndFrame();
 		directXCommon_->PostDraw();
 
 	}
@@ -105,6 +111,7 @@ namespace {
 	WinApp* sWinApp = nullptr;
 	DirectXCommon* sDirectXCommon = nullptr;
 	DXCompile* sDXC = nullptr;
+	ImGuiManager* sImGuiManager = nullptr;
 
 	std::unique_ptr<EngineSystem> sEngineSystem = nullptr;
 
@@ -118,6 +125,7 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 	assert(!sWinApp);
 	assert(!sDirectXCommon);
 	assert(!sDXC);
+	assert(!sImGuiManager);
 
 
 	const int width = windowSize.x;
@@ -137,6 +145,9 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 	sDXC = DXCompile::GetInstance();
 	sDXC->Initialize();
 
+	sImGuiManager = ImGuiManager::GetInstance();
+	sImGuiManager->Initialize(sWinApp, sDirectXCommon);
+
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();
 
@@ -150,6 +161,8 @@ void Engine::Finalize() {
 
 	sDXC->Finalize();
 	sDirectXCommon->Finalize();
+
+	sImGuiManager->Finalize();
 
 }
 

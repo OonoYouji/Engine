@@ -65,6 +65,9 @@
     <ClCompile Include="Externals\imgui\imgui_widgets.cpp">
       <Filter>ImGui\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\ImGuiManager.cpp">
+      <Filter>Engine\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -197,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="Externals\imgui\imstb_truetype.h">
       <Filter>ImGui\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\ImGuiManager.h">
+      <Filter>Engine\Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

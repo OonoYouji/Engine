@@ -107,7 +107,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Engine;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -131,7 +131,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Engine;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -151,6 +151,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\DirectXCommon.cpp" />
     <ClCompile Include="Engine\DXCompile.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Engine\ImGuiManager.cpp" />
     <ClCompile Include="Engine\WinApp.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
     <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
@@ -175,6 +176,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\DirectXCommon.h" />
     <ClInclude Include="Engine\DXCompile.h" />
     <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Engine\ImGuiManager.h" />
     <ClInclude Include="Engine\SafeDelete.h" />
     <ClInclude Include="Engine\WinApp.h" />
     <ClInclude Include="Externals\imgui\imconfig.h" />

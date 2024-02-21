@@ -37,11 +37,13 @@ private:
 
 	/// スワップチェーン
 	IDXGISwapChain4* swapChain_ = nullptr;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 
 	/// RTV
 	ID3D12DescriptorHeap* rtvDescriptorHeap_ = nullptr;
 	ID3D12Resource* swapChainResource_[2] = { nullptr };
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 
 	/// Fence
 	ID3D12Fence* fence_ = nullptr;
@@ -87,12 +89,18 @@ public:
 	/// レンダーターゲットのクリア
 	/// </summary>
 	void ClearRenderTarget();
-	
+
+
+	ID3D12DescriptorHeap* CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+
+
 
 	ID3D12Device* GetDevice() { return device_; }
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList_; }
 
-	
+	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
+	const DXGI_SWAP_CHAIN_DESC1& GetSwapChainDesc() const { return swapChainDesc_; }
+
 private:
 
 	/// <summary>
