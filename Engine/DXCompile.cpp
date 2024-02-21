@@ -22,69 +22,70 @@ DXCompile* DXCompile::GetInstance() {
 
 void DXCompile::Initialize() {
 
-	/// <summary>
 	/// DXCの初期化
-	/// </summary>
 	InitializeDXC();
 
-	/// <summary>
 	/// ルートシグネチャの生成
-	/// </summary>
 	CreateRootSignature();
 
-	/// <summary>
 	/// インプットレイアウトの設定
-	/// </summary>
 	SetingInputLayout();
-	
-	/// <summary>
+
 	/// ブレンドステートの設定
-	/// </summary>
 	SetingBlendState();
 
-	/// <summary>
 	/// ラスタライザーステートの設定
-	/// </summary>
 	SetingRasterizerState();
 
-	/// <summary>
 	/// 
-	/// </summary>
 	SetingShader();
 
-	/// <summary>
 	/// 
-	/// </summary>
 	CreatePSO();
 
-	/// <summary>
 	/// VertexResourceの生成
-	/// </summary>
 	CreateVertexResource();
 
-	/// <summary>
 	/// VertexBufferViewの生成
-	/// </summary>
 	CreateVBV();
 
 	InitializeViewport();
 
-	/// <summary>
 	/// マテリアルリソースの生成
-	/// </summary>
 	CreateMaterialResource();
+
+
+	wvpResource_ = CreateBufferResource(sizeof(Matrix4x4));
+
 
 }
 
 void DXCompile::Finalize() {
 
 	vertexResource_->Release();
+	materialResource_->Release();
+	wvpResource_->Release();
+
 	graphicsPipelineState_->Release();
+	signatureBlob_->Release();
+
+	if (errorBlob_) {
+		errorBlob_->Release();
+	}
+
 	rootSignature_->Release();
 	pixelShaderBlob_->Release();
 	vertexShaderBlob_->Release();
 
-	materialResource_->Release();
+	
+
+	dxcCompiler_->Release();
+	dxcUtils_->Release();
+	includeHandler_->Release();
+
+	//vertexResource_->Release();
+
+	
 
 }
 
@@ -147,7 +148,7 @@ IDxcBlob* DXCompile::CompileShader(const std::wstring& filePath, const wchar_t* 
 	/// リソースの解放
 	shaderSource->Release();
 	shaderResult->Release();
-
+	shaderError->Release();
 
 	return shaderBlob;
 }
@@ -218,25 +219,24 @@ void DXCompile::CreateRootSignature() {
 	descriptionRootSigneture.NumParameters = _countof(rootParameters_);		// 配列の長さs
 
 	/// シリアライズしてバイナリする
-	ID3DBlob* signatureBlob = nullptr;
-	ID3DBlob* errorBlob = nullptr;
+
 	hr = D3D12SerializeRootSignature(
 		&descriptionRootSigneture,
 		D3D_ROOT_SIGNATURE_VERSION_1,
-		&signatureBlob,
-		&errorBlob
+		&signatureBlob_,
+		&errorBlob_
 	);
 
 	if (FAILED(hr)) {
-		Engine::ConsolePrint(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Engine::ConsolePrint(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
 		assert(false);
 	}
 
 	/// バイナリを元に生成
 	hr = DirectXCommon::GetInstance()->GetDevice()->CreateRootSignature(
 		0,
-		signatureBlob->GetBufferPointer(),
-		signatureBlob->GetBufferSize(),
+		signatureBlob_->GetBufferPointer(),
+		signatureBlob_->GetBufferSize(),
 		IID_PPV_ARGS(&rootSignature_)
 	);
 	assert(SUCCEEDED(hr));
@@ -369,7 +369,7 @@ void DXCompile::CreateVertexResource() {
 
 ID3D12Resource* DXCompile::CreateBufferResource(size_t sizeInBytes) {
 	HRESULT hr = S_FALSE;
-	ID3D12Resource* vertexResource = nullptr;
+	ID3D12Resource* resource = nullptr;
 
 	/// 頂点リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
@@ -396,11 +396,11 @@ ID3D12Resource* DXCompile::CreateBufferResource(size_t sizeInBytes) {
 		&vertexResourceDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&vertexResource)
+		IID_PPV_ARGS(&resource)
 	);
 	assert(SUCCEEDED(hr));
 
-	return vertexResource;
+	return resource;
 }
 
 void DXCompile::CreateVBV() {
@@ -440,7 +440,7 @@ void DXCompile::InitializeViewport() {
 	/// viewport
 	/*viewport_.Width = static_cast<float>(backBufferWidth_);
 	viewport_.Height = static_cast<float>(backBufferHeight_);*/
-	
+
 	viewport_.Width = static_cast<float>(1280.0f);
 	viewport_.Height = static_cast<float>(720.0f);
 

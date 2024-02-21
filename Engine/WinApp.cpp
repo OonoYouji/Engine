@@ -84,4 +84,6 @@ void WinApp::TerminateGameWindow() {
 
 	// COM 終了
 	CoUninitialize();
+
+	CloseWindow(hwnd_);
 }

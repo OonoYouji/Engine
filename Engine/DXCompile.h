@@ -44,6 +44,8 @@ private:
 	/// RootSignatureの生成
 	ID3D12RootSignature* rootSignature_ = nullptr;
 	D3D12_ROOT_PARAMETER rootParameters_[2];
+	ID3DBlob* signatureBlob_ = nullptr;
+	ID3DBlob* errorBlob_ = nullptr;
 	/// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElemntDescs_[1];
 	D3D12_INPUT_LAYOUT_DESC inputlayoutDesc_;

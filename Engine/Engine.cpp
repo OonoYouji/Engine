@@ -148,6 +148,7 @@ void Engine::Finalize() {
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();
 
+	sDXC->Finalize();
 	sDirectXCommon->Finalize();
 
 }

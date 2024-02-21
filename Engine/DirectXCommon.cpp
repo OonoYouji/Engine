@@ -34,17 +34,13 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t 
 	/// フェンスの生成
 	CreateFence();
 
-
-
-	
-
-
 }
 
 void DirectXCommon::Finalize() {
 
 
 	//// オブジェクトの解放 -----
+	CloseHandle(fenceEvent_);
 	fence_->Release();
 	rtvDescriptorHeap_->Release();
 	swapChainResource_[0]->Release();
@@ -54,9 +50,12 @@ void DirectXCommon::Finalize() {
 	commandAllocator_->Release();
 	commandQueue_->Release();
 	device_->Release();
+	useAdapter_->Release();
 	dxgiFactory_->Release();
 
-	
+#ifdef _DEBUG
+	debugController_->Release();
+#endif // _DEBUG
 
 	//// 解放されていないものがあれば止まる -----
 	IDXGIDebug1* debug;
@@ -137,10 +136,8 @@ void DirectXCommon::PostDraw() {
 	fenceValue_++;
 	commandQueue_->Signal(fence_, fenceValue_);
 	if (fence_->GetCompletedValue() < fenceValue_) {
-		HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-		assert(fenceEvent != nullptr);
-		fence_->SetEventOnCompletion(fenceValue_, fenceEvent);
-		WaitForSingleObject(fenceEvent, INFINITE);
+		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
+		WaitForSingleObject(fenceEvent_, INFINITE);
 	}
 
 	/// 次のフレームのコマンドリストを準備
@@ -191,35 +188,6 @@ void DirectXCommon::ClearRenderTarget() {
 //	commandList_->DrawInstanced(3, 1, 0, 0);
 //
 //}
-//
-//
-//void DirectXCommon::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
-//
-//	commandList_->RSSetViewports(1, &viewport_);
-//	commandList_->RSSetScissorRects(1, &scissorRect_);
-//
-//	/// RootSignatureを設定; PS0に設定しているけど別途設定が必要
-//	commandList_->SetGraphicsRootSignature(rootSignature_);
-//	commandList_->SetPipelineState(graphicsPipelineState_);
-//
-//	WriteVertexData(v1, v2, v3);
-//	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
-//
-//	/// 形状を設定; PS0に設定している物とはまた別; 同じものを設定すると考えておけばいい
-//	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-//
-//	/// マテリアルCBufferの場所を設定
-//	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-//
-//	/// wvp用のCBufferの場所を指定
-//	CreateWVPResource(scale, rotate, translate);
-//	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-//
-//	/// 描画! (DrawCall/ドローコール); 3頂点で1つのインスタンス; インスタンスについては今後
-//	commandList_->DrawInstanced(3, 1, 0, 0);
-//
-//}
-
 
 void DirectXCommon::InitializeDXGIDevice() {
 	HRESULT hr = S_FALSE;
@@ -227,12 +195,12 @@ void DirectXCommon::InitializeDXGIDevice() {
 
 #ifdef _DEBUG
 
-	ID3D12Debug1* debugController = nullptr;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+	debugController_ = nullptr;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_)))) {
 		/// デバッグレイヤーを有効化する
-		debugController->EnableDebugLayer();
+		debugController_->EnableDebugLayer();
 		/// さらにGPU側でもチェックできるようにする
-		debugController->SetEnableGPUBasedValidation(TRUE);
+		debugController_->SetEnableGPUBasedValidation(TRUE);
 	}
 
 #endif // _DEBUG
@@ -243,15 +211,14 @@ void DirectXCommon::InitializeDXGIDevice() {
 
 
 	/// 使用するアダプタ用変数
-	IDXGIAdapter4* useAdapter = nullptr;
 
 	/// いい順にアダプタを頼む
 	for (UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i,
-		DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) != DXGI_ERROR_NOT_FOUND; i++) {
+		DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_)) != DXGI_ERROR_NOT_FOUND; i++) {
 
 		/// アダプタの情報を取得する
 		DXGI_ADAPTER_DESC3 adapterDesc{};
-		hr = useAdapter->GetDesc3(&adapterDesc);
+		hr = useAdapter_->GetDesc3(&adapterDesc);
 		assert(SUCCEEDED(hr)); /// 所得出来ないのは一大事
 
 		/// ソフトウェアアダプタでなければ採用
@@ -262,12 +229,12 @@ void DirectXCommon::InitializeDXGIDevice() {
 		}
 
 		/// ソフトウェアアダプタの場合は無視
-		useAdapter = nullptr;
+		useAdapter_ = nullptr;
 
 	}
 
 	/// 適切なアダプタがなければ起動できない
-	assert(useAdapter != nullptr);
+	assert(useAdapter_ != nullptr);
 
 
 
@@ -283,7 +250,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 	for (size_t i = 0; i < _countof(featureLevels); i++) {
 
 		/// 採用したアダプターでデバイスを生成
-		hr = D3D12CreateDevice(useAdapter, featureLevels[i], IID_PPV_ARGS(&device_));
+		hr = D3D12CreateDevice(useAdapter_, featureLevels[i], IID_PPV_ARGS(&device_));
 
 		/// 指定した機能レベルでデバイスが生成できるかを確認
 		if (SUCCEEDED(hr)) {
@@ -416,9 +383,6 @@ void DirectXCommon::CreateFinalRenderTargets() {
 	//	assert(SUCCEEDED(hr));
 	//}
 
-	swapChainResource_[0] = nullptr;
-	swapChainResource_[1] = nullptr;
-
 	hr = swapChain_->GetBuffer(0, IID_PPV_ARGS(&swapChainResource_[0]));
 	assert(SUCCEEDED(hr));
 	hr = swapChain_->GetBuffer(1, IID_PPV_ARGS(&swapChainResource_[1]));
@@ -451,5 +415,8 @@ void DirectXCommon::CreateFence() {
 
 	hr = device_->CreateFence(fenceValue_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_));
 	assert(SUCCEEDED(hr));
+
+	fenceEvent_ = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent_ != nullptr);
 
 }

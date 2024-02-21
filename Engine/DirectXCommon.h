@@ -28,6 +28,7 @@ private:
 	/// デバイス
 	IDXGIFactory7* dxgiFactory_ = nullptr;
 	ID3D12Device* device_ = nullptr;
+	IDXGIAdapter4* useAdapter_ = nullptr;
 
 	/// コマンド関連
 	ID3D12CommandAllocator* commandAllocator_ = nullptr;
@@ -45,6 +46,10 @@ private:
 	/// Fence
 	ID3D12Fence* fence_ = nullptr;
 	uint64_t fenceValue_ = 0;
+	HANDLE fenceEvent_;
+
+	/// debug
+	ID3D12Debug1* debugController_ = nullptr;
 
 	/// windowのサイズ
 	int32_t backBufferWidth_ = 0;
