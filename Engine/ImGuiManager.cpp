@@ -38,6 +38,8 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
 void ImGuiManager::Finalize() {
 
+	srvDescriptorHeap_->Release();
+
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -61,6 +63,6 @@ void ImGuiManager::BeginFrame() {
 void ImGuiManager::EndFrame() {
 
 	ImGui::Render();
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), p_commandList_);
+	//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), p_commandList_);
 
 }

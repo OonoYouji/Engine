@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <assert.h>
 #include <memory>
+#include <array>
 
 #include <WinApp.h>
 #include <DirectXCommon.h>
@@ -11,6 +12,17 @@
 #include <Camera.h>
 
 namespace {
+
+	Vector4 FloatColor(uint32_t color) {
+		Vector4 colorf = {
+			((color >> 24) & 0xFF) / 255.0f,
+			((color >> 16) & 0xFF) / 255.0f,
+			((color >> 8) & 0xFF) / 255.0f,
+			((color >> 0) & 0xFF) / 255.0f
+		};
+
+		return colorf;
+	}
 
 	class EngineSystem {
 		friend class Engine;
@@ -28,6 +40,13 @@ namespace {
 		//std::unique_ptr<Camera> camera_ = nullptr;
 		Camera* camera_ = nullptr;
 
+		uint32_t indexTriangle_ = 0;
+
+		struct VertexPosColor {
+			Vector3 pos;   // xyz座標
+			Vector4 color; // RGBA
+		};
+
 	public:
 
 		void Initialize();
@@ -41,7 +60,11 @@ namespace {
 		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate);
 
+		//void DrawTriangle(const Vec3f& v1, const Vec3f& v2, const Vec3f& v3, uint32_t color);
+
 		inline Camera* GetCamera();
+
+		void Reset();
 
 	};
 
@@ -102,9 +125,33 @@ namespace {
 		dxc_->TestDraw(v1, v2, v3, scale, rotate, translate);
 	}
 
+	//void EngineSystem::DrawTriangle(const Vec3f& v1, const Vec3f& v2, const Vec3f& v3, uint32_t color) {
+	//	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
+
+	//	// 頂点データ
+	//	std::array vertices = {
+	//		VertexPosColor{{v1.x, v1.y, v1.z}, {1, 1, 1, 1}},
+	//		VertexPosColor{{v2.x, v2.y, v2.z}, {1, 1, 1, 1}},
+	//		VertexPosColor{{v3.x, v3.y, v3.z}, {1, 1, 1, 1}},
+	//	};
+
+	//	Vector4 colorf = FloatColor(color);
+
+	//	for (auto vertex : vertices) {
+	//		vertex.color = colorf;
+	//	}
+
+	//	size_t indexVertex = indexTriangle_ * 3;
+
+	//}
+
 	inline Camera* EngineSystem::GetCamera() {
 		//return camera_.get();
 		return camera_;
+	}
+
+	void EngineSystem::Reset() {
+		indexTriangle_ = 0;
 	}
 
 
@@ -159,10 +206,11 @@ void Engine::Finalize() {
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();
 
+	sImGuiManager->Finalize();
+
 	sDXC->Finalize();
 	sDirectXCommon->Finalize();
 
-	sImGuiManager->Finalize();
 
 }
 
