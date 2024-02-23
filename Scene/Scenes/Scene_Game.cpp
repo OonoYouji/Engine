@@ -42,14 +42,14 @@ void Scene_Game::Draw() {
 	);
 
 
-	Engine::TestDraw(
+	/*Engine::TestDraw(
 		{ 0.0f,-0.5f,0.0f,1.0f },
 		{ -0.5f,0.5f,0.0f,1.0f },
 		{ 0.5f,0.5f,0.0f,1.0f },
 		scale_,
 		rotate_,
 		pos_
-	);
+	);*/
 
 
 }

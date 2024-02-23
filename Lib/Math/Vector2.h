@@ -34,6 +34,8 @@ public:
 	inline Vector2& operator/= (float value);
 	inline Vector2& operator*= (float value);
 
+	inline Vector2& operator= (const Vector2& other);
+
 };
 
 
@@ -105,6 +107,12 @@ inline Vector2& Vector2::operator/=(float value) {
 inline Vector2& Vector2::operator*=(float value) {
 	this->x *= value;
 	this->y *= value;
+	return *this;
+}
+
+inline Vector2& Vector2::operator=(const Vector2& other) {
+	this->x = other.x;
+	this->y = other.y;
 	return *this;
 }
 

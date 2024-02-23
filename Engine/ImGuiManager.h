@@ -14,7 +14,7 @@ private:
 private:
 
 	/// SRV
-	ID3D12DescriptorHeap* srvDescriptorHeap_ = nullptr;
+	ID3D12DescriptorHeap* p_srvDescriptorHeap_ = nullptr;
 
 	DirectXCommon* p_directXCommon_;
 	ID3D12GraphicsCommandList* p_commandList_;

@@ -218,4 +218,9 @@
       <Filter>ImGui\Include</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Object3d.hlsli">
+      <Filter>Engine\Include</Filter>
+    </None>
+  </ItemGroup>
 </Project>

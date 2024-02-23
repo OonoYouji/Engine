@@ -56,7 +56,7 @@ private:
 	/// windowのサイズ
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
-
+	
 
 public:
 
