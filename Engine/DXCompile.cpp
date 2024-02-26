@@ -4,6 +4,8 @@
 #include <Vector4.h>
 #include <Matrix4x4.h>
 #include <DirectXCommon.h>
+#include <d3dx12.h>
+#include <vector>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -13,7 +15,6 @@
 
 
 DXCompile::DXCompile() { }
-
 DXCompile::~DXCompile() { Finalize(); }
 
 DXCompile* DXCompile::GetInstance() {
@@ -22,6 +23,8 @@ DXCompile* DXCompile::GetInstance() {
 }
 
 void DXCompile::Initialize() {
+
+	p_directXCommon_ = DirectXCommon::GetInstance();
 
 	/// DXCの初期化
 	InitializeDXC();
@@ -66,22 +69,25 @@ void DXCompile::Initialize() {
 	wvpResource_ = CreateBufferResource(sizeof(Matrix4x4));
 
 	/// srvDescriptorHeapの設定
-	srvDescriptorHeap_ = DirectXCommon::GetInstance()->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap_ = p_directXCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
 	/// Textureを読んで転送する
 	mipImages_ = LoadTexture("./Resources/Images/uvChecker.png");
 	metaData_ = mipImages_.GetMetadata();
 	textureResource_ = CreateTextureResource(metaData_);
-	UploadTextureData(textureResource_, mipImages_);
+	//UploadTextureData(textureResource_, mipImages_);
 
 
 	CreateShaderResourceView();
-
+	intermediateResource_ = UploadTextureData(textureResource_, mipImages_);
 
 }
 
 void DXCompile::Finalize() {
 
+	intermediateResource_->Release();
+
+	srvDescriptorHeap_->Release();
 	textureResource_->Release();
 	vertexResource_->Release();
 	materialResource_->Release();
@@ -177,7 +183,7 @@ IDxcBlob* DXCompile::CompileShader(const std::wstring& filePath, const wchar_t* 
 
 void DXCompile::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
 
-	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = p_directXCommon_->GetCommandList();
 
 	commandList->RSSetViewports(1, &viewport_);
 	commandList->RSSetScissorRects(1, &scissorRect_);
@@ -205,10 +211,15 @@ void DXCompile::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3
 	/// SRVのDescriptorTableの先頭を設定; 2はrootParameter[2]である;
 	commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
 
+
 	/// 描画! (DrawCall/ドローコール); 3頂点で1つのインスタンス; インスタンスについては今後
 	commandList->DrawInstanced(3, 1, 0, 0);
 
 }
+
+//ID3D12Resource* DXCompile::UploadTextureData() {
+//	return UploadTextureData(textureResource_, mipImages_);
+//}
 
 void DXCompile::InitializeDXC() {
 
@@ -278,7 +289,7 @@ void DXCompile::CreateRootSignature() {
 	}
 
 	/// バイナリを元に生成
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateRootSignature(
+	hr = p_directXCommon_->GetDevice()->CreateRootSignature(
 		0,
 		signatureBlob_->GetBufferPointer(),
 		signatureBlob_->GetBufferSize(),
@@ -371,7 +382,7 @@ void DXCompile::CreatePSO() {
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
 	/// 実際に生成
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateGraphicsPipelineState(
+	hr = p_directXCommon_->GetDevice()->CreateGraphicsPipelineState(
 		&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState_)
 	);
@@ -405,7 +416,7 @@ void DXCompile::CreateVertexResource() {
 	/// バッファの場合はこれにする決まり
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
+	hr = p_directXCommon_->GetDevice()->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc,
@@ -440,7 +451,7 @@ ID3D12Resource* DXCompile::CreateBufferResource(size_t sizeInBytes) {
 	/// バッファの場合はこれにする決まり
 	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
-	hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
+	hr = p_directXCommon_->GetDevice()->CreateCommittedResource(
 		&uploadHeapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&vertexResourceDesc,
@@ -574,47 +585,56 @@ ID3D12Resource* DXCompile::CreateTextureResource(const DirectX::TexMetadata& met
 
 	/// 利用するHeapの設定; 非常に特殊な運用; 02_04exで一般的なケース版がある
 	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;							//- 細かい設定を行う
+	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;						//- 細かい設定を行う
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;	//- WriteBackポリシー
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;				//- プロセッサの近くに配置
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;			//- プロセッサの近くに配置
 
 	/// Resourceの生成
 	ID3D12Resource* resource = nullptr;
 	HRESULT hr = DirectXCommon::GetInstance()->GetDevice()->CreateCommittedResource(
 		&heapProperties,					//- Heapの設定
 		D3D12_HEAP_FLAG_NONE,				//- Heapの特殊な設定; 特になし
-		&desc,								//- Resourceの設定
-		D3D12_RESOURCE_STATE_GENERIC_READ,	//- 初回のResourceState; Textureは基本読むだけ
+		&desc,							//- Resourceの設定
+		D3D12_RESOURCE_STATE_COPY_DEST,	//- データ転送される設定
 		nullptr,							//- Clear最適解; 使わないのでnullptr
-		IID_PPV_ARGS(&resource)				//- 作成するResourceポインタへのポインタ
+		IID_PPV_ARGS(&resource)			//- 作成するResourceポインタへのポインタ
 	);
 	assert(SUCCEEDED(hr));
 
 	return resource;
 }
 
-void DXCompile::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImage) {
 
-	/// Meta情報を取得
-	const DirectX::TexMetadata& metaData = mipImage.GetMetadata();
+/// 属性 [[nodiscard]] 戻り値を破棄しては行けないことを示す; 
+[[nodiscard]]
+ID3D12Resource* DXCompile::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImage) {
 
-	/// 全MipMapについて
-	for (size_t mipLevel = 0; mipLevel < metaData.mipLevels; ++mipLevel) {
-		/// MipMapLevelを指定して各Imageを取得
-		const DirectX::Image* img = mipImage.GetImage(mipLevel, 0, 0);
+	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
 
-		/// Textureに転送
-		HRESULT hr = texture->WriteToSubresource(
-			UINT(mipLevel),
-			nullptr,				//- 全領域へコピー
-			img->pixels,			//- 元データアドレス
-			UINT(img->rowPitch),	//- 1ラインサイズ
-			UINT(img->slicePitch)	//- 1枚サイズ
-		);
-		assert(SUCCEEDED(hr));
+	/// 読み込んだデータからDirectX12用のSubresourceの配列を作成する
+	DirectX::PrepareUpload(p_directXCommon_->GetDevice(), mipImage.GetImages(), mipImage.GetImageCount(), mipImage.GetMetadata(), subresources);
+	/// Subresourceの数を基にコピー元となるIntermediateResourceに必要なサイズを計算する
+	uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, UINT(subresources.size()));
+	/// 上記で計算した値を使って作成
+	ID3D12Resource* intermediateResource = CreateBufferResource(intermediateSize);
 
-	}
+	/// intermediateResourceにSubResourceのデータを書き込む; Textureに転送するコマンドを積む
+	UpdateSubresources(p_directXCommon_->GetCommandList(), texture, intermediateResource, 0, 0, UINT(subresources.size()), subresources.data());
 
+	//- CPUとGPUを取り持つためのResourceなので IntermediateResource(中間リソース)と呼ぶ
+
+
+	/// Textureへの転送後は利用できるよう,D3D12_RESOURCE_STATE_COPY_DESCからD3D12_RESOURCE_STATE_GENERIC_READへResourceStateを変更する
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = texture;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
+	p_directXCommon_->GetCommandList()->ResourceBarrier(1, &barrier);
+
+	return intermediateResource;
 }
 
 void DXCompile::CreateShaderResourceView() {

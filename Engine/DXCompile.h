@@ -15,6 +15,8 @@
 #include <Vector3.h>
 #include <Vector4.h>
 
+class DirectXCommon;
+
 class DXCompile final {
 private:
 
@@ -36,7 +38,12 @@ public:
 
 	ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap_; }
 
+	//ID3D12Resource* UploadTextureData();
+
+
 private:
+
+	DirectXCommon* p_directXCommon_;
 
 	/// DXCの初期化
 	IDxcUtils* dxcUtils_ = nullptr;
@@ -96,6 +103,7 @@ private:
 
 	/// descriptorRange
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
+	ID3D12Resource* intermediateResource_;
 
 
 private:
@@ -167,7 +175,8 @@ private:
 
 	ID3D12Resource* CreateTextureResource(const DirectX::TexMetadata& metaData);
 
-	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImage);
+	//void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImage);
+	ID3D12Resource* UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImage);
 
 	void CreateShaderResourceView();
 

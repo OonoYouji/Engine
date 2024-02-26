@@ -1,6 +1,7 @@
 #include <DirectXCommon.h>
 
 #include <Engine.h>
+#include <DXCompile.h>
 #include <Vector4.h>
 #include <Matrix4x4.h>
 
@@ -120,6 +121,7 @@ void DirectXCommon::PostDraw() {
 	/// TransitionBarrierを張る
 	commandList_->ResourceBarrier(1, &barrier);
 
+	//ID3D12Resource* intermediateResource = DXCompile::GetInstance()->UploadTextureData();
 
 	/// コマンドリストの内容を確定させる(すべてのコマンドを積んでからCloseする)
 	hr = commandList_->Close();
@@ -146,6 +148,7 @@ void DirectXCommon::PostDraw() {
 	hr = commandList_->Reset(commandAllocator_, nullptr);
 	assert(SUCCEEDED(hr));
 
+	//intermediateResource->Release();
 }
 
 void DirectXCommon::ClearRenderTarget() {
