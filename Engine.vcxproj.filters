@@ -130,6 +130,9 @@
     <Filter Include="ImGui\Source">
       <UniqueIdentifier>{a986697f-8ecf-4cf2-ab4c-116a581fa598}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{3c245ce3-18fa-4bb0-a080-c3d2026453cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\WinApp.h">
@@ -203,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="Engine\ImGuiManager.h">
       <Filter>Engine\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Config\Environment.h">
+      <Filter>Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

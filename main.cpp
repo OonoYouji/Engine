@@ -1,9 +1,7 @@
 #include <Engine.h>
 
 #include <GameManager.h>
-
-const Vec2 kWindowSize = { 1280, 720 };
-const std::string kWindowTitle = "大野陽司";
+#include <Environment.h>
 
 /// windowsアプリでエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {

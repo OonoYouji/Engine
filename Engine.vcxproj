@@ -107,7 +107,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -172,6 +172,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Scene\Transitions\NormalTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Config\Environment.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\DirectXCommon.h" />
     <ClInclude Include="Engine\DXCompile.h" />

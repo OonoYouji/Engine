@@ -6,6 +6,7 @@
 #include <DirectXCommon.h>
 #include <d3dx12.h>
 #include <vector>
+#include <Environment.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -14,7 +15,7 @@
 
 
 
-DXCompile::DXCompile() { }
+DXCompile::DXCompile() {}
 DXCompile::~DXCompile() { Finalize(); }
 
 DXCompile* DXCompile::GetInstance() {
@@ -81,9 +82,35 @@ void DXCompile::Initialize() {
 	CreateShaderResourceView();
 	intermediateResource_ = UploadTextureData(textureResource_, mipImages_);
 
+
+	/// DepthBufferStencilResourceの生成
+	depthStencilResource_ = CreateDepthStenciltextureResource(kWindowSize.x, kWindowSize.y);
+	dsvDescriptorHeap_ = p_directXCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	// DSVの設定
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //- Format; 基本的にはResourceに合わせる
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //- 2dTexture
+	p_directXCommon_->GetDevice()->CreateDepthStencilView(
+		depthStencilResource_,
+		&dsvDesc,
+		dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart()
+	);
+
+	/// DepthStencilStateの設定
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+	depthStencilDesc.DepthEnable = true; //- Depthの機能を有効化する
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; //- 書き込みします
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; //- 比較関数はLessEqual; 近ければ描画される
+
+	// PSOに代入しDSVのFormatの設定を行う
+	graphicsPipelineStateDesc_.DepthStencilState = depthStencilDesc;
+	graphicsPipelineStateDesc_.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
 }
 
 void DXCompile::Finalize() {
+
+	depthStencilResource_->Release();
 
 	intermediateResource_->Release();
 
@@ -96,7 +123,7 @@ void DXCompile::Finalize() {
 	graphicsPipelineState_->Release();
 	signatureBlob_->Release();
 
-	if (errorBlob_) {
+	if(errorBlob_) {
 		errorBlob_->Release();
 	}
 
@@ -159,7 +186,7 @@ IDxcBlob* DXCompile::CompileShader(const std::wstring& filePath, const wchar_t* 
 	/// 警告・エラーが出ていたらログに出して止める
 	IDxcBlobUtf8* shaderError = nullptr;
 	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
-	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
+	if(shaderError != nullptr && shaderError->GetStringLength() != 0) {
 		Engine::ConsolePrint(shaderError->GetStringPointer());
 		assert(false);
 	}
@@ -212,8 +239,8 @@ void DXCompile::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3
 	commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
 
 
-	/// 描画! (DrawCall/ドローコール); 3頂点で1つのインスタンス; インスタンスについては今後
-	commandList->DrawInstanced(3, 1, 0, 0);
+	/// 描画! (DrawCall/ドローコール); 3頂点*2で1つのインスタンス; インスタンスについては今後
+	commandList->DrawInstanced(6, 1, 0, 0);
 
 }
 
@@ -283,7 +310,7 @@ void DXCompile::CreateRootSignature() {
 		&errorBlob_
 	);
 
-	if (FAILED(hr)) {
+	if(FAILED(hr)) {
 		Engine::ConsolePrint(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
 		assert(false);
 	}
@@ -351,39 +378,38 @@ void DXCompile::CreatePSO() {
 
 	HRESULT hr = S_FALSE;
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-	graphicsPipelineStateDesc.pRootSignature = rootSignature_;
-	graphicsPipelineStateDesc.InputLayout = inputlayoutDesc_;
+	graphicsPipelineStateDesc_.pRootSignature = rootSignature_;
+	graphicsPipelineStateDesc_.InputLayout = inputlayoutDesc_;
 
 	/// VertexShader
-	graphicsPipelineStateDesc.VS = {
+	graphicsPipelineStateDesc_.VS = {
 		vertexShaderBlob_->GetBufferPointer(),
 		vertexShaderBlob_->GetBufferSize()
 	};
 
 	/// PixelShader
-	graphicsPipelineStateDesc.PS = {
+	graphicsPipelineStateDesc_.PS = {
 		pixelShaderBlob_->GetBufferPointer(),
 		pixelShaderBlob_->GetBufferSize()
 	};
 
-	graphicsPipelineStateDesc.BlendState = blendDesc_;
-	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc_;
+	graphicsPipelineStateDesc_.BlendState = blendDesc_;
+	graphicsPipelineStateDesc_.RasterizerState = rasterizerDesc_;
 
 	/// 書き込むRTVの情報
-	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	graphicsPipelineStateDesc_.NumRenderTargets = 1;
+	graphicsPipelineStateDesc_.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
 	/// 利用するトロポジ(形状)のタイプ; 三角形
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	graphicsPipelineStateDesc_.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 	/// どのような画面に色を打ち込むかの設定(気にしなくていい)
-	graphicsPipelineStateDesc.SampleDesc.Count = 1;
-	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	graphicsPipelineStateDesc_.SampleDesc.Count = 1;
+	graphicsPipelineStateDesc_.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
 	/// 実際に生成
 	hr = p_directXCommon_->GetDevice()->CreateGraphicsPipelineState(
-		&graphicsPipelineStateDesc,
+		&graphicsPipelineStateDesc_,
 		IID_PPV_ARGS(&graphicsPipelineState_)
 	);
 	assert(SUCCEEDED(hr));
@@ -405,7 +431,7 @@ void DXCompile::CreateVertexResource() {
 	D3D12_RESOURCE_DESC vertexResourceDesc{};
 	/// バッファリソース; テクスチャの場合はまた別の設定を行う
 	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc.Width = sizeof(VertexData) * 3; // リソースのサイズ; 今回はVector4を3頂点分
+	vertexResourceDesc.Width = sizeof(VertexData) * 6; // リソースのサイズ; 今回はVector4を3頂点分
 
 	/// バッファの場合はこれらは1にする決まり
 	vertexResourceDesc.Height = 1;
@@ -472,7 +498,7 @@ void DXCompile::CreateVBV() {
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
 	/// 使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 3;
+	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
 	/// 1頂点あたりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
@@ -494,6 +520,7 @@ void DXCompile::WriteVertexData(const Vector4& v1, const Vector4& v2, const Vect
 	v2;
 	v3;
 
+	/// 一枚目の三角形
 	vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
 	vertexData[0].texcoord = Vec2f{ 0.0f,1.0f };
 
@@ -502,6 +529,17 @@ void DXCompile::WriteVertexData(const Vector4& v1, const Vector4& v2, const Vect
 
 	vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };
 	vertexData[2].texcoord = Vec2f{ 1.0f,1.0f };
+
+	/// 二枚目の三角形
+	vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };
+	vertexData[3].texcoord = Vec2f{ 0.0f,1.0f };
+
+	vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexData[4].texcoord = Vec2f{ 0.5f,0.0f };
+
+	vertexData[5].position = { 0.5f,-0.5f,-0.5f,1.0f };
+	vertexData[5].texcoord = Vec2f{ 1.0f,1.0f };
+
 
 }
 
@@ -599,6 +637,48 @@ ID3D12Resource* DXCompile::CreateTextureResource(const DirectX::TexMetadata& met
 		nullptr,							//- Clear最適解; 使わないのでnullptr
 		IID_PPV_ARGS(&resource)			//- 作成するResourceポインタへのポインタ
 	);
+	assert(SUCCEEDED(hr));
+
+	return resource;
+}
+
+ID3D12Resource* DXCompile::CreateDepthStenciltextureResource(int32_t width, int32_t height) {
+
+	/// 生成するResourceの設定
+	D3D12_RESOURCE_DESC desc{};
+	desc.Width = width;	//- Textureの幅
+	desc.Height = height;	//- Textureの高さ
+	desc.MipLevels = 1;	//- mipMapの数
+	desc.DepthOrArraySize = 1;	//- 奥行き or 配列Textureの配列数
+	desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;	//- DepthStencilとして利用可能なフォーマット
+	desc.SampleDesc.Count = 1;	//- サンプリングカウント; 1固定
+	desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	//- 2次元
+	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;	//- DepthStencilとして使う通知
+
+
+	/// 利用するHeapの設定
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+
+	/// 震度値のクリア
+	D3D12_CLEAR_VALUE depthClearValue{};
+	depthClearValue.DepthStencil.Depth = 1.0f; //- 1.0f(最大値)でクリア
+	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //- フォーマット; Resourceと合わせる
+
+
+	/// Resourceの生成
+	ID3D12Resource* resource = nullptr;
+	HRESULT hr = p_directXCommon_->GetDevice()->CreateCommittedResource(
+		&heapProperties,	//- Heapの設定
+		D3D12_HEAP_FLAG_NONE,	//- Heapの特殊な設定; 特になし
+		&desc,	//-　Resourceの設定
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,	//- 深度値を書き込む状態にしておく
+		&depthClearValue,	//- Clear最適化
+		IID_PPV_ARGS(&resource)	//- 作成するResourceへのポインタ
+	);
+
+	/// 生成に失敗したら停止
 	assert(SUCCEEDED(hr));
 
 	return resource;

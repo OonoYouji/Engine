@@ -38,6 +38,7 @@ public:
 
 	ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap_; }
 
+	ID3D12DescriptorHeap* GetDSVDescriptorHeap() const { return dsvDescriptorHeap_; }
 	//ID3D12Resource* UploadTextureData();
 
 
@@ -68,6 +69,7 @@ private:
 
 	/// PSO
 	ID3D12PipelineState* graphicsPipelineState_ = nullptr;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc_{};
 
 	/// VertexResource
 	ID3D12Resource* vertexResource_ = nullptr;
@@ -104,6 +106,10 @@ private:
 	/// descriptorRange
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
 	ID3D12Resource* intermediateResource_;
+
+	/// DepthBuffer
+	ID3D12Resource* depthStencilResource_ = nullptr;
+	ID3D12DescriptorHeap* dsvDescriptorHeap_ = nullptr;
 
 
 private:
@@ -174,6 +180,8 @@ private:
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
 
 	ID3D12Resource* CreateTextureResource(const DirectX::TexMetadata& metaData);
+
+	ID3D12Resource* CreateDepthStenciltextureResource(int32_t width, int32_t height);
 
 	//void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImage);
 	ID3D12Resource* UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImage);

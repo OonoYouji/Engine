@@ -93,6 +93,7 @@ public:
 
 	ID3D12DescriptorHeap* CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
+	void SetRenderTargets(const D3D12_CPU_DESCRIPTOR_HANDLE& dsvHandle);
 
 
 	ID3D12Device* GetDevice() { return device_; }

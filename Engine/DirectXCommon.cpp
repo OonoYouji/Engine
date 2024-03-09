@@ -4,6 +4,7 @@
 #include <DXCompile.h>
 #include <Vector4.h>
 #include <Matrix4x4.h>
+#include <DXCompile.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -156,8 +157,13 @@ void DirectXCommon::ClearRenderTarget() {
 	/// これから書き込むバックバッファのインデックスを所得(二枚しかないので 0 か 1)
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DXCompile::GetInstance()->GetDSVDescriptorHeap()->GetCPUDescriptorHandleForHeapStart();
+	
+	/// 指定した深度で画面全体をクリアする
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
 	/// 描画先のRTVを設定する
-	commandList_->OMSetRenderTargets(1, &rtvHandles_[bbIndex], false, nullptr);
+	commandList_->OMSetRenderTargets(1, &rtvHandles_[bbIndex], false, &dsvHandle);
 
 	/// 指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f, 0.25f, 0.5f, 1.0f }; /// 青っぽい色, RGBAの順番
@@ -424,4 +430,10 @@ ID3D12DescriptorHeap* DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
 
+}
+
+void DirectXCommon::SetRenderTargets(const D3D12_CPU_DESCRIPTOR_HANDLE& dsvHandle) {
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	commandList_->OMSetRenderTargets(1, &rtvHandles_[bbIndex], false, &dsvHandle);
 }
