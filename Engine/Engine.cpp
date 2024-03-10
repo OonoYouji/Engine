@@ -211,6 +211,7 @@ void Engine::Finalize() {
 	sDXC->Finalize();
 	sDirectXCommon->Finalize();
 
+	sDirectXCommon->DebugReleaseCheck();
 
 }
 

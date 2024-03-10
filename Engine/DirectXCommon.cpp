@@ -52,6 +52,7 @@ void DirectXCommon::Finalize() {
 	commandAllocator_->Release();
 	commandQueue_->Release();
 	device_->Release();
+	device_.Reset();
 	useAdapter_->Release();
 	dxgiFactory_->Release();
 
@@ -59,14 +60,7 @@ void DirectXCommon::Finalize() {
 	debugController_->Release();
 #endif // _DEBUG
 
-	//// 解放されていないものがあれば止まる -----
-	IDXGIDebug1* debug = nullptr;
-	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
-		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-		debug->Release();
-	}
+	
 
 }
 
@@ -87,7 +81,7 @@ void DirectXCommon::PreDraw() {
 	/// Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	/// バリアを張る対象のリソース; 現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResource_[bbIndex];
+	barrier.Transition.pResource = swapChainResource_[bbIndex].Get();
 	/// 遷移前(現在)のResourceState
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	/// 遷移後のResourceState
@@ -113,7 +107,7 @@ void DirectXCommon::PostDraw() {
 	/// Noneにしておく
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	/// バリアを張る対象のリソース; 現在のバックバッファに対して行う
-	barrier.Transition.pResource = swapChainResource_[bbIndex];
+	barrier.Transition.pResource = swapChainResource_[bbIndex].Get();
 	/// 遷移前(現在)のResourceState
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	/// 遷移後のResourceState
@@ -122,14 +116,13 @@ void DirectXCommon::PostDraw() {
 	/// TransitionBarrierを張る
 	commandList_->ResourceBarrier(1, &barrier);
 
-	//ID3D12Resource* intermediateResource = DXCompile::GetInstance()->UploadTextureData();
 
 	/// コマンドリストの内容を確定させる(すべてのコマンドを積んでからCloseする)
 	hr = commandList_->Close();
 	assert(SUCCEEDED(hr));
 
 	/// コマンドリストの実行
-	ID3D12CommandList* commandLists[] = { commandList_ };
+	ID3D12CommandList* commandLists[] = { commandList_.Get()};
 	commandQueue_->ExecuteCommandLists(1, commandLists);
 
 	/// GPUとOSに画面の交換を行うよう通知する
@@ -137,7 +130,7 @@ void DirectXCommon::PostDraw() {
 
 
 	fenceValue_++;
-	commandQueue_->Signal(fence_, fenceValue_);
+	commandQueue_->Signal(fence_.Get(), fenceValue_);
 	if (fence_->GetCompletedValue() < fenceValue_) {
 		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
 		WaitForSingleObject(fenceEvent_, INFINITE);
@@ -146,7 +139,7 @@ void DirectXCommon::PostDraw() {
 	/// 次のフレームのコマンドリストを準備
 	hr = commandAllocator_->Reset();
 	assert(SUCCEEDED(hr));
-	hr = commandList_->Reset(commandAllocator_, nullptr);
+	hr = commandList_->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(hr));
 
 	//intermediateResource->Release();
@@ -171,32 +164,17 @@ void DirectXCommon::ClearRenderTarget() {
 
 }
 
+void DirectXCommon::DebugReleaseCheck() {
+	//// 解放されていないものがあれば止まる -----
+	IDXGIDebug1* debug = nullptr;
+	if(SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
+		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
+		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
+		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
+		debug->Release();
+	}
+}
 
-//void DirectXCommon::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
-//
-//	commandList_->RSSetViewports(1, &viewport_);
-//	commandList_->RSSetScissorRects(1, &scissorRect_);
-//
-//	/// RootSignatureを設定; PS0に設定しているけど別途設定が必要
-//	commandList_->SetGraphicsRootSignature(rootSignature_);
-//	commandList_->SetPipelineState(graphicsPipelineState_);
-//
-//	WriteVertexData(v1, v2, v3);
-//	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
-//
-//	/// 形状を設定; PS0に設定している物とはまた別; 同じものを設定すると考えておけばいい
-//	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-//
-//	/// マテリアルCBufferの場所を設定
-//	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-//
-//	/// wvp用のCBufferの場所を指定
-//	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-//
-//	/// 描画! (DrawCall/ドローコール); 3頂点で1つのインスタンス; インスタンスについては今後
-//	commandList_->DrawInstanced(3, 1, 0, 0);
-//
-//}
 
 void DirectXCommon::InitializeDXGIDevice() {
 	HRESULT hr = S_FALSE;
@@ -259,7 +237,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 	for (size_t i = 0; i < _countof(featureLevels); i++) {
 
 		/// 採用したアダプターでデバイスを生成
-		hr = D3D12CreateDevice(useAdapter_, featureLevels[i], IID_PPV_ARGS(&device_));
+		hr = D3D12CreateDevice(useAdapter_.Get(), featureLevels[i], IID_PPV_ARGS(&device_));
 
 		/// 指定した機能レベルでデバイスが生成できるかを確認
 		if (SUCCEEDED(hr)) {
@@ -319,7 +297,7 @@ void DirectXCommon::InitializeCommand() {
 	hr = device_->CreateCommandList(
 		0,
 		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		commandAllocator_,
+		commandAllocator_.Get(),
 		nullptr,
 		IID_PPV_ARGS(&commandList_)
 	);
@@ -349,14 +327,19 @@ void DirectXCommon::CreateSwapChain() {
 
 
 	//// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
+	ComPtr<IDXGISwapChain1> swapChain1;
 	hr = dxgiFactory_->CreateSwapChainForHwnd(
-		commandQueue_,
+		commandQueue_.Get(),
 		p_winApp_->GetHWND(),
 		&swapChainDesc_,
 		nullptr,
 		nullptr,
-		reinterpret_cast<IDXGISwapChain1**>(&swapChain_)
+		&swapChain1
 	);
+
+	/// SwapChain4を得る
+	swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain_));
+	assert(SUCCEEDED(hr));
 
 	/// 失敗したら起動できない
 	assert(SUCCEEDED(hr));
@@ -398,11 +381,11 @@ void DirectXCommon::CreateFinalRenderTargets() {
 
 	/// まず1つ目を作る;1つ目は最初のところに作る;作る場所をこちらで指定してあげる必要がある
 	rtvHandles_[0] = rtvStartHandle;
-	device_->CreateRenderTargetView(swapChainResource_[0], &rtvDesc_, rtvHandles_[0]);
+	device_->CreateRenderTargetView(swapChainResource_[0].Get(), &rtvDesc_, rtvHandles_[0]);
 	/// 2つ目のディスクリプタハンドルを得る
 	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	/// 2つ目を作る
-	device_->CreateRenderTargetView(swapChainResource_[1], &rtvDesc_, rtvHandles_[1]);
+	device_->CreateRenderTargetView(swapChainResource_[1].Get(), &rtvDesc_, rtvHandles_[1]);
 
 
 }

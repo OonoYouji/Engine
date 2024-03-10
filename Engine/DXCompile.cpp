@@ -55,7 +55,7 @@ void DXCompile::Initialize() {
 	dsvDesc_.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //- Format; 基本的にはResourceに合わせる
 	dsvDesc_.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //- 2dTexture
 	p_directXCommon_->GetDevice()->CreateDepthStencilView(
-		depthStencilResource_,
+		depthStencilResource_.Get(),
 		&dsvDesc_,
 		dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart()
 	);
@@ -103,7 +103,7 @@ void DXCompile::Initialize() {
 
 
 	CreateShaderResourceView();
-	intermediateResource_ = UploadTextureData(textureResource_, mipImages_);
+	intermediateResource_ = UploadTextureData(textureResource_.Get(), mipImages_);
 
 
 	
@@ -112,6 +112,7 @@ void DXCompile::Initialize() {
 void DXCompile::Finalize() {
 
 	depthStencilResource_->Release();
+	dsvDescriptorHeap_->Release();
 
 	intermediateResource_->Release();
 
@@ -138,7 +139,7 @@ void DXCompile::Finalize() {
 	dxcUtils_->Release();
 	includeHandler_->Release();
 
-	//vertexResource_->Release();
+	vertexResource_->Release();
 
 
 
@@ -178,7 +179,7 @@ IDxcBlob* DXCompile::CompileShader(const std::wstring& filePath, const wchar_t* 
 		&shaderSourceBuffer,
 		arguments,
 		_countof(arguments),
-		includeHandler_,
+		includeHandler_.Get(),
 		IID_PPV_ARGS(&shaderResult)
 	);
 	assert(SUCCEEDED(hr));
@@ -217,8 +218,8 @@ void DXCompile::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3
 	commandList->RSSetScissorRects(1, &scissorRect_);
 
 	/// RootSignatureを設定; PS0に設定しているけど別途設定が必要
-	commandList->SetGraphicsRootSignature(rootSignature_);
-	commandList->SetPipelineState(graphicsPipelineState_);
+	commandList->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList->SetPipelineState(graphicsPipelineState_.Get());
 
 	v1;
 	v2;
@@ -379,7 +380,7 @@ void DXCompile::CreatePSO() {
 	
 	HRESULT hr = S_FALSE;
 
-	graphicsPipelineStateDesc_.pRootSignature = rootSignature_;
+	graphicsPipelineStateDesc_.pRootSignature = rootSignature_.Get();
 	graphicsPipelineStateDesc_.InputLayout = inputlayoutDesc_;
 
 	/// VertexShader
@@ -736,7 +737,7 @@ void DXCompile::CreateShaderResourceView() {
 	textureSrvHandleGPU_.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	/// SRVの生成
-	device->CreateShaderResourceView(textureResource_, &srvDesc_, textureSrvHandleCPU_);
+	device->CreateShaderResourceView(textureResource_.Get(), &srvDesc_, textureSrvHandleCPU_);
 
 }
 

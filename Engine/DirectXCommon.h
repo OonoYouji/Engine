@@ -14,6 +14,8 @@
 #include <Vector4.h>
 #include <Vector3.h>
 
+using namespace Microsoft::WRL;
+
 class DirectXCommon final {
 private:
 
@@ -26,32 +28,32 @@ private:
 	WinApp* p_winApp_;
 
 	/// デバイス
-	IDXGIFactory7* dxgiFactory_ = nullptr;
-	ID3D12Device* device_ = nullptr;
-	IDXGIAdapter4* useAdapter_ = nullptr;
+	ComPtr<IDXGIFactory7> dxgiFactory_ = nullptr;
+	ComPtr<ID3D12Device> device_ = nullptr;
+	ComPtr<IDXGIAdapter4> useAdapter_ = nullptr;
 
 	/// コマンド関連
-	ID3D12CommandAllocator* commandAllocator_ = nullptr;
-	ID3D12GraphicsCommandList* commandList_ = nullptr;
-	ID3D12CommandQueue* commandQueue_ = nullptr;
+	ComPtr<ID3D12CommandAllocator> commandAllocator_ = nullptr;
+	ComPtr<ID3D12GraphicsCommandList> commandList_ = nullptr;
+	ComPtr<ID3D12CommandQueue> commandQueue_ = nullptr;
 
 	/// スワップチェーン
-	IDXGISwapChain4* swapChain_ = nullptr;
+	ComPtr<IDXGISwapChain4> swapChain_ = nullptr;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 
 	/// RTV
-	ID3D12DescriptorHeap* rtvDescriptorHeap_ = nullptr;
-	ID3D12Resource* swapChainResource_[2] = { nullptr };
+	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_ = nullptr;
+	ComPtr<ID3D12Resource> swapChainResource_[2] = { nullptr };
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 
 	/// Fence
-	ID3D12Fence* fence_ = nullptr;
+	ComPtr<ID3D12Fence> fence_ = nullptr;
 	uint64_t fenceValue_ = 0;
 	HANDLE fenceEvent_;
 
 	/// debug
-	ID3D12Debug1* debugController_ = nullptr;
+	ComPtr<ID3D12Debug1> debugController_ = nullptr;
 
 	/// windowのサイズ
 	int32_t backBufferWidth_ = 0;
@@ -93,13 +95,16 @@ public:
 	void ClearRenderTarget();
 
 
+	void DebugReleaseCheck();
+
+
 	ID3D12DescriptorHeap* CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 	void SetRenderTargets(const D3D12_CPU_DESCRIPTOR_HANDLE& dsvHandle);
 
 
-	ID3D12Device* GetDevice() { return device_; }
-	ID3D12GraphicsCommandList* GetCommandList() { return commandList_; }
+	ID3D12Device* GetDevice() { return device_.Get(); }
+	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 	const DXGI_SWAP_CHAIN_DESC1& GetSwapChainDesc() const { return swapChainDesc_; }
