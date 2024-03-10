@@ -110,7 +110,8 @@ private:
 	/// DepthBuffer
 	ID3D12Resource* depthStencilResource_ = nullptr;
 	ID3D12DescriptorHeap* dsvDescriptorHeap_ = nullptr;
-
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc_;
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_;
 
 private:
 

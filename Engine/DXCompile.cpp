@@ -47,7 +47,30 @@ void DXCompile::Initialize() {
 	/// 
 	SetingShader();
 
-	/// 
+
+	/// DepthBufferStencilResourceの生成
+	depthStencilResource_ = CreateDepthStenciltextureResource(kWindowSize.x, kWindowSize.y);
+	dsvDescriptorHeap_ = p_directXCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	// DSVの設定
+	dsvDesc_.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //- Format; 基本的にはResourceに合わせる
+	dsvDesc_.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //- 2dTexture
+	p_directXCommon_->GetDevice()->CreateDepthStencilView(
+		depthStencilResource_,
+		&dsvDesc_,
+		dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart()
+	);
+
+	/// DepthStencilStateの設定
+	depthStencilDesc_.DepthEnable = true; //- Depthの機能を有効化する
+	depthStencilDesc_.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; //- 書き込みします
+	depthStencilDesc_.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; //- 比較関数はLessEqual; 近ければ描画される
+
+	// PSOに代入しDSVのFormatの設定を行う
+	graphicsPipelineStateDesc_.DepthStencilState = depthStencilDesc_;
+	graphicsPipelineStateDesc_.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+
+	/// PSOの生成
 	CreatePSO();
 
 	/// VertexResourceの生成
@@ -83,29 +106,7 @@ void DXCompile::Initialize() {
 	intermediateResource_ = UploadTextureData(textureResource_, mipImages_);
 
 
-	/// DepthBufferStencilResourceの生成
-	depthStencilResource_ = CreateDepthStenciltextureResource(kWindowSize.x, kWindowSize.y);
-	dsvDescriptorHeap_ = p_directXCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-	// DSVの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
-	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //- Format; 基本的にはResourceに合わせる
-	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //- 2dTexture
-	p_directXCommon_->GetDevice()->CreateDepthStencilView(
-		depthStencilResource_,
-		&dsvDesc,
-		dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart()
-	);
-
-	/// DepthStencilStateの設定
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	depthStencilDesc.DepthEnable = true; //- Depthの機能を有効化する
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; //- 書き込みします
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; //- 比較関数はLessEqual; 近ければ描画される
-
-	// PSOに代入しDSVのFormatの設定を行う
-	graphicsPipelineStateDesc_.DepthStencilState = depthStencilDesc;
-	graphicsPipelineStateDesc_.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
+	
 }
 
 void DXCompile::Finalize() {
@@ -375,7 +376,7 @@ void DXCompile::SetingShader() {
 }
 
 void DXCompile::CreatePSO() {
-
+	
 	HRESULT hr = S_FALSE;
 
 	graphicsPipelineStateDesc_.pRootSignature = rootSignature_;

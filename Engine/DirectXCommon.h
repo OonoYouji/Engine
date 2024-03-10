@@ -57,6 +57,8 @@ private:
 	int32_t backBufferWidth_ = 0;
 	int32_t backBufferHeight_ = 0;
 	
+	/// DSV
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_;
 
 public:
 
