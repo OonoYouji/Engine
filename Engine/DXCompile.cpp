@@ -111,6 +111,8 @@ void DXCompile::Initialize() {
 
 void DXCompile::Finalize() {
 
+	p_directXCommon_ = nullptr;
+
 	depthStencilResource_->Release();
 	dsvDescriptorHeap_->Release();
 
@@ -154,7 +156,7 @@ IDxcBlob* DXCompile::CompileShader(const std::wstring& filePath, const wchar_t* 
 	Engine::ConsolePrint(std::format(L"Begin Compile, path:{}, profile:{}\n", filePath, profile));
 
 	/// hlslファイルを読み込む
-	IDxcBlobEncoding* shaderSource = nullptr;
+	ComPtr<IDxcBlobEncoding> shaderSource = nullptr;
 	hr = dxcUtils_->LoadFile(filePath.c_str(), nullptr, &shaderSource);
 	assert(SUCCEEDED(hr));
 
@@ -174,7 +176,7 @@ IDxcBlob* DXCompile::CompileShader(const std::wstring& filePath, const wchar_t* 
 	};
 
 	/// 実際にShaderをコンパイルする
-	IDxcResult* shaderResult = nullptr;
+	ComPtr<IDxcResult> shaderResult = nullptr;
 	hr = dxcCompiler_->Compile(
 		&shaderSourceBuffer,
 		arguments,
@@ -186,7 +188,7 @@ IDxcBlob* DXCompile::CompileShader(const std::wstring& filePath, const wchar_t* 
 
 
 	/// 警告・エラーが出ていたらログに出して止める
-	IDxcBlobUtf8* shaderError = nullptr;
+	ComPtr<IDxcBlobUtf8> shaderError = nullptr;
 	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
 	if(shaderError != nullptr && shaderError->GetStringLength() != 0) {
 		Engine::ConsolePrint(shaderError->GetStringPointer());
@@ -738,7 +740,7 @@ void DXCompile::CreateShaderResourceView() {
 
 	/// SRVの生成
 	device->CreateShaderResourceView(textureResource_.Get(), &srvDesc_, textureSrvHandleCPU_);
-
+	device = nullptr;
 }
 
 void DXCompile::InitializeDescriptorRange() {

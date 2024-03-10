@@ -40,6 +40,7 @@ void DirectXCommon::Initialize(WinApp* winApp, int32_t backBufferWidth, int32_t 
 
 void DirectXCommon::Finalize() {
 
+	p_winApp_ = nullptr;
 
 	//// オブジェクトの解放 -----
 	CloseHandle(fenceEvent_);
@@ -166,12 +167,11 @@ void DirectXCommon::ClearRenderTarget() {
 
 void DirectXCommon::DebugReleaseCheck() {
 	//// 解放されていないものがあれば止まる -----
-	IDXGIDebug1* debug = nullptr;
+	ComPtr<IDXGIDebug1> debug = nullptr;
 	if(SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
 		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
 		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
 		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-		debug->Release();
 	}
 }
 
@@ -255,7 +255,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 
 #ifdef _DEBUG
 
-	ID3D12InfoQueue* infoQueue = nullptr;
+	ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
 	if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 		/// ヤバいエラーのとき止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
@@ -263,9 +263,6 @@ void DirectXCommon::InitializeDXGIDevice() {
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		/// 警告時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
-
-		/// 解放
-		infoQueue->Release();
 	}
 
 #endif // _DEBUG
@@ -339,7 +336,6 @@ void DirectXCommon::CreateSwapChain() {
 
 	/// SwapChain4を得る
 	swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain_));
-	assert(SUCCEEDED(hr));
 
 	/// 失敗したら起動できない
 	assert(SUCCEEDED(hr));
@@ -352,10 +348,6 @@ void DirectXCommon::CreateSwapChain() {
 
 void DirectXCommon::CreateFinalRenderTargets() {
 	HRESULT hr = S_FALSE;
-
-	/*DXGI_SWAP_CHAIN_DESC swcDesc = {};
-	hr = swapChain_->GetDesc(&swcDesc);
-	assert(SUCCEEDED(hr));*/
 
 	///// ディスクリプタヒープの生成 /////
 	/// レンダーターゲットビュー用
