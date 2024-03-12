@@ -62,6 +62,16 @@ private:
 	/// DSV
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle_;
 
+
+	/// -------------------------------
+	/// ↓ DXCompile class の移植
+	/// -------------------------------
+
+	/// DirectXCompile
+	ComPtr<IDxcUtils> dxcUtils_ = nullptr;
+	ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;
+	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
+
 public:
 
 	/// <summary>
@@ -136,6 +146,15 @@ private:
 	/// </summary>
 	void CreateFence();
 
+
+	/// ----------------------------------
+	/// DXCompile class の移植
+	/// ----------------------------------
+
+	/// <summary>
+	/// DirectXCompileの初期化
+	/// </summary>
+	void InitializeDXC();
 
 private:
 
