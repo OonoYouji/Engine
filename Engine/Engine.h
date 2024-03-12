@@ -5,6 +5,7 @@
 #include <Vector2.h>
 #include <Vector3.h>
 #include <Vector4.h>
+#include <Matrix4x4.h>
 #include <SafeDelete.h>
 #include <Camera.h>
 
@@ -27,12 +28,11 @@ public:
 	static int ProcessMessage();
 
 
-	static void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 	static void TestDraw(
 		const Vector4& v1, const Vector4& v2, const Vector4& v3, 
 		const Vec3f& scale, const Vec3f& rotate, Vec3f& translate
 	);
-
+	static void TestDraw(const Matrix4x4& worldMatrix);
 
 	static Camera* GetCamera();
 

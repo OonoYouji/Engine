@@ -1,9 +1,11 @@
 #pragma once
 
 #include <d3d12.h>
+#include <wrl/client.h>
 
 class WinApp;
 class DirectXCommon;
+using namespace Microsoft::WRL;
 
 class ImGuiManager final {
 private:
@@ -14,10 +16,10 @@ private:
 private:
 
 	/// SRV
-	ID3D12DescriptorHeap* p_srvDescriptorHeap_ = nullptr;
+	ComPtr<ID3D12DescriptorHeap> p_srvDescriptorHeap_ = nullptr;
 
 	DirectXCommon* p_directXCommon_;
-	ID3D12GraphicsCommandList* p_commandList_;
+	ComPtr<ID3D12GraphicsCommandList> p_commandList_;
 
 public:
 

@@ -513,17 +513,6 @@ void DXCompile::WriteVertexData(const Vector4& v1, const Vector4& v2, const Vect
 	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
-	// 左下
-	//vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };
-	// 上
-	//vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };
-	// 右下
-	//vertexData[1] = { 0.5f,-0.5f,0.0f,1.0f };
-
-	v1;
-	v2;
-	v3;
-
 	/// 一枚目の三角形
 	vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };
 	vertexData[0].texcoord = Vec2f{ 0.0f,1.0f };

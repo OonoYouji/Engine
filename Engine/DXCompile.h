@@ -57,6 +57,7 @@ private:
 	D3D12_ROOT_PARAMETER rootParameters_[3];
 	ComPtr<ID3DBlob> signatureBlob_ = nullptr;
 	ComPtr<ID3DBlob> errorBlob_ = nullptr;
+
 	/// InputLayout
 	D3D12_INPUT_ELEMENT_DESC inputElemntDescs_[2];
 	D3D12_INPUT_LAYOUT_DESC inputlayoutDesc_;

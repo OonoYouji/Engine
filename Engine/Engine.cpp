@@ -57,8 +57,8 @@ namespace {
 
 		std::wstring ConvertString(const std::string& str);
 
-		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate);
+		void TestDraw(const Matrix4x4& worldMatrix);
 
 		//void DrawTriangle(const Vec3f& v1, const Vec3f& v2, const Vec3f& v3, uint32_t color);
 
@@ -74,12 +74,12 @@ namespace {
 	}
 
 	void EngineSystem::Initialize() {
+		camera_ = new Camera();
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
 		dxc_ = DXCompile::GetInstance();
 		imGuiManager_ = ImGuiManager::GetInstance();
 		//camera_ = std::make_unique<Camera>();
-		camera_ = new Camera();
 	}
 
 	void EngineSystem::BeginFrame() {
@@ -117,12 +117,12 @@ namespace {
 		return result;
 	}
 
-	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
-		//dxc_->TestDraw(v1, v2, v3);
-	}
-
 	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
 		dxc_->TestDraw(v1, v2, v3, scale, rotate, translate);
+	}
+
+	void EngineSystem::TestDraw(const Matrix4x4& worldMatrix) {
+		directXCommon_->TestDraw(worldMatrix);
 	}
 
 	//void EngineSystem::DrawTriangle(const Vec3f& v1, const Vec3f& v2, const Vec3f& v3, uint32_t color) {
@@ -157,7 +157,6 @@ namespace {
 
 	WinApp* sWinApp = nullptr;
 	DirectXCommon* sDirectXCommon = nullptr;
-	DXCompile* sDXC = nullptr;
 	ImGuiManager* sImGuiManager = nullptr;
 
 	std::unique_ptr<EngineSystem> sEngineSystem = nullptr;
@@ -171,7 +170,6 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 
 	assert(!sWinApp);
 	assert(!sDirectXCommon);
-	assert(!sDXC);
 	assert(!sImGuiManager);
 
 
@@ -189,9 +187,6 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 	sDirectXCommon = DirectXCommon::GetInstance();
 	sDirectXCommon->Initialize(sWinApp, width, height);
 
-	sDXC = DXCompile::GetInstance();
-	sDXC->Initialize();
-
 	sImGuiManager = ImGuiManager::GetInstance();
 	sImGuiManager->Initialize(sWinApp, sDirectXCommon);
 
@@ -208,7 +203,6 @@ void Engine::Finalize() {
 
 	sImGuiManager->Finalize();
 
-	sDXC->Finalize();
 	sDirectXCommon->Finalize();
 
 	sDirectXCommon->DebugReleaseCheck();
@@ -239,12 +233,12 @@ int Engine::ProcessMessage() {
 	return sEngineSystem->ProcessMessage();
 }
 
-void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3) {
-	sEngineSystem->TestDraw(v1, v2, v3);
-}
-
 void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
 	sEngineSystem->TestDraw(v1, v2, v3, scale, rotate, translate);
+}
+
+void Engine::TestDraw(const Matrix4x4& worldMatrix) {
+	sEngineSystem->TestDraw(worldMatrix);
 }
 
 Camera* Engine::GetCamera() {

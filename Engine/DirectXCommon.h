@@ -11,8 +11,13 @@
 #include <dxcapi.h>
 
 #include <WinApp.h>
-#include <Vector4.h>
+#include <Vector2.h>
 #include <Vector3.h>
+#include <Vector4.h>
+#include <Matrix4x4.h>
+
+#include <d3dx12.h>
+#include <DirectXTex.h>
 
 using namespace Microsoft::WRL;
 
@@ -23,6 +28,14 @@ private:
 	~DirectXCommon() = default;
 
 private:
+
+	/// <summary>
+	/// 図形の各頂点が持つデータ
+	/// </summary>
+	struct VertexData {
+		Vector4 position;
+		Vec2f texcoord;
+	};
 
 	/// WinAppクラスへのポインタ;
 	WinApp* p_winApp_;
@@ -72,6 +85,69 @@ private:
 	ComPtr<IDxcCompiler3> dxcCompiler_ = nullptr;
 	ComPtr<IDxcIncludeHandler> includeHandler_ = nullptr;
 
+	/// RootSignature
+	ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
+	D3D12_ROOT_PARAMETER rootParameters_[3];
+	ComPtr<ID3DBlob> signatureBlob_ = nullptr;
+	ComPtr<ID3DBlob> errorBlob_ = nullptr;
+
+	/// InputLayout
+	D3D12_INPUT_ELEMENT_DESC inputElemntDescs_[2];
+	D3D12_INPUT_LAYOUT_DESC inputlayoutDesc_;
+
+	/// BlendState
+	D3D12_BLEND_DESC blendDesc_;
+
+	/// RasterizerState
+	D3D12_RASTERIZER_DESC rasterizerDesc_;
+
+	/// Shader
+	ComPtr<IDxcBlob> vertexShaderBlob_ = nullptr;
+	ComPtr<IDxcBlob> pixelShaderBlob_ = nullptr;
+
+	/// PSO
+	ComPtr<ID3D12PipelineState> graphicsPipelineState_ = nullptr;
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc_;
+
+	/// VertexResource
+	ComPtr<ID3D12Resource> vertexResource_ = nullptr;
+
+	/// VBV
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+
+	/// ビューポート
+	D3D12_VIEWPORT viewport_;
+
+	/// シザー矩形
+	D3D12_RECT scissorRect_;
+
+	/// MaterialResource
+	ComPtr<ID3D12Resource> materialResource_ = nullptr;
+
+	/// wvpResource
+	ComPtr<ID3D12Resource> wvpResource_ = nullptr;
+
+	/// srvDescriptorHeap
+	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_ = nullptr;
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc_;
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
+
+	/// texture
+	DirectX::ScratchImage mipImages_;
+	DirectX::TexMetadata metaData_;
+	ComPtr<ID3D12Resource> textureResource_ = nullptr;
+
+	/// descriptorRange
+	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
+	ComPtr<ID3D12Resource> intermediateResource_ = nullptr;
+
+	/// DepthBuffer
+	ComPtr<ID3D12Resource> depthStencilResource_ = nullptr;
+	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_ = nullptr;
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc_;
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc_;
+
 public:
 
 	/// <summary>
@@ -104,8 +180,13 @@ public:
 	/// </summary>
 	void ClearRenderTarget();
 
-
+	/// <summary>
+	/// ゲームの終了時に解放忘れがないかチェックする
+	/// </summary>
 	void DebugReleaseCheck();
+
+
+	void TestDraw(const Matrix4x4& worldMatrix);
 
 
 	ID3D12DescriptorHeap* CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
@@ -118,6 +199,9 @@ public:
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 	const DXGI_SWAP_CHAIN_DESC1& GetSwapChainDesc() const { return swapChainDesc_; }
+
+	ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap_.Get(); }
+
 
 private:
 
@@ -155,6 +239,97 @@ private:
 	/// DirectXCompileの初期化
 	/// </summary>
 	void InitializeDXC();
+
+	/// <summary>
+	/// RootSignatureの生成
+	/// </summary>
+	void CreateRootSignature();
+
+	/// <summary>
+	/// インプットレイアウトの初期化
+	/// </summary>
+	void InitializeInputLayout();
+
+	/// <summary>
+	/// ブレンドステートの初期化
+	/// </summary>
+	void InitializeBlendState();
+
+	/// <summary>
+	/// ラスタライザーステートの初期化
+	/// </summary>
+	void InitializeRasterizerState();
+
+	/// <summary>
+	/// シェーダーの初期化
+	/// </summary>
+	void InitializeShader();
+
+	/// <summary>
+	/// シェーダーをコンパイルする
+	/// </summary>
+	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
+
+	/// <summary>
+	/// パイプラインステートの初期化
+	/// </summary>
+	void InitializePSO();
+	
+	/// <summary>
+	/// VertexResourceの初期化
+	/// </summary>
+	void InitializeVertexResource();
+
+	/// <summary>
+	/// ビューポート; シザー矩形の初期化
+	/// </summary>
+	void InitializeViewport();
+
+	/// <summary>
+	/// material; wvpのResourceの生成
+	/// </summary>
+	void CreateResource();
+
+	/// <summary>
+	/// Resourceの生成
+	/// </summary>
+	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
+
+	/// <summary>
+	/// シェーダーリソースの生成
+	/// </summary>
+	void CreateShaderResourceView();
+
+	/// <summary>
+	/// TextureResourceの初期化
+	/// </summary>
+	void InitializeTextureResource();
+
+	/// <summary>
+	/// テクスチャの読み込み
+	/// </summary>
+	DirectX::ScratchImage LoadTexture(const std::string& filePath);
+
+	/// <summary>
+	/// テクスチャリソースの生成
+	/// </summary>
+	ID3D12Resource* CreateTextureResource(const DirectX::TexMetadata& metaData);
+
+	/// <summary>
+	/// デスクリプターレンジの初期化
+	/// </summary>
+	void InitializeDescriptorRange();
+
+	/// <summary>
+	/// デプスバッファステンシル
+	/// </summary>
+	ID3D12Resource* CreateDepthStenciltextureResource(int32_t width, int32_t height);
+
+	/// <summary>
+	/// TextureData
+	/// </summary>
+	ID3D12Resource* UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImage);
+
 
 private:
 
