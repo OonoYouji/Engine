@@ -30,7 +30,15 @@ private:
 	ComPtr<IDXGIAdapter4> useAdapter_;
 	ComPtr<ID3D12Device> device_;
 
+	///- 画面の色を変えよう
+	ComPtr<ID3D12CommandQueue> commandQueue_;
+	ComPtr<ID3D12CommandAllocator> commandAllocator_;
+	ComPtr<ID3D12GraphicsCommandList> commandList_;
 	
+	ComPtr<IDXGISwapChain4> swapChain_;
+	
+	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	ComPtr<ID3D12Resource> swapChainResource_[2];
 
 public:
 
@@ -63,6 +71,11 @@ private:
 
 	void InitializeDXGIDevice();
 	
+	void InitializeCommand();
+
+	void InitializeSwapChain();
+
+	void InitialiezRenderTarget();
 
 private:
 

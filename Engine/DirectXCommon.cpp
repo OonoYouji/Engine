@@ -2,6 +2,7 @@
 
 #include <WinApp.h>
 #include <Engine.h>
+#include <Environment.h>
 
 #include <format>
 
@@ -19,6 +20,8 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	p_winApp_ = winApp;
 
 	InitializeDXGIDevice();
+	InitializeCommand();
+	InitializeSwapChain();
 
 }
 
@@ -39,6 +42,11 @@ DirectXCommon* DirectXCommon::GetInstance() {
 	return &instance;
 }
 
+
+
+/// ---------------------------
+/// ↓ DirextX12の初期化
+/// ---------------------------
 void DirectXCommon::InitializeDXGIDevice() {
 	HRESULT result = S_FALSE;
 
@@ -57,7 +65,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 	useAdapter_ = nullptr;
 
 	///- 良い順にアダプタを頼む
-	for(UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i,DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_))!= DXGI_ERROR_NOT_FOUND; i++) {
+	for(UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_)) != DXGI_ERROR_NOT_FOUND; i++) {
 
 		///- アダプターの情報を取得する
 		DXGI_ADAPTER_DESC3 desc;
@@ -110,5 +118,130 @@ void DirectXCommon::InitializeDXGIDevice() {
 	///- 生成できたか確認; 生成出来ていたらログ出力する
 	assert(device_ != nullptr);
 	Engine::ConsolePrint("Compile create D3D12Device!!!\n");
+
+}
+
+
+
+/// ---------------------------
+/// ↓ Command関係を初期化
+/// ---------------------------
+void DirectXCommon::InitializeCommand() {
+	HRESULT result = S_FALSE;
+
+	/// ---------------------------
+	/// ↓ CommandQueueを生成
+	/// ---------------------------
+	commandQueue_ = nullptr;
+	D3D12_COMMAND_QUEUE_DESC desc{};
+
+	///- 生成; 生成できたか確認
+	result = device_->CreateCommandQueue(&desc, IID_PPV_ARGS(&commandQueue_));
+	assert(SUCCEEDED(result));
+
+
+
+	/// ---------------------------
+	/// ↓ CommandAllocatorを生成
+	/// ---------------------------
+	commandAllocator_ = nullptr;
+
+	///- 生成; 生成できたか確認
+	result = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator_));
+	assert(SUCCEEDED(result));
+
+
+
+	/// ---------------------------
+	/// ↓ CommandListを生成
+	/// ---------------------------
+	commandList_ = nullptr;
+
+	///- 生成; 生成できたか確認
+	result = device_->CreateCommandList(
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		commandAllocator_.Get(),
+		nullptr,
+		IID_PPV_ARGS(&commandList_)
+	);
+	assert(SUCCEEDED(result));
+
+
+}
+
+
+
+/// ---------------------------
+/// ↓ SwapChainを初期化
+/// ---------------------------
+void DirectXCommon::InitializeSwapChain() {
+	HRESULT result = S_FALSE;
+
+	swapChain_ = nullptr;
+
+	DXGI_SWAP_CHAIN_DESC1 desc{};
+	desc.Width = kWindowSize.x;
+	desc.Height = kWindowSize.y;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	//- 描画のターゲットとして利用
+	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	//- ダブルバッファを使用
+	desc.BufferCount = 2;
+	//- モニターに移したら中身を破棄
+	desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+	///- SwapChain1で仮に生成
+	ComPtr<IDXGISwapChain1> swapChain1;
+	result = dxgiFactory_->CreateSwapChainForHwnd(
+		commandQueue_.Get(), p_winApp_->GetHWND(), &desc, nullptr, nullptr, &swapChain1
+	);
+	assert(SUCCEEDED(result));
+
+	///- SwapChain4に引き渡す
+	result = swapChain1->QueryInterface(IID_PPV_ARGS(&swapChain_));
+	assert(SUCCEEDED(result));
+
+}
+
+
+
+/// ---------------------------
+/// ↓ RTVを初期化
+/// ---------------------------
+void DirectXCommon::InitialiezRenderTarget() {
+	HRESULT result = S_FALSE;
+
+
+	/// ---------------------------
+	/// ↓ DescriptorHeapを生成
+	/// ---------------------------
+	rtvDescriptorHeap_ = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc{};
+	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	rtvHeapDesc.NumDescriptors = 2; //- ダブルバッファなので2つ
+
+	///- 生成; 生成できたか確認
+	result = device_->CreateDescriptorHeap(
+		&rtvHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap_)
+	);
+	assert(SUCCEEDED(result));
+
+
+
+	/// ---------------------------
+	/// ↓ SwapChainResourceを生成
+	/// ---------------------------
+	for(size_t i = 0; i < 2; i++) {
+		swapChainResource_[i] = nullptr;
+	}
+
+	///- 取得出来なければ起動できない
+	for(size_t i = 0; i < 2; i++) {
+		result = swapChain_->GetBuffer(i, IID_PPV_ARGS(&swapChainResource_[i]));
+		assert(SUCCEEDED(result));
+	}
+
 
 }
