@@ -39,6 +39,7 @@ private:
 	
 	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	ComPtr<ID3D12Resource> swapChainResource_[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
 public:
 

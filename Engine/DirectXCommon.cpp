@@ -22,6 +22,8 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeDXGIDevice();
 	InitializeCommand();
 	InitializeSwapChain();
+	InitialiezRenderTarget();
+
 
 }
 
@@ -238,10 +240,31 @@ void DirectXCommon::InitialiezRenderTarget() {
 	}
 
 	///- 取得出来なければ起動できない
-	for(size_t i = 0; i < 2; i++) {
+	for(UINT i = 0; i < 2; i++) {
 		result = swapChain_->GetBuffer(i, IID_PPV_ARGS(&swapChainResource_[i]));
 		assert(SUCCEEDED(result));
 	}
 
+
+
+	/// ---------------------------
+	/// ↓ RTVの設定
+	/// ---------------------------
+
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+
+	///- ディスクリプタの先頭を取得
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandl = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+
+	///- rtvHandleの生成
+	rtvHandles_[0] = rtvStartHandl;
+	device_->CreateRenderTargetView(swapChainResource_[0].Get(), &rtvDesc, rtvHandles_[0]);
+
+	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(
+		D3D12_DESCRIPTOR_HEAP_TYPE_RTV
+	);
+	device_->CreateRenderTargetView(swapChainResource_[1].Get(), &rtvDesc, rtvHandles_[1]);
 
 }
