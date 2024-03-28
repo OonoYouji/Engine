@@ -371,10 +371,6 @@ void DirectXCommon::PostDraw() {
 		rtvHandles_[bbIndex], clearColor, 0, nullptr
 	);
 
-	///- Commandを閉じる
-	result = commandList_->Close();
-	assert(SUCCEEDED(result));
-
 	/// ---------------------------
 	/// ↓ バリアを貼る; これから描画処理用に変更
 	/// ---------------------------
@@ -385,6 +381,10 @@ void DirectXCommon::PostDraw() {
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	commandList_->ResourceBarrier(1, &barrier);
+
+	///- Commandを閉じる
+	result = commandList_->Close();
+	assert(SUCCEEDED(result));
 
 	///- コマンドをキックする
 	ID3D12CommandList* commandLists[] = { commandList_.Get() };
