@@ -85,7 +85,7 @@ namespace {
 
 	void EngineSystem::BeginFrame() {
 
-		//directXCommon_->PreDraw();
+		directXCommon_->PreDraw();
 		imGuiManager_->BeginFrame();
 
 	}
@@ -93,7 +93,7 @@ namespace {
 	void EngineSystem::EndFrame() {
 
 		imGuiManager_->EndFrame();
-		//directXCommon_->PostDraw();
+		directXCommon_->PostDraw();
 
 	}
 

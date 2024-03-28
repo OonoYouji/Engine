@@ -41,6 +41,22 @@ private:
 	ComPtr<ID3D12Resource> swapChainResource_[2];
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
+
+private:
+
+	/// -----------------------------------
+	/// ↓ privateなメンバ関数
+	/// -----------------------------------
+
+	void InitializeDXGIDevice();
+	
+	void InitializeCommand();
+
+	void InitializeSwapChain();
+
+	void InitialiezRenderTarget();
+
+
 public:
 
 	/// -----------------------------------
@@ -64,19 +80,10 @@ public:
 	static DirectXCommon* GetInstance();
 
 
-private:
+	void PreDraw();
 
-	/// -----------------------------------
-	/// ↓ privateなメンバ関数
-	/// -----------------------------------
+	void PostDraw();
 
-	void InitializeDXGIDevice();
-	
-	void InitializeCommand();
-
-	void InitializeSwapChain();
-
-	void InitialiezRenderTarget();
 
 private:
 

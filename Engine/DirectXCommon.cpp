@@ -45,7 +45,6 @@ DirectXCommon* DirectXCommon::GetInstance() {
 }
 
 
-
 /// ---------------------------
 /// ↓ DirextX12の初期化
 /// ---------------------------
@@ -268,3 +267,51 @@ void DirectXCommon::InitialiezRenderTarget() {
 	device_->CreateRenderTargetView(swapChainResource_[1].Get(), &rtvDesc, rtvHandles_[1]);
 
 }
+
+
+
+/// ---------------------------
+/// ↓ 描画前処理
+/// ---------------------------
+void DirectXCommon::PreDraw() {}
+
+
+
+/// ---------------------------
+/// ↓ 描画後処理
+/// ---------------------------
+void DirectXCommon::PostDraw() {
+	HRESULT result = S_FALSE;
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	commandList_->OMSetRenderTargets(
+		1, &rtvHandles_[bbIndex], false, nullptr
+	);
+
+	///- 指定した色で画面をクリア
+	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
+	commandList_->ClearRenderTargetView(
+		rtvHandles_[bbIndex], clearColor, 0, nullptr
+	);
+
+	///- Commandを閉じる
+	result = commandList_->Close();
+	assert(SUCCEEDED(result));
+
+
+	///- コマンドをキックする
+	ID3D12CommandList* commandLists[] = { commandList_.Get() };
+	commandQueue_->ExecuteCommandLists(1, commandLists);
+
+	///- GPUとOSに画面の交換を行うように通知する
+	swapChain_->Present(1, 0);
+
+	///- 次のフレーム用にコマンドリストを準備
+	result = commandAllocator_->Reset();
+	assert(SUCCEEDED(result));
+	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
+	assert(SUCCEEDED(result));
+
+}
+
+
