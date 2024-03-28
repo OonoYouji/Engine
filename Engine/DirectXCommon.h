@@ -3,6 +3,7 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <cassert>
+#include <cmath>
 
 /// ComPtr用
 #include <wrl/client.h>
@@ -44,6 +45,11 @@ private:
 	///- エラー放置ダメ、ゼッタイ
 	ComPtr<ID3D12Debug1> debugController_;
 
+	///- 完璧な画面クリアを目指す
+	ComPtr<ID3D12Fence> fence_;
+	uint64_t fenceValue_;
+	HANDLE fenceEvent_;
+
 private:
 
 	/// -----------------------------------
@@ -58,6 +64,7 @@ private:
 
 	void InitialiezRenderTarget();
 
+	void InitializeFence();
 
 public:
 

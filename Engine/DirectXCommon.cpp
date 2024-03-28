@@ -33,7 +33,7 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeCommand();
 	InitializeSwapChain();
 	InitialiezRenderTarget();
-
+	InitializeFence();
 
 }
 
@@ -311,9 +311,46 @@ void DirectXCommon::InitialiezRenderTarget() {
 
 
 /// ---------------------------
+/// ↓ Fenceを初期化
+/// ---------------------------
+void DirectXCommon::InitializeFence() {
+	HRESULT result = S_FALSE;
+
+	fence_ = nullptr;
+	fenceValue_ = 0;
+
+	result = device_->CreateFence(
+		fenceValue_, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence_)
+	);
+	assert(SUCCEEDED(result));
+
+	fenceEvent_ = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent_ != nullptr);
+
+
+}
+
+
+
+/// ---------------------------
 /// ↓ 描画前処理
 /// ---------------------------
-void DirectXCommon::PreDraw() {}
+void DirectXCommon::PreDraw() {
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+
+	/// ---------------------------
+	/// ↓ バリアを貼る; commandListを積めるようにする
+	/// ---------------------------
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = swapChainResource_[bbIndex].Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	commandList_->ResourceBarrier(1, &barrier);
+
+}
 
 
 
@@ -338,6 +375,16 @@ void DirectXCommon::PostDraw() {
 	result = commandList_->Close();
 	assert(SUCCEEDED(result));
 
+	/// ---------------------------
+	/// ↓ バリアを貼る; これから描画処理用に変更
+	/// ---------------------------
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = swapChainResource_[bbIndex].Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	commandList_->ResourceBarrier(1, &barrier);
 
 	///- コマンドをキックする
 	ID3D12CommandList* commandLists[] = { commandList_.Get() };
@@ -345,6 +392,17 @@ void DirectXCommon::PostDraw() {
 
 	///- GPUとOSに画面の交換を行うように通知する
 	swapChain_->Present(1, 0);
+
+	///- GPUにSignalを送信
+	fenceValue_++;
+	commandQueue_->Signal(fence_.Get(), fenceValue_);
+
+	///- GPUの処理が終わっていなければイベントを待機する
+	if(fence_->GetCompletedValue() < fenceValue_) {
+		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
+		WaitForSingleObject(fenceEvent_, INFINITE);
+	}
+
 
 	///- 次のフレーム用にコマンドリストを準備
 	result = commandAllocator_->Reset();
