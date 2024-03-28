@@ -41,6 +41,8 @@ private:
 	ComPtr<ID3D12Resource> swapChainResource_[2];
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
+	///- エラー放置ダメ、ゼッタイ
+	ComPtr<ID3D12Debug1> debugController_;
 
 private:
 

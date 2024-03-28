@@ -19,6 +19,16 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 	p_winApp_ = winApp;
 
+#ifdef _DEBUG
+
+	///- DebugLayerを設定
+	if(SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_)))) {
+		debugController_->EnableDebugLayer();
+		debugController_->SetEnableGPUBasedValidation(TRUE);
+	}
+
+#endif // _DEBUG
+
 	InitializeDXGIDevice();
 	InitializeCommand();
 	InitializeSwapChain();
@@ -119,6 +129,36 @@ void DirectXCommon::InitializeDXGIDevice() {
 	///- 生成できたか確認; 生成出来ていたらログ出力する
 	assert(device_ != nullptr);
 	Engine::ConsolePrint("Compile create D3D12Device!!!\n");
+
+
+
+#ifdef _DEBUG
+	/// ---------------------------
+	/// ↓ エラー・警告が出たときにプログラムを停止
+	/// ---------------------------
+	ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
+	if(SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+		//- ヤバいエラー
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+		//- エラー
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		//- 警告
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+
+		///- エラーと警告の抑制
+		D3D12_MESSAGE_ID denyIds[] = {
+			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+		};
+		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+		D3D12_INFO_QUEUE_FILTER filter{};
+		filter.DenyList.NumIDs = _countof(denyIds);
+		filter.DenyList.pIDList = denyIds;
+		filter.DenyList.NumSeverities = _countof(severities);
+		filter.DenyList.pSeverityList = severities;
+		infoQueue->PushStorageFilter(&filter);
+	}
+#endif // _DEBUG
+
 
 }
 
