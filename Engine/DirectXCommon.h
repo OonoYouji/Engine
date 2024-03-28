@@ -194,13 +194,13 @@ public:
 	void SetRenderTargets(const D3D12_CPU_DESCRIPTOR_HANDLE& dsvHandle);
 
 
-	ID3D12Device* GetDevice() { return device_.Get(); }
-	ID3D12GraphicsCommandList* GetCommandList() { return commandList_.Get(); }
+	ComPtr<ID3D12Device> GetDevice() { return device_; }
+	ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return commandList_; }
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 	const DXGI_SWAP_CHAIN_DESC1& GetSwapChainDesc() const { return swapChainDesc_; }
 
-	ID3D12DescriptorHeap* GetSrvDescriptorHeap() const { return srvDescriptorHeap_.Get(); }
+	ComPtr<ID3D12DescriptorHeap> GetSrvDescriptorHeap() const { return srvDescriptorHeap_; }
 
 
 private:

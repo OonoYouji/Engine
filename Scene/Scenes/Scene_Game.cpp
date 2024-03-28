@@ -19,6 +19,7 @@ void Scene_Game::Init() {
 void Scene_Game::Update() {
 
 	rotate_.y += 0.01f;
+	//rotate_.x -= 0.01f;
 	/*ImGui::Begin("main");
 
 	ImGui::DragFloat3("pos", &pos_.x, 0.05f);

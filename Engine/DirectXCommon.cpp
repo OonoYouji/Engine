@@ -204,7 +204,6 @@ void DirectXCommon::PostDraw() {
 	hr = commandList_->Reset(commandAllocator_.Get(), nullptr);
 	assert(SUCCEEDED(hr));
 
-	//intermediateResource->Release();
 }
 
 void DirectXCommon::ClearRenderTarget() {
@@ -316,7 +315,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 
 #ifdef _DEBUG
 
-	ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
+	ID3D12InfoQueue* infoQueue = nullptr;
 	if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 		/// ヤバいエラーのとき止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
@@ -324,7 +323,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		/// 警告時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
-		//infoQueue->Release();
+		infoQueue->Release();
 	}
 
 #endif // _DEBUG

@@ -34,7 +34,7 @@ namespace {
 
 		WinApp* winApp_ = nullptr;
 		DirectXCommon* directXCommon_ = nullptr;
-		DXCompile* dxc_ = nullptr;
+		//DXCompile* dxc_ = nullptr;
 		ImGuiManager* imGuiManager_ = nullptr;
 
 		//std::unique_ptr<Camera> camera_ = nullptr;
@@ -77,7 +77,7 @@ namespace {
 		camera_ = new Camera();
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
-		dxc_ = DXCompile::GetInstance();
+		//dxc_ = DXCompile::GetInstance();
 		imGuiManager_ = ImGuiManager::GetInstance();
 		//camera_ = std::make_unique<Camera>();
 	}
@@ -118,7 +118,7 @@ namespace {
 	}
 
 	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
-		dxc_->TestDraw(v1, v2, v3, scale, rotate, translate);
+		//dxc_->TestDraw(v1, v2, v3, scale, rotate, translate);
 	}
 
 	void EngineSystem::TestDraw(const Matrix4x4& worldMatrix) {
