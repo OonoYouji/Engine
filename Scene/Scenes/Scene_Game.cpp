@@ -31,9 +31,9 @@ void Scene_Game::Update() {
 
 void Scene_Game::Draw() {
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
-	Engine::TestDraw(Matrix4x4::MakeAffine(scale_, rotate_, pos_));
+	//Engine::TestDraw(Matrix4x4::MakeAffine(scale_, rotate_, pos_));
 
 }
 

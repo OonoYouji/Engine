@@ -12,7 +12,7 @@
 class Engine {
 public:
 
-	static void Initialize(const std::string& title, const Vec2& windowSize);
+	static void Initialize(const std::string& title);
 	static void Finalize(); 
 
 public:

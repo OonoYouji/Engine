@@ -6,7 +6,7 @@
 /// windowsアプリでエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
-	Engine::Initialize(kWindowTitle, kWindowSize);
+	Engine::Initialize(kWindowTitle);
 	GameManager::Init();
 
 	GameManager::Run();

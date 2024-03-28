@@ -5,6 +5,7 @@
 #include <memory>
 #include <array>
 
+#include <Environment.h>
 #include <WinApp.h>
 #include <DirectXCommon.h>
 #include <DXCompile.h>
@@ -78,13 +79,13 @@ namespace {
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
 		//dxc_ = DXCompile::GetInstance();
-		imGuiManager_ = ImGuiManager::GetInstance();
+		//imGuiManager_ = ImGuiManager::GetInstance();
 		//camera_ = std::make_unique<Camera>();
 	}
 
 	void EngineSystem::BeginFrame() {
 
-		directXCommon_->PreDraw();
+		//directXCommon_->PreDraw();
 		imGuiManager_->BeginFrame();
 
 	}
@@ -92,7 +93,7 @@ namespace {
 	void EngineSystem::EndFrame() {
 
 		imGuiManager_->EndFrame();
-		directXCommon_->PostDraw();
+		//directXCommon_->PostDraw();
 
 	}
 
@@ -122,28 +123,9 @@ namespace {
 	}
 
 	void EngineSystem::TestDraw(const Matrix4x4& worldMatrix) {
-		directXCommon_->TestDraw(worldMatrix);
+		//directXCommon_->TestDraw(worldMatrix);
 	}
 
-	//void EngineSystem::DrawTriangle(const Vec3f& v1, const Vec3f& v2, const Vec3f& v3, uint32_t color) {
-	//	ID3D12GraphicsCommandList* commandList = directXCommon_->GetCommandList();
-
-	//	// 頂点データ
-	//	std::array vertices = {
-	//		VertexPosColor{{v1.x, v1.y, v1.z}, {1, 1, 1, 1}},
-	//		VertexPosColor{{v2.x, v2.y, v2.z}, {1, 1, 1, 1}},
-	//		VertexPosColor{{v3.x, v3.y, v3.z}, {1, 1, 1, 1}},
-	//	};
-
-	//	Vector4 colorf = FloatColor(color);
-
-	//	for (auto vertex : vertices) {
-	//		vertex.color = colorf;
-	//	}
-
-	//	size_t indexVertex = indexTriangle_ * 3;
-
-	//}
 
 	inline Camera* EngineSystem::GetCamera() {
 		//return camera_.get();
@@ -166,15 +148,15 @@ namespace {
 
 
 
-void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
+void Engine::Initialize(const std::string& title) {
 
 	assert(!sWinApp);
 	assert(!sDirectXCommon);
 	assert(!sImGuiManager);
 
 
-	const int width = windowSize.x;
-	const int height = windowSize.y;
+	const int width = kWindowSize.x;
+	const int height = kWindowSize.y;
 	auto&& titleString = ConvertString(title);
 	sWinApp = WinApp::GetInstance();
 	sWinApp->CreateGameWindow(
@@ -185,10 +167,10 @@ void Engine::Initialize(const std::string& title, const Vec2& windowSize) {
 
 	/// DirectXの初期化
 	sDirectXCommon = DirectXCommon::GetInstance();
-	sDirectXCommon->Initialize(sWinApp, width, height);
+	sDirectXCommon->Initialize(sWinApp);
 
-	sImGuiManager = ImGuiManager::GetInstance();
-	sImGuiManager->Initialize(sWinApp, sDirectXCommon);
+	/*sImGuiManager = ImGuiManager::GetInstance();
+	sImGuiManager->Initialize(sWinApp, sDirectXCommon);*/
 
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();
@@ -201,11 +183,11 @@ void Engine::Finalize() {
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();
 
-	sImGuiManager->Finalize();
+	//sImGuiManager->Finalize();
 
 	sDirectXCommon->Finalize();
 
-	sDirectXCommon->DebugReleaseCheck();
+	//sDirectXCommon->DebugReleaseCheck();
 
 }
 

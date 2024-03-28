@@ -20,7 +20,7 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
 	p_directXCommon_ = dxCommon;
 
-	p_srvDescriptorHeap_ = DirectXCommon::GetInstance()->GetSrvDescriptorHeap().Get();
+	/*p_srvDescriptorHeap_ = DirectXCommon::GetInstance()->GetSrvDescriptorHeap().Get();
 
 
 	IMGUI_CHECKVERSION();
@@ -34,7 +34,7 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 		p_srvDescriptorHeap_.Get(),
 		p_srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(),
 		p_srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart()
-	);
+	);*/
 }
 
 void ImGuiManager::Finalize() {
@@ -51,21 +51,21 @@ void ImGuiManager::Finalize() {
 
 void ImGuiManager::BeginFrame() {
 
-	ImGui_ImplDX12_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
+	//ImGui_ImplDX12_NewFrame();
+	//ImGui_ImplWin32_NewFrame();
+	//ImGui::NewFrame();
 
-	p_commandList_ = p_directXCommon_->GetCommandList();
+	////p_commandList_ = p_directXCommon_->GetCommandList();
 
-	ID3D12DescriptorHeap* descriptorHeap[] = { p_srvDescriptorHeap_.Get() };
-	p_commandList_->SetDescriptorHeaps(1, descriptorHeap);
+	//ID3D12DescriptorHeap* descriptorHeap[] = { p_srvDescriptorHeap_.Get() };
+	//p_commandList_->SetDescriptorHeaps(1, descriptorHeap);
 
 
 }
 
 void ImGuiManager::EndFrame() {
 
-	ImGui::Render();
+	//ImGui::Render();
 	//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), p_commandList_);
 
 }
