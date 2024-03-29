@@ -59,6 +59,9 @@ private:
 	ComPtr<IDxcCompiler3> dxcCompiler_;
 	ComPtr<IDxcIncludeHandler> includeHandler_;
 
+	ComPtr<ID3DBlob> signatureBlob_;
+	ComPtr<ID3DBlob> errorBlob_;
+	ComPtr<ID3D12RootSignature> rootSignature_;
 
 private:
 
@@ -79,6 +82,8 @@ private:
 	void InitializeDxcCompiler();
 
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
+
+	void InitializeRootSignature();
 
 public:
 

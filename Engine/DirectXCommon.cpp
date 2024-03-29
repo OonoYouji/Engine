@@ -462,6 +462,40 @@ IDxcBlob* DirectXCommon::CompileShader(const std::wstring& filePath, const wchar
 
 
 /// ---------------------------
+/// ↓ RootSignatureの初期化
+/// ---------------------------
+void DirectXCommon::InitializeRootSignature() {
+	HRESULT result = S_FALSE;
+
+	///- RootSignatureの作成
+	D3D12_ROOT_SIGNATURE_DESC desc{};
+	desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	///- シリアライズしてバイナリ
+	result = D3D12SerializeRootSignature(
+		&desc,
+		D3D_ROOT_SIGNATURE_VERSION_1,
+		&signatureBlob_,
+		&errorBlob_
+	);
+	if(FAILED(result)) {
+		Engine::ConsolePrint(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
+		assert(false);
+	}
+
+	///- バイナリを元に生成
+	result = device_->CreateRootSignature(
+		0, signatureBlob_->GetBufferPointer(),
+		signatureBlob_->GetBufferSize(),
+		IID_PPV_ARGS(&rootSignature_)
+	);
+	assert(SUCCEEDED(result));
+
+}
+
+
+
+/// ---------------------------
 /// ↓ 描画前処理
 /// ---------------------------
 void DirectXCommon::PreDraw() {
