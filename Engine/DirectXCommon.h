@@ -3,10 +3,14 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <cassert>
-#include <cmath>
+#include <cmath>	
+#include <dxgidebug.h>
+#include <dxcapi.h>
 
 /// ComPtr用
 #include <wrl/client.h>
+
+#include <string>
 
 using namespace Microsoft::WRL;
 
@@ -50,6 +54,12 @@ private:
 	uint64_t fenceValue_;
 	HANDLE fenceEvent_;
 
+	///- 三角形を表示しよう
+	ComPtr<IDxcUtils> dxcUtils_;
+	ComPtr<IDxcCompiler3> dxcCompiler_;
+	ComPtr<IDxcIncludeHandler> includeHandler_;
+
+
 private:
 
 	/// -----------------------------------
@@ -65,6 +75,10 @@ private:
 	void InitialiezRenderTarget();
 
 	void InitializeFence();
+
+	void InitializeDxcCompiler();
+
+	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 public:
 
