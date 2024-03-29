@@ -51,6 +51,7 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializePSO();
 	InitializeVertexResource();
 	InitializeViewport();
+	InitializeMaterialResource();
 
 }
 
@@ -65,7 +66,8 @@ void DirectXCommon::Finalize() {
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
 
-	vertexResource_.Reset();
+	materialResource_->Release();
+	vertexResource_->Release();
 	graphicsPipelineState_.Reset();
 	pixelShaderBlob_.Reset();
 	vertexShaderBlob_.Reset();
@@ -206,7 +208,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		//- エラー
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//- 警告
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 		///- エラーと警告の抑制
 		D3D12_MESSAGE_ID denyIds[] = {
@@ -637,35 +639,7 @@ void DirectXCommon::InitializeVertexResource() {
 	/// ↓ VertexResourceの初期化
 	/// ---------------------------
 
-	///- 頂点リソース用のヒープ設定
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-
-	///- 頂点リソースの設定
-	D3D12_RESOURCE_DESC desc{};
-	///- バッファリソース
-	desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	desc.Width = sizeof(Vector4) * 3; //- リソースのサイズ(頂点数
-
-	///- バッファの場合これらは1に設定する決まり
-	desc.Height = 1;
-	desc.DepthOrArraySize = 1;
-	desc.MipLevels = 1;
-	desc.SampleDesc.Count = 1;
-
-	///- バッファの場合はこれにする決まり
-	desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	///- 実際に頂点リソースを生成
-	result = device_->CreateCommittedResource(
-		&uploadHeapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&desc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertexResource_)
-	);
-	assert(SUCCEEDED(result));
+	vertexResource_ = CreateBufferResource(sizeof(Vector4) * 3);
 
 
 
@@ -727,6 +701,13 @@ void DirectXCommon::InitializeViewport() {
 /// ---------------------------
 void DirectXCommon::InitializeMaterialResource() {
 
+	///- マテリアルリソースの生成
+	materialResource_ = CreateBufferResource(sizeof(Vector4));
+
+	///- マテリアルにデータを書き込む
+	Vector4* materialData = nullptr;
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 
 }
 
@@ -735,8 +716,41 @@ void DirectXCommon::InitializeMaterialResource() {
 /// ---------------------------
 /// ↓ BufferResourceの生成
 /// ---------------------------
-ID3D12Resource* DirectXCommon::CreateBufferResource(size_t) {
-	return nullptr;
+ID3D12Resource* DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
+	HRESULT result = S_FALSE;
+	ID3D12Resource* resource = nullptr;
+
+	///- 頂点リソース用のヒープ設定
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+	///- 頂点リソースの設定
+	D3D12_RESOURCE_DESC desc{};
+	///- バッファリソース
+	desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	desc.Width = sizeInBytes; //- リソースのサイズ(頂点数
+
+	///- バッファの場合これらは1に設定する決まり
+	desc.Height = 1;
+	desc.DepthOrArraySize = 1;
+	desc.MipLevels = 1;
+	desc.SampleDesc.Count = 1;
+
+	///- バッファの場合はこれにする決まり
+	desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	///- 実際に頂点リソースを生成
+	result = device_->CreateCommittedResource(
+		&uploadHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&desc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&resource)
+	);
+	assert(SUCCEEDED(result));
+
+	return resource;
 }
 
 
@@ -852,6 +866,8 @@ void DirectXCommon::TestDraw() {
 
 	///- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK
 	commandList_->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	///- マテリアルのCBufferの場所を設定
+	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
 	///- 描画 (DrawCall)
 	commandList_->DrawInstanced(3, 1, 0, 0);
