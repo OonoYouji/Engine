@@ -45,6 +45,7 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeBlendState();
 	InitializeRasterizer();
 	InitializeShaderBlob();
+	InitializePSO();
 
 }
 
@@ -59,6 +60,7 @@ void DirectXCommon::Finalize() {
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
 
+	graphicsPipelineState_.Reset();
 	pixelShaderBlob_.Reset();
 	vertexShaderBlob_.Reset();
 	rootSignature_.Reset();
@@ -198,7 +200,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		//- エラー
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//- 警告
-		//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 		///- エラーと警告の抑制
 		D3D12_MESSAGE_ID denyIds[] = {
@@ -559,6 +561,50 @@ void DirectXCommon::InitializeShaderBlob() {
 
 	pixelShaderBlob_ = CompileShader(L"./Engine/Object3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
+
+
+}
+
+
+
+/// ---------------------------
+/// ↓ PSOの初期化
+/// ---------------------------
+void DirectXCommon::InitializePSO() {
+	HRESULT result = S_FALSE;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc{};
+
+	desc.pRootSignature = rootSignature_.Get();	//- RootSignature
+	desc.InputLayout = inputLayoutDesc_;		//- InputLayout
+
+	//- Shader
+	desc.VS = {
+		vertexShaderBlob_->GetBufferPointer(),
+		vertexShaderBlob_->GetBufferSize()
+	};
+	desc.PS = {
+		pixelShaderBlob_->GetBufferPointer(),
+		pixelShaderBlob_->GetBufferSize()
+	};
+
+	desc.BlendState = blendDesc_;			//- BlendState
+	desc.RasterizerState = rasterizerDesc_; //- RasterizerState
+
+	///- 書き込むRTVの情報
+	desc.NumRenderTargets = 1;
+	desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	///- 利用するトロポジ(形状)のタイプ; 三角形
+	desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	///- 画面に色を打ち込みかの設定
+	desc.SampleDesc.Count = 1;
+	desc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+
+	///- 実際に生成
+	result = device_->CreateGraphicsPipelineState(
+		&desc, IID_PPV_ARGS(&graphicsPipelineState_)
+	);
+	assert(SUCCEEDED(result));
 
 
 }

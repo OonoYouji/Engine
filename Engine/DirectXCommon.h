@@ -73,6 +73,8 @@ private:
 	ComPtr<IDxcBlob> vertexShaderBlob_;
 	ComPtr<IDxcBlob> pixelShaderBlob_;
 
+	ComPtr<ID3D12PipelineState> graphicsPipelineState_;
+
 private:
 
 	/// -----------------------------------
@@ -102,6 +104,8 @@ private:
 	void InitializeRasterizer();
 
 	void InitializeShaderBlob();
+
+	void InitializePSO();
 
 public:
 
