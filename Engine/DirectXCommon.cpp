@@ -1,10 +1,12 @@
 #include <DirectXCommon.h>
 
+#include <format>
+
 #include <WinApp.h>
 #include <Engine.h>
 #include <Environment.h>
+#include <Vector4.h>
 
-#include <format>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -605,6 +607,79 @@ void DirectXCommon::InitializePSO() {
 		&desc, IID_PPV_ARGS(&graphicsPipelineState_)
 	);
 	assert(SUCCEEDED(result));
+
+
+}
+
+
+
+/// ---------------------------
+/// ↓ VertexResourceの初期化
+/// ---------------------------
+void DirectXCommon::InitializeVertexResource() {
+	HRESULT result = S_FALSE;
+
+
+	/// ---------------------------
+	/// ↓ VertexResourceの初期化
+	/// ---------------------------
+
+	///- 頂点リソース用のヒープ設定
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+	///- 頂点リソースの設定
+	D3D12_RESOURCE_DESC desc{};
+	///- バッファリソース
+	desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	desc.Width = sizeof(Vector4) * 3; //- リソースのサイズ(頂点数
+
+	///- バッファの場合これらは1に設定する決まり
+	desc.Height = 1;
+	desc.DepthOrArraySize = 1;
+	desc.MipLevels = 1;
+	desc.SampleDesc.Count = 1;
+
+	///- バッファの場合はこれにする決まり
+	desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	///- 実際に頂点リソースを生成
+	result = device_->CreateCommittedResource(
+		&uploadHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&desc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&vertexResource_)
+	);
+	assert(SUCCEEDED(result));
+
+
+
+	/// ---------------------------
+	/// ↓ VertexBufferViewを作成
+	/// ---------------------------
+
+	///- 頂点バッファビューを作成
+	///- リソースの先頭のアドレスから使う
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	///- 使用するリソースのサイズ; 頂点数分確保する
+	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 3;
+	///- 1頂点あたりのサイズ
+	vertexBufferView_.StrideInBytes = sizeof(Vector4);
+
+
+
+	/// ---------------------------
+	/// ↓ Resourceにデータを書き込む
+	/// ---------------------------
+
+	Vector4* vertexData = nullptr;
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+	vertexData[0] = { -0.5f,-0.5f,0.0f,1.0f };	//- 左下
+	vertexData[1] = { 0.0f,0.5f,0.0f,1.0f };	//- 上
+	vertexData[2] = { 0.5f,-0.5f,0.0f,1.0f };	//- 右下
 
 
 }

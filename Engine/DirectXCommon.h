@@ -75,6 +75,9 @@ private:
 
 	ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
+	ComPtr<ID3D12Resource> vertexResource_;
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+
 private:
 
 	/// -----------------------------------
@@ -106,6 +109,8 @@ private:
 	void InitializeShaderBlob();
 
 	void InitializePSO();
+
+	void InitializeVertexResource();
 
 public:
 
