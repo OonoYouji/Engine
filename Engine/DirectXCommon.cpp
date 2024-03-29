@@ -59,6 +59,11 @@ void DirectXCommon::Finalize() {
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
 
+	pixelShaderBlob_.Reset();
+	vertexShaderBlob_.Reset();
+	rootSignature_.Reset();
+	errorBlob_.Reset();
+	signatureBlob_.Reset();
 	includeHandler_.Reset();
 	dxcCompiler_.Reset();
 	dxcUtils_.Reset();
@@ -193,7 +198,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		//- エラー
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//- 警告
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 		///- エラーと警告の抑制
 		D3D12_MESSAGE_ID denyIds[] = {
@@ -549,10 +554,10 @@ void DirectXCommon::InitializeRasterizer() {
 void DirectXCommon::InitializeShaderBlob() {
 
 	///- Shaderをコンパイルする
-	vertexShaderBlob_ = CompileShader(L"Engine/Object3D.VS.hlsl", L"vs_6_0");
+	vertexShaderBlob_ = CompileShader(L"./Engine/Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 
-	pixelShaderBlob_ = CompileShader(L"Engine/Obejct3D.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob_ = CompileShader(L"./Engine/Object3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 
 
