@@ -64,7 +64,14 @@ private:
 	ComPtr<ID3D12RootSignature> rootSignature_;
 
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
+	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 
+	D3D12_BLEND_DESC blendDesc_;
+
+	D3D12_RASTERIZER_DESC rasterizerDesc_;
+
+	ComPtr<IDxcBlob> vertexShaderBlob_;
+	ComPtr<IDxcBlob> pixelShaderBlob_;
 
 private:
 
@@ -89,6 +96,12 @@ private:
 	void InitializeRootSignature();
 
 	void InitializeInputLayout();
+
+	void InitializeBlendState();
+
+	void InitializeRasterizer();
+
+	void InitializeShaderBlob();
 
 public:
 

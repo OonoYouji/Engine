@@ -40,6 +40,11 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 
 	InitializeDxcCompiler();
+	InitializeRootSignature();
+	InitializeInputLayout();
+	InitializeBlendState();
+	InitializeRasterizer();
+	InitializeShaderBlob();
 
 }
 
@@ -506,9 +511,50 @@ void DirectXCommon::InitializeInputLayout() {
 	inputElementDescs_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	inputElementDescs_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	D3D12_INPUT_LAYOUT_DESC desc{};
-	desc.pInputElementDescs = inputElementDescs_;
-	desc.NumElements = _countof(inputElementDescs_);
+	inputLayoutDesc_.pInputElementDescs = inputElementDescs_;
+	inputLayoutDesc_.NumElements = _countof(inputElementDescs_);
+
+}
+
+
+
+/// ---------------------------
+/// ↓ BlendStateの初期化
+/// ---------------------------
+void DirectXCommon::InitializeBlendState() {
+
+	///- すべての色要素を書き込む
+	blendDesc_.RenderTarget[0].RenderTargetWriteMask =
+		D3D12_COLOR_WRITE_ENABLE_ALL;
+
+}
+
+
+
+/// ---------------------------
+/// ↓ Rasterizerの初期化
+/// ---------------------------
+void DirectXCommon::InitializeRasterizer() {
+
+	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;	//- 裏面を表示しない
+	rasterizerDesc_.FillMode = D3D12_FILL_MODE_SOLID;	//- 三角形の中を塗りつぶす
+
+}
+
+
+
+/// ---------------------------
+/// ↓ ShaderBlobの初期化
+/// ---------------------------
+void DirectXCommon::InitializeShaderBlob() {
+
+	///- Shaderをコンパイルする
+	vertexShaderBlob_ = CompileShader(L"Engine/Object3D.VS.hlsl", L"vs_6_0");
+	assert(vertexShaderBlob_ != nullptr);
+
+	pixelShaderBlob_ = CompileShader(L"Engine/Obejct3D.PS.hlsl", L"ps_6_0");
+	assert(pixelShaderBlob_ != nullptr);
+
 
 }
 
