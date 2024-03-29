@@ -496,6 +496,25 @@ void DirectXCommon::InitializeRootSignature() {
 
 
 /// ---------------------------
+/// ↓ InputLayoutの初期化
+/// ---------------------------
+void DirectXCommon::InitializeInputLayout() {
+
+	///- InputLayout
+	inputElementDescs_[0].SemanticName = "POSITION";
+	inputElementDescs_[0].SemanticIndex = 0;
+	inputElementDescs_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	inputElementDescs_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	D3D12_INPUT_LAYOUT_DESC desc{};
+	desc.pInputElementDescs = inputElementDescs_;
+	desc.NumElements = _countof(inputElementDescs_);
+
+}
+
+
+
+/// ---------------------------
 /// ↓ 描画前処理
 /// ---------------------------
 void DirectXCommon::PreDraw() {

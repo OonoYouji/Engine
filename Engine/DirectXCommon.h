@@ -63,6 +63,9 @@ private:
 	ComPtr<ID3DBlob> errorBlob_;
 	ComPtr<ID3D12RootSignature> rootSignature_;
 
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
+
+
 private:
 
 	/// -----------------------------------
@@ -84,6 +87,8 @@ private:
 	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 	void InitializeRootSignature();
+
+	void InitializeInputLayout();
 
 public:
 
