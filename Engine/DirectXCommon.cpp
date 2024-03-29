@@ -17,6 +17,7 @@ using namespace Microsoft::WRL;
 
 
 
+
 /// ---------------------------
 /// ↓ 初期化を行う
 /// ---------------------------
@@ -48,6 +49,8 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeRasterizer();
 	InitializeShaderBlob();
 	InitializePSO();
+	InitializeVertexResource();
+	InitializeViewport();
 
 }
 
@@ -62,6 +65,7 @@ void DirectXCommon::Finalize() {
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
 
+	vertexResource_.Reset();
 	graphicsPipelineState_.Reset();
 	pixelShaderBlob_.Reset();
 	vertexShaderBlob_.Reset();
@@ -485,6 +489,15 @@ void DirectXCommon::InitializeRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC desc{};
 	desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	///- RootParameter作成; 複数設定できるので配列
+	rootParameters_[0].ParameterType =
+		D3D12_ROOT_PARAMETER_TYPE_CBV;					//- CBVを使う
+	rootParameters_[0].ShaderVisibility =
+		D3D12_SHADER_VISIBILITY_PIXEL;					//- PixelShaderを使う
+	rootParameters_[0].Descriptor.ShaderRegister = 0;	//- レジスタ番号0とバインド
+	desc.pParameters = rootParameters_;					//- ルートパラメータ配列へのポインタ
+	desc.NumParameters = _countof(rootParameters_);		//- 配列の長さ
+
 	///- シリアライズしてバイナリ
 	result = D3D12SerializeRootSignature(
 		&desc,
@@ -687,6 +700,68 @@ void DirectXCommon::InitializeVertexResource() {
 
 
 /// ---------------------------
+/// ↓ viewportとscissorの初期化
+/// ---------------------------
+void DirectXCommon::InitializeViewport() {
+
+	///- ビューポート
+	viewport_.Width = static_cast<FLOAT>(kWindowSize.x);
+	viewport_.Height = static_cast<FLOAT>(kWindowSize.y);
+	viewport_.TopLeftX = 0;
+	viewport_.TopLeftY = 0;
+	viewport_.MinDepth = 0.0f;
+	viewport_.MaxDepth = 1.0f;
+
+	///- シザー矩形
+	scissorRect_.left = 0;
+	scissorRect_.right = kWindowSize.x;
+	scissorRect_.top = 0;
+	scissorRect_.bottom = kWindowSize.y;
+
+}
+
+
+
+/// ---------------------------
+/// ↓ MaterialResourceの初期化
+/// ---------------------------
+void DirectXCommon::InitializeMaterialResource() {
+
+
+}
+
+
+
+/// ---------------------------
+/// ↓ BufferResourceの生成
+/// ---------------------------
+ID3D12Resource* DirectXCommon::CreateBufferResource(size_t) {
+	return nullptr;
+}
+
+
+
+/// ---------------------------
+/// ↓ 画面を一定の色で染める
+/// ---------------------------
+void DirectXCommon::ClearRenderTarget() {
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	///- 描画先のRTVを設定する
+	commandList_->OMSetRenderTargets(
+		1, &rtvHandles_[bbIndex], false, nullptr
+	);
+
+	///- 指定した色で画面をクリア
+	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
+	commandList_->ClearRenderTargetView(
+		rtvHandles_[bbIndex], clearColor, 0, nullptr
+	);
+}
+
+
+
+/// ---------------------------
 /// ↓ 描画前処理
 /// ---------------------------
 void DirectXCommon::PreDraw() {
@@ -704,6 +779,9 @@ void DirectXCommon::PreDraw() {
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	commandList_->ResourceBarrier(1, &barrier);
 
+	///- 画面を一定の色で染める
+	ClearRenderTarget();
+
 }
 
 
@@ -714,16 +792,6 @@ void DirectXCommon::PreDraw() {
 void DirectXCommon::PostDraw() {
 	HRESULT result = S_FALSE;
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
-
-	commandList_->OMSetRenderTargets(
-		1, &rtvHandles_[bbIndex], false, nullptr
-	);
-
-	///- 指定した色で画面をクリア
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
-	commandList_->ClearRenderTargetView(
-		rtvHandles_[bbIndex], clearColor, 0, nullptr
-	);
 
 	/// ---------------------------
 	/// ↓ バリアを貼る; これから描画処理用に変更
@@ -765,5 +833,30 @@ void DirectXCommon::PostDraw() {
 	assert(SUCCEEDED(result));
 
 }
+
+
+
+/// ---------------------------
+/// ↓ 三角形の描画(テスト
+/// ---------------------------
+void DirectXCommon::TestDraw() {
+
+	///- viewport; scissorRectを設定
+	commandList_->RSSetViewports(1, &viewport_);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
+
+	///- RootSignatureを設定; PSOとは別に別途設定が必要
+	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList_->SetPipelineState(graphicsPipelineState_.Get());
+	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
+
+	///- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK
+	commandList_->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	///- 描画 (DrawCall)
+	commandList_->DrawInstanced(3, 1, 0, 0);
+
+}
+
 
 

@@ -78,6 +78,13 @@ private:
 	ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 
+	D3D12_VIEWPORT viewport_;
+	D3D12_RECT scissorRect_;
+
+	///- 三角形の色を変えよう
+	D3D12_ROOT_PARAMETER rootParameters_[1];
+	ComPtr<ID3D12Resource> materialResource_;
+
 private:
 
 	/// -----------------------------------
@@ -112,6 +119,15 @@ private:
 
 	void InitializeVertexResource();
 
+	void InitializeViewport();
+
+	void InitializeMaterialResource();
+
+	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
+
+	void ClearRenderTarget();
+
+
 public:
 
 	/// -----------------------------------
@@ -139,6 +155,8 @@ public:
 
 	void PostDraw();
 
+
+	void TestDraw();
 
 private:
 

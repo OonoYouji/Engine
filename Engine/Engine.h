@@ -33,6 +33,7 @@ public:
 		const Vec3f& scale, const Vec3f& rotate, Vec3f& translate
 	);
 	static void TestDraw(const Matrix4x4& worldMatrix);
+	static void TestDraw();
 
 	static Camera* GetCamera();
 

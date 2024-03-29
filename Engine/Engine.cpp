@@ -61,6 +61,8 @@ namespace {
 		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate);
 		void TestDraw(const Matrix4x4& worldMatrix);
 
+		void TestDraw();
+
 		//void DrawTriangle(const Vec3f& v1, const Vec3f& v2, const Vec3f& v3, uint32_t color);
 
 		inline Camera* GetCamera();
@@ -124,6 +126,10 @@ namespace {
 
 	void EngineSystem::TestDraw(const Matrix4x4& worldMatrix) {
 		//directXCommon_->TestDraw(worldMatrix);
+	}
+
+	void EngineSystem::TestDraw() {
+		directXCommon_->TestDraw();
 	}
 
 
@@ -221,6 +227,10 @@ void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, c
 
 void Engine::TestDraw(const Matrix4x4& worldMatrix) {
 	sEngineSystem->TestDraw(worldMatrix);
+}
+
+void Engine::TestDraw() {
+	sEngineSystem->TestDraw();
 }
 
 Camera* Engine::GetCamera() {

@@ -33,7 +33,7 @@ void Scene_Game::Draw() {
 
 	//ImGui::ShowDemoWindow();
 
-	//Engine::TestDraw(Matrix4x4::MakeAffine(scale_, rotate_, pos_));
+	Engine::TestDraw();
 
 }
 
