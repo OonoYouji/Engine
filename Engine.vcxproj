@@ -165,6 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Lib\Math\Vector2.cpp" />
     <ClCompile Include="Lib\Math\Vector3.cpp" />
     <ClCompile Include="Lib\Math\Vector4.cpp" />
+    <ClCompile Include="Lib\Math\WorldTransform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\IScene.cpp" />
     <ClCompile Include="Scene\ITransition.cpp" />
@@ -193,6 +194,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Lib\Math\Vector2.h" />
     <ClInclude Include="Lib\Math\Vector3.h" />
     <ClInclude Include="Lib\Math\Vector4.h" />
+    <ClInclude Include="Lib\Math\WorldTransform.h" />
     <ClInclude Include="Scene\IScene.h" />
     <ClInclude Include="Scene\ITransition.h" />
     <ClInclude Include="Scene\Scenes\Scene_Game.h" />

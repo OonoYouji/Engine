@@ -12,6 +12,12 @@
 
 #include <string>
 
+
+#include <WorldTransform.h>
+#include <Camera.h>
+#include <memory>
+
+
 using namespace Microsoft::WRL;
 
 class WinApp;
@@ -82,8 +88,14 @@ private:
 	D3D12_RECT scissorRect_;
 
 	///- 三角形の色を変えよう
-	D3D12_ROOT_PARAMETER rootParameters_[1];
+	D3D12_ROOT_PARAMETER rootParameters_[2];
 	ComPtr<ID3D12Resource> materialResource_;
+
+	///- 三角形を動かそう
+	ComPtr<ID3D12Resource> wvpResource_;
+
+	WorldTransform worldTransform_;
+	std::unique_ptr<Camera> camera_;
 
 private:
 
@@ -122,6 +134,10 @@ private:
 	void InitializeViewport();
 
 	void InitializeMaterialResource();
+
+	void InitializeWVPResource();
+
+	void WriteWVPResource(const Mat4& matrix);
 
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
 

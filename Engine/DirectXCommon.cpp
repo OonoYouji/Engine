@@ -50,8 +50,12 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeShaderBlob();
 	InitializePSO();
 	InitializeVertexResource();
-	InitializeViewport();
 	InitializeMaterialResource();
+	InitializeWVPResource();
+	InitializeViewport();
+
+	worldTransform_.Init();
+	camera_ = std::make_unique<Camera>();
 
 }
 
@@ -66,8 +70,10 @@ void DirectXCommon::Finalize() {
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
 
-	materialResource_->Release();
-	vertexResource_->Release();
+
+	wvpResource_.Reset();
+	materialResource_.Reset();
+	vertexResource_.Reset();
 	graphicsPipelineState_.Reset();
 	pixelShaderBlob_.Reset();
 	vertexShaderBlob_.Reset();
@@ -208,7 +214,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		//- エラー
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//- 警告
-		//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 		///- エラーと警告の抑制
 		D3D12_MESSAGE_ID denyIds[] = {
@@ -491,14 +497,23 @@ void DirectXCommon::InitializeRootSignature() {
 	D3D12_ROOT_SIGNATURE_DESC desc{};
 	desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-	///- RootParameter作成; 複数設定できるので配列
+	///- RootParameter作成; PixelShaderのMaterialとVertexShaderのTransform
+	///- PixelShader
 	rootParameters_[0].ParameterType =
 		D3D12_ROOT_PARAMETER_TYPE_CBV;					//- CBVを使う
 	rootParameters_[0].ShaderVisibility =
 		D3D12_SHADER_VISIBILITY_PIXEL;					//- PixelShaderを使う
 	rootParameters_[0].Descriptor.ShaderRegister = 0;	//- レジスタ番号0とバインド
+	///- VertexShader
+	rootParameters_[1].ParameterType =
+		D3D12_ROOT_PARAMETER_TYPE_CBV;					//- CBVを使う
+	rootParameters_[1].ShaderVisibility =
+		D3D12_SHADER_VISIBILITY_VERTEX;					//- VertexShaderを使う
+	rootParameters_[1].Descriptor.ShaderRegister = 0;	//- レジスタ番号0とバインド
+
 	desc.pParameters = rootParameters_;					//- ルートパラメータ配列へのポインタ
 	desc.NumParameters = _countof(rootParameters_);		//- 配列の長さ
+
 
 	///- シリアライズしてバイナリ
 	result = D3D12SerializeRootSignature(
@@ -639,8 +654,7 @@ void DirectXCommon::InitializeVertexResource() {
 	/// ↓ VertexResourceの初期化
 	/// ---------------------------
 
-	vertexResource_ = CreateBufferResource(sizeof(Vector4) * 3);
-
+	vertexResource_.Attach(CreateBufferResource(sizeof(Vector4) * 3));
 
 
 	/// ---------------------------
@@ -702,12 +716,40 @@ void DirectXCommon::InitializeViewport() {
 void DirectXCommon::InitializeMaterialResource() {
 
 	///- マテリアルリソースの生成
-	materialResource_ = CreateBufferResource(sizeof(Vector4));
+	materialResource_.Attach(CreateBufferResource(sizeof(Vector4)));
 
 	///- マテリアルにデータを書き込む
 	Vector4* materialData = nullptr;
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	*materialData = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+
+}
+
+
+
+/// ---------------------------
+/// ↓ wvpResourceの初期化
+/// ---------------------------
+void DirectXCommon::InitializeWVPResource() {
+
+	///- wvpリソースの生成
+	wvpResource_.Attach(CreateBufferResource(sizeof(Matrix4x4)));
+
+	WriteWVPResource(Mat4::MakeIdentity());
+
+}
+
+
+
+/// ---------------------------
+/// ↓ wvpResourceへの書き込み
+/// ---------------------------
+void DirectXCommon::WriteWVPResource(const Mat4& Matrix) {
+
+	///- データの書き込み
+	Matrix4x4* wvpData = nullptr;
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	*wvpData = Matrix;
 
 }
 
@@ -864,10 +906,16 @@ void DirectXCommon::TestDraw() {
 	commandList_->SetPipelineState(graphicsPipelineState_.Get());
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
+	worldTransform_.rotate.y += 1.0f / 64.0f;
+	worldTransform_.MakeWorldMatrix();
+	WriteWVPResource(worldTransform_.worldMatrix * camera_->GetVpMatrix());
+
 	///- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK
-	commandList_->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///- マテリアルのCBufferの場所を設定
 	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	///- wvp用のCBufferの場所を設定
+	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 
 	///- 描画 (DrawCall)
 	commandList_->DrawInstanced(3, 1, 0, 0);

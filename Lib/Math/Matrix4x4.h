@@ -111,3 +111,6 @@ inline Matrix4x4& Matrix4x4::operator*=(const Matrix4x4& other) {
 	*this = result;
 	return *this;
 }
+
+
+using Mat4 = Matrix4x4;
