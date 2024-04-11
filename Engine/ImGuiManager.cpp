@@ -18,31 +18,29 @@ ImGuiManager* ImGuiManager::GetInstance() {
 
 void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
-	p_directXCommon_ = dxCommon;
+	dxCommon_ = dxCommon;
 
-	/*p_srvDescriptorHeap_ = DirectXCommon::GetInstance()->GetSrvDescriptorHeap().Get();
-
+	srvHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(winApp->GetHWND());
 	ImGui_ImplDX12_Init(
-		p_directXCommon_->GetDevice().Get(),
-		p_directXCommon_->GetSwapChainDesc().BufferCount,
-		p_directXCommon_->GetRTVDesc().Format,
-		p_srvDescriptorHeap_.Get(),
-		p_srvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart(),
-		p_srvDescriptorHeap_->GetGPUDescriptorHandleForHeapStart()
-	);*/
+		dxCommon_->GetDevice(),
+		dxCommon_->GetSwapChainDesc().BufferCount,
+		dxCommon_->GetRTVDesc().Format,
+		srvHeap_.Get(),
+		srvHeap_->GetCPUDescriptorHandleForHeapStart(),
+		srvHeap_->GetGPUDescriptorHandleForHeapStart()
+	);
 }
 
 void ImGuiManager::Finalize() {
 
-	p_directXCommon_ = nullptr;
-	p_srvDescriptorHeap_.Reset();
-	p_commandList_.Reset();
-
+	dxCommon_ = nullptr;
+	srvHeap_.Reset();
+	
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -51,21 +49,19 @@ void ImGuiManager::Finalize() {
 
 void ImGuiManager::BeginFrame() {
 
-	//ImGui_ImplDX12_NewFrame();
-	//ImGui_ImplWin32_NewFrame();
-	//ImGui::NewFrame();
+	ImGui_ImplDX12_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
 
-	////p_commandList_ = p_directXCommon_->GetCommandList();
-
-	//ID3D12DescriptorHeap* descriptorHeap[] = { p_srvDescriptorHeap_.Get() };
-	//p_commandList_->SetDescriptorHeaps(1, descriptorHeap);
+	ID3D12DescriptorHeap* descriptorHeap[] = { srvHeap_.Get() };
+	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeap);
 
 
 }
 
 void ImGuiManager::EndFrame() {
 
-	//ImGui::Render();
-	//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), p_commandList_);
+	ImGui::Render();
+	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon_->GetCommandList());
 
 }

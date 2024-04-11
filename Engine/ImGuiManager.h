@@ -13,13 +13,8 @@ private:
 	ImGuiManager() = default;
 	~ImGuiManager() = default;
 
-private:
-
-	/// SRV
-	ComPtr<ID3D12DescriptorHeap> p_srvDescriptorHeap_ = nullptr;
-
-	DirectXCommon* p_directXCommon_;
-	ComPtr<ID3D12GraphicsCommandList> p_commandList_;
+	ComPtr<ID3D12DescriptorHeap> srvHeap_;
+	DirectXCommon* dxCommon_;
 
 public:
 

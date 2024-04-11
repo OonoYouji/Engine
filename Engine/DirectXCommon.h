@@ -45,10 +45,12 @@ private:
 	ComPtr<ID3D12CommandQueue> commandQueue_;
 	ComPtr<ID3D12CommandAllocator> commandAllocator_;
 	ComPtr<ID3D12GraphicsCommandList> commandList_;
-	
+
 	ComPtr<IDXGISwapChain4> swapChain_;
-	
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
+
 	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	ComPtr<ID3D12Resource> swapChainResource_[2];
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
@@ -97,6 +99,10 @@ private:
 	WorldTransform worldTransform_;
 	std::unique_ptr<Camera> camera_;
 
+	///- 開発用UIを出そう
+
+
+
 private:
 
 	/// -----------------------------------
@@ -104,7 +110,7 @@ private:
 	/// -----------------------------------
 
 	void InitializeDXGIDevice();
-	
+
 	void InitializeCommand();
 
 	void InitializeSwapChain();
@@ -144,6 +150,8 @@ private:
 	void ClearRenderTarget();
 
 
+
+
 public:
 
 	/// -----------------------------------
@@ -171,8 +179,17 @@ public:
 
 	void PostDraw();
 
-
 	void TestDraw();
+
+	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+
+	ID3D12Device* GetDevice() { return device_.Get(); }
+
+	const DXGI_SWAP_CHAIN_DESC1& GetSwapChainDesc() const { return swapChainDesc_; }
+
+	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
+
+	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 
 private:
 

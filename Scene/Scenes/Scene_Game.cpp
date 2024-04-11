@@ -31,7 +31,7 @@ void Scene_Game::Update() {
 
 void Scene_Game::Draw() {
 
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 
 	Engine::TestDraw();
 

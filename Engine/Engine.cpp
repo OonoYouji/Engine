@@ -80,8 +80,7 @@ namespace {
 		camera_ = new Camera();
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
-		//dxc_ = DXCompile::GetInstance();
-		//imGuiManager_ = ImGuiManager::GetInstance();
+		imGuiManager_ = ImGuiManager::GetInstance();
 		//camera_ = std::make_unique<Camera>();
 	}
 
@@ -175,8 +174,8 @@ void Engine::Initialize(const std::string& title) {
 	sDirectXCommon = DirectXCommon::GetInstance();
 	sDirectXCommon->Initialize(sWinApp);
 
-	/*sImGuiManager = ImGuiManager::GetInstance();
-	sImGuiManager->Initialize(sWinApp, sDirectXCommon);*/
+	sImGuiManager = ImGuiManager::GetInstance();
+	sImGuiManager->Initialize(sWinApp, sDirectXCommon);
 
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();
@@ -189,11 +188,9 @@ void Engine::Finalize() {
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();
 
-	//sImGuiManager->Finalize();
+	sImGuiManager->Finalize();
 
 	sDirectXCommon->Finalize();
-
-	//sDirectXCommon->DebugReleaseCheck();
 
 }
 
