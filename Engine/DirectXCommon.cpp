@@ -74,55 +74,55 @@ void DirectXCommon::Finalize() {
 	/// ↓ オブジェクトの解放; 生成の逆順
 	/// -------------------------------
 
-	srvDescriptorHeap_->Release();
+	srvDescriptorHeap_.Reset();
 
-	intermediateResource_->Release();
-	textureResource_->Release();
+	intermediateResource_.Reset();
+	textureResource_.Reset();
 
-	wvpResource_->Release();
-	materialResource_->Release();
-	vertexResource_->Release();
+	wvpResource_.Reset();
+	materialResource_.Reset();
+	vertexResource_.Reset();
 
-	graphicsPipelineState_->Release();
-	depthStencilResource_->Release();
-	dsvDescriptorHeap_->Release();
+	graphicsPipelineState_.Reset();
+	depthStencilResource_.Reset();
+	dsvDescriptorHeap_.Reset();
 
-	pixelShaderBlob_->Release();
-	vertexShaderBlob_->Release();
+	pixelShaderBlob_.Reset();
+	vertexShaderBlob_.Reset();
 
-	rootSignature_->Release();
-	signatureBlob_->Release();
+	rootSignature_.Reset();
+	signatureBlob_.Reset();
 	if(errorBlob_) {
-		errorBlob_->Release();
+		errorBlob_.Reset();
 	}
 
-	includeHandler_->Release();
-	dxcUtils_->Release();
-	dxcCompiler_->Release();
+	includeHandler_.Reset();
+	dxcUtils_.Reset();
+	dxcCompiler_.Reset();
 
 
 	CloseHandle(fenceEvent_);
-	fence_->Release();
+	fence_.Reset();
 
-	swapChainResource_[1]->Release();
-	swapChainResource_[0]->Release();
-	rtvDescriptorHeap_->Release();
-	
-	swapChain_->Release();
+	swapChainResource_[1].Reset();
+	swapChainResource_[0].Reset();
+	rtvDescriptorHeap_.Reset();
 
-	commandList_->Release();
-	commandAllocator_->Release();
-	commandQueue_->Release();
-	
-	device_->Release();
-	useAdapter_->Release();
-	dxgiFactory_->Release();
+	swapChain_.Reset();
+
+	commandList_.Reset();
+	commandAllocator_.Reset();
+	commandQueue_.Reset();
+
+	device_.Reset();
+	useAdapter_.Reset();
+	dxgiFactory_.Reset();
 
 #ifdef _DEBUG
-	debugController_->Release();
+	debugController_.Reset();
 #endif // _DEBUG
 
-	
+
 
 }
 
@@ -184,7 +184,7 @@ void DirectXCommon::PostDraw() {
 	assert(SUCCEEDED(hr));
 
 	/// コマンドリストの実行
-	ID3D12CommandList* commandLists[] = { commandList_.Get()};
+	ID3D12CommandList* commandLists[] = { commandList_.Get() };
 	commandQueue_->ExecuteCommandLists(1, commandLists);
 
 	/// GPUとOSに画面の交換を行うよう通知する
@@ -193,7 +193,7 @@ void DirectXCommon::PostDraw() {
 
 	fenceValue_++;
 	commandQueue_->Signal(fence_.Get(), fenceValue_);
-	if (fence_->GetCompletedValue() < fenceValue_) {
+	if(fence_->GetCompletedValue() < fenceValue_) {
 		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
 		WaitForSingleObject(fenceEvent_, INFINITE);
 	}
@@ -212,7 +212,7 @@ void DirectXCommon::ClearRenderTarget() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
 	dsvHandle_ = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-	
+
 	/// 指定した深度で画面全体をクリアする
 	commandList_->ClearDepthStencilView(dsvHandle_, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
@@ -243,7 +243,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 
 #ifdef _DEBUG
 
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_)))) {
+	if(SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_)))) {
 		/// デバッグレイヤーを有効化する
 		debugController_->EnableDebugLayer();
 		/// さらにGPU側でもチェックできるようにする
@@ -260,8 +260,8 @@ void DirectXCommon::InitializeDXGIDevice() {
 	/// 使用するアダプタ用変数
 
 	/// いい順にアダプタを頼む
-	for (UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i,
-		DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_)) != DXGI_ERROR_NOT_FOUND; i++) {
+	for(UINT i = 0; dxgiFactory_->EnumAdapterByGpuPreference(i,
+															 DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter_)) != DXGI_ERROR_NOT_FOUND; i++) {
 
 		/// アダプタの情報を取得する
 		DXGI_ADAPTER_DESC3 adapterDesc{};
@@ -269,7 +269,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		assert(SUCCEEDED(hr)); /// 所得出来ないのは一大事
 
 		/// ソフトウェアアダプタでなければ採用
-		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
+		if(!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
 			/// 採用したアダプタの情報をログに出力
 			Engine::ConsolePrint(std::format(L"Use Adapter:{}\n", adapterDesc.Description));
 			break;
@@ -294,13 +294,13 @@ void DirectXCommon::InitializeDXGIDevice() {
 	const char* featureLovelString[] = { "12.2", "12.1", "12.0" };
 
 	/// 高い順に生成できるか試す
-	for (size_t i = 0; i < _countof(featureLevels); i++) {
+	for(size_t i = 0; i < _countof(featureLevels); i++) {
 
 		/// 採用したアダプターでデバイスを生成
 		hr = D3D12CreateDevice(useAdapter_.Get(), featureLevels[i], IID_PPV_ARGS(&device_));
 
 		/// 指定した機能レベルでデバイスが生成できるかを確認
-		if (SUCCEEDED(hr)) {
+		if(SUCCEEDED(hr)) {
 			/// 生成できたのでログ出力を行ってループを抜ける
 			Engine::ConsolePrint(std::format("FeatureLevel : {}", featureLovelString[i]));
 			break;
@@ -316,7 +316,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 #ifdef _DEBUG
 
 	ID3D12InfoQueue* infoQueue = nullptr;
-	if (SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+	if(SUCCEEDED(device_->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 		/// ヤバいエラーのとき止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
 		/// エラーのときに止まる
@@ -413,7 +413,7 @@ void DirectXCommon::CreateFinalRenderTargets() {
 	///// ディスクリプタヒープの生成 /////
 	/// レンダーターゲットビュー用
 	/// ダブルバッファ用に2つ; 多くても構わない
-	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	rtvDescriptorHeap_.Attach(CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false));
 	/// 生成できなかったら起動できない
 	assert(SUCCEEDED(hr));
 
@@ -623,10 +623,10 @@ void DirectXCommon::InitializeRasterizerState() {
 
 void DirectXCommon::InitializeShader() {
 
-	vertexShaderBlob_ = CompileShader(Engine::ConvertString("./Engine/Object3d.VS.hlsl"), L"vs_6_0");
+	vertexShaderBlob_.Attach(CompileShader(Engine::ConvertString("./Engine/Object3d.VS.hlsl"), L"vs_6_0"));
 	assert(vertexShaderBlob_ != nullptr);
 
-	pixelShaderBlob_ = CompileShader(Engine::ConvertString("./Engine/Object3d.PS.hlsl"), L"ps_6_0");
+	pixelShaderBlob_.Attach(CompileShader(Engine::ConvertString("./Engine/Object3d.PS.hlsl"), L"ps_6_0"));
 	assert(pixelShaderBlob_ != nullptr);
 
 }
@@ -699,8 +699,8 @@ void DirectXCommon::InitializePSO() {
 	HRESULT hr = S_FALSE;
 
 	/// DepthBufferStencilResourceの生成
-	depthStencilResource_ = CreateDepthStenciltextureResource(kWindowSize.x, kWindowSize.y);
-	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	depthStencilResource_.Attach(CreateDepthStenciltextureResource(kWindowSize.x, kWindowSize.y));
+	dsvDescriptorHeap_.Attach(CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false));
 	// DSVの設定
 	dsvDesc_.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; //- Format; 基本的にはResourceに合わせる
 	dsvDesc_.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; //- 2dTexture
@@ -799,7 +799,7 @@ void DirectXCommon::InitializeVertexResource() {
 	/// --------------------------------
 	/// ↓ 頂点バッファビューを作成
 	/// --------------------------------
-	
+
 	/// リソースの先頭アドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 
@@ -829,12 +829,12 @@ void DirectXCommon::InitializeViewport() {
 
 void DirectXCommon::CreateResource() {
 
-	
+
 	/// ------------------------------
 	/// ↓ マテリアルリソースの生成
 	/// ------------------------------
-	
-	materialResource_ = CreateBufferResource(sizeof(Vector4));
+
+	materialResource_.Attach(CreateBufferResource(sizeof(Vector4)));
 	Vector4* materialData = nullptr;
 	/// 書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
@@ -846,7 +846,7 @@ void DirectXCommon::CreateResource() {
 	/// ↓ wvpリソースの生成
 	/// ------------------------------
 
-	wvpResource_ = CreateBufferResource(sizeof(Matrix4x4));
+	wvpResource_.Attach(CreateBufferResource(sizeof(Matrix4x4)));
 	Matrix4x4* wvpData = nullptr;
 	/// 書き込むためのアドレスの取得
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
@@ -896,7 +896,7 @@ ID3D12Resource* DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
 void DirectXCommon::CreateShaderResourceView() {
 
 	/// srvDescriptorHeapの設定
-	srvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap_.Attach(CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true));
 
 	/// metaDataを基にSRVの設定
 	srvDesc_.Format = metaData_.format;
@@ -921,9 +921,9 @@ void DirectXCommon::InitializeTextureResource() {
 	/// Textureを読んで転送する
 	mipImages_ = LoadTexture("./Resources/Images/uvChecker.png");
 	metaData_ = mipImages_.GetMetadata();
-	textureResource_ = CreateTextureResource(metaData_);
+	textureResource_.Attach(CreateTextureResource(metaData_));
 
-	intermediateResource_ = UploadTextureData(textureResource_.Get(), mipImages_);
+	intermediateResource_.Attach(UploadTextureData(textureResource_.Get(), mipImages_));
 
 }
 
