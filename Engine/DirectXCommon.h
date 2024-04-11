@@ -6,6 +6,7 @@
 #include <cmath>	
 #include <dxgidebug.h>
 #include <dxcapi.h>
+#include <DirectXTex.h>
 
 /// ComPtr用
 #include <wrl/client.h>
@@ -99,7 +100,8 @@ private:
 	WorldTransform worldTransform_;
 	std::unique_ptr<Camera> camera_;
 
-	///- 開発用UIを出そう
+	///- テクスチャを貼ろう
+	ComPtr<ID3D12Resource> textureResource_;
 
 
 
@@ -149,8 +151,13 @@ private:
 
 	void ClearRenderTarget();
 
+	DirectX::ScratchImage LoadTexture(const std::string& filePath);
 
+	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
+	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+	
+	void InitializeTextureResource();
 
 public:
 

@@ -54,6 +54,9 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeWVPResource();
 	InitializeViewport();
 
+	InitializeTextureResource();
+
+
 	worldTransform_.Init();
 	camera_ = std::make_unique<Camera>();
 
@@ -70,6 +73,7 @@ void DirectXCommon::Finalize() {
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
 
+	textureResource_.Reset();
 
 	wvpResource_.Reset();
 	materialResource_.Reset();
@@ -804,6 +808,114 @@ void DirectXCommon::ClearRenderTarget() {
 	commandList_->ClearRenderTargetView(
 		rtvHandles_[bbIndex], clearColor, 0, nullptr
 	);
+}
+
+
+
+/// ---------------------------
+/// ↓ Textureデータを読む
+/// ---------------------------
+DirectX::ScratchImage DirectXCommon::LoadTexture(const std::string& filePath) {
+	///- テクスチャを読み込む
+	DirectX::ScratchImage image{};
+	std::wstring filePathW = Engine::ConvertString(filePath);
+	HRESULT result = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	assert(SUCCEEDED(result));
+
+	///- ミップマップの作成
+	DirectX::ScratchImage mipImages{};
+	result = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	assert(SUCCEEDED(result));
+
+	return mipImages;
+}
+
+
+
+/// ---------------------------
+/// ↓ DirextX12のTextureResourceを作成
+/// ---------------------------
+ComPtr<ID3D12Resource> DirectXCommon::CreateTextureResource(const DirectX::TexMetadata& metadata) {
+
+	/// --------------------------------------
+	/// ↓ metadataを基にResourceの設定
+	/// --------------------------------------
+	D3D12_RESOURCE_DESC desc{};
+	desc.Width = UINT(metadata.width);		//- textureの幅
+	desc.Height = UINT(metadata.height);	//- textureの高さ
+	desc.MipLevels = UINT16(metadata.mipLevels);		//- mipmapの数
+	desc.DepthOrArraySize = UINT16(metadata.arraySize);	//- 奥行き or 配列Textureの配列数
+	desc.Format = metadata.format;	//- TextureのFormat
+	desc.SampleDesc.Count = 1;	//- サンプリングカウント; 1固定
+	desc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);	//- Textureの次元数
+
+
+	/// --------------------------------------
+	/// ↓ 利用するHeapの設定
+	/// --------------------------------------
+
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;	//- 細かい設定を行う
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK; //- WriteBackポリシーでCPUアクセス可能
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;	//- プロセッサの近くに配置
+
+
+	/// --------------------------------------
+	/// ↓ Resourceを生成
+	/// --------------------------------------
+
+	ComPtr<ID3D12Resource> resource;
+	HRESULT result = device_->CreateCommittedResource(
+		&heapProperties,		//- Heapの設定
+		D3D12_HEAP_FLAG_NONE,	//- Heapの特殊な設定
+		&desc,					//- Resourceの設定
+		D3D12_RESOURCE_STATE_GENERIC_READ,	//- 初回のResourceState; Textureは基本読むだけ
+		nullptr,				//- Clear最適値; 使わないのでnullptr
+		IID_PPV_ARGS(&resource)
+	);
+	assert(SUCCEEDED(result));
+
+	return resource;
+}
+
+
+
+/// ---------------------------
+/// ↓ TextureResourceにデータを転送する
+/// ---------------------------
+void DirectXCommon::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
+	///- meta情報を取得
+	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+
+	///- 全MipMapについて
+	for(size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
+		///- MipMapLevelを指定して各Imageを取得
+		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
+		///- Textureに転送
+		HRESULT result = texture->WriteToSubresource(
+			UINT(mipLevel),
+			nullptr,		//- 全領域へコピー
+			img->pixels,	//- 元データアドレス
+			UINT(img->rowPitch),	//- 1ラインサイズ
+			UINT(img->slicePitch)	//- 1枚サイズ
+		);
+		assert(SUCCEEDED(result));
+	}
+
+}
+
+
+
+/// ---------------------------
+/// ↓ TextureResourceの初期化
+/// ---------------------------
+void DirectXCommon::InitializeTextureResource() {
+
+	DirectX::ScratchImage mipImages = LoadTexture("./Resources/Images/uvChecker.png");
+	const  DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+	textureResource_ = CreateTextureResource(metadata);
+	UploadTextureData(textureResource_.Get(), mipImages);
+
 }
 
 
