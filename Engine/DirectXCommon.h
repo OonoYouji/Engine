@@ -112,6 +112,10 @@ private:
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
 	D3D12_STATIC_SAMPLER_DESC staticSamplers_[1];
 
+	///- 前後関係
+	ComPtr<ID3D12Resource> depthStencilResource_;
+	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+
 
 	WorldTransform worldTransform_;
 	std::unique_ptr<Camera> camera_;
@@ -174,6 +178,10 @@ private:
 	void InitializeDescriptorRange();
 
 	void WriteColor(const Vector4& color);
+
+	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
+
+	void InitializeDepthStencil();
 
 public:
 

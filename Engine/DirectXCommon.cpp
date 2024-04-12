@@ -56,10 +56,11 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeViewport();
 
 	InitializeTextureResource();
-
+	InitializeDepthStencil();
 
 	worldTransform_.Init();
 	camera_ = std::make_unique<Camera>();
+	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 }
 
@@ -74,6 +75,8 @@ void DirectXCommon::Finalize() {
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
 
+	dsvDescriptorHeap_.Reset();
+	depthStencilResource_.Reset();
 	textureResource_.Reset();
 	srvHeap_.Reset();
 
@@ -637,8 +640,22 @@ void DirectXCommon::InitializeShaderBlob() {
 void DirectXCommon::InitializePSO() {
 	HRESULT result = S_FALSE;
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc{};
 
+	/// ---------------------------
+	/// ↓ depthStencilの設定
+	/// ---------------------------
+
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+	depthStencilDesc.DepthEnable = true;	//- Depth機能の有効化
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//- 書き込みする
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;	//- 比較関数の設定; 近ければ描画される
+
+
+	/// ---------------------------
+	/// ↓ PSOの設定
+	/// ---------------------------
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc{};
 	desc.pRootSignature = rootSignature_.Get();	//- RootSignature
 	desc.InputLayout = inputLayoutDesc_;		//- InputLayout
 
@@ -663,6 +680,9 @@ void DirectXCommon::InitializePSO() {
 	///- 画面に色を打ち込みかの設定
 	desc.SampleDesc.Count = 1;
 	desc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	///- DepthStencilの設定
+	desc.DepthStencilState = depthStencilDesc;
+	desc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	///- 実際に生成
 	result = device_->CreateGraphicsPipelineState(
@@ -686,7 +706,7 @@ void DirectXCommon::InitializeVertexResource() {
 	/// ↓ VertexResourceの初期化
 	/// ---------------------------
 
-	vertexResource_.Attach(CreateBufferResource(sizeof(VertexData) * 3));
+	vertexResource_.Attach(CreateBufferResource(sizeof(VertexData) * 6));
 
 
 	/// ---------------------------
@@ -697,7 +717,7 @@ void DirectXCommon::InitializeVertexResource() {
 	///- リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	///- 使用するリソースのサイズ; 頂点数分確保する
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 3;
+	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
 	///- 1頂点あたりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
@@ -710,12 +730,21 @@ void DirectXCommon::InitializeVertexResource() {
 	VertexData* vertexData = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
+	///- 1枚目
 	vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };	//- 左下
 	vertexData[0].texcoord = { 0.0f,1.0f };
 	vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };	//- 上
 	vertexData[1].texcoord = { 0.5f,0.0f };
 	vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };	//- 右下
 	vertexData[2].texcoord = { 1.0f,1.0f };
+
+	///- 2枚目
+	vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };	//- 左下
+	vertexData[3].texcoord = { 0.0f,1.0f };
+	vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };	//- 上
+	vertexData[4].texcoord = { 0.5f,0.0f };
+	vertexData[5].position = { 0.0f,-0.5f,-0.5f,1.0f };	//- 右下
+	vertexData[5].texcoord = { 1.0f,1.0f };
 
 
 }
@@ -836,8 +865,9 @@ void DirectXCommon::ClearRenderTarget() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
 	///- 描画先のRTVを設定する
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
 	commandList_->OMSetRenderTargets(
-		1, &rtvHandles_[bbIndex], false, nullptr
+		1, &rtvHandles_[bbIndex], false, &dsvHandle
 	);
 
 	///- 指定した色で画面をクリア
@@ -1008,6 +1038,9 @@ ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTO
 
 
 
+/// ---------------------------
+/// ↓ 色の書き込み
+/// ---------------------------
 void DirectXCommon::WriteColor(const Vector4& color) {
 	///- マテリアルにデータを書き込む
 	Vector4* materialData = nullptr;
@@ -1018,11 +1051,35 @@ void DirectXCommon::WriteColor(const Vector4& color) {
 
 
 /// ---------------------------
+/// ↓ DepthStencilの生成
+/// ---------------------------
+void DirectXCommon::InitializeDepthStencil() {
+
+	depthStencilResource_ = CreateDepthStencilTextureResource(kWindowSize.x, kWindowSize.y);
+
+	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+
+	///- Heap上にDSVを構築する
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
+	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+
+	///- DsvHeapの先頭にDsvを作る
+	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
+
+}
+
+
+
+/// ---------------------------
 /// ↓ 描画前処理
 /// ---------------------------
 void DirectXCommon::PreDraw() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
+	///- 深度をクリア
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	/// ---------------------------
 	/// ↓ バリアを貼る; commandListを積めるようにする
@@ -1038,6 +1095,47 @@ void DirectXCommon::PreDraw() {
 	///- 画面を一定の色で染める
 	ClearRenderTarget();
 
+}
+
+
+/// ---------------------------
+/// ↓ DepthStencilTextureを作成
+/// ---------------------------
+ComPtr<ID3D12Resource> DirectXCommon::CreateDepthStencilTextureResource(int32_t width, int32_t height) {
+
+	///- 生成するResourceの設定
+	D3D12_RESOURCE_DESC desc{};
+	desc.Width = width;		//- Textureの幅
+	desc.Height = height;	//- Textureの高さ
+	desc.MipLevels = 1;		//- mipmapの数
+	desc.DepthOrArraySize = 1;	//- 奥行き or 配列Textureの配列数
+	desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			//- DepthStencilとして利用可能なフォーマット
+	desc.SampleDesc.Count = 1;	//- サンプリングカウント; 1固定
+	desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;	//- 2次元
+	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;	//- DepthStencilとして使う通知
+
+	///- 利用するHeapの設定
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; //- VRAM上に作る
+
+	///- 深度値のクリア最適化設定
+	D3D12_CLEAR_VALUE depthClearValue{};
+	depthClearValue.DepthStencil.Depth = 1.0f;		//- 1.0f(最大値)でクリア
+	depthClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;	//- フォーマット; Resourceと合わせる
+
+	///- Resourceの生成
+	ComPtr<ID3D12Resource> resource = nullptr;
+	HRESULT result = device_->CreateCommittedResource(
+		&heapProperties,		//- Heapの設定
+		D3D12_HEAP_FLAG_NONE,	//- Heapの特殊な設定; 特になし
+		&desc,					//- Resourceの設定
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,	//- 深度値を書き込む状態にしておく
+		&depthClearValue,		//- Clear最適値
+		IID_PPV_ARGS(&resource)	//- 作成するResourceポインタへのポインタ
+	);
+	assert(SUCCEEDED(result));
+
+	return resource;
 }
 
 
@@ -1110,7 +1208,7 @@ void DirectXCommon::TestDraw() {
 	ImGui::SliderFloat4("color", &color_.x, 0.0f, 1.0f);
 	ImGui::End();
 
-	//worldTransform_.rotate.y += 1.0f / 64.0f;
+	worldTransform_.rotate.y += 1.0f / 64.0f;
 	worldTransform_.MakeWorldMatrix();
 	WriteWVPResource(worldTransform_.worldMatrix * camera_->GetVpMatrix());
 	WriteColor(color_);
@@ -1125,7 +1223,7 @@ void DirectXCommon::TestDraw() {
 	commandList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
 
 	///- 描画 (DrawCall)
-	commandList_->DrawInstanced(3, 1, 0, 0);
+	commandList_->DrawInstanced(6, 1, 0, 0);
 
 }
 
