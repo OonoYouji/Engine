@@ -18,11 +18,18 @@
 #include <Camera.h>
 #include <memory>
 
+#include "Vector2.h"
+#include "Vector4.h"
+
 
 using namespace Microsoft::WRL;
 
 class WinApp;
 
+struct VertexData {
+	Vec4f position;
+	Vec2f texcoord;
+};
 
 /// -------------------------
 /// DirextX12の汎用クラス
@@ -72,7 +79,7 @@ private:
 	ComPtr<ID3DBlob> errorBlob_;
 	ComPtr<ID3D12RootSignature> rootSignature_;
 
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[2];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 
 	D3D12_BLEND_DESC blendDesc_;
@@ -91,19 +98,24 @@ private:
 	D3D12_RECT scissorRect_;
 
 	///- 三角形の色を変えよう
-	D3D12_ROOT_PARAMETER rootParameters_[2];
+	D3D12_ROOT_PARAMETER rootParameters_[3];
 	ComPtr<ID3D12Resource> materialResource_;
 
 	///- 三角形を動かそう
 	ComPtr<ID3D12Resource> wvpResource_;
 
-	WorldTransform worldTransform_;
-	std::unique_ptr<Camera> camera_;
-
 	///- テクスチャを貼ろう
 	ComPtr<ID3D12Resource> textureResource_;
+	ComPtr<ID3D12DescriptorHeap> srvHeap_;
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
+	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
+	D3D12_STATIC_SAMPLER_DESC staticSamplers_[1];
 
 
+	WorldTransform worldTransform_;
+	std::unique_ptr<Camera> camera_;
+	Vector4 color_;
 
 private:
 
@@ -159,6 +171,10 @@ private:
 	
 	void InitializeTextureResource();
 
+	void InitializeDescriptorRange();
+
+	void WriteColor(const Vector4& color);
+
 public:
 
 	/// -----------------------------------
@@ -197,6 +213,8 @@ public:
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
+
+	ID3D12DescriptorHeap* GetSrvHeap() const { return srvHeap_.Get(); }
 
 private:
 

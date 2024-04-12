@@ -4,10 +4,6 @@
 #include <DirectXCommon.h>
 #include <DXCompile.h>
 
-#include "Externals/imgui/imgui.h"
-#include "Externals/imgui/imgui_impl_dx12.h"
-#include "Externals/imgui/imgui_impl_win32.h"
-
 
 ImGuiManager* ImGuiManager::GetInstance() {
 	static ImGuiManager instance;
@@ -20,7 +16,7 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
 	dxCommon_ = dxCommon;
 
-	srvHeap_ = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	ID3D12DescriptorHeap* srvHeap = dxCommon_->GetSrvHeap();
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -30,16 +26,15 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 		dxCommon_->GetDevice(),
 		dxCommon_->GetSwapChainDesc().BufferCount,
 		dxCommon_->GetRTVDesc().Format,
-		srvHeap_.Get(),
-		srvHeap_->GetCPUDescriptorHandleForHeapStart(),
-		srvHeap_->GetGPUDescriptorHandleForHeapStart()
+		srvHeap,
+		srvHeap->GetCPUDescriptorHandleForHeapStart(),
+		srvHeap->GetGPUDescriptorHandleForHeapStart()
 	);
 }
 
 void ImGuiManager::Finalize() {
 
 	dxCommon_ = nullptr;
-	srvHeap_.Reset();
 	
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -53,7 +48,7 @@ void ImGuiManager::BeginFrame() {
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	ID3D12DescriptorHeap* descriptorHeap[] = { srvHeap_.Get() };
+	ID3D12DescriptorHeap* descriptorHeap[] = { dxCommon_->GetSrvHeap() };
 	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeap);
 
 

@@ -3,6 +3,12 @@
 #include <d3d12.h>
 #include <wrl/client.h>
 
+
+#include "Externals/imgui/imgui.h"
+#include "Externals/imgui/imgui_impl_dx12.h"
+#include "Externals/imgui/imgui_impl_win32.h"
+
+
 class WinApp;
 class DirectXCommon;
 using namespace Microsoft::WRL;
@@ -13,7 +19,6 @@ private:
 	ImGuiManager() = default;
 	~ImGuiManager() = default;
 
-	ComPtr<ID3D12DescriptorHeap> srvHeap_;
 	DirectXCommon* dxCommon_;
 
 public:
