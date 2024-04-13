@@ -1,238 +1,216 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Engine\WinApp.cpp">
-      <Filter>Engine\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\DirectXCommon.cpp">
-      <Filter>Engine\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Math\Vector2.cpp">
-      <Filter>Lib\Math\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Engine.cpp">
-      <Filter>Engine\Adapter</Filter>
-    </ClCompile>
-    <ClCompile Include="GameManager\GameManager.cpp">
-      <Filter>GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\IScene.cpp">
-      <Filter>Scene\Interface</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\ITransition.cpp">
-      <Filter>Scene\Interface</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\Transitions\NormalTransition.cpp">
-      <Filter>Scene\Transitons\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\Scenes\Scene_Game.cpp">
-      <Filter>Scene\Scenes\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Lib\Math\Vector4.cpp">
-      <Filter>Lib\Math\Source</Filter>
+    <ClCompile Include="Lib\Math\WorldTransform.cpp">
+      <Filter>Source\Math</Filter>
     </ClCompile>
     <ClCompile Include="Lib\Math\Matrix4x4.cpp">
-      <Filter>Lib\Math\Source</Filter>
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Vector4.cpp">
+      <Filter>Source\Math</Filter>
     </ClCompile>
     <ClCompile Include="Lib\Math\Vector3.cpp">
-      <Filter>Lib\Math\Source</Filter>
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Lib\Math\Vector2.cpp">
+      <Filter>Source\Math</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Camera.cpp">
-      <Filter>Engine\Source</Filter>
+      <Filter>Source\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DXCompile.cpp">
-      <Filter>Engine\Source</Filter>
+    <ClCompile Include="Engine\DirectXCommon.cpp">
+      <Filter>Source\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Externals\imgui\imgui.cpp">
-      <Filter>ImGui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Externals\imgui\imgui_demo.cpp">
-      <Filter>ImGui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Externals\imgui\imgui_draw.cpp">
-      <Filter>ImGui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Externals\imgui\imgui_impl_dx12.cpp">
-      <Filter>ImGui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp">
-      <Filter>ImGui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Externals\imgui\imgui_tables.cpp">
-      <Filter>ImGui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Externals\imgui\imgui_widgets.cpp">
-      <Filter>ImGui\Source</Filter>
+    <ClCompile Include="Engine\WinApp.cpp">
+      <Filter>Source\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\ImGuiManager.cpp">
-      <Filter>Engine\Source</Filter>
+      <Filter>Source\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Math\WorldTransform.cpp">
-      <Filter>Lib\Math\Source</Filter>
+    <ClCompile Include="Engine\Engine.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Scenes\Scene_Game.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\IScene.cpp">
+      <Filter>Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager\GameManager.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui.cpp">
+      <Filter>Source\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_demo.cpp">
+      <Filter>Source\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_draw.cpp">
+      <Filter>Source\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>Source\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp">
+      <Filter>Source\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_tables.cpp">
+      <Filter>Source\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Externals\imgui\imgui_widgets.cpp">
+      <Filter>Source\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\ITransition.cpp">
+      <Filter>Source\SceneTransition</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\Transitions\NormalTransition.cpp">
+      <Filter>Source\SceneTransition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Engine">
-      <UniqueIdentifier>{a00e76b4-c44a-4923-a176-a626158475f3}</UniqueIdentifier>
+    <Filter Include="Include">
+      <UniqueIdentifier>{4622ee62-b182-40d2-9a35-d05052a09566}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Include">
-      <UniqueIdentifier>{d7d335ac-5bdb-4b9d-920c-dbac6ab314b6}</UniqueIdentifier>
+    <Filter Include="Source">
+      <UniqueIdentifier>{2dfb7c48-e617-44c3-90cf-e0c7160207dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Source">
-      <UniqueIdentifier>{91da0505-6055-47be-874a-d1351f3a7a73}</UniqueIdentifier>
+    <Filter Include="Include\Math">
+      <UniqueIdentifier>{002df13b-0c38-42b0-8532-c0fd5fd9521e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib">
-      <UniqueIdentifier>{a4dfc9de-888e-48a7-965a-128739c90515}</UniqueIdentifier>
+    <Filter Include="Source\Math">
+      <UniqueIdentifier>{76127770-fb31-43af-8125-4254705859c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Math">
-      <UniqueIdentifier>{4263c13e-1e95-4a5a-abb3-43380cbaae02}</UniqueIdentifier>
+    <Filter Include="Include\3D">
+      <UniqueIdentifier>{9fa788de-850a-423b-b064-f6a6e52004ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Math\Include">
-      <UniqueIdentifier>{926fb700-cb67-4a78-9688-7d97188355e4}</UniqueIdentifier>
+    <Filter Include="Source\3D">
+      <UniqueIdentifier>{255d72a8-b50d-45a9-ba38-ebaa7f8de980}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Lib\Math\Source">
-      <UniqueIdentifier>{f53ee9c8-a688-4092-bdf1-dc94ec7e6ede}</UniqueIdentifier>
+    <Filter Include="Include\Base">
+      <UniqueIdentifier>{a7bea987-a6f7-44da-8562-c8f71d349021}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Adapter">
-      <UniqueIdentifier>{19a40bb7-e490-4ba6-a8e6-acd8c78e31a5}</UniqueIdentifier>
+    <Filter Include="Source\Base">
+      <UniqueIdentifier>{e2d6c214-9cb9-4ba8-b3e8-0a403ca7167f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{ec8fc508-e774-444b-8d03-626510fa4b41}</UniqueIdentifier>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{996af508-c639-4371-af32-61be6c0d9cba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameManager">
-      <UniqueIdentifier>{741a5a1a-add4-47d9-bd49-12109f1821b4}</UniqueIdentifier>
+    <Filter Include="Source\Scene">
+      <UniqueIdentifier>{f55f8dfe-a48c-4524-8365-d03c7767a17f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Interface">
-      <UniqueIdentifier>{1d9a6a34-c5b0-4ab7-960c-a7d935db54fc}</UniqueIdentifier>
+    <Filter Include="Include\Scene">
+      <UniqueIdentifier>{056c8d07-225d-4618-8b81-1f8cb03d59f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Scenes">
-      <UniqueIdentifier>{a93eab8d-c52c-495d-a935-c59fd1fcd46b}</UniqueIdentifier>
+    <Filter Include="Include\Config">
+      <UniqueIdentifier>{030923b0-30e4-4ba5-8d89-4cee04071de1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Scenes\Include">
-      <UniqueIdentifier>{e7b3a5e5-2503-4a09-b585-0fa224af755d}</UniqueIdentifier>
+    <Filter Include="Include\ImGui">
+      <UniqueIdentifier>{7d02004b-d39c-43bc-958d-72ce3a2c9719}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Scenes\Source">
-      <UniqueIdentifier>{e0e2cb65-69ca-45cf-a029-f1697721fc98}</UniqueIdentifier>
+    <Filter Include="Source\ImGui">
+      <UniqueIdentifier>{443388e0-047c-4b5b-934f-adeba3b83b4b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Transitons">
-      <UniqueIdentifier>{6aaa3196-1dd1-4925-a630-3c43faa906f8}</UniqueIdentifier>
+    <Filter Include="Include\SceneTransition">
+      <UniqueIdentifier>{ea88b9fe-05e7-447a-8cf6-fc6600c39d1d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene\Transitons\Include">
-      <UniqueIdentifier>{7646b005-cd88-40a2-9fc8-aa954f0ede86}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Scene\Transitons\Source">
-      <UniqueIdentifier>{246f6a36-0101-46a8-a9b0-0911abfea24c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ImGui">
-      <UniqueIdentifier>{02cf35e3-ddc4-4ae7-b85b-4c15ad0be177}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ImGui\Include">
-      <UniqueIdentifier>{29b3b52a-5829-4d67-a523-1e931edd10fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ImGui\Source">
-      <UniqueIdentifier>{a986697f-8ecf-4cf2-ab4c-116a581fa598}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Config">
-      <UniqueIdentifier>{3c245ce3-18fa-4bb0-a080-c3d2026453cd}</UniqueIdentifier>
+    <Filter Include="Source\SceneTransition">
+      <UniqueIdentifier>{551b43ae-8392-41f4-bb7f-3ffc0d403195}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\WinApp.h">
-      <Filter>Engine\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\DirectXCommon.h">
-      <Filter>Engine\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Math\Vector2.h">
-      <Filter>Lib\Math\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Engine.h">
-      <Filter>Engine\Adapter</Filter>
-    </ClInclude>
-    <ClInclude Include="GameManager\GameManager.h">
-      <Filter>GameManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\IScene.h">
-      <Filter>Scene\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\ITransition.h">
-      <Filter>Scene\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\Transitions\NormalTransition.h">
-      <Filter>Scene\Transitons\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\SafeDelete.h">
-      <Filter>Engine\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\Scenes\Scene_Game.h">
-      <Filter>Scene\Scenes\Include</Filter>
+    <ClInclude Include="Lib\Math\WorldTransform.h">
+      <Filter>Include\Math</Filter>
     </ClInclude>
     <ClInclude Include="Lib\Math\Vector4.h">
-      <Filter>Lib\Math\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Lib\Math\Matrix4x4.h">
-      <Filter>Lib\Math\Include</Filter>
+      <Filter>Include\Math</Filter>
     </ClInclude>
     <ClInclude Include="Lib\Math\Vector3.h">
-      <Filter>Lib\Math\Include</Filter>
+      <Filter>Include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Vector2.h">
+      <Filter>Include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Lib\Math\Matrix4x4.h">
+      <Filter>Include\Math</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Camera.h">
-      <Filter>Engine\Include</Filter>
+      <Filter>Include\3D</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DXCompile.h">
-      <Filter>Engine\Include</Filter>
+    <ClInclude Include="Engine\DirectXCommon.h">
+      <Filter>Include\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Externals\imgui\imconfig.h">
-      <Filter>ImGui\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Externals\imgui\imgui.h">
-      <Filter>ImGui\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Externals\imgui\imgui_impl_dx12.h">
-      <Filter>ImGui\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Externals\imgui\imgui_impl_win32.h">
-      <Filter>ImGui\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Externals\imgui\imgui_internal.h">
-      <Filter>ImGui\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Externals\imgui\imstb_rectpack.h">
-      <Filter>ImGui\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Externals\imgui\imstb_textedit.h">
-      <Filter>ImGui\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Externals\imgui\imstb_truetype.h">
-      <Filter>ImGui\Include</Filter>
+    <ClInclude Include="Engine\WinApp.h">
+      <Filter>Include\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\ImGuiManager.h">
-      <Filter>Engine\Include</Filter>
+      <Filter>Include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Engine.h">
+      <Filter>Include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scenes\Scene_Game.h">
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\IScene.h">
+      <Filter>Include\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager\GameManager.h">
+      <Filter>Include\Base</Filter>
     </ClInclude>
     <ClInclude Include="Config\Environment.h">
-      <Filter>Config</Filter>
+      <Filter>Include\Config</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Math\WorldTransform.h">
-      <Filter>Lib\Math\Include</Filter>
+    <ClInclude Include="Externals\imgui\imconfig.h">
+      <Filter>Include\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui.h">
+      <Filter>Include\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_impl_dx12.h">
+      <Filter>Include\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_impl_win32.h">
+      <Filter>Include\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imgui_internal.h">
+      <Filter>Include\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_rectpack.h">
+      <Filter>Include\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_textedit.h">
+      <Filter>Include\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Externals\imgui\imstb_truetype.h">
+      <Filter>Include\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\ITransition.h">
+      <Filter>Include\SceneTransition</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Transitions\NormalTransition.h">
+      <Filter>Include\SceneTransition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Engine\Object3d.PS.hlsl">
-      <Filter>Engine\Include</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Engine\Object3d.VS.hlsl">
-      <Filter>Engine\Include</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Externals\imgui\LICENSE.txt">
-      <Filter>ImGui\Include</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="Engine\Object3d.hlsli">
-      <Filter>Engine\Include</Filter>
+      <Filter>Shader</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Externals\imgui\LICENSE.txt">
+      <Filter>Include\ImGui</Filter>
+    </Text>
   </ItemGroup>
 </Project>
