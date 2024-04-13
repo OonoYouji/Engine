@@ -237,7 +237,7 @@ public:
 
 private:
 
-	DirectXCommon();
+	DirectXCommon() = default;
 	~DirectXCommon() = default;
 
 	/// 代入演算子、コピーコンストラクタの禁止
