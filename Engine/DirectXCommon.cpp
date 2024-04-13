@@ -1072,6 +1072,57 @@ void DirectXCommon::InitializeDepthStencil() {
 
 
 /// ---------------------------
+/// ↓ スプライトの表示に必要な変数の初期化
+/// ---------------------------
+void DirectXCommon::InitializeSprite() {
+
+	///- 頂点リソースの生成
+	vertexResourceSprite_ = CreateBufferResource(sizeof(VertexData) * 6);
+
+	///- 頂点バッファビューを作成する
+	///- リソースの先頭アドレスから使う
+	vertexBufferViewSprite_.BufferLocation = vertexResourceSprite_->GetGPUVirtualAddress();
+	///- 使用するリソースのサイズは頂点の数分
+	vertexBufferViewSprite_.SizeInBytes = sizeof(VertexData) * 6;
+	///- 1頂点当たりのサイズ
+	vertexBufferViewSprite_.StrideInBytes = sizeof(VertexData);
+
+	/// ---------------------------
+	/// ↓ 頂点データを設定
+	/// ---------------------------
+
+	VertexData* vertexDataSprite = nullptr;
+	vertexResourceSprite_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
+
+	///- 1枚目
+	vertexDataSprite[0].position = { 0.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
+	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
+	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
+
+	///- 2枚目
+	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
+	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
+	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
+	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
+	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
+
+
+	/// ---------------------------
+	/// ↓ Transform周りを作る
+	/// ---------------------------
+
+	
+
+
+}
+
+
+
+/// ---------------------------
 /// ↓ 描画前処理
 /// ---------------------------
 void DirectXCommon::PreDraw() {

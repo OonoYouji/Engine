@@ -31,6 +31,11 @@ struct VertexData {
 	Vec2f texcoord;
 };
 
+struct Texture {
+	ComPtr<ID3D12Resource> vertexResource;
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+};
+
 /// -------------------------
 /// DirextX12の汎用クラス
 /// -------------------------
@@ -116,6 +121,10 @@ private:
 	ComPtr<ID3D12Resource> depthStencilResource_;
 	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 
+	///- Spriteの表示
+	ComPtr<ID3D12Resource> vertexResourceSprite_;
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite_;
+	ComPtr<ID3D12Resource> transformationMatrixResourceSprite_;
 
 	WorldTransform worldTransform_;
 	std::unique_ptr<Camera> camera_;
@@ -183,6 +192,8 @@ private:
 
 	void InitializeDepthStencil();
 
+	void InitializeSprite();
+
 public:
 
 	/// -----------------------------------
@@ -226,7 +237,7 @@ public:
 
 private:
 
-	DirectXCommon() = default;
+	DirectXCommon();
 	~DirectXCommon() = default;
 
 	/// 代入演算子、コピーコンストラクタの禁止
