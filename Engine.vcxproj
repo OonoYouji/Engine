@@ -107,7 +107,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Game;$(ProjectDir)GameManager;$(ProjectDir)Scene\Transitions;$(ProjectDir)Scene\Scenes;$(ProjectDir)Scene;$(ProjectDir)Lib\Math;$(ProjectDir)Lib;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)3D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Math;$(ProjectDir)Base;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -147,11 +147,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Camera.cpp" />
-    <ClCompile Include="Engine\DirectXCommon.cpp" />
-    <ClCompile Include="Engine\Engine.cpp" />
-    <ClCompile Include="Engine\ImGuiManager.cpp" />
-    <ClCompile Include="Engine\WinApp.cpp" />
+    <ClCompile Include="3D\Camera.cpp" />
+    <ClCompile Include="Base\DirectXCommon.cpp" />
+    <ClCompile Include="Base\Engine.cpp" />
+    <ClCompile Include="Base\ImGuiManager.cpp" />
+    <ClCompile Include="Base\WinApp.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
     <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="Externals\imgui\imgui_draw.cpp" />
@@ -159,25 +159,25 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="Externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="GameManager\GameManager.cpp" />
-    <ClCompile Include="Lib\Math\Matrix4x4.cpp" />
-    <ClCompile Include="Lib\Math\Vector2.cpp" />
-    <ClCompile Include="Lib\Math\Vector3.cpp" />
-    <ClCompile Include="Lib\Math\Vector4.cpp" />
-    <ClCompile Include="Lib\Math\WorldTransform.cpp" />
+    <ClCompile Include="Base\GameManager.cpp" />
+    <ClCompile Include="Math\Matrix4x4.cpp" />
+    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Math\Vector3.cpp" />
+    <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="Math\WorldTransform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene\IScene.cpp" />
-    <ClCompile Include="Scene\ITransition.cpp" />
-    <ClCompile Include="Scene\Scenes\Scene_Game.cpp" />
-    <ClCompile Include="Scene\Transitions\NormalTransition.cpp" />
+    <ClCompile Include="SceneTransition\ITransition.cpp" />
+    <ClCompile Include="Scene\Scene_Game.cpp" />
+    <ClCompile Include="SceneTransition\NormalTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config\Environment.h" />
-    <ClInclude Include="Engine\Camera.h" />
-    <ClInclude Include="Engine\DirectXCommon.h" />
-    <ClInclude Include="Engine\Engine.h" />
-    <ClInclude Include="Engine\ImGuiManager.h" />
-    <ClInclude Include="Engine\WinApp.h" />
+    <ClInclude Include="3D\Camera.h" />
+    <ClInclude Include="Base\DirectXCommon.h" />
+    <ClInclude Include="Base\Engine.h" />
+    <ClInclude Include="Base\ImGuiManager.h" />
+    <ClInclude Include="Base\WinApp.h" />
     <ClInclude Include="Externals\imgui\imconfig.h" />
     <ClInclude Include="Externals\imgui\imgui.h" />
     <ClInclude Include="Externals\imgui\imgui_impl_dx12.h" />
@@ -186,23 +186,23 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="Externals\imgui\imstb_textedit.h" />
     <ClInclude Include="Externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="GameManager\GameManager.h" />
-    <ClInclude Include="Lib\Math\Matrix4x4.h" />
-    <ClInclude Include="Lib\Math\Vector2.h" />
-    <ClInclude Include="Lib\Math\Vector3.h" />
-    <ClInclude Include="Lib\Math\Vector4.h" />
-    <ClInclude Include="Lib\Math\WorldTransform.h" />
+    <ClInclude Include="Base\GameManager.h" />
+    <ClInclude Include="Math\Matrix4x4.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Math\Vector3.h" />
+    <ClInclude Include="Math\Vector4.h" />
+    <ClInclude Include="Math\WorldTransform.h" />
     <ClInclude Include="Scene\IScene.h" />
-    <ClInclude Include="Scene\ITransition.h" />
-    <ClInclude Include="Scene\Scenes\Scene_Game.h" />
-    <ClInclude Include="Scene\Transitions\NormalTransition.h" />
+    <ClInclude Include="SceneTransition\ITransition.h" />
+    <ClInclude Include="Scene\Scene_Game.h" />
+    <ClInclude Include="SceneTransition\NormalTransition.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\Object3d.PS.hlsl">
+    <FxCompile Include="Shader\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Object3d.VS.hlsl">
+    <FxCompile Include="Shader\Object3d.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
@@ -216,7 +216,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Object3d.hlsli" />
+    <None Include="Shader\Object3d.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

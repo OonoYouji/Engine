@@ -8,9 +8,14 @@
 #include <Environment.h>
 #include <WinApp.h>
 #include <DirectXCommon.h>
-#include <DXCompile.h>
 #include <ImGuiManager.h>
 #include <Camera.h>
+
+template<class T>
+void SafeDelete(T* t) {
+	delete t;
+	t = nullptr;
+}
 
 namespace {
 

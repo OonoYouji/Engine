@@ -3,6 +3,11 @@
 #include <Scene_Game.h>
 #include <memory>
 
+template<class T>
+void SafeDelete(T* t) {
+	delete t;
+	t = nullptr;
+}
 
 namespace {
 

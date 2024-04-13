@@ -1,43 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Lib\Math\WorldTransform.cpp">
+    <ClCompile Include="Math\WorldTransform.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Math\Matrix4x4.cpp">
+    <ClCompile Include="Math\Matrix4x4.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Math\Vector4.cpp">
+    <ClCompile Include="Math\Vector4.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Math\Vector3.cpp">
+    <ClCompile Include="Math\Vector3.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Lib\Math\Vector2.cpp">
+    <ClCompile Include="Math\Vector2.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Camera.cpp">
+    <ClCompile Include="3D\Camera.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\DirectXCommon.cpp">
+    <ClCompile Include="Base\DirectXCommon.cpp">
       <Filter>Source\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\WinApp.cpp">
+    <ClCompile Include="Base\WinApp.cpp">
       <Filter>Source\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\ImGuiManager.cpp">
+    <ClCompile Include="Base\ImGuiManager.cpp">
       <Filter>Source\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Engine.cpp">
+    <ClCompile Include="Base\Engine.cpp">
       <Filter>Source\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Scenes\Scene_Game.cpp">
+    <ClCompile Include="Scene\Scene_Game.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Scene\IScene.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="GameManager\GameManager.cpp">
+    <ClCompile Include="Base\GameManager.cpp">
       <Filter>Source\Base</Filter>
     </ClCompile>
     <ClCompile Include="Externals\imgui\imgui.cpp">
@@ -64,10 +64,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\ITransition.cpp">
+    <ClCompile Include="SceneTransition\ITransition.cpp">
       <Filter>Source\SceneTransition</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Transitions\NormalTransition.cpp">
+    <ClCompile Include="SceneTransition\NormalTransition.cpp">
       <Filter>Source\SceneTransition</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,43 +122,43 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Lib\Math\WorldTransform.h">
+    <ClInclude Include="Math\WorldTransform.h">
       <Filter>Include\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Math\Vector4.h">
+    <ClInclude Include="Math\Vector4.h">
       <Filter>Include\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Math\Vector3.h">
+    <ClInclude Include="Math\Vector3.h">
       <Filter>Include\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Math\Vector2.h">
+    <ClInclude Include="Math\Vector2.h">
       <Filter>Include\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Lib\Math\Matrix4x4.h">
+    <ClInclude Include="Math\Matrix4x4.h">
       <Filter>Include\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Camera.h">
+    <ClInclude Include="3D\Camera.h">
       <Filter>Include\3D</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\DirectXCommon.h">
+    <ClInclude Include="Base\DirectXCommon.h">
       <Filter>Include\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\WinApp.h">
+    <ClInclude Include="Base\WinApp.h">
       <Filter>Include\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\ImGuiManager.h">
+    <ClInclude Include="Base\ImGuiManager.h">
       <Filter>Include\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Engine.h">
+    <ClInclude Include="Base\Engine.h">
       <Filter>Include\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Scenes\Scene_Game.h">
+    <ClInclude Include="Scene\Scene_Game.h">
       <Filter>Include\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene\IScene.h">
       <Filter>Include\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager\GameManager.h">
+    <ClInclude Include="Base\GameManager.h">
       <Filter>Include\Base</Filter>
     </ClInclude>
     <ClInclude Include="Config\Environment.h">
@@ -188,23 +188,23 @@
     <ClInclude Include="Externals\imgui\imstb_truetype.h">
       <Filter>Include\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\ITransition.h">
+    <ClInclude Include="SceneTransition\ITransition.h">
       <Filter>Include\SceneTransition</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\Transitions\NormalTransition.h">
+    <ClInclude Include="SceneTransition\NormalTransition.h">
       <Filter>Include\SceneTransition</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\Object3d.PS.hlsl">
+    <FxCompile Include="Shader\Object3d.PS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Object3d.VS.hlsl">
+    <FxCompile Include="Shader\Object3d.VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Object3d.hlsli">
+    <None Include="Shader\Object3d.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

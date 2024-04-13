@@ -2,7 +2,6 @@
 
 #include <WinApp.h>
 #include <DirectXCommon.h>
-#include <DXCompile.h>
 
 
 ImGuiManager* ImGuiManager::GetInstance() {
