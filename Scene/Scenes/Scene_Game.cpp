@@ -1,5 +1,6 @@
 #include <Scene_Game.h>
 #include <Engine.h>
+#include "DirectXCommon.h"
 
 #include <imgui.h>
 
@@ -34,6 +35,7 @@ void Scene_Game::Draw() {
 	ImGui::ShowDemoWindow();
 
 	Engine::TestDraw();
+	DirectXCommon::GetInstance()->DrawSprite();
 
 }
 

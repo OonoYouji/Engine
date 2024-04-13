@@ -58,6 +58,8 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeTextureResource();
 	InitializeDepthStencil();
 
+	InitializeSprite();
+
 	worldTransform_.Init();
 	camera_ = std::make_unique<Camera>();
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
@@ -74,6 +76,9 @@ void DirectXCommon::Finalize() {
 	/// ---------------------------
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
+
+	transformationMatrixResourceSprite_.Reset();
+	vertexResourceSprite_.Reset();
 
 	dsvDescriptorHeap_.Reset();
 	depthStencilResource_.Reset();
@@ -224,7 +229,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		//- エラー
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//- 警告
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 		///- エラーと警告の抑制
 		D3D12_MESSAGE_ID denyIds[] = {
@@ -1077,7 +1082,7 @@ void DirectXCommon::InitializeDepthStencil() {
 void DirectXCommon::InitializeSprite() {
 
 	///- 頂点リソースの生成
-	vertexResourceSprite_ = CreateBufferResource(sizeof(VertexData) * 6);
+	vertexResourceSprite_.Attach(CreateBufferResource(sizeof(VertexData) * 6));
 
 	///- 頂点バッファビューを作成する
 	///- リソースの先頭アドレスから使う
@@ -1115,8 +1120,21 @@ void DirectXCommon::InitializeSprite() {
 	/// ↓ Transform周りを作る
 	/// ---------------------------
 
-	
+	transformationMatrixResourceSprite_ .Attach(CreateBufferResource(sizeof(Matrix4x4)));
 
+	///- データを書き込む
+	Matrix4x4* transformationMatrixDataSprite = nullptr;
+	///- 書き込むためのアドレスを取得
+	transformationMatrixResourceSprite_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
+	*transformationMatrixDataSprite = Matrix4x4::MakeIdentity();
+
+	transformSprite_.Init();
+
+	Matrix4x4 worldMatrixSprite = transformSprite_.worldMatrix;
+	Matrix4x4 viewMatrixSprite = Matrix4x4::MakeIdentity();
+	Matrix4x4 projectionMatrixSprite = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, float(kWindowSize.x), float(kWindowSize.y), 0.0f, 100.0f);
+	Matrix4x4 wvpMatrixSprite = worldMatrixSprite * (viewMatrixSprite * projectionMatrixSprite);
+	*transformationMatrixDataSprite = wvpMatrixSprite;
 
 }
 
@@ -1279,3 +1297,17 @@ void DirectXCommon::TestDraw() {
 }
 
 
+
+/// <summary>
+/// Spriteの描画
+/// </summary>
+void DirectXCommon::DrawSprite() {
+
+
+	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList_->SetPipelineState(graphicsPipelineState_.Get());
+	commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite_);
+	commandList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite_->GetGPUVirtualAddress());
+	commandList_->DrawInstanced(6, 1, 0, 0);
+
+}

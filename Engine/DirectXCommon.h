@@ -125,6 +125,8 @@ private:
 	ComPtr<ID3D12Resource> vertexResourceSprite_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite_;
 	ComPtr<ID3D12Resource> transformationMatrixResourceSprite_;
+	WorldTransform transformSprite_;
+	
 
 	WorldTransform worldTransform_;
 	std::unique_ptr<Camera> camera_;
@@ -234,6 +236,8 @@ public:
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 
 	ID3D12DescriptorHeap* GetSrvHeap() const { return srvHeap_.Get(); }
+
+	void DrawSprite();
 
 private:
 
