@@ -1,5 +1,9 @@
 #include <Camera.h>
 
+#include <Environment.h>
+
+
+
 Camera::Camera() { Init(); }
 Camera::~Camera() { Finalize(); }
 
@@ -12,7 +16,9 @@ void Camera::Init() {
 	worldMatrix_ = Matrix4x4::MakeAffine(scale_, rotate_, worldPos_);
 	viewMatrix_ = Matrix4x4::MakeInverse(worldMatrix_);
 
-	projectionMatrix_ = Matrix4x4::MakePerspectiveFovMatrix(0.45f, 1280.0f / 720.0f, 0.1f, 100.0f);
+	projectionMatrix_ = Matrix4x4::MakePerspectiveFovMatrix(
+		0.45f, static_cast<float>(kWindowSize.x) / static_cast<float>(kWindowSize.y),
+		0.1f, 100.0f);
 
 	vpMatrix_ = viewMatrix_ * projectionMatrix_;
 
