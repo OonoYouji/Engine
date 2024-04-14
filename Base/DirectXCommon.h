@@ -174,7 +174,6 @@ private:
 
 	void WriteWVPResource(const Mat4& matrix);
 
-	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
 
 	void ClearRenderTarget();
 
@@ -238,6 +237,9 @@ public:
 	ID3D12DescriptorHeap* GetSrvHeap() const { return srvHeap_.Get(); }
 
 	void DrawSprite();
+
+	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
+
 
 private:
 

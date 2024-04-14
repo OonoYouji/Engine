@@ -70,6 +70,12 @@
     <ClCompile Include="SceneTransition\NormalTransition.cpp">
       <Filter>Source\SceneTransition</Filter>
     </ClCompile>
+    <ClCompile Include="2D\Sprite.cpp">
+      <Filter>Source\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\TextureManager.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -119,6 +125,12 @@
     </Filter>
     <Filter Include="Source\SceneTransition">
       <UniqueIdentifier>{551b43ae-8392-41f4-bb7f-3ffc0d403195}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\2D">
+      <UniqueIdentifier>{82906231-5cf4-4a99-afa8-1cb1b952f208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\2D">
+      <UniqueIdentifier>{a58db450-04fe-49a9-a4a2-84d0e335c6e3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +205,12 @@
     </ClInclude>
     <ClInclude Include="SceneTransition\NormalTransition.h">
       <Filter>Include\SceneTransition</Filter>
+    </ClInclude>
+    <ClInclude Include="2D\Sprite.h">
+      <Filter>Include\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\TextureManager.h">
+      <Filter>Include\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

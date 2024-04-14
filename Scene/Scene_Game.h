@@ -1,8 +1,10 @@
 #pragma once
 
 #include <IScene.h>
-
+#include <memory>
+#include <vector>
 #include <Vector3.h>
+#include "2D/Sprite.h"
 
 class Scene_Game final
 	: public IScene {
@@ -18,8 +20,7 @@ public:
 
 private:
 
-	Vec3f scale_;
-	Vec3f rotate_;
-	Vec3f pos_;
+	std::vector<Vec2f> pos_;
+	std::vector<std::unique_ptr<Sprite>> sprite_;
 
 };

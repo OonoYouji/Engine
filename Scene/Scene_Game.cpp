@@ -11,23 +11,21 @@ Scene_Game::~Scene_Game() { Finalize(); }
 
 void Scene_Game::Init() {
 
-	scale_ = { 1.0f,1.0f,1.0f };
-	rotate_ = { 0.0f,0.0f,0.0f };
-	pos_ = { 0.0f,0.0f,0.0f };
+	pos_.resize(2);
+
+	sprite_.resize(2);
+	for(auto& sprite : sprite_) {
+		sprite = std::make_unique<Sprite>();
+		sprite->Init();
+	}
 
 }
 
 void Scene_Game::Update() {
 
-	rotate_.y += 0.01f;
-	//rotate_.x -= 0.01f;
-	/*ImGui::Begin("main");
-
-	ImGui::DragFloat3("pos", &pos_.x, 0.05f);
-	ImGui::DragFloat3("rotate", &rotate_.x, 0.005f);
-
-	ImGui::End();*/
-
+	
+	sprite_[0]->ImGui("spriteA");
+	sprite_[1]->ImGui("spriteB");
 }
 
 void Scene_Game::Draw() {
@@ -35,8 +33,14 @@ void Scene_Game::Draw() {
 	ImGui::ShowDemoWindow();
 
 	Engine::TestDraw();
-	DirectXCommon::GetInstance()->DrawSprite();
+	//DirectXCommon::GetInstance()->DrawSprite();
+	sprite_[0]->Draw();
+	sprite_[1]->Draw();
 
 }
 
-void Scene_Game::Finalize() {}
+void Scene_Game::Finalize() {
+	for(auto& sprite : sprite_) {
+		sprite.reset();
+	}
+}

@@ -628,10 +628,10 @@ void DirectXCommon::InitializeRasterizer() {
 void DirectXCommon::InitializeShaderBlob() {
 
 	///- Shaderをコンパイルする
-	vertexShaderBlob_ = CompileShader(L"./Engine/Object3d.VS.hlsl", L"vs_6_0");
+	vertexShaderBlob_ = CompileShader(L"./Shader/Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 
-	pixelShaderBlob_ = CompileShader(L"./Engine/Object3d.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob_ = CompileShader(L"./Shader/Object3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 
 
@@ -1141,33 +1141,6 @@ void DirectXCommon::InitializeSprite() {
 
 
 /// ---------------------------
-/// ↓ 描画前処理
-/// ---------------------------
-void DirectXCommon::PreDraw() {
-	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
-
-	///- 深度をクリア
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
-	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-
-	/// ---------------------------
-	/// ↓ バリアを貼る; commandListを積めるようにする
-	/// ---------------------------
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = swapChainResource_[bbIndex].Get();
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	commandList_->ResourceBarrier(1, &barrier);
-
-	///- 画面を一定の色で染める
-	ClearRenderTarget();
-
-}
-
-
-/// ---------------------------
 /// ↓ DepthStencilTextureを作成
 /// ---------------------------
 ComPtr<ID3D12Resource> DirectXCommon::CreateDepthStencilTextureResource(int32_t width, int32_t height) {
@@ -1205,6 +1178,42 @@ ComPtr<ID3D12Resource> DirectXCommon::CreateDepthStencilTextureResource(int32_t 
 	assert(SUCCEEDED(result));
 
 	return resource;
+}
+
+
+
+/// ---------------------------
+/// ↓ 描画前処理
+/// ---------------------------
+void DirectXCommon::PreDraw() {
+	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+
+	///- 深度をクリア
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+	/// ---------------------------
+	/// ↓ バリアを貼る; commandListを積めるようにする
+	/// ---------------------------
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = swapChainResource_[bbIndex].Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	commandList_->ResourceBarrier(1, &barrier);
+
+	///- 画面を一定の色で染める
+	ClearRenderTarget();
+
+	///- viewport; scissorRectを設定
+	commandList_->RSSetViewports(1, &viewport_);
+	commandList_->RSSetScissorRects(1, &scissorRect_);
+
+	///- RootSignatureを設定; PSOとは別に別途設定が必要
+	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList_->SetPipelineState(graphicsPipelineState_.Get());
+
 }
 
 
@@ -1264,13 +1273,7 @@ void DirectXCommon::PostDraw() {
 /// ---------------------------
 void DirectXCommon::TestDraw() {
 
-	///- viewport; scissorRectを設定
-	commandList_->RSSetViewports(1, &viewport_);
-	commandList_->RSSetScissorRects(1, &scissorRect_);
 
-	///- RootSignatureを設定; PSOとは別に別途設定が必要
-	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList_->SetPipelineState(graphicsPipelineState_.Get());
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
 	ImGui::Begin("Triangle");
@@ -1304,8 +1307,6 @@ void DirectXCommon::TestDraw() {
 void DirectXCommon::DrawSprite() {
 
 
-	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList_->SetPipelineState(graphicsPipelineState_.Get());
 	commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite_);
 	commandList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite_->GetGPUVirtualAddress());
 	commandList_->DrawInstanced(6, 1, 0, 0);

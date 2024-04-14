@@ -147,10 +147,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="2D\Sprite.cpp" />
     <ClCompile Include="3D\Camera.cpp" />
     <ClCompile Include="Base\DirectXCommon.cpp" />
     <ClCompile Include="Base\Engine.cpp" />
     <ClCompile Include="Base\ImGuiManager.cpp" />
+    <ClCompile Include="Base\TextureManager.cpp" />
     <ClCompile Include="Base\WinApp.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
     <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
@@ -172,6 +174,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="SceneTransition\NormalTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="2D\Sprite.h" />
+    <ClInclude Include="Base\TextureManager.h" />
     <ClInclude Include="Config\Environment.h" />
     <ClInclude Include="3D\Camera.h" />
     <ClInclude Include="Base\DirectXCommon.h" />
