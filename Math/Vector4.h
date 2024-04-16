@@ -24,8 +24,11 @@ public:
 	-----------------------------------*/
 
 	inline Vector4 operator+(const Vector4& other)const;
+	inline Vector4 operator-(const Vector4& other)const;
 
-	Vector4& operator= (const Vector4& other);
+	inline Vector4& operator-= (const Vector4& other);
+
+	inline Vector4& operator= (const Vector4& other);
 
 };
 
@@ -38,6 +41,30 @@ inline Vector4 Vector4::operator+(const Vector4& other) const {
 		this->w + other.w
 	);
 }
+inline Vector4 Vector4::operator-(const Vector4& other) const {
+	return Vector4(
+		this->x - other.x,
+		this->y - other.y,
+		this->z - other.z,
+		this->w - other.w
+	);
+}
+
+
+inline Vector4& Vector4::operator-=(const Vector4& other) {
+	*this = *this - other;
+	return *this;
+}
+
+
+inline Vector4& Vector4::operator=(const Vector4& other) {
+	this->x = other.x;
+	this->y = other.y;
+	this->z = other.z;
+	this->w = other.w;
+	return *this;
+}
+
 
 ///- 名前の追加
 using Vec4f = Vector4;

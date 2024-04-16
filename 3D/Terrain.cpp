@@ -39,43 +39,87 @@ void Terrain::Init() {
 	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
 	vertexResource_->Unmap(0, nullptr);
 
-	///- 頂点の計算
-	vertexData_[0].position = { -1.0f, 1.0f, 0.0f, 1.0f };	//- 左上
-	vertexData_[0].texcoord = { 0.0f,0.0f };
-	vertexData_[1].position = { 1.0f, 1.0f, 0.0f, 1.0f };	//- 右上
-	vertexData_[1].texcoord = { 1.0f,0.0f };
-	vertexData_[2].position = { -1.0f, -1.0f, 0.0f, 1.0f };	//- 左下
-	vertexData_[2].texcoord = { 0.0f,1.0f };
-
-	vertexData_[3].position = { 1.0f, 1.0f, 0.0f, 1.0f };	//- 右上
-	vertexData_[3].texcoord = { 1.0f,0.0f };
-	vertexData_[4].position = { 1.0f, -1.0f, 0.0f, 1.0f };	//- 右下
-	vertexData_[4].texcoord = { 1.0f,1.0f };
-	vertexData_[5].position = { -1.0f, -1.0f, 0.0f, 1.0f };	//- 左下
-	vertexData_[5].texcoord = { 0.0f,1.0f };
-
-	///-頂点計算
+	///- 頂点計算
 	int index = 0;
-	for(int32_t row = kVerticalDivisionNum_; row >= 0; row--) {
+	for(int32_t row = 0; row <= kVerticalDivisionNum_; row++) {
 		for(int32_t col = 0; col <= kHorizontalDivisionNum_; col++) {
-			//- 左上
-			vertexData_[index + 0].position = { float(col),float(row),0.0f,1.0f };
-			vertexData_[index + 0].texcoord = { 0.0f,0.0f };
-			//- 右上
-			vertexData_[index + 1].position = { float(col + 1),float(row),0.0f,1.0f };;
-			vertexData_[index + 1].texcoord = { 1.0f,0.0f };
+
+			///- 0割り防止
+			if(col == 0) {
+				for(uint32_t i = 0; i < 6; i++) {
+					vertexData_[index + 1].texcoord.x = 0.0f;
+				}
+			} else {
+				for(uint32_t i = 0; i < 6; i++) {
+					vertexData_[index + i].texcoord.x =
+						float(kHorizontalDivisionNum_) / float(row + (i % 2));
+				}
+			}
+
+			///- 0割り防止
+			if(row == 0) {
+				for(uint32_t i = 0; i < 6; i++) {
+					vertexData_[index + 1].texcoord.y = 1.0f;
+				}
+			} else {
+				for(uint32_t i = 0; i < 6; i++) {
+					vertexData_[index + 1].texcoord.y = 1.0f;
+				}
+				//vertexData_[index + 0].texcoord.y = 
+			}
+
+
 			//- 左下
-			vertexData_[index + 2].position = { float(col),float(row - 1),0.0f,1.0f };;
-			vertexData_[index + 2].texcoord = { 0.0f,1.0f };
-			//- 左下
-			vertexData_[index + 3].position = vertexData_[index + 2].position;
-			vertexData_[index + 3].texcoord = { 0.0f,1.0f };
-			//- 右上
-			vertexData_[index + 4].position = vertexData_[index + 1].position;
-			vertexData_[index + 4].texcoord = { 1.0f,0.0f };
-			//- 右下
-			vertexData_[index + 5].position = { float(col + 1),float(row - 1),0.0f,1.0f };;
-			vertexData_[index + 5].texcoord = { 1.0f,1.0f };
+			//vertexData_[index + 0].texcoord = {
+			//	float(kHorizontalDivisionNum_) / float(col),
+			//	1.0f - (float(kVerticalDivisionNum_) / float(row))
+			//};
+			////- 左上
+			//vertexData_[index + 1].texcoord = {
+			//	float(kHorizontalDivisionNum_) / float(col),
+			//	1.0f - (float(kVerticalDivisionNum_) / float(row - 1))
+			//};
+			////- 右上
+			//vertexData_[index + 2].texcoord = {
+			//	float(kHorizontalDivisionNum_) / float(col + 1),
+			//	1.0f - (float(kVerticalDivisionNum_) / float(row - 1))
+			//};
+			////- 右上
+			//vertexData_[index + 3].texcoord = vertexData_[index + 2].texcoord;
+			////- 右下
+			//vertexData_[index + 4].texcoord = {
+			//	float(kHorizontalDivisionNum_) / float(col + 1),
+			//	1.0f - (float(kVerticalDivisionNum_) / float(row))
+			//};
+			////- 左下
+			//vertexData_[index + 5].texcoord = vertexData_[index + 0].texcoord;
+
+			///- positionの計算
+			for(uint32_t i = 0; i < 6; i++) {
+				vertexData_[index + i].position.x = float(col + (i % 2));
+				vertexData_[index + i].position.y = 0.0f;
+				if(i >= 2 && i <= 4) {
+					vertexData_[index + i].position.z = float(row);
+				} else {
+					vertexData_[index + i].position.z = float(row + 1);
+				}
+				vertexData_[index + i].position.w = 1.0f;
+
+			}
+
+			///- texcoordの計算
+			for(uint32_t i = 0; i < 6; i++) {
+			}
+
+			///- 地形の中心が原点になるように移動
+			for(uint32_t i = 0; i < 6; i++) {
+				vertexData_[index + i].position -= Vec4f{
+					static_cast<float>(kHorizontalDivisionNum_ + 1) / 2.0f,
+					0.0f,
+					static_cast<float>(kVerticalDivisionNum_ + 1) / 2.0f,
+					0.0f
+				};
+			}
 
 			///- 頂点数の増加
 			index += 6;
@@ -111,6 +155,10 @@ void Terrain::Update() {
 	ImGui::DragFloat3("rotate", &worldTransform_.rotate.x, 1.0f / 64.0f);
 	ImGui::DragFloat3("translate", &worldTransform_.translate.x, 0.25f);
 	ImGui::ColorEdit4("color", &color_.x);
+
+	static int index = 0;
+	ImGui::SliderInt("vertexIndex", &index, 0, static_cast<int>(vertexData_.size()));
+	ImGui::DragFloat4("vertex", &vertexData_[index].position.x, 0.25f);
 
 	ImGui::End();
 #endif // _DEBUG

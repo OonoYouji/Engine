@@ -10,8 +10,9 @@ Camera::~Camera() { Finalize(); }
 void Camera::Init() {
 
 	scale_ = { 1.0f,1.0f,1.0f };
-	rotate_ = { 0.0f,0.0f,0.0f };
-	worldPos_ = { 0.0f,0.0f,-50.0f };
+	rotate_ = { 0.26f,0.0f,0.0f };
+	worldPos_ = { 0.0f,1.9f, -6.49f };
+
 
 	worldMatrix_ = Matrix4x4::MakeAffine(scale_, rotate_, worldPos_);
 	viewMatrix_ = Matrix4x4::MakeInverse(worldMatrix_);
