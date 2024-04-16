@@ -11,36 +11,31 @@ Scene_Game::~Scene_Game() { Finalize(); }
 
 void Scene_Game::Init() {
 
-	pos_.resize(2);
-
-	sprite_.resize(2);
-	for(auto& sprite : sprite_) {
-		sprite = std::make_unique<Sprite>();
-		sprite->Init();
-	}
+	terrain_ = std::make_unique<Terrain>();
+	terrain_->Init();
 
 }
 
 void Scene_Game::Update() {
 
+	terrain_->Update();
+
 	
-	sprite_[0]->ImGui("spriteA");
-	sprite_[1]->ImGui("spriteB");
 }
 
 void Scene_Game::Draw() {
 
 	ImGui::ShowDemoWindow();
 
-	Engine::TestDraw();
-	//DirectXCommon::GetInstance()->DrawSprite();
-	sprite_[0]->Draw();
-	sprite_[1]->Draw();
+	//Engine::TestDraw();
+
+	terrain_->Draw();
+
 
 }
 
 void Scene_Game::Finalize() {
-	for(auto& sprite : sprite_) {
-		sprite.reset();
-	}
+
+	terrain_.reset();
+
 }

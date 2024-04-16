@@ -61,7 +61,6 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeSprite();
 
 	worldTransform_.Init();
-	camera_ = std::make_unique<Camera>();
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 }
@@ -1282,7 +1281,7 @@ void DirectXCommon::TestDraw() {
 
 	worldTransform_.rotate.y += 1.0f / 64.0f;
 	worldTransform_.MakeWorldMatrix();
-	WriteWVPResource(worldTransform_.worldMatrix * camera_->GetVpMatrix());
+	WriteWVPResource(worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix());
 	WriteColor(color_);
 
 	///- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK

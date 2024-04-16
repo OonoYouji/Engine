@@ -126,10 +126,9 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite_;
 	ComPtr<ID3D12Resource> transformationMatrixResourceSprite_;
 	WorldTransform transformSprite_;
-	
+
 
 	WorldTransform worldTransform_;
-	std::unique_ptr<Camera> camera_;
 	Vector4 color_;
 
 private:
@@ -182,7 +181,7 @@ private:
 	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
 	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
-	
+
 	void InitializeTextureResource();
 
 	void InitializeDescriptorRange();
@@ -240,6 +239,7 @@ public:
 
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
 
+	const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU_; }
 
 private:
 
