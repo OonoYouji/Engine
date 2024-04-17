@@ -45,27 +45,16 @@ void Terrain::Init() {
 		for(int32_t col = 0; col <= kHorizontalDivisionNum_; col++) {
 
 			///- 0割り防止
-			if(col == 0) {
-				for(uint32_t i = 0; i < 6; i++) {
-					vertexData_[index + 1].texcoord.x = 0.0f;
-				}
-			} else {
-				for(uint32_t i = 0; i < 6; i++) {
-					vertexData_[index + i].texcoord.x =
-						float(kHorizontalDivisionNum_) / float(row + (i % 2));
-				}
+			for(uint32_t i = 0; i < 6; i++) {
+				vertexData_[index + i].texcoord.x = float(col + (i % 2)) / float(kHorizontalDivisionNum_ + 1);
 			}
 
-			///- 0割り防止
-			if(row == 0) {
-				for(uint32_t i = 0; i < 6; i++) {
-					vertexData_[index + 1].texcoord.y = 1.0f;
+			for(uint32_t i = 0; i < 6; i++) {
+				if(i >= 2 && i <= 4) {
+					vertexData_[index + i].texcoord.y = 1.0f - (float(row) / float(kVerticalDivisionNum_ + 1));
+				} else {
+					vertexData_[index + i].texcoord.y = 1.0f - (float(row + 1) / float(kVerticalDivisionNum_ + 1));
 				}
-			} else {
-				for(uint32_t i = 0; i < 6; i++) {
-					vertexData_[index + 1].texcoord.y = 1.0f;
-				}
-				//vertexData_[index + 0].texcoord.y = 
 			}
 
 
@@ -140,7 +129,7 @@ void Terrain::Init() {
 
 	///- 
 	worldTransform_.Init();
-	color_ = { 1.0f,0.0f,0.0f,1.0f };
+	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 }
 
@@ -159,6 +148,7 @@ void Terrain::Update() {
 	static int index = 0;
 	ImGui::SliderInt("vertexIndex", &index, 0, static_cast<int>(vertexData_.size()));
 	ImGui::DragFloat4("vertex", &vertexData_[index].position.x, 0.25f);
+	ImGui::DragFloat2("texcoord", &vertexData_[index].texcoord.x, 0.0f);
 
 	ImGui::End();
 #endif // _DEBUG
