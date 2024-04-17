@@ -1,8 +1,13 @@
 #include <WinApp.h>
 
+#include "Input.h"
+
+#include <windowsx.h>
 #include "Externals/imgui/imgui.h"
 #include "Externals/imgui/imgui_impl_dx12.h"
 #include "Externals/imgui/imgui_impl_win32.h"
+
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
@@ -51,7 +56,14 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	}
 
 	switch (msg) {
+	case WM_MOUSEMOVE:
 
+		Input::GetInstance()->SetMousePos(
+			{ static_cast<float>(GET_X_LPARAM(lparam)),
+			static_cast<float>(GET_X_LPARAM(lparam)) }
+		);
+
+		break;
 	case WM_DESTROY: // windowが破棄された
 		/// OSにアプリの終了を伝える
 		PostQuitMessage(0);

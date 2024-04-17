@@ -9,6 +9,7 @@
 #include <WinApp.h>
 #include <DirectXCommon.h>
 #include <ImGuiManager.h>
+#include <Input.h>
 #include <Camera.h>
 
 template<class T>
@@ -40,9 +41,9 @@ namespace {
 
 		WinApp* winApp_ = nullptr;
 		DirectXCommon* directXCommon_ = nullptr;
-		//DXCompile* dxc_ = nullptr;
 		ImGuiManager* imGuiManager_ = nullptr;
 
+		Input* input_ = nullptr;
 		//std::unique_ptr<Camera> camera_ = nullptr;
 		Camera* camera_ = nullptr;
 
@@ -86,6 +87,7 @@ namespace {
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
 		imGuiManager_ = ImGuiManager::GetInstance();
+		input_ = Input::GetInstance();
 		//camera_ = std::make_unique<Camera>();
 	}
 
@@ -93,6 +95,7 @@ namespace {
 
 		directXCommon_->PreDraw();
 		imGuiManager_->BeginFrame();
+		input_->Begin();
 
 		camera_->Update();
 
@@ -152,6 +155,7 @@ namespace {
 	WinApp* sWinApp = nullptr;
 	DirectXCommon* sDirectXCommon = nullptr;
 	ImGuiManager* sImGuiManager = nullptr;
+	Input* sInput = nullptr;
 
 	std::unique_ptr<EngineSystem> sEngineSystem = nullptr;
 
@@ -177,12 +181,17 @@ void Engine::Initialize(const std::string& title) {
 		width, height
 	);
 
-	/// DirectXの初期化
+	///- DirectXの初期化
 	sDirectXCommon = DirectXCommon::GetInstance();
 	sDirectXCommon->Initialize(sWinApp);
 
+	///- ImGuiの初期化
 	sImGuiManager = ImGuiManager::GetInstance();
 	sImGuiManager->Initialize(sWinApp, sDirectXCommon);
+
+	///- Inputの初期化
+	sInput = Input::GetInstance();
+	sInput->Init();
 
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();

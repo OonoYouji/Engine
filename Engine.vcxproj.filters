@@ -79,6 +79,12 @@
     <ClCompile Include="3D\Terrain.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="Input\Input.cpp">
+      <Filter>Source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\Brush.cpp">
+      <Filter>Source\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -134,6 +140,12 @@
     </Filter>
     <Filter Include="Source\2D">
       <UniqueIdentifier>{a58db450-04fe-49a9-a4a2-84d0e335c6e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Input">
+      <UniqueIdentifier>{0c5ea435-d4c2-48ef-8d2e-557c360174c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Input">
+      <UniqueIdentifier>{b494380c-2de8-4f81-9b84-52bd69d896c6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +228,12 @@
       <Filter>Include\Base</Filter>
     </ClInclude>
     <ClInclude Include="3D\Terrain.h">
+      <Filter>Include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Input.h">
+      <Filter>Include\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Brush.h">
       <Filter>Include\3D</Filter>
     </ClInclude>
   </ItemGroup>

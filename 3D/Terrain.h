@@ -29,8 +29,8 @@ public:
 private:
 
 	///- 縦横の分割数
-	static const int kVerticalDivisionNum_ = 2;
-	static const int kHorizontalDivisionNum_ = 2;
+	static const int kVerticalDivisionNum_ = 1024;
+	static const int kHorizontalDivisionNum_ = 1024;
 
 
 	///- 描画用Resource
@@ -41,7 +41,7 @@ private:
 
 	///- 書き込み用データ
 	std::vector<VertexData> vertexData_;
-	VertexData* pData_;
+	VertexData* pData_ = nullptr;
 	void* pMappedData_ = nullptr;
 	Vector4* materialData_ = nullptr;
 	Matrix4x4* wvpData_ = nullptr;

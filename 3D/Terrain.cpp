@@ -3,6 +3,7 @@
 #include <array>
 #include "ImGuiManager.h"
 #include "Engine.h"
+#include "Input.h"
 
 Terrain::Terrain() {}
 Terrain::~Terrain() {
@@ -44,12 +45,15 @@ void Terrain::Init() {
 	for(int32_t row = 0; row <= kVerticalDivisionNum_; row++) {
 		for(int32_t col = 0; col <= kHorizontalDivisionNum_; col++) {
 
-			///- 0割り防止
+			///- texcoord x軸
 			for(uint32_t i = 0; i < 6; i++) {
+				///- 頂点番号が 奇数->右; 偶数->左;
 				vertexData_[index + i].texcoord.x = float(col + (i % 2)) / float(kHorizontalDivisionNum_ + 1);
 			}
 
+			///- texcoord y軸
 			for(uint32_t i = 0; i < 6; i++) {
+				///- 頂点番号 2 ~ 4までが四角形の下側
 				if(i >= 2 && i <= 4) {
 					vertexData_[index + i].texcoord.y = 1.0f - (float(row) / float(kVerticalDivisionNum_ + 1));
 				} else {
@@ -58,35 +62,11 @@ void Terrain::Init() {
 			}
 
 
-			//- 左下
-			//vertexData_[index + 0].texcoord = {
-			//	float(kHorizontalDivisionNum_) / float(col),
-			//	1.0f - (float(kVerticalDivisionNum_) / float(row))
-			//};
-			////- 左上
-			//vertexData_[index + 1].texcoord = {
-			//	float(kHorizontalDivisionNum_) / float(col),
-			//	1.0f - (float(kVerticalDivisionNum_) / float(row - 1))
-			//};
-			////- 右上
-			//vertexData_[index + 2].texcoord = {
-			//	float(kHorizontalDivisionNum_) / float(col + 1),
-			//	1.0f - (float(kVerticalDivisionNum_) / float(row - 1))
-			//};
-			////- 右上
-			//vertexData_[index + 3].texcoord = vertexData_[index + 2].texcoord;
-			////- 右下
-			//vertexData_[index + 4].texcoord = {
-			//	float(kHorizontalDivisionNum_) / float(col + 1),
-			//	1.0f - (float(kVerticalDivisionNum_) / float(row))
-			//};
-			////- 左下
-			//vertexData_[index + 5].texcoord = vertexData_[index + 0].texcoord;
-
 			///- positionの計算
 			for(uint32_t i = 0; i < 6; i++) {
 				vertexData_[index + i].position.x = float(col + (i % 2));
 				vertexData_[index + i].position.y = 0.0f;
+				///- 頂点番号 2 ~ 4までが四角形の下側
 				if(i >= 2 && i <= 4) {
 					vertexData_[index + i].position.z = float(row);
 				} else {
@@ -96,9 +76,6 @@ void Terrain::Init() {
 
 			}
 
-			///- texcoordの計算
-			for(uint32_t i = 0; i < 6; i++) {
-			}
 
 			///- 地形の中心が原点になるように移動
 			for(uint32_t i = 0; i < 6; i++) {
