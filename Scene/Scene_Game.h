@@ -6,7 +6,7 @@
 #include <Vector3.h>
 #include "2D/Sprite.h"
 #include "Terrain.h"
-
+#include "Brush.h"
 
 
 class Scene_Game final
@@ -25,6 +25,6 @@ private:
 
 
 	std::unique_ptr<Terrain> terrain_;
-
+	std::unique_ptr<Brush> brush_;
 
 };

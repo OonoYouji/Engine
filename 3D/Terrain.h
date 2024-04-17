@@ -29,8 +29,8 @@ public:
 private:
 
 	///- 縦横の分割数
-	static const int kVerticalDivisionNum_ = 1024;
-	static const int kHorizontalDivisionNum_ = 1024;
+	static const int kVerticalDivisionNum_ = 10;
+	static const int kHorizontalDivisionNum_ = 10;
 
 
 	///- 描画用Resource

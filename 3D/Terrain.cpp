@@ -106,6 +106,7 @@ void Terrain::Init() {
 
 	///- 
 	worldTransform_.Init();
+	//worldTransform_.scale = { 0.001f,1.0f,0.001f };
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 }
@@ -123,7 +124,7 @@ void Terrain::Update() {
 	ImGui::ColorEdit4("color", &color_.x);
 
 	static int index = 0;
-	ImGui::SliderInt("vertexIndex", &index, 0, static_cast<int>(vertexData_.size()));
+	ImGui::SliderInt("vertexIndex", &index, 0, static_cast<int>(vertexData_.size() - 1));
 	ImGui::DragFloat4("vertex", &vertexData_[index].position.x, 0.25f);
 	ImGui::DragFloat2("texcoord", &vertexData_[index].texcoord.x, 0.0f);
 

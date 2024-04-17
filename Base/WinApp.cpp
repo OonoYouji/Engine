@@ -60,7 +60,7 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 		Input::GetInstance()->SetMousePos(
 			{ static_cast<float>(GET_X_LPARAM(lparam)),
-			static_cast<float>(GET_X_LPARAM(lparam)) }
+			static_cast<float>(GET_Y_LPARAM(lparam)) }
 		);
 
 		break;

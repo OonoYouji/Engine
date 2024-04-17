@@ -768,6 +768,15 @@ void DirectXCommon::InitializeViewport() {
 	viewport_.MinDepth = 0.0f;
 	viewport_.MaxDepth = 1.0f;
 
+	viewportMatrix_ = Matrix4x4::MakeViewportMatrix(
+		viewport_.TopLeftY, 
+		viewport_.TopLeftY, 
+		viewport_.Width,
+		viewport_.Height,
+		viewport_.MinDepth,
+		viewport_.MaxDepth
+	);
+
 	///- シザー矩形
 	scissorRect_.left = 0;
 	scissorRect_.right = kWindowSize.x;

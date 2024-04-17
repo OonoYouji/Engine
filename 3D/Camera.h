@@ -33,4 +33,10 @@ public:
 
 	const Matrix4x4& GetVpMatrix() const { return vpMatrix_; }
 
+	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
+
+	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
+
+	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
+
 };

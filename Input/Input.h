@@ -19,6 +19,8 @@ public:
 		mousePos_ = position;
 	}
 
+	const Vec2f& GetMousePos() const { return mousePos_; }
+
 private:
 
 	Vec2f mousePos_ = { 0.0f,0.0f };

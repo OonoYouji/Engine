@@ -15,7 +15,7 @@ public:
 	);
 
 
-private:
+public:
 
 	float m_[4][4];
 
@@ -38,6 +38,7 @@ public:
 
 	static Matrix4x4 MakeTranspose(const Matrix4x4& m);
 
+	static Vec3f Transform(const Vec3f& v, const Matrix4x4& m);
 
 	static Matrix4x4 MakeOrthographicMatrix(float l, float t, float r, float b, float near, float far);
 	static Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
@@ -50,7 +51,7 @@ public:
 	inline Matrix4x4 operator* (const Matrix4x4& other) const;
 
 	inline Matrix4x4& operator*= (const Matrix4x4& other);
-	
+
 };
 
 //inline float* Matrix4x4::operator[](int index) const {
@@ -64,8 +65,8 @@ public:
 
 inline Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
 	Matrix4x4 result;
-	for (int r = 0; r < 4; r++) {
-		for (int c = 0; c < 4; c++) {
+	for(int r = 0; r < 4; r++) {
+		for(int c = 0; c < 4; c++) {
 			result.m_[r][c] = this->m_[r][c] + other.m_[r][c];
 		}
 	}
@@ -74,8 +75,8 @@ inline Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const {
 
 inline Matrix4x4 Matrix4x4::operator-(const Matrix4x4& other) const {
 	Matrix4x4 result;
-	for (int r = 0; r < 4; r++) {
-		for (int c = 0; c < 4; c++) {
+	for(int r = 0; r < 4; r++) {
+		for(int c = 0; c < 4; c++) {
 			result.m_[r][c] = this->m_[r][c] - other.m_[r][c];
 		}
 	}
@@ -84,8 +85,8 @@ inline Matrix4x4 Matrix4x4::operator-(const Matrix4x4& other) const {
 
 inline Matrix4x4 Matrix4x4::operator*(const Matrix4x4& other) const {
 	Matrix4x4 result;
-	for (int r = 0; r < 4; r++) {
-		for (int c = 0; c < 4; c++) {
+	for(int r = 0; r < 4; r++) {
+		for(int c = 0; c < 4; c++) {
 			result.m_[r][c] =
 				this->m_[r][0] * other.m_[0][c]
 				+ this->m_[r][1] * other.m_[1][c]
@@ -98,8 +99,8 @@ inline Matrix4x4 Matrix4x4::operator*(const Matrix4x4& other) const {
 
 inline Matrix4x4& Matrix4x4::operator*=(const Matrix4x4& other) {
 	Matrix4x4 result;
-	for (int r = 0; r < 4; r++) {
-		for (int c = 0; c < 4; c++) {
+	for(int r = 0; r < 4; r++) {
+		for(int c = 0; c < 4; c++) {
 			result.m_[r][c] =
 				this->m_[r][0] * other.m_[0][c]
 				+ this->m_[r][1] * other.m_[1][c]
