@@ -4,7 +4,7 @@
 
 #include "ImGuiManager.h"
 #include "Engine.h"
-
+#include "DxCommand.h"
 
 using namespace std::numbers;
 
@@ -151,7 +151,7 @@ void Sphere::Init() {
 
 void Sphere::Draw() {
 
-	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 

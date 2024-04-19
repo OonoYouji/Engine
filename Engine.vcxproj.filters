@@ -85,6 +85,9 @@
     <ClCompile Include="Base\DxDescriptors.cpp">
       <Filter>Source\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Base\DxCommand.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -228,6 +231,9 @@
       <Filter>Include\3D</Filter>
     </ClInclude>
     <ClInclude Include="Base\DxDescriptors.h">
+      <Filter>Include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\DxCommand.h">
       <Filter>Include\Base</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,6 +3,7 @@
 #include "DirectXCommon.h"
 #include "Environment.h"
 #include "ImGuiManager.h"
+#include "DxCommand.h"
 
 Sprite::Sprite() {}
 Sprite::~Sprite() {
@@ -100,7 +101,7 @@ void Sprite::Init() {
 /// 描画
 /// </summary>
 void Sprite::Draw() {
-	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	///- マテリアルにデータをRGBAデータを書き込む
 	*materialData_ = color;

@@ -25,6 +25,8 @@ using namespace Microsoft::WRL;
 
 
 class WinApp;
+class DxCommand;
+
 
 struct VertexData {
 	Vec4f position;
@@ -54,17 +56,17 @@ private:
 	ComPtr<IDXGIAdapter4> useAdapter_;
 	ComPtr<ID3D12Device> device_;
 
-	///- 画面の色を変えよう
-	ComPtr<ID3D12CommandQueue> commandQueue_;
-	ComPtr<ID3D12CommandAllocator> commandAllocator_;
-	ComPtr<ID3D12GraphicsCommandList> commandList_;
+
+	///- DirectX Command
+	DxCommand* dxCommand_;
+
 
 	ComPtr<IDXGISwapChain4> swapChain_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 
 	//ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
-	ComPtr<ID3D12Resource> swapChainResource_[2];
+	std::vector<ComPtr<ID3D12Resource>>swapChainResource_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
 	///- エラー放置ダメ、ゼッタイ
@@ -126,7 +128,7 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite_;
 	ComPtr<ID3D12Resource> transformationMatrixResourceSprite_;
 	WorldTransform transformSprite_;
-	
+
 
 	///- sphereの表示
 
@@ -186,7 +188,7 @@ private:
 	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
 	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
-	
+
 	void InitializeTextureResource();
 
 	void InitializeDescriptorRange();
@@ -241,7 +243,7 @@ public:
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 
-	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
+	//ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 
 	void DrawSprite();
 
@@ -250,6 +252,13 @@ public:
 
 
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
+
+
+	/// <summary>
+	/// swapChainResource getter
+	/// </summary>
+	/// <returns></returns>
+	std::vector<ComPtr<ID3D12Resource>> GetSwapChainResource() { return swapChainResource_; }
 
 
 private:

@@ -3,6 +3,7 @@
 #include <format>
 
 #include <DxDescriptors.h>
+#include <DxCommand.h>
 #include <WinApp.h>
 #include <Engine.h>
 #include <Environment.h>
@@ -43,8 +44,9 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeDXGIDevice();
 
 	DxDescriptors::GetInstance()->Initialize();
+	dxCommand_ = DxCommand::GetInstance();
+	dxCommand_->Initialize(device_.Get());
 
-	InitializeCommand();
 	InitializeSwapChain();
 	InitialiezRenderTarget();
 	InitializeFence();
@@ -92,10 +94,8 @@ void DirectXCommon::Finalize() {
 	transformationMatrixResourceSprite_.Reset();
 	vertexResourceSprite_.Reset();
 
-	//dsvDescriptorHeap_.Reset();
 	depthStencilResource_.Reset();
 	textureResource_.Reset();
-	//srvHeap_.Reset();
 
 	wvpResource_.Reset();
 	materialResource_.Reset();
@@ -112,14 +112,17 @@ void DirectXCommon::Finalize() {
 
 	CloseHandle(fenceEvent_);
 	fence_.Reset();
-	//rtvDescriptorHeap_.Reset();
 	for(UINT i = 0; i < 2; i++) {
 		swapChainResource_[i].Reset();
 	}
 	swapChain_.Reset();
-	commandList_.Reset();
-	commandAllocator_.Reset();
-	commandQueue_.Reset();
+	//commandList_.Reset();
+	//commandAllocator_.Reset();
+	//commandQueue_.Reset();
+
+	///- Commandの解放
+	dxCommand_->Finalize();
+
 	device_.Reset();
 	useAdapter_.Reset();
 	dxgiFactory_.Reset();
@@ -266,7 +269,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 /// ↓ Command関係を初期化
 /// ---------------------------
 void DirectXCommon::InitializeCommand() {
-	HRESULT result = S_FALSE;
+	/*HRESULT result = S_FALSE;
 
 	/// ---------------------------
 	/// ↓ CommandQueueを生成
@@ -304,7 +307,7 @@ void DirectXCommon::InitializeCommand() {
 		nullptr,
 		IID_PPV_ARGS(&commandList_)
 	);
-	assert(SUCCEEDED(result));
+	assert(SUCCEEDED(result));*/
 
 
 }
@@ -333,7 +336,7 @@ void DirectXCommon::InitializeSwapChain() {
 	///- SwapChain1で仮に生成
 	ComPtr<IDXGISwapChain1> swapChain1;
 	result = dxgiFactory_->CreateSwapChainForHwnd(
-		commandQueue_.Get(), p_winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, &swapChain1
+		dxCommand_->GetQueue(), p_winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, &swapChain1
 	);
 	assert(SUCCEEDED(result));
 
@@ -364,6 +367,7 @@ void DirectXCommon::InitialiezRenderTarget() {
 	/// ---------------------------
 	/// ↓ SwapChainResourceを生成
 	/// ---------------------------
+	swapChainResource_.resize(2);
 	for(size_t i = 0; i < 2; i++) {
 		swapChainResource_[i] = nullptr;
 	}
@@ -883,13 +887,13 @@ void DirectXCommon::ClearRenderTarget() {
 
 	///- 描画先のRTVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart();
-	commandList_->OMSetRenderTargets(
+	dxCommand_->GetList()->OMSetRenderTargets(
 		1, &rtvHandles_[bbIndex], false, &dsvHandle
 	);
 
 	///- 指定した色で画面をクリア
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
-	commandList_->ClearRenderTargetView(
+	dxCommand_->GetList()->ClearRenderTargetView(
 		rtvHandles_[bbIndex], clearColor, 0, nullptr
 	);
 }
@@ -1201,31 +1205,25 @@ ComPtr<ID3D12Resource> DirectXCommon::CreateDepthStencilTextureResource(int32_t 
 void DirectXCommon::PreDraw() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
+	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
+
 	///- 深度をクリア
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart();
-	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	/// ---------------------------
-	/// ↓ バリアを貼る; commandListを積めるようにする
-	/// ---------------------------
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = swapChainResource_[bbIndex].Get();
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	commandList_->ResourceBarrier(1, &barrier);
+	///- 書き込み用にバリアーを貼る
+	dxCommand_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	///- 画面を一定の色で染める
 	ClearRenderTarget();
 
 	///- viewport; scissorRectを設定
-	commandList_->RSSetViewports(1, &viewport_);
-	commandList_->RSSetScissorRects(1, &scissorRect_);
+	commandList->RSSetViewports(1, &viewport_);
+	commandList->RSSetScissorRects(1, &scissorRect_);
 
 	///- RootSignatureを設定; PSOとは別に別途設定が必要
-	commandList_->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList_->SetPipelineState(graphicsPipelineState_.Get());
+	commandList->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList->SetPipelineState(graphicsPipelineState_.Get());
 
 }
 
@@ -1237,32 +1235,25 @@ void DirectXCommon::PreDraw() {
 void DirectXCommon::PostDraw() {
 	HRESULT result = S_FALSE;
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
+	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
 
-	/// ---------------------------
-	/// ↓ バリアを貼る; これから描画処理用に変更
-	/// ---------------------------
-	D3D12_RESOURCE_BARRIER barrier{};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = swapChainResource_[bbIndex].Get();
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	commandList_->ResourceBarrier(1, &barrier);
+	///- 描画用にバリアーを貼る
+	dxCommand_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	///- Commandを閉じる
-	result = commandList_->Close();
+	result = commandList->Close();
 	assert(SUCCEEDED(result));
 
 	///- コマンドをキックする
-	ID3D12CommandList* commandLists[] = { commandList_.Get() };
-	commandQueue_->ExecuteCommandLists(1, commandLists);
+	ID3D12CommandList* commandLists[] = { commandList };
+	dxCommand_->GetQueue()->ExecuteCommandLists(1, commandLists);
 
 	///- GPUとOSに画面の交換を行うように通知する
 	swapChain_->Present(1, 0);
 
 	///- GPUにSignalを送信
 	fenceValue_++;
-	commandQueue_->Signal(fence_.Get(), fenceValue_);
+	dxCommand_->GetQueue()->Signal(fence_.Get(), fenceValue_);
 
 	///- GPUの処理が終わっていなければイベントを待機する
 	if(fence_->GetCompletedValue() < fenceValue_) {
@@ -1271,11 +1262,8 @@ void DirectXCommon::PostDraw() {
 	}
 
 
-	///- 次のフレーム用にコマンドリストを準備
-	result = commandAllocator_->Reset();
-	assert(SUCCEEDED(result));
-	result = commandList_->Reset(commandAllocator_.Get(), nullptr);
-	assert(SUCCEEDED(result));
+	///- 次のフレームのためにQueueをリセットする
+	dxCommand_->ResetCommandList();
 
 }
 
@@ -1285,9 +1273,9 @@ void DirectXCommon::PostDraw() {
 /// ↓ 三角形の描画(テスト
 /// ---------------------------
 void DirectXCommon::TestDraw() {
+	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
 
-
-	commandList_->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
 	ImGui::Begin("Triangle");
 	ImGui::SliderFloat4("color", &color_.x, 0.0f, 1.0f);
@@ -1299,16 +1287,16 @@ void DirectXCommon::TestDraw() {
 	WriteColor(color_);
 
 	///- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK
-	commandList_->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///- マテリアルのCBufferの場所を設定
-	commandList_->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	///- wvp用のCBufferの場所を設定
-	commandList_->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	///- DescriptorTableを設定する
-	commandList_->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
+	commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
 
 	///- 描画 (DrawCall)
-	commandList_->DrawInstanced(6, 1, 0, 0);
+	commandList->DrawInstanced(6, 1, 0, 0);
 
 }
 
@@ -1318,10 +1306,11 @@ void DirectXCommon::TestDraw() {
 /// Spriteの描画
 /// </summary>
 void DirectXCommon::DrawSprite() {
+	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
 
 
-	commandList_->IASetVertexBuffers(0, 1, &vertexBufferViewSprite_);
-	commandList_->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite_->GetGPUVirtualAddress());
-	commandList_->DrawInstanced(6, 1, 0, 0);
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite_);
+	commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite_->GetGPUVirtualAddress());
+	commandList->DrawInstanced(6, 1, 0, 0);
 
 }
