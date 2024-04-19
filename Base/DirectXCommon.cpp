@@ -44,8 +44,8 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeDXGIDevice();
 
 	DxDescriptors::GetInstance()->Initialize();
-	dxCommand_ = DxCommand::GetInstance();
-	dxCommand_->Initialize(device_.Get());
+	command_ = DxCommand::GetInstance();
+	command_->Initialize(device_.Get());
 
 	InitializeSwapChain();
 	InitialiezRenderTarget();
@@ -121,7 +121,7 @@ void DirectXCommon::Finalize() {
 	//commandQueue_.Reset();
 
 	///- Commandの解放
-	dxCommand_->Finalize();
+	command_->Finalize();
 
 	device_.Reset();
 	useAdapter_.Reset();
@@ -266,55 +266,6 @@ void DirectXCommon::InitializeDXGIDevice() {
 
 
 /// ---------------------------
-/// ↓ Command関係を初期化
-/// ---------------------------
-void DirectXCommon::InitializeCommand() {
-	/*HRESULT result = S_FALSE;
-
-	/// ---------------------------
-	/// ↓ CommandQueueを生成
-	/// ---------------------------
-	commandQueue_ = nullptr;
-	D3D12_COMMAND_QUEUE_DESC desc{};
-
-	///- 生成; 生成できたか確認
-	result = device_->CreateCommandQueue(&desc, IID_PPV_ARGS(&commandQueue_));
-	assert(SUCCEEDED(result));
-
-
-
-	/// ---------------------------
-	/// ↓ CommandAllocatorを生成
-	/// ---------------------------
-	commandAllocator_ = nullptr;
-
-	///- 生成; 生成できたか確認
-	result = device_->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator_));
-	assert(SUCCEEDED(result));
-
-
-
-	/// ---------------------------
-	/// ↓ CommandListを生成
-	/// ---------------------------
-	commandList_ = nullptr;
-
-	///- 生成; 生成できたか確認
-	result = device_->CreateCommandList(
-		0,
-		D3D12_COMMAND_LIST_TYPE_DIRECT,
-		commandAllocator_.Get(),
-		nullptr,
-		IID_PPV_ARGS(&commandList_)
-	);
-	assert(SUCCEEDED(result));*/
-
-
-}
-
-
-
-/// ---------------------------
 /// ↓ SwapChainを初期化
 /// ---------------------------
 void DirectXCommon::InitializeSwapChain() {
@@ -336,7 +287,7 @@ void DirectXCommon::InitializeSwapChain() {
 	///- SwapChain1で仮に生成
 	ComPtr<IDXGISwapChain1> swapChain1;
 	result = dxgiFactory_->CreateSwapChainForHwnd(
-		dxCommand_->GetQueue(), p_winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, &swapChain1
+		command_->GetQueue(), p_winApp_->GetHWND(), &swapChainDesc_, nullptr, nullptr, &swapChain1
 	);
 	assert(SUCCEEDED(result));
 
@@ -887,13 +838,13 @@ void DirectXCommon::ClearRenderTarget() {
 
 	///- 描画先のRTVを設定する
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart();
-	dxCommand_->GetList()->OMSetRenderTargets(
+	command_->GetList()->OMSetRenderTargets(
 		1, &rtvHandles_[bbIndex], false, &dsvHandle
 	);
 
 	///- 指定した色で画面をクリア
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
-	dxCommand_->GetList()->ClearRenderTargetView(
+	command_->GetList()->ClearRenderTargetView(
 		rtvHandles_[bbIndex], clearColor, 0, nullptr
 	);
 }
@@ -1205,14 +1156,14 @@ ComPtr<ID3D12Resource> DirectXCommon::CreateDepthStencilTextureResource(int32_t 
 void DirectXCommon::PreDraw() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
-	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
+	ID3D12GraphicsCommandList* commandList = command_->GetList();
 
 	///- 深度をクリア
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart();
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	///- 書き込み用にバリアーを貼る
-	dxCommand_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	command_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	///- 画面を一定の色で染める
 	ClearRenderTarget();
@@ -1235,10 +1186,10 @@ void DirectXCommon::PreDraw() {
 void DirectXCommon::PostDraw() {
 	HRESULT result = S_FALSE;
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
-	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
+	ID3D12GraphicsCommandList* commandList = command_->GetList();
 
 	///- 描画用にバリアーを貼る
-	dxCommand_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	command_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	///- Commandを閉じる
 	result = commandList->Close();
@@ -1246,14 +1197,14 @@ void DirectXCommon::PostDraw() {
 
 	///- コマンドをキックする
 	ID3D12CommandList* commandLists[] = { commandList };
-	dxCommand_->GetQueue()->ExecuteCommandLists(1, commandLists);
+	command_->GetQueue()->ExecuteCommandLists(1, commandLists);
 
 	///- GPUとOSに画面の交換を行うように通知する
 	swapChain_->Present(1, 0);
 
 	///- GPUにSignalを送信
 	fenceValue_++;
-	dxCommand_->GetQueue()->Signal(fence_.Get(), fenceValue_);
+	command_->GetQueue()->Signal(fence_.Get(), fenceValue_);
 
 	///- GPUの処理が終わっていなければイベントを待機する
 	if(fence_->GetCompletedValue() < fenceValue_) {
@@ -1263,7 +1214,7 @@ void DirectXCommon::PostDraw() {
 
 
 	///- 次のフレームのためにQueueをリセットする
-	dxCommand_->ResetCommandList();
+	command_->ResetCommandList();
 
 }
 
@@ -1273,7 +1224,7 @@ void DirectXCommon::PostDraw() {
 /// ↓ 三角形の描画(テスト
 /// ---------------------------
 void DirectXCommon::TestDraw() {
-	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
+	ID3D12GraphicsCommandList* commandList = command_->GetList();
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
@@ -1306,7 +1257,7 @@ void DirectXCommon::TestDraw() {
 /// Spriteの描画
 /// </summary>
 void DirectXCommon::DrawSprite() {
-	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
+	ID3D12GraphicsCommandList* commandList = command_->GetList();
 
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite_);

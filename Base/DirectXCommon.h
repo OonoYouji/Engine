@@ -56,9 +56,8 @@ private:
 	ComPtr<IDXGIAdapter4> useAdapter_;
 	ComPtr<ID3D12Device> device_;
 
-
 	///- DirectX Command
-	DxCommand* dxCommand_;
+	DxCommand* command_;
 
 
 	ComPtr<IDXGISwapChain4> swapChain_;
@@ -145,8 +144,6 @@ private:
 	/// -----------------------------------
 
 	void InitializeDXGIDevice();
-
-	void InitializeCommand();
 
 	void InitializeSwapChain();
 
