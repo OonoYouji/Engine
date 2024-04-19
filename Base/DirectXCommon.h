@@ -21,8 +21,8 @@
 #include "Vector2.h"
 #include "Vector4.h"
 
-
 using namespace Microsoft::WRL;
+
 
 class WinApp;
 
@@ -127,6 +127,10 @@ private:
 	ComPtr<ID3D12Resource> transformationMatrixResourceSprite_;
 	WorldTransform transformSprite_;
 	
+
+	///- sphereの表示
+
+
 
 	WorldTransform worldTransform_;
 	std::unique_ptr<Camera> camera_;
@@ -237,6 +241,10 @@ public:
 	ID3D12DescriptorHeap* GetSrvHeap() const { return srvHeap_.Get(); }
 
 	void DrawSprite();
+
+
+	const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU_; }
+
 
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
 

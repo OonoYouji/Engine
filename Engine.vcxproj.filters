@@ -79,6 +79,9 @@
     <ClCompile Include="3D\Terrain.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="3D\Sphere.cpp">
+      <Filter>Source\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -216,6 +219,9 @@
       <Filter>Include\Base</Filter>
     </ClInclude>
     <ClInclude Include="3D\Terrain.h">
+      <Filter>Include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Sphere.h">
       <Filter>Include\3D</Filter>
     </ClInclude>
   </ItemGroup>

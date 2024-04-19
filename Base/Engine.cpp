@@ -94,6 +94,8 @@ namespace {
 		directXCommon_->PreDraw();
 		imGuiManager_->BeginFrame();
 
+		camera_->Update();
+
 	}
 
 	void EngineSystem::EndFrame() {

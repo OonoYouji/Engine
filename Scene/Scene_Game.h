@@ -5,6 +5,7 @@
 #include <vector>
 #include <Vector3.h>
 #include "2D/Sprite.h"
+#include "3D/Sphere.h"
 
 class Scene_Game final
 	: public IScene {
@@ -20,7 +21,6 @@ public:
 
 private:
 
-	std::vector<Vec2f> pos_;
-	std::vector<std::unique_ptr<Sprite>> sprite_;
+	std::unique_ptr<Sphere> sphere_;
 
 };
