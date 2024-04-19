@@ -34,6 +34,9 @@ private: ///- メンバ変数
 
 	std::vector<Texture> textures_;
 
+
+
+
 private:
 
 	TextureManager() = default;

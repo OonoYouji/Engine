@@ -62,7 +62,7 @@ private:
 	ComPtr<IDXGISwapChain4> swapChain_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 
-	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	//ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	ComPtr<ID3D12Resource> swapChainResource_[2];
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
@@ -111,7 +111,7 @@ private:
 
 	///- テクスチャを貼ろう
 	ComPtr<ID3D12Resource> textureResource_;
-	ComPtr<ID3D12DescriptorHeap> srvHeap_;
+	//ComPtr<ID3D12DescriptorHeap> srvHeap_;
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
@@ -119,7 +119,7 @@ private:
 
 	///- 前後関係
 	ComPtr<ID3D12Resource> depthStencilResource_;
-	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+	//ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 
 	///- Spriteの表示
 	ComPtr<ID3D12Resource> vertexResourceSprite_;
@@ -221,9 +221,14 @@ public:
 	/// </summary>
 	static DirectXCommon* GetInstance();
 
-
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
 	void PreDraw();
 
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
 	void PostDraw();
 
 	void TestDraw();
@@ -237,8 +242,6 @@ public:
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
-
-	ID3D12DescriptorHeap* GetSrvHeap() const { return srvHeap_.Get(); }
 
 	void DrawSprite();
 

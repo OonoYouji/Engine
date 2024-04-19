@@ -2,11 +2,14 @@
 
 #include <format>
 
+#include <DxDescriptors.h>
 #include <WinApp.h>
 #include <Engine.h>
 #include <Environment.h>
-#include <Vector4.h>
 #include "ImGuiManager.h"
+
+#include <Vector4.h>
+
 
 
 #pragma comment(lib, "d3d12.lib")
@@ -36,7 +39,11 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 #endif // _DEBUG
 
+
 	InitializeDXGIDevice();
+
+	DxDescriptors::GetInstance()->Initialize();
+
 	InitializeCommand();
 	InitializeSwapChain();
 	InitialiezRenderTarget();
@@ -77,13 +84,18 @@ void DirectXCommon::Finalize() {
 	/// ↓ 生成した逆順に解放していく
 	/// ---------------------------
 
+
+	///- DescriptorHeapの解放
+	DxDescriptors::GetInstance()->Finalize();
+
+
 	transformationMatrixResourceSprite_.Reset();
 	vertexResourceSprite_.Reset();
 
-	dsvDescriptorHeap_.Reset();
+	//dsvDescriptorHeap_.Reset();
 	depthStencilResource_.Reset();
 	textureResource_.Reset();
-	srvHeap_.Reset();
+	//srvHeap_.Reset();
 
 	wvpResource_.Reset();
 	materialResource_.Reset();
@@ -100,7 +112,7 @@ void DirectXCommon::Finalize() {
 
 	CloseHandle(fenceEvent_);
 	fence_.Reset();
-	rtvDescriptorHeap_.Reset();
+	//rtvDescriptorHeap_.Reset();
 	for(UINT i = 0; i < 2; i++) {
 		swapChainResource_[i].Reset();
 	}
@@ -343,9 +355,9 @@ void DirectXCommon::InitialiezRenderTarget() {
 	/// ---------------------------
 	/// ↓ DescriptorHeapを生成
 	/// ---------------------------
-	rtvDescriptorHeap_ = nullptr;
+	/*rtvDescriptorHeap_ = nullptr;
 	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	assert(rtvDescriptorHeap_);
+	assert(rtvDescriptorHeap_);*/
 
 
 
@@ -372,7 +384,7 @@ void DirectXCommon::InitialiezRenderTarget() {
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
 	///- ディスクリプタの先頭を取得
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandl = rtvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandl = DxDescriptors::GetInstance()->GetRTVHeap()->GetCPUDescriptorHandleForHeapStart();
 
 	///- rtvHandleの生成
 	rtvHandles_[0] = rtvStartHandl;
@@ -870,7 +882,7 @@ void DirectXCommon::ClearRenderTarget() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
 	///- 描画先のRTVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart();
 	commandList_->OMSetRenderTargets(
 		1, &rtvHandles_[bbIndex], false, &dsvHandle
 	);
@@ -983,7 +995,7 @@ void DirectXCommon::UploadTextureData(ID3D12Resource* texture, const DirectX::Sc
 /// ---------------------------
 void DirectXCommon::InitializeTextureResource() {
 
-	srvHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	//srvHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
 	DirectX::ScratchImage mipImages = LoadTexture("./Resources/Images/uvChecker.png");
 	const  DirectX::TexMetadata& metadata = mipImages.GetMetadata();
@@ -998,8 +1010,9 @@ void DirectXCommon::InitializeTextureResource() {
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
 	///- SRVを作成するDescriptorHeapの場所を決める
-	textureSrvHandleCPU_ = srvHeap_->GetCPUDescriptorHandleForHeapStart();
-	textureSrvHandleGPU_ = srvHeap_->GetGPUDescriptorHandleForHeapStart();
+	ID3D12DescriptorHeap* srvHeap = DxDescriptors::GetInstance()->GetSRVHeap();
+	textureSrvHandleCPU_ = srvHeap->GetCPUDescriptorHandleForHeapStart();
+	textureSrvHandleGPU_ = srvHeap->GetGPUDescriptorHandleForHeapStart();
 	///- 先頭はImGuiが使っているのでその次を使う
 	textureSrvHandleCPU_.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	textureSrvHandleGPU_.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -1062,7 +1075,7 @@ void DirectXCommon::InitializeDepthStencil() {
 
 	depthStencilResource_ = CreateDepthStencilTextureResource(kWindowSize.x, kWindowSize.y);
 
-	dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	//dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	///- Heap上にDSVを構築する
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
@@ -1070,7 +1083,7 @@ void DirectXCommon::InitializeDepthStencil() {
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 
 	///- DsvHeapの先頭にDsvを作る
-	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart());
+	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart());
 
 }
 
@@ -1120,7 +1133,7 @@ void DirectXCommon::InitializeSprite() {
 	/// ↓ Transform周りを作る
 	/// ---------------------------
 
-	transformationMatrixResourceSprite_ .Attach(CreateBufferResource(sizeof(Matrix4x4)));
+	transformationMatrixResourceSprite_.Attach(CreateBufferResource(sizeof(Matrix4x4)));
 
 	///- データを書き込む
 	Matrix4x4* transformationMatrixDataSprite = nullptr;
@@ -1189,7 +1202,7 @@ void DirectXCommon::PreDraw() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
 
 	///- 深度をクリア
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap_->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart();
 	commandList_->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	/// ---------------------------

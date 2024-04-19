@@ -82,6 +82,9 @@
     <ClCompile Include="3D\Sphere.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="Base\DxDescriptors.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="3D\Sphere.h">
       <Filter>Include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\DxDescriptors.h">
+      <Filter>Include\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

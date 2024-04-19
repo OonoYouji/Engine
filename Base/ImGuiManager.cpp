@@ -2,6 +2,7 @@
 
 #include <WinApp.h>
 #include <DirectXCommon.h>
+#include <DxDescriptors.h>
 
 
 ImGuiManager* ImGuiManager::GetInstance() {
@@ -15,7 +16,7 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
 	dxCommon_ = dxCommon;
 
-	ID3D12DescriptorHeap* srvHeap = dxCommon_->GetSrvHeap();
+	ID3D12DescriptorHeap* srvHeap = DxDescriptors::GetInstance()->GetSRVHeap();
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -47,7 +48,7 @@ void ImGuiManager::BeginFrame() {
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	ID3D12DescriptorHeap* descriptorHeap[] = { dxCommon_->GetSrvHeap() };
+	ID3D12DescriptorHeap* descriptorHeap[] = { DxDescriptors::GetInstance()->GetSRVHeap() };
 	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeap);
 
 
