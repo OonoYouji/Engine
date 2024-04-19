@@ -49,47 +49,38 @@ void Brush::Init() {
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	*materialData_ = { 1.0f,1.0f,1.0f,1.0f };
 
-
 	///- 行列リソースの生成; 書き込み
 	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(Matrix4x4)));
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	*wvpData_ = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
-	circleRadius_ = 1.0f;
 
 	///- 頂点データの計算
-	///- 上
-	vertexData_[0].position = { 0.0f,0.0f,0.1f,1.0f };
-	vertexData_[0].texcoord = { 0.0f,0.5f };
-	///- 右下
-	vertexData_[1].position = { 0.1f,0.0f,-0.1f,1.0f };
-	vertexData_[1].texcoord = { 1.0f,1.0f };
-	///- 左下
-	vertexData_[2].position = { -0.1f,0.0f,-0.1f,1.0f };
-	vertexData_[2].texcoord = { 0.0f,1.0f };
-
 	int index = 0;
 	for(int i = 0; i < kVertexCount_; i++) {
 
+		///- 頂点のθ
 		float thetaA = (float(i) / float(kVertexCount_ / 2)) * pi_v<float>;
 		float thetaB = (float(i + 1) / float(kVertexCount_ / 2)) * pi_v<float>;
 
-		///- 中心
+		/// A
 		vertexData_[index + 0].position = { 0.0f,0.0f,0.0f,1.0f };
 		vertexData_[index + 0].texcoord = { 0.0f,0.0f };
 
+		/// B
 		vertexData_[index + 1].position = {
-			std::cos(thetaB) * circleRadius_,
+			std::cos(thetaB),
 			0.0f,
-			std::sin(thetaB) * circleRadius_,
+			std::sin(thetaB),
 			1.0f
 		};
 		vertexData_[index + 1].texcoord = { 0.0f,1.0f };
 
+		/// C
 		vertexData_[index + 2].position = {
-			std::cos(thetaA) * circleRadius_,
+			std::cos(thetaA),
 			0.0f,
-			std::sin(thetaA) * circleRadius_,
+			std::sin(thetaA),
 			1.0f
 		};
 		vertexData_[index + 2].texcoord = { 1.0f,0.0f };
@@ -103,6 +94,7 @@ void Brush::Init() {
 	worldTransform_.Init();
 
 	distanceTestObject_ = 1.0f;
+	circleRadius_ = 0.25f;
 
 }
 
@@ -121,12 +113,18 @@ void Brush::Update() {
 
 	ImGui::DragFloat4("worldMousePos", &worldTransform_.translate.x, 0.0f);
 	ImGui::DragFloat("cameraDistance", &distanceTestObject_, 0.25f);
+	ImGui::DragFloat("circleRadius", &circleRadius_, 0.01f);
 
 	ImGui::End();
 #endif // _DEBUG
 
 
-
+	///- 拡縮行列は円の半径
+	worldTransform_.scale = {
+		circleRadius_,
+		circleRadius_,
+		circleRadius_
+	};
 
 
 }
@@ -144,7 +142,7 @@ void Brush::Draw() {
 	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
 
 	///- 色情報
-	*materialData_ = { 1.0f,0.0f,0.0f,1.0f };
+	*materialData_ = { 0.0f,0.0f,0.0f,1.0f };
 	///- 行列情報
 	worldTransform_.MakeWorldMatrix();
 	*wvpData_ = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
