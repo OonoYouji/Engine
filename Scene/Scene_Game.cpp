@@ -43,5 +43,6 @@ void Scene_Game::Draw() {
 void Scene_Game::Finalize() {
 
 	terrain_.reset();
+	brush_.reset();
 
 }

@@ -1,17 +1,24 @@
 #include "Brush.h"
 
+#include <cmath>
+#include <numbers>
+
 #include "Environment.h"
 #include "Engine.h"
 #include "ImGuiManager.h"
 #include "Camera.h"
 #include "Input.h"
-#include "DirectXCommon.h"
 
+
+
+using namespace std::numbers;
 
 
 Brush::Brush() {}
 Brush::~Brush() {
-
+	wvpResource_.Reset();
+	materialResource_.Reset();
+	vertexResource_.Reset();
 }
 
 
@@ -19,16 +26,23 @@ Brush::~Brush() {
 void Brush::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
+	///- 頂点数の決定
+	vertexData_.resize(kTriangleVertexCount_ * kVertexCount_);
+
+
 	///- 頂点数分確保
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * 3));
+	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertexData_.size()));
 
 	///- vertexBufferViewの作成
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 3;
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertexData_.size());
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	///- 頂点データの書き込み
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	pData_ = vertexData_.data();
+	vertexResource_->Map(0, nullptr, &pMappedData_);
+	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
+	vertexResource_->Unmap(0, nullptr);
 
 	///- マテリアルリソースの生成; 情報の書き込み
 	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector4)));
@@ -41,7 +55,7 @@ void Brush::Init() {
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	*wvpData_ = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
-
+	circleRadius_ = 1.0f;
 
 	///- 頂点データの計算
 	///- 上
@@ -54,8 +68,41 @@ void Brush::Init() {
 	vertexData_[2].position = { -0.1f,0.0f,-0.1f,1.0f };
 	vertexData_[2].texcoord = { 0.0f,1.0f };
 
+	int index = 0;
+	for(int i = 0; i < kVertexCount_; i++) {
+
+		float thetaA = (float(i) / float(kVertexCount_ / 2)) * pi_v<float>;
+		float thetaB = (float(i + 1) / float(kVertexCount_ / 2)) * pi_v<float>;
+
+		///- 中心
+		vertexData_[index + 0].position = { 0.0f,0.0f,0.0f,1.0f };
+		vertexData_[index + 0].texcoord = { 0.0f,0.0f };
+
+		vertexData_[index + 1].position = {
+			std::cos(thetaB) * circleRadius_,
+			0.0f,
+			std::sin(thetaB) * circleRadius_,
+			1.0f
+		};
+		vertexData_[index + 1].texcoord = { 0.0f,1.0f };
+
+		vertexData_[index + 2].position = {
+			std::cos(thetaA) * circleRadius_,
+			0.0f,
+			std::sin(thetaA) * circleRadius_,
+			1.0f
+		};
+		vertexData_[index + 2].texcoord = { 1.0f,0.0f };
+
+
+
+		index += kTriangleVertexCount_;
+	}
+
 
 	worldTransform_.Init();
+
+	distanceTestObject_ = 1.0f;
 
 }
 
@@ -73,6 +120,7 @@ void Brush::Update() {
 	ImGui::Begin("Brush");
 
 	ImGui::DragFloat4("worldMousePos", &worldTransform_.translate.x, 0.0f);
+	ImGui::DragFloat("cameraDistance", &distanceTestObject_, 0.25f);
 
 	ImGui::End();
 #endif // _DEBUG
@@ -93,6 +141,7 @@ void Brush::Draw() {
 	///- データの書き込み
 
 	///- 頂点情報
+	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
 
 	///- 色情報
 	*materialData_ = { 1.0f,0.0f,0.0f,1.0f };
@@ -108,7 +157,7 @@ void Brush::Draw() {
 	commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
 
 	///- 描画 (DrawCall)
-	commandList->DrawInstanced(3, 1, 0, 0);
+	commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);
 
 }
 
@@ -132,17 +181,7 @@ void Brush::ConvertMousePosition() {
 	Vec3f mouseDirection = Vec3f::Normalize(posFar - posNear);
 
 	///- カメラから設定オブジェクトの距離
-	const float kDistanceTestObject = 1.0f;
-	worldTransform_.translate = posNear + (mouseDirection * kDistanceTestObject);
-
-	/*///- 正規化デバイス座標系
-	Vec3f normalizeDevicePos = Matrix4x4::Transform(mousePos_, Matrix4x4::MakeInverse(DirectXCommon::GetInstance()->GetViewportMatrix()));
-	///- プロジェクション座標
-	Vec3f projectionPos = normalizeDevicePos * 1.0f;
-	///- ビュー座標系
-	Vec3f viewPos = Matrix4x4::Transform(projectionPos, Matrix4x4::MakeInverse(Engine::GetCamera()->GetProjectionMatrix()));
-	///- ワールド座標系
-	worldTransform_.translate = Matrix4x4::Transform(viewPos, Engine::GetCamera()->GetWorldMatrix());*/
+	worldTransform_.translate = posNear + (mouseDirection * distanceTestObject_);
 
 }
 
