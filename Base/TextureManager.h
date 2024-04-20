@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <map>
 
 
 ///- ComPtrの省略用
@@ -24,8 +25,8 @@ public:
 	/// </summary>
 	struct Texture {
 		ComPtr<ID3D12Resource> resource;
-		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU_;
-		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU_;
+		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
+		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
 	};
 
 
@@ -47,20 +48,22 @@ public:
 	void Finalize();
 
 
-private: ///- メンバ変数
-
-	std::vector<Texture> textures_;
-
-
-	ComPtr<ID3D12Resource> textureResource_;
-
-
-
 	/// <summary>
 	/// 
 	/// </summary>
 	/// <param name="filePath"></param>
-	void Load(const std::string& filePath);
+	void Load(const std::string& textureName, const std::string& filePath);
+
+	/// <summary>
+	/// textureのセット
+	/// </summary>
+	/// <param name="index"></param>
+	void SetGraphicsRootDescriptorTable(const std::string& textureName);
+
+
+private: ///- メンバ変数
+
+	std::map<std::string, Texture> textures_;
 
 
 	/// <summary>

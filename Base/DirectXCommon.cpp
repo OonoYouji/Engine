@@ -101,8 +101,7 @@ void DirectXCommon::Finalize() {
 	vertexResourceSprite_.Reset();
 
 	depthStencilResource_.Reset();
-	textureResource2_.Reset();
-	textureResource_.Reset();
+
 
 	wvpResource_.Reset();
 	materialResource_.Reset();
@@ -251,7 +250,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		//- エラー
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//- 警告
-		//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 		///- エラーと警告の抑制
 		D3D12_MESSAGE_ID denyIds[] = {
@@ -959,51 +958,51 @@ void DirectXCommon::InitializeTextureResource() {
 
 	//srvHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
-	DirectX::ScratchImage mipImages = LoadTexture("./Resources/Images/uvChecker.png");
-	const  DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	textureResource_ = CreateTextureResource(metadata);
-	UploadTextureData(textureResource_.Get(), mipImages);
+	//DirectX::ScratchImage mipImages = LoadTexture("./Resources/Images/uvChecker.png");
+	//const  DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+	//textureResource_ = CreateTextureResource(metadata);
+	//UploadTextureData(textureResource_.Get(), mipImages);
 
-	///- metadataを基にSRVの設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = metadata.format;
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
+	//- metadataを基にSRVの設定
+	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	//srvDesc.Format = metadata.format;
+	//srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	//srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	//srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
-	///- SRVを作成するDescriptorHeapの場所を決める
-	ID3D12DescriptorHeap* srvHeap = DxDescriptors::GetInstance()->GetSRVHeap();
-	textureSrvHandleCPU_ = srvHeap->GetCPUDescriptorHandleForHeapStart();
-	textureSrvHandleGPU_ = srvHeap->GetGPUDescriptorHandleForHeapStart();
-	///- 先頭はImGuiが使っているのでその次を使う
-	textureSrvHandleCPU_.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleGPU_.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//- SRVを作成するDescriptorHeapの場所を決める
+	//ID3D12DescriptorHeap* srvHeap = DxDescriptors::GetInstance()->GetSRVHeap();
+	//textureSrvHandleCPU_ = srvHeap->GetCPUDescriptorHandleForHeapStart();
+	//textureSrvHandleGPU_ = srvHeap->GetGPUDescriptorHandleForHeapStart();
+	//- 先頭はImGuiが使っているのでその次を使う
+	//textureSrvHandleCPU_.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//textureSrvHandleGPU_.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	///- srvの生成
-	device_->CreateShaderResourceView(textureResource_.Get(), &srvDesc, textureSrvHandleCPU_);
-
-
-	/// --------------------------
-	/// ↓ 2枚目のテクスチャを作る
-	/// --------------------------
-
-	DirectX::ScratchImage mipImage2 = LoadTexture("./Resources/Images/monsterBall.png");
-	const DirectX::TexMetadata& metadata2 = mipImage2.GetMetadata();
-	textureResource2_ = CreateTextureResource(metadata2);
-	UploadTextureData(textureResource2_.Get(), mipImage2);
+	//- srvの生成
+	//device_->CreateShaderResourceView(textureResource_.Get(), &srvDesc, textureSrvHandleCPU_);
 
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
-	srvDesc2.Format = metadata2.format;
-	srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
+	// --------------------------
+	// ↓ 2枚目のテクスチャを作る
+	// --------------------------
 
-	textureSrvHandleCPU2_ = descriptors_->GetCPUDescriptorHandle(descriptors_->GetSRVHeap(), descriptors_->GetSRVSize(), 2);
-	textureSrvHandleGPU2_ = descriptors_->GetGPUDescriptorHandle(descriptors_->GetSRVHeap(), descriptors_->GetSRVSize(), 2);
+	//DirectX::ScratchImage mipImage2 = LoadTexture("./Resources/Images/monsterBall.png");
+	//const DirectX::TexMetadata& metadata2 = mipImage2.GetMetadata();
+	//textureResource2_ = CreateTextureResource(metadata2);
+	//UploadTextureData(textureResource2_.Get(), mipImage2);
 
-	/// srvの生成
-	device_->CreateShaderResourceView(textureResource2_.Get(), &srvDesc2, textureSrvHandleCPU2_);
+
+	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
+	//srvDesc2.Format = metadata2.format;
+	//srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	//srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	//srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
+
+	//textureSrvHandleCPU2_ = descriptors_->GetCPUDescriptorHandle(descriptors_->GetSRVHeap(), descriptors_->GetSRVSize(), 2);
+	//textureSrvHandleGPU2_ = descriptors_->GetGPUDescriptorHandle(descriptors_->GetSRVHeap(), descriptors_->GetSRVSize(), 2);
+
+	// srvの生成
+	//device_->CreateShaderResourceView(textureResource2_.Get(), &srvDesc2, textureSrvHandleCPU2_);
 
 
 }
@@ -1275,7 +1274,8 @@ void DirectXCommon::TestDraw() {
 	///- wvp用のCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	///- DescriptorTableを設定する
-	commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2_);
+	//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2_);
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 
 	///- 描画 (DrawCall)
 	commandList->DrawInstanced(6, 1, 0, 0);

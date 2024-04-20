@@ -2,6 +2,7 @@
 
 #include "DirectXCommon.h"
 #include <DxDescriptors.h>
+#include <DxCommand.h>
 #include "Engine.h"
 
 #pragma comment(lib, "DirectXTex.lib")
@@ -21,7 +22,8 @@ TextureManager* TextureManager::GetInstance() {
 /// </summary>
 void TextureManager::Initialize() {
 
-	Load("./Resources/Images/uvChecker.png");
+	Load("uvChecker", "./Resources/Images/uvChecker.png");
+	Load("monsterBall", "./Resources/Images/monsterBall.png");
 
 
 
@@ -33,6 +35,7 @@ void TextureManager::Initialize() {
 /// </summary>
 void TextureManager::Finalize() {
 
+	textures_.clear();
 
 }
 
@@ -41,12 +44,13 @@ void TextureManager::Finalize() {
 /// 新しいテクスチャを読み込み
 /// </summary>
 /// <param name="filePath"></param>
-void TextureManager::Load(const std::string& filePath) {
-	filePath;
-	/*DirectX::ScratchImage mipImages = LoadTexture(filePath);
+void TextureManager::Load(const std::string& textureName, const std::string& filePath) {
+
+	Texture newTexture{};
+	DirectX::ScratchImage mipImages = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	textureResource_ = CreataTextureResouece(DirectXCommon::GetInstance()->GetDevice(), metadata);
-	UploadTextureData(textureResource_.Get(), mipImages);
+	newTexture.resource = CreataTextureResouece(DirectXCommon::GetInstance()->GetDevice(), metadata);
+	UploadTextureData(newTexture.resource.Get(), mipImages);
 
 	///- metadataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -56,19 +60,33 @@ void TextureManager::Load(const std::string& filePath) {
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
 	///- SRVを作成するDescriptorHeapの場所を決める
-	ID3D12DescriptorHeap* srvHeap = DxDescriptors::GetInstance()->GetSRVHeap();
-	textureSrvHandleCPU_ = srvHeap->GetCPUDescriptorHandleForHeapStart();
-	textureSrvHandleGPU_ = srvHeap->GetGPUDescriptorHandleForHeapStart();
+	//ID3D12DescriptorHeap* srvHeap = DxDescriptors::GetInstance()->GetSRVHeap();
+	//newTexture.srvHandleCPU = srvHeap->GetCPUDescriptorHandleForHeapStart();
+	//newTexture.srvHandleGPU = srvHeap->GetGPUDescriptorHandleForHeapStart();
 	///- 先頭はImGuiが使っているのでその次を使う
 
-	///- deviceの取得
-	ID3D12Device* device = DirectXCommon::GetInstance()->GetDevice();
-	textureSrvHandleCPU_.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	textureSrvHandleGPU_.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	///- srvHandleの取得
+	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
+	newTexture.srvHandleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>(textures_.size() + 1));
+	newTexture.srvHandleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>(textures_.size() + 1));
+
 
 	///- srvの生成
-	device->CreateShaderResourceView(textureResource_.Get(), &srvDesc, textureSrvHandleCPU_);*/
+	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(newTexture.resource.Get(), &srvDesc, newTexture.srvHandleCPU);
 
+	textures_[textureName] = newTexture;
+
+}
+
+
+/// <summary>
+/// textureのセット
+/// </summary>
+/// <param name="index"></param>
+void TextureManager::SetGraphicsRootDescriptorTable(const std::string& textureName) {
+
+	/// texturesの範囲外参照しないように注意
+	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(2, textures_[textureName].srvHandleGPU);
 }
 
 

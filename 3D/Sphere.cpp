@@ -2,6 +2,7 @@
 
 #include <numbers>
 
+#include <TextureManager.h>
 #include "ImGuiManager.h"
 #include "Engine.h"
 #include "DxCommand.h"
@@ -172,7 +173,8 @@ void Sphere::Draw() {
 	///- wvp用のCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	///- DescriptorTableを設定する
-	commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
+	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 
 	///- 描画 (DrawCall)
 	commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);

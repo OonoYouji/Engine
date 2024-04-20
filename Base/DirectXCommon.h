@@ -115,10 +115,6 @@ private:
 	ComPtr<ID3D12Resource> wvpResource_;
 
 	///- テクスチャを貼ろう
-	ComPtr<ID3D12Resource> textureResource_;
-	//ComPtr<ID3D12DescriptorHeap> srvHeap_;
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
 	D3D12_STATIC_SAMPLER_DESC staticSamplers_[1];
 
@@ -131,12 +127,6 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite_;
 	ComPtr<ID3D12Resource> transformationMatrixResourceSprite_;
 	WorldTransform transformSprite_;
-
-
-	///- Textureの切り替え
-	ComPtr<ID3D12Resource> textureResource2_;
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2_;
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2_;
 
 
 	WorldTransform worldTransform_;
@@ -246,12 +236,11 @@ public:
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 
-	//ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
 
 	void DrawSprite();
 
 
-	const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU2_; }
+	//const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU2_; }
 
 
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
