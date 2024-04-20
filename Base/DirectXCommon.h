@@ -26,6 +26,7 @@ using namespace Microsoft::WRL;
 
 class WinApp;
 class DxCommand;
+class DxDescriptors;
 
 
 struct VertexData {
@@ -58,6 +59,9 @@ private:
 
 	///- DirectX Command
 	DxCommand* command_;
+
+	///- Descriptors
+	DxDescriptors* descriptors_;
 
 
 	ComPtr<IDXGISwapChain4> swapChain_;
@@ -129,8 +133,10 @@ private:
 	WorldTransform transformSprite_;
 
 
-	///- sphereの表示
-
+	///- Textureの切り替え
+	ComPtr<ID3D12Resource> textureResource2_;
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2_;
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2_;
 
 
 	WorldTransform worldTransform_;
@@ -245,7 +251,7 @@ public:
 	void DrawSprite();
 
 
-	const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU_; }
+	const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU2_; }
 
 
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);

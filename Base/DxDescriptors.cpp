@@ -35,6 +35,14 @@ void DxDescriptors::Initialize() {
 	dsvDescriptorHeap_ = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 	assert(dsvDescriptorHeap_);
 
+
+
+	///- descriptorSizeの取得
+	descriptorRTV_ = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	descriptorSRV_ = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descriptorDSV_ = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+
 }
 
 
@@ -65,4 +73,25 @@ ComPtr<ID3D12DescriptorHeap> DxDescriptors::CreateDescriptorHeap(ID3D12Device* d
 	assert(SUCCEEDED(result));
 
 	return heap;
+}
+
+
+
+/// <summary>
+/// DescriptorHandleの取得
+/// </summary>
+D3D12_CPU_DESCRIPTOR_HANDLE DxDescriptors::GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index) {
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
+}
+
+
+/// <summary>
+/// DescriptorHandleの取得
+/// </summary>
+D3D12_GPU_DESCRIPTOR_HANDLE DxDescriptors::GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index) {
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
 }

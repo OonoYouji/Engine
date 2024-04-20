@@ -4,6 +4,7 @@
 
 #include <DxDescriptors.h>
 #include <DxCommand.h>
+#include <TextureManager.h>
 #include <WinApp.h>
 #include <Engine.h>
 #include <Environment.h>
@@ -43,9 +44,14 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 	InitializeDXGIDevice();
 
-	DxDescriptors::GetInstance()->Initialize();
+	///- DirectX Commnadの初期化
 	command_ = DxCommand::GetInstance();
 	command_->Initialize(device_.Get());
+
+	///- DescriptorHeapのまとまりの初期化
+	descriptors_ = DxDescriptors::GetInstance();
+	descriptors_->Initialize();
+
 
 	InitializeSwapChain();
 	InitialiezRenderTarget();
@@ -95,6 +101,7 @@ void DirectXCommon::Finalize() {
 	vertexResourceSprite_.Reset();
 
 	depthStencilResource_.Reset();
+	textureResource2_.Reset();
 	textureResource_.Reset();
 
 	wvpResource_.Reset();
@@ -975,6 +982,30 @@ void DirectXCommon::InitializeTextureResource() {
 	///- srvの生成
 	device_->CreateShaderResourceView(textureResource_.Get(), &srvDesc, textureSrvHandleCPU_);
 
+
+	/// --------------------------
+	/// ↓ 2枚目のテクスチャを作る
+	/// --------------------------
+
+	DirectX::ScratchImage mipImage2 = LoadTexture("./Resources/Images/monsterBall.png");
+	const DirectX::TexMetadata& metadata2 = mipImage2.GetMetadata();
+	textureResource2_ = CreateTextureResource(metadata2);
+	UploadTextureData(textureResource2_.Get(), mipImage2);
+
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
+	srvDesc2.Format = metadata2.format;
+	srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
+
+	textureSrvHandleCPU2_ = descriptors_->GetCPUDescriptorHandle(descriptors_->GetSRVHeap(), descriptors_->GetSRVSize(), 2);
+	textureSrvHandleGPU2_ = descriptors_->GetGPUDescriptorHandle(descriptors_->GetSRVHeap(), descriptors_->GetSRVSize(), 2);
+
+	/// srvの生成
+	device_->CreateShaderResourceView(textureResource2_.Get(), &srvDesc2, textureSrvHandleCPU2_);
+
+
 }
 
 
@@ -1244,7 +1275,7 @@ void DirectXCommon::TestDraw() {
 	///- wvp用のCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	///- DescriptorTableを設定する
-	commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU_);
+	commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2_);
 
 	///- 描画 (DrawCall)
 	commandList->DrawInstanced(6, 1, 0, 0);

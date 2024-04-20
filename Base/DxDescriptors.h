@@ -3,6 +3,8 @@
 #include <d3d12.h>
 #include <wrl/client.h>
 
+#include <cmath>
+
 using namespace Microsoft::WRL;
 
 
@@ -48,11 +50,31 @@ public:
 	ID3D12DescriptorHeap* GetDSVHeap() const { return dsvDescriptorHeap_.Get(); }
 
 
+	/// <summary>
+	/// DescriptorHandleを取得する [ CPU ver ]
+	/// </summary>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+	/// <summary>
+	/// DescriptorHandleを取得する [ GPU ver ]
+	/// </summary>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+
+	uint32_t GetSRVSize() const { return descriptorSRV_; }
+	uint32_t GetRTVSize() const { return descriptorRTV_; }
+	uint32_t GetDSVSize() const { return descriptorDSV_; }
+
+
 private: ///- member obejct
 
 	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap_;
 	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+
+	uint32_t descriptorSRV_;
+	uint32_t descriptorRTV_;
+	uint32_t descriptorDSV_;
 
 private: ///- member method
 
@@ -65,6 +87,7 @@ private: ///- member method
 	/// <param name="shaderVisible"></param>
 	/// <returns></returns>
 	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+
 
 
 
