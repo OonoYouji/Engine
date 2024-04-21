@@ -21,10 +21,13 @@
 #include "Vector2.h"
 #include "Vector4.h"
 
-
 using namespace Microsoft::WRL;
 
+
 class WinApp;
+class DxCommand;
+class DxDescriptors;
+
 
 struct VertexData {
 	Vec4f position;
@@ -54,17 +57,19 @@ private:
 	ComPtr<IDXGIAdapter4> useAdapter_;
 	ComPtr<ID3D12Device> device_;
 
-	///- 画面の色を変えよう
-	ComPtr<ID3D12CommandQueue> commandQueue_;
-	ComPtr<ID3D12CommandAllocator> commandAllocator_;
-	ComPtr<ID3D12GraphicsCommandList> commandList_;
+	///- DirectX Command
+	DxCommand* command_;
+
+	///- Descriptors
+	DxDescriptors* descriptors_;
+
 
 	ComPtr<IDXGISwapChain4> swapChain_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 
-	ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
+	//ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
-	ComPtr<ID3D12Resource> swapChainResource_[2];
+	std::vector<ComPtr<ID3D12Resource>>swapChainResource_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
 
 	///- エラー放置ダメ、ゼッタイ
@@ -111,16 +116,12 @@ private:
 	ComPtr<ID3D12Resource> wvpResource_;
 
 	///- テクスチャを貼ろう
-	ComPtr<ID3D12Resource> textureResource_;
-	ComPtr<ID3D12DescriptorHeap> srvHeap_;
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
 	D3D12_STATIC_SAMPLER_DESC staticSamplers_[1];
 
 	///- 前後関係
 	ComPtr<ID3D12Resource> depthStencilResource_;
-	ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
+	//ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
 
 	///- Spriteの表示
 	ComPtr<ID3D12Resource> vertexResourceSprite_;
@@ -139,8 +140,6 @@ private:
 	/// -----------------------------------
 
 	void InitializeDXGIDevice();
-
-	void InitializeCommand();
 
 	void InitializeSwapChain();
 
@@ -217,9 +216,14 @@ public:
 	/// </summary>
 	static DirectXCommon* GetInstance();
 
-
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
 	void PreDraw();
 
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
 	void PostDraw();
 
 	void TestDraw();
@@ -232,11 +236,12 @@ public:
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 
-	ID3D12GraphicsCommandList* GetCommandList() const { return commandList_.Get(); }
-
-	ID3D12DescriptorHeap* GetSrvHeap() const { return srvHeap_.Get(); }
 
 	void DrawSprite();
+
+
+	//const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU2_; }
+
 
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
 
@@ -244,6 +249,13 @@ public:
 
 
 	const Matrix4x4& GetViewportMatrix() const { return viewportMatrix_; }
+
+
+	/// <summary>
+	/// swapChainResource getter
+	/// </summary>
+	/// <returns></returns>
+	std::vector<ComPtr<ID3D12Resource>> GetSwapChainResource() { return swapChainResource_; }
 
 
 private:

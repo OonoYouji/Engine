@@ -9,6 +9,7 @@
 #include <WinApp.h>
 #include <DirectXCommon.h>
 #include <ImGuiManager.h>
+#include <TextureManager.h>
 #include <Input.h>
 #include <Camera.h>
 
@@ -42,6 +43,7 @@ namespace {
 		WinApp* winApp_ = nullptr;
 		DirectXCommon* directXCommon_ = nullptr;
 		ImGuiManager* imGuiManager_ = nullptr;
+		TextureManager* textureManager_ = nullptr;
 
 		Input* input_ = nullptr;
 		//std::unique_ptr<Camera> camera_ = nullptr;
@@ -87,6 +89,7 @@ namespace {
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
 		imGuiManager_ = ImGuiManager::GetInstance();
+		textureManager_ = TextureManager::GetInstance();
 		input_ = Input::GetInstance();
 		//camera_ = std::make_unique<Camera>();
 	}
@@ -113,13 +116,13 @@ namespace {
 	}
 
 	std::wstring EngineSystem::ConvertString(const std::string& str) {
-		if (str.empty()) {
+		if(str.empty()) {
 			return std::wstring();
 		}
 
 		auto sizeNeeded = MultiByteToWideChar(
 			CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
-		if (sizeNeeded == 0) {
+		if(sizeNeeded == 0) {
 			return std::wstring();
 		}
 		std::wstring result(sizeNeeded, 0);
@@ -155,6 +158,7 @@ namespace {
 	WinApp* sWinApp = nullptr;
 	DirectXCommon* sDirectXCommon = nullptr;
 	ImGuiManager* sImGuiManager = nullptr;
+	TextureManager* sTextureManager_ = nullptr;
 	Input* sInput = nullptr;
 
 	std::unique_ptr<EngineSystem> sEngineSystem = nullptr;
@@ -169,6 +173,7 @@ void Engine::Initialize(const std::string& title) {
 	assert(!sWinApp);
 	assert(!sDirectXCommon);
 	assert(!sImGuiManager);
+	assert(!sTextureManager_);
 
 
 	const int width = kWindowSize.x;
@@ -196,6 +201,9 @@ void Engine::Initialize(const std::string& title) {
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();
 
+	sTextureManager_ = TextureManager::GetInstance();
+	sTextureManager_->Initialize();
+
 }
 
 void Engine::Finalize() {
@@ -205,6 +213,8 @@ void Engine::Finalize() {
 	sWinApp->TerminateGameWindow();
 
 	sImGuiManager->Finalize();
+
+	sTextureManager_->Finalize();
 
 	sDirectXCommon->Finalize();
 

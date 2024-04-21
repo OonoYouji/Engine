@@ -37,7 +37,7 @@ void Camera::Update() {
 	ImGui::End();
 
 #endif // _DEBUG
- 
+
 	worldMatrix_ = Matrix4x4::MakeAffine(scale_, rotate_, worldPos_);
 	viewMatrix_ = Matrix4x4::MakeInverse(worldMatrix_);
 	vpMatrix_ = viewMatrix_ * projectionMatrix_;

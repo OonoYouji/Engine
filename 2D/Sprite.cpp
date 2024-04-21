@@ -3,6 +3,8 @@
 #include "DirectXCommon.h"
 #include "Environment.h"
 #include "ImGuiManager.h"
+#include "DxCommand.h"
+#include <TextureManager.h>
 
 Sprite::Sprite() {}
 Sprite::~Sprite() {
@@ -27,13 +29,13 @@ void Sprite::Init() {
 	/// ---------------------------------
 	/// ↓ 頂点リソースの初期化
 	/// ---------------------------------
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * 6));
+	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * 4));
 
 	///- 頂点バッファビューを作成
 	///- リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	///- 使用するリソースのサイズ; 頂点数分確保する
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
+	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
 	///- 1頂点あたりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
@@ -41,27 +43,48 @@ void Sprite::Init() {
 	vertexData_ = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
-	///- 1枚目
+	///- 頂点情報
 	vertexData_[0].position = { 0.0f,360.0f,0.0f,1.0f };
 	vertexData_[0].texcoord = { 0.0f,1.0f };
 	vertexData_[1].position = { 0.0f,0.0f,0.0f,1.0f };
 	vertexData_[1].texcoord = { 0.0f,0.0f };
 	vertexData_[2].position = { 640.0f,360.0f,0.0f,1.0f };
 	vertexData_[2].texcoord = { 1.0f,1.0f };
-
-	///- 2枚目
-	vertexData_[3].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexData_[3].texcoord = { 0.0f,0.0f };
-	vertexData_[4].position = { 640.0f,0.0f,0.0f,1.0f };
-	vertexData_[4].texcoord = { 1.0f,0.0f };
-	vertexData_[5].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexData_[5].texcoord = { 1.0f,1.0f };
+	vertexData_[3].position = { 640.0f,0.0f,0.0f,1.0f };
+	vertexData_[3].texcoord = { 1.0f,0.0f };
 
 	///- 頂点座標を保存
-	localVertex_.resize(6);
-	for(uint32_t index = 0; index < 6; index++) {
+	localVertex_.resize(4);
+	for(uint32_t index = 0; index < 4; index++) {
 		localVertex_[index] = vertexData_[index].position;
 	}
+
+
+
+	/// ---------------------------------
+	/// ↓ Indexリソースの初期化
+	/// ---------------------------------
+	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * 6));
+
+	///- リソースの先頭アドレスから使用する
+	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	///- 使用するリソースのサイズはインデックスの6つ分のサイズ
+	indexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
+	///- indexはuint32_tとする
+	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
+
+
+	///- indexResourceに書き込み
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	indexData_[0] = 0;
+	indexData_[1] = 1;
+	indexData_[2] = 2;
+
+	indexData_[3] = 1;
+	indexData_[4] = 3;
+	indexData_[5] = 2;
+
+
 
 	/// ---------------------------
 	/// ↓ Transform周りを作る
@@ -100,30 +123,33 @@ void Sprite::Init() {
 /// 描画
 /// </summary>
 void Sprite::Draw() {
-	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	///- マテリアルにデータをRGBAデータを書き込む
 	*materialData_ = color;
 
 	///- 頂点データに中心点のプラスして書き込む
-	for(uint32_t index = 0; index < 6; index++) {
+	for(uint32_t index = 0; index < 4; index++) {
 		Vec4f pos = { position.x, position.y, 0.0f, 0.0f };
 		vertexData_[index].position = localVertex_[index] + pos;
 	}
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
+
 	///- DrawCall
-	commandList->DrawInstanced(6, 1, 0, 0);
+	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 }
 
 
 void Sprite::ImGui([[maybe_unused]] const std::string& windowName) {
 #ifdef _DEBUG
-	
+
 	ImGui::Begin(windowName.c_str());
 
 	ImGui::DragFloat2("position", &position.x, 1.0f);

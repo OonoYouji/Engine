@@ -79,11 +79,14 @@
     <ClCompile Include="3D\Terrain.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Input\Input.cpp">
-      <Filter>Source\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="3D\Brush.cpp">
+    <ClCompile Include="3D\Sphere.cpp">
       <Filter>Source\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\DxDescriptors.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\DxCommand.cpp">
+      <Filter>Source\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,11 +233,14 @@
     <ClInclude Include="3D\Terrain.h">
       <Filter>Include\3D</Filter>
     </ClInclude>
-    <ClInclude Include="Input\Input.h">
-      <Filter>Include\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="3D\Brush.h">
+    <ClInclude Include="3D\Sphere.h">
       <Filter>Include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\DxDescriptors.h">
+      <Filter>Include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\DxCommand.h">
+      <Filter>Include\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
