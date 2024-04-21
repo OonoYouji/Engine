@@ -33,9 +33,17 @@ private:
 	ComPtr<ID3D12Resource> materialResource_;
 	ComPtr<ID3D12Resource> wvpResource_;
 
+	/*ComPtr<ID3D12Resource> indexResource_;
+	D3D12_INDEX_BUFFER_VIEW indexBuffer_;
+
+	std::vector<uint32_t> indexData_;
+	uint32_t* pIndexData_ = nullptr;
+	void* pIndexMappedData_ = nullptr;*/
+
 	std::vector<VertexData> vertexData_;
 	VertexData* pData_ = nullptr;
 	void* pMappedData_ = nullptr;
+
 	Vec4f* materialData_ = nullptr;
 	Matrix4x4* wvpData_ = nullptr;
 

@@ -23,4 +23,6 @@ private:
 
 	std::unique_ptr<Sphere> sphere_;
 
+	std::unique_ptr<Sprite> sprite_;
+
 };

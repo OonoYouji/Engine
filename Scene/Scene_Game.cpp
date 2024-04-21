@@ -14,6 +14,9 @@ void Scene_Game::Init() {
 	sphere_ = std::make_unique<Sphere>();
 	sphere_->Init();
 
+	sprite_ = std::make_unique<Sprite>();
+	sprite_->Init();
+
 }
 
 void Scene_Game::Update() {
@@ -29,11 +32,15 @@ void Scene_Game::Draw() {
 
 	sphere_->Draw();
 
+	//sprite_->Draw();
+
+
 
 }
 
 void Scene_Game::Finalize() {
 
 	sphere_.reset();
+	sprite_.reset();
 
 }

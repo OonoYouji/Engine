@@ -49,10 +49,15 @@ private: ///- メンバ変数
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	ComPtr<ID3D12Resource> transformationMatrixResource_;
 	ComPtr<ID3D12Resource> materialResource_;
+
+	ComPtr<ID3D12Resource> indexResource_;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
+
 	WorldTransform transform_;
 
 	Vector4* materialData_;
 	VertexData* vertexData_;
+	uint32_t* indexData_ = nullptr;
 	std::vector<Vector4> localVertex_;
 	Matrix4x4* transformationMatrixData_;
 

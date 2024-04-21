@@ -112,6 +112,11 @@ void Sphere::Init() {
 	/// ↓ resoruceの初期化
 	/// -----------------------------------------------
 
+
+	/// -----------------------------------------------
+	/// ↓ 頂点リソース
+	/// -----------------------------------------------
+
 	///- 頂点数分確保
 	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertexData_.size()));
 
@@ -126,12 +131,22 @@ void Sphere::Init() {
 	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
 	vertexResource_->Unmap(0, nullptr);
 
+	
+	
+	/// -----------------------------------------------
+	/// ↓ マテリアルリソース
+	/// -----------------------------------------------
 
 	///- マテリアルリソースの生成; 情報の書き込み
 	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector4)));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	*materialData_ = { 1.0f,1.0f,1.0f,1.0f };
 
+
+
+	/// -----------------------------------------------
+	/// ↓ 行列リソース
+	/// -----------------------------------------------
 
 	///- 行列リソースの生成; 書き込み
 	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(Matrix4x4)));
@@ -173,7 +188,6 @@ void Sphere::Draw() {
 	///- wvp用のCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	///- DescriptorTableを設定する
-	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 
 	///- 描画 (DrawCall)

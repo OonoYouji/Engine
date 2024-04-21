@@ -22,8 +22,10 @@ TextureManager* TextureManager::GetInstance() {
 /// </summary>
 void TextureManager::Initialize() {
 
-	Load("uvChecker", "./Resources/Images/uvChecker.png");
-	Load("monsterBall", "./Resources/Images/monsterBall.png");
+	const std::string baseFilePath = "./Resources/Images/";
+	Load("uvChecker", baseFilePath + "uvChecker.png");
+	Load("monsterBall", baseFilePath + "monsterBall.png");
+	//Load("white1x1", baseFilePath + "white1x1.png");
 
 
 
