@@ -131,6 +131,7 @@ void Sphere::Init() {
 	/// -----------------------------------------------
 
 
+	///- 頂点の割り振り
 	for(uint32_t latIndex = 0; latIndex < subdivision_; latIndex++) {
 		for(uint32_t lonIndex = 0; lonIndex < subdivision_; lonIndex++) {
 			uint32_t startIndex = (latIndex * subdivision_ + lonIndex) * 4;
@@ -145,13 +146,15 @@ void Sphere::Init() {
 		}
 	}
 
-
+	///- リソースの生成
 	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * indexData_.size()));
 
+	///- bufferの設定
 	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	indexBuffer_.SizeInBytes = UINT(sizeof(VertexData) * indexData_.size());
 	indexBuffer_.Format = DXGI_FORMAT_R32_UINT;
 
+	///- resourceに書き込み
 	pIndexData_ = indexData_.data();
 	indexResource_->Map(0, nullptr, &pIndexMappedData_);
 	memcpy(pIndexMappedData_, pIndexData_, indexData_.size() * sizeof(VertexData));
