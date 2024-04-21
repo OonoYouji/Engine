@@ -29,7 +29,8 @@ public:
 private:
 
 	///- 縦横の分割数
-	static const int kSubdivision_ = 100;
+	//static const int kSubdivision_ = 100;
+	int kSubdivision_;
 
 
 	///- 描画用Resource

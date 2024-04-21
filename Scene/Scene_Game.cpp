@@ -17,10 +17,6 @@ void Scene_Game::Init() {
 	brush_ = std::make_unique<Brush>();
 	brush_->Init();
 
-
-	sphere_ = std::make_unique<Sphere>();
-	sphere_->Init();
-
 }
 
 void Scene_Game::Update() {
@@ -41,8 +37,6 @@ void Scene_Game::Draw() {
 	brush_->Draw();
 
 
-	//sphere_->Draw();
-
 
 }
 
@@ -50,7 +44,5 @@ void Scene_Game::Finalize() {
 
 	terrain_.reset();
 	brush_.reset();
-
-	sphere_.reset();
 
 }

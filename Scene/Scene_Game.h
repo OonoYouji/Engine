@@ -27,6 +27,4 @@ private:
 	std::unique_ptr<Terrain> terrain_;
 	std::unique_ptr<Brush> brush_;
 
-	std::unique_ptr<Sphere> sphere_;
-
 };

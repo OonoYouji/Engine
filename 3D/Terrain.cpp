@@ -23,13 +23,16 @@ Terrain::~Terrain() {
 void Terrain::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
+
+	kSubdivision_ = 10;
+
+
 	///- 頂点数の調整
 	int indexCount = (kSubdivision_ + 1) * (kSubdivision_ + 1);
 	indexCount *= 6;	//- 三角形1個分の頂点数をかける
 	indexData_.resize(indexCount);
 
 	int vertexCount = (kSubdivision_ + 1) * (kSubdivision_ + 1);
-	//vertexCount *= 4;
 	vertexData_.resize(vertexCount);
 
 
@@ -38,24 +41,29 @@ void Terrain::Init() {
 	/// ------------------------------------------------- 
 
 
-	uint32_t indices[kSubdivision_ + 1][kSubdivision_ + 1]{};
+	/// -----------------------
+	/// ↓ 頂点インデックス
+	/// -----------------------
+
+	///- 頂点インデックスの設定用
+	//uint32_t indices[kSubdivision_ + 1][kSubdivision_ + 1]{};
+	std::vector<std::vector<uint32_t>> indices;
+	indices.resize(kSubdivision_ + 1);
+	for(uint32_t i = 0; i < indices.size(); i++) {
+		indices[i].resize(kSubdivision_ + 1);
+	}
+
 	int number = 0;
-	for(uint32_t row = 0; row < kSubdivision_ + 1; row++) {
-		for(uint32_t col = 0; col < kSubdivision_ + 1; col++) {
+	for(uint32_t row = 0; row < uint32_t(kSubdivision_ + 1); row++) {
+		for(uint32_t col = 0; col < uint32_t(kSubdivision_ + 1); col++) {
 			indices[row][col] = number;
 			++number;
 		}
 	}
 
 
-
-
-	/// -----------------------
-	/// ↓ 頂点インデックス
-	/// -----------------------
-
-	for(uint32_t row = 0; row < kSubdivision_; row++) {
-		for(uint32_t col = 0; col < kSubdivision_; col++) {
+	for(uint32_t row = 0; row < uint32_t(kSubdivision_); row++) {
+		for(uint32_t col = 0; col < uint32_t(kSubdivision_); col++) {
 			uint32_t startIndex = (row * kSubdivision_ + col) * 6;
 
 			indexData_[startIndex + 0] = indices[row + 0][col + 0];
@@ -77,7 +85,7 @@ void Terrain::Init() {
 	uint32_t index = 0;
 	for(int32_t row = 0; row <= kSubdivision_; row++) {
 		for(int32_t col = 0; col <= kSubdivision_; col++) {
-			
+
 
 			/// -----------------------
 			/// ↓ Position
@@ -180,7 +188,7 @@ void Terrain::Init() {
 	*wvpData_ = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
 
-	
+
 
 
 
@@ -213,6 +221,9 @@ void Terrain::Update() {
 	ImGui::DragFloat4("vertex", &vertexData_[index].position.x, 0.25f);
 	ImGui::DragFloat2("texcoord", &vertexData_[index].texcoord.x, 0.0f);
 
+	ImGui::Spacing();
+	ImGui::Text("vertexData dataSize: %d", sizeof(VertexData) * vertexData_.size());
+
 	ImGui::End();
 #endif // _DEBUG
 
@@ -221,7 +232,7 @@ void Terrain::Update() {
 	/// ↓ 更新処理ここから
 	/// -----------------------------------
 
-
+	//worldTransform_.rotate.y += 1.0f / 128.0f;
 
 
 }
@@ -237,7 +248,7 @@ void Terrain::Draw() {
 
 	///- 頂点情報
 	memcpy(pVertexMappedData_, pVertexData_, vertexData_.size() * sizeof(VertexData));
-	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
+	//memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
 
 	///- 色情報
 	*materialData_ = color_;
