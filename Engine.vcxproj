@@ -181,6 +181,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2D\Sprite.h" />
+    <ClInclude Include="3D\Brush.h" />
     <ClInclude Include="3D\Sphere.h" />
     <ClInclude Include="3D\Terrain.h" />
     <ClInclude Include="Base\DxCommand.h" />

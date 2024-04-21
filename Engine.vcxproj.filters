@@ -88,6 +88,12 @@
     <ClCompile Include="Base\DxCommand.cpp">
       <Filter>Source\Base</Filter>
     </ClCompile>
+    <ClCompile Include="3D\Brush.cpp">
+      <Filter>Source\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Input.cpp">
+      <Filter>Source\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -241,6 +247,12 @@
     </ClInclude>
     <ClInclude Include="Base\DxCommand.h">
       <Filter>Include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Input.h">
+      <Filter>Include\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Brush.h">
+      <Filter>Include\3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

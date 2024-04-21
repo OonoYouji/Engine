@@ -3,6 +3,8 @@
 #include <cmath>
 #include <numbers>
 
+#include <DxCommand.h>
+#include <TextureManager.h>
 #include "Environment.h"
 #include "Engine.h"
 #include "ImGuiManager.h"
@@ -132,7 +134,7 @@ void Brush::Update() {
 
 
 void Brush::Draw() {
-	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
@@ -152,7 +154,8 @@ void Brush::Draw() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
+	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 
 	///- 描画 (DrawCall)
 	commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);

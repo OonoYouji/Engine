@@ -245,7 +245,7 @@ public:
 
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
 
-	const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU_; }
+	//const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU_; }
 
 
 	const Matrix4x4& GetViewportMatrix() const { return viewportMatrix_; }

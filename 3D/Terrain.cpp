@@ -1,9 +1,14 @@
 #include "Terrain.h"
 
 #include <array>
+
+#include <DxCommand.h>
+#include <DxDescriptors.h>
+#include <TextureManager.h>
 #include "ImGuiManager.h"
 #include "Engine.h"
 #include "Input.h"
+
 
 Terrain::Terrain() {}
 Terrain::~Terrain() {
@@ -143,7 +148,7 @@ void Terrain::Update() {
 
 
 void Terrain::Draw() {
-	ID3D12GraphicsCommandList* commandList = DirectXCommon::GetInstance()->GetCommandList();
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
@@ -163,7 +168,8 @@ void Terrain::Draw() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
+	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 
 	///- 描画 (DrawCall)
 	commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);
