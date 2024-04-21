@@ -147,17 +147,17 @@ void Sphere::Init() {
 	}
 
 	///- リソースの生成
-	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * indexData_.size()));
+	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(uint32_t) * indexData_.size()));
 
 	///- bufferの設定
 	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	indexBuffer_.SizeInBytes = UINT(sizeof(VertexData) * indexData_.size());
+	indexBuffer_.SizeInBytes = UINT(sizeof(uint32_t) * indexData_.size());
 	indexBuffer_.Format = DXGI_FORMAT_R32_UINT;
 
 	///- resourceに書き込み
 	pIndexData_ = indexData_.data();
 	indexResource_->Map(0, nullptr, &pIndexMappedData_);
-	memcpy(pIndexMappedData_, pIndexData_, indexData_.size() * sizeof(VertexData));
+	memcpy(pIndexMappedData_, pIndexData_, indexData_.size() * sizeof(uint32_t));
 	indexResource_->Unmap(0, nullptr);
 
 
@@ -203,7 +203,7 @@ void Sphere::Draw() {
 
 	///- 頂点情報
 	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
-	memcpy(pIndexMappedData_, pIndexData_, indexData_.size() * sizeof(VertexData));
+	memcpy(pIndexMappedData_, pIndexData_, indexData_.size() * sizeof(uint32_t));
 
 	///- 行列情報
 	worldTransform_.MakeWorldMatrix();

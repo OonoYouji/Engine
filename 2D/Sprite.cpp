@@ -64,12 +64,12 @@ void Sprite::Init() {
 	/// ---------------------------------
 	/// ↓ Indexリソースの初期化
 	/// ---------------------------------
-	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * 6));
+	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(uint32_t) * 6));
 
 	///- リソースの先頭アドレスから使用する
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	///- 使用するリソースのサイズはインデックスの6つ分のサイズ
-	indexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
+	indexBufferView_.SizeInBytes = sizeof(uint32_t) * 6;
 	///- indexはuint32_tとする
 	indexBufferView_.Format = DXGI_FORMAT_R32_UINT;
 

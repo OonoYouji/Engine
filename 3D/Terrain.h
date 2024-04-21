@@ -29,8 +29,7 @@ public:
 private:
 
 	///- 縦横の分割数
-	static const int kVerticalDivisionNum_ = 10;
-	static const int kHorizontalDivisionNum_ = 10;
+	static const int kSubdivision_ = 100;
 
 
 	///- 描画用Resource
@@ -38,11 +37,18 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	ComPtr<ID3D12Resource> materialResource_;
 	ComPtr<ID3D12Resource> wvpResource_;
+	ComPtr<ID3D12Resource> indexResource_;
+	D3D12_INDEX_BUFFER_VIEW indexBuffer_;
 
 	///- 書き込み用データ
 	std::vector<VertexData> vertexData_;
-	VertexData* pData_ = nullptr;
-	void* pMappedData_ = nullptr;
+	VertexData* pVertexData_ = nullptr;
+	void* pVertexMappedData_ = nullptr;
+
+	std::vector<uint32_t> indexData_;
+	uint32_t* pIndexData_;
+	void* pIndexMappedData_;
+
 	Vector4* materialData_ = nullptr;
 	Matrix4x4* wvpData_ = nullptr;
 

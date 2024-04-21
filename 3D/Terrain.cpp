@@ -24,92 +24,172 @@ void Terrain::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	///- 頂点数の調整
-	int vertexCount = kVerticalDivisionNum_ + 1; //- 縦の分割数+1
-	vertexCount *= kHorizontalDivisionNum_ + 1;  //- 横の分割数+1
-	vertexCount *= 6;	//- 三角形1個分の頂点数をかける
+	int indexCount = (kSubdivision_ + 1) * (kSubdivision_ + 1);
+	indexCount *= 6;	//- 三角形1個分の頂点数をかける
+	indexData_.resize(indexCount);
+
+	int vertexCount = (kSubdivision_ + 1) * (kSubdivision_ + 1);
+	//vertexCount *= 4;
 	vertexData_.resize(vertexCount);
 
 
-	///- 頂点数分確保
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertexCount));
-
-	///- vertexBufferViewの作成
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * vertexCount;
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	/// -------------------------------------------------
+	/// ↓ 頂点計算
+	/// ------------------------------------------------- 
 
 
-	///- 頂点データの書き込み
-	pData_ = vertexData_.data();
-	vertexResource_->Map(0, nullptr, &pMappedData_);
-	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
-	vertexResource_->Unmap(0, nullptr);
-
-	///- 頂点計算
-	int index = 0;
-	for(int32_t row = 0; row <= kVerticalDivisionNum_; row++) {
-		for(int32_t col = 0; col <= kHorizontalDivisionNum_; col++) {
-
-			///- texcoord x軸
-			for(uint32_t i = 0; i < 6; i++) {
-				///- 頂点番号が 奇数->右; 偶数->左;
-				vertexData_[index + i].texcoord.x = float(col + (i % 2)) / float(kHorizontalDivisionNum_ + 1);
-			}
-
-			///- texcoord y軸
-			for(uint32_t i = 0; i < 6; i++) {
-				///- 頂点番号 2 ~ 4までが四角形の下側
-				if(i >= 2 && i <= 4) {
-					vertexData_[index + i].texcoord.y = 1.0f - (float(row) / float(kVerticalDivisionNum_ + 1));
-				} else {
-					vertexData_[index + i].texcoord.y = 1.0f - (float(row + 1) / float(kVerticalDivisionNum_ + 1));
-				}
-			}
-
-
-			///- positionの計算
-			for(uint32_t i = 0; i < 6; i++) {
-				vertexData_[index + i].position.x = float(col + (i % 2));
-				vertexData_[index + i].position.y = 0.0f;
-				///- 頂点番号 2 ~ 4までが四角形の下側
-				if(i >= 2 && i <= 4) {
-					vertexData_[index + i].position.z = float(row);
-				} else {
-					vertexData_[index + i].position.z = float(row + 1);
-				}
-				vertexData_[index + i].position.w = 1.0f;
-
-			}
-
-
-			///- 地形の中心が原点になるように移動
-			for(uint32_t i = 0; i < 6; i++) {
-				vertexData_[index + i].position -= Vec4f{
-					static_cast<float>(kHorizontalDivisionNum_ + 1) / 2.0f,
-					0.0f,
-					static_cast<float>(kVerticalDivisionNum_ + 1) / 2.0f,
-					0.0f
-				};
-			}
-
-			///- 頂点数の増加
-			index += 6;
+	uint32_t indices[kSubdivision_ + 1][kSubdivision_ + 1]{};
+	int number = 0;
+	for(uint32_t row = 0; row < kSubdivision_ + 1; row++) {
+		for(uint32_t col = 0; col < kSubdivision_ + 1; col++) {
+			indices[row][col] = number;
+			++number;
 		}
 	}
 
-	///- マテリアルリソースの生成; 情報の書き込み
+
+
+
+	/// -----------------------
+	/// ↓ 頂点インデックス
+	/// -----------------------
+
+	for(uint32_t row = 0; row < kSubdivision_; row++) {
+		for(uint32_t col = 0; col < kSubdivision_; col++) {
+			uint32_t startIndex = (row * kSubdivision_ + col) * 6;
+
+			indexData_[startIndex + 0] = indices[row + 0][col + 0];
+			indexData_[startIndex + 1] = indices[row + 1][col + 0];
+			indexData_[startIndex + 2] = indices[row + 0][col + 1];
+			indexData_[startIndex + 3] = indices[row + 1][col + 1];
+			indexData_[startIndex + 4] = indices[row + 0][col + 1];
+			indexData_[startIndex + 5] = indices[row + 1][col + 0];
+
+		}
+	}
+
+
+
+	/// -----------------------
+	/// ↓ 頂点データ
+	/// -----------------------
+
+	uint32_t index = 0;
+	for(int32_t row = 0; row <= kSubdivision_; row++) {
+		for(int32_t col = 0; col <= kSubdivision_; col++) {
+			
+
+			/// -----------------------
+			/// ↓ Position
+			/// -----------------------
+
+			vertexData_[index + 0].position = {
+				float(col), 0.0f,
+				float(row), 1.0f
+			};
+
+
+			/// -----------------------
+			/// ↓ Texcoord
+			/// -----------------------
+
+
+			vertexData_[index + 0].texcoord = {
+				float(col + 0) / float(kSubdivision_ + 1),
+				1.0f - (float(row + 0) / float(kSubdivision_ + 1))
+			};
+
+
+			///- 地形の中心が原点になるように移動
+			vertexData_[index].position -= Vec4f{
+				static_cast<float>(kSubdivision_ + 1) / 2.0f,
+				0.0f,
+				static_cast<float>(kSubdivision_ + 1) / 2.0f,
+				0.0f
+			};
+
+
+			++index;
+
+		}
+	}
+
+
+
+
+	/// ------------------------------------------------- 
+	/// ↓ リソースの生成
+	/// ------------------------------------------------- 
+
+
+	/// -------------------------
+	/// ↓ VertexResource
+	/// -------------------------
+
+	///- 頂点数分確保
+	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertexData_.size()));
+
+	///- vertexBufferViewの作成
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertexData_.size());
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+
+	///- 頂点データの書き込み
+	pVertexData_ = vertexData_.data();
+	vertexResource_->Map(0, nullptr, &pVertexMappedData_);
+	memcpy(pVertexMappedData_, pVertexData_, vertexData_.size() * sizeof(VertexData));
+	vertexResource_->Unmap(0, nullptr);
+
+
+
+	/// -------------------------
+	/// ↓ IndexResource
+	/// -------------------------
+
+	///- 頂点数分確保
+	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(uint32_t) * indexData_.size()));
+	///- Bufferの設定
+	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	indexBuffer_.SizeInBytes = UINT(sizeof(uint32_t) * indexData_.size());
+	indexBuffer_.Format = DXGI_FORMAT_R32_UINT;
+
+	///- Resourceに対し情報を書き込む
+	pIndexData_ = indexData_.data();
+	indexResource_->Map(0, nullptr, &pIndexMappedData_);
+	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
+	indexResource_->Unmap(0, nullptr);
+
+
+
+	/// -------------------------
+	/// ↓ MaterialResource
+	/// -------------------------
+
 	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector4)));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	*materialData_ = { 1.0f,1.0f,1.0f,1.0f };
 
 
-	///- 行列リソースの生成; 書き込み
+
+	/// -------------------------
+	/// ↓ wvpResource
+	/// -------------------------
+
 	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(Matrix4x4)));
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
 	*wvpData_ = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
 
-	///- 
+	
+
+
+
+
+	/// ------------------------------------------------- 
+	/// ↓ その他メンバ変数の初期化
+	/// ------------------------------------------------- 
+
+
 	worldTransform_.Init();
 	//worldTransform_.scale = { 0.001f,1.0f,0.001f };
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
@@ -151,11 +231,13 @@ void Terrain::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetIndexBuffer(&indexBuffer_);
 
 	///- データの書き込み
 
 	///- 頂点情報
-	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
+	memcpy(pVertexMappedData_, pVertexData_, vertexData_.size() * sizeof(VertexData));
+	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
 
 	///- 色情報
 	*materialData_ = color_;
@@ -172,6 +254,6 @@ void Terrain::Draw() {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 
 	///- 描画 (DrawCall)
-	commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);
+	commandList->DrawIndexedInstanced(UINT(indexData_.size()), 1, 0, 0, 0);
 
 }
