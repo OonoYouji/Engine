@@ -27,7 +27,7 @@ void Sphere::Init() {
 
 	///- 頂点数の計算
 	///- 縦の分割数 x 横の分割数 x 6
-	vertexData_.resize(subdivision_ * subdivision_ * 6);
+	vertexData_.resize(subdivision_ * subdivision_ * 4);
 
 
 	///- 頂点座標の計算
@@ -40,7 +40,7 @@ void Sphere::Init() {
 
 		// 経度の方向に分割 0 ~ 2π
 		for(uint32_t lonIndex = 0; lonIndex < subdivision_; lonIndex++) {
-			uint32_t startIndex = (latIndex * subdivision_ + lonIndex) * 6;
+			uint32_t startIndex = (latIndex * subdivision_ + lonIndex) * 4;
 			float lon = lonIndex * kLonEvery; // 現在の経度
 
 
@@ -97,13 +97,6 @@ void Sphere::Init() {
 				1.0f - float(latIndex + 1) / float(subdivision_)
 			};
 
-
-			// c
-			vertexData_[startIndex + 4] = vertexData_[startIndex + 2];
-
-			// b
-			vertexData_[startIndex + 5] = vertexData_[startIndex + 1];
-
 		}
 	}
 
@@ -131,8 +124,40 @@ void Sphere::Init() {
 	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
 	vertexResource_->Unmap(0, nullptr);
 
-	
-	
+
+
+	/// -----------------------------------------------
+	/// ↓ インデックスリソース
+	/// -----------------------------------------------
+
+
+	for(uint32_t latIndex = 0; latIndex < subdivision_; latIndex++) {
+		for(uint32_t lonIndex = 0; lonIndex < subdivision_; lonIndex++) {
+			uint32_t startIndex = (latIndex * subdivision_ + lonIndex) * 4;
+
+			indexData_.push_back(startIndex + 0);
+			indexData_.push_back(startIndex + 1);
+			indexData_.push_back(startIndex + 2);
+			indexData_.push_back(startIndex + 1);
+			indexData_.push_back(startIndex + 3);
+			indexData_.push_back(startIndex + 2);
+
+		}
+	}
+
+
+	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * indexData_.size()));
+
+	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	indexBuffer_.SizeInBytes = UINT(sizeof(VertexData) * indexData_.size());
+	indexBuffer_.Format = DXGI_FORMAT_R32_UINT;
+
+	pIndexData_ = indexData_.data();
+	indexResource_->Map(0, nullptr, &pIndexMappedData_);
+	memcpy(pIndexMappedData_, pIndexData_, indexData_.size() * sizeof(VertexData));
+	indexResource_->Unmap(0, nullptr);
+
+
 	/// -----------------------------------------------
 	/// ↓ マテリアルリソース
 	/// -----------------------------------------------
@@ -170,10 +195,12 @@ void Sphere::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetIndexBuffer(&indexBuffer_);
 
 
 	///- 頂点情報
 	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
+	memcpy(pIndexMappedData_, pIndexData_, indexData_.size() * sizeof(VertexData));
 
 	///- 行列情報
 	worldTransform_.MakeWorldMatrix();
@@ -191,7 +218,7 @@ void Sphere::Draw() {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 
 	///- 描画 (DrawCall)
-	commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);
+	commandList->DrawIndexedInstanced(UINT(indexData_.size()), 1, 0, 0, 0);
 
 }
 
