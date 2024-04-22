@@ -56,7 +56,7 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	}
 
 
-	Input::GetInstance()->SetMouseLeftButton(false);
+	//Input::GetInstance()->Reset();
 
 
 	switch (msg) {
@@ -68,11 +68,21 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		);
 
 		break;
+
 	case WM_LBUTTONDOWN: ///- 左ボタンが押された(mouse
 		Input::GetInstance()->SetMouseLeftButton(true);
-
-
 		break;
+	case WM_LBUTTONUP: ///- 左ボタンが離された
+		Input::GetInstance()->SetMouseLeftButton(false);
+		break;
+
+	case WM_RBUTTONDOWN: ///- 右ボタンが押された(mouse
+		Input::GetInstance()->SetMouseRightButton(true); 
+		break;
+	case WM_RBUTTONUP: ///- 右ボタンが離された
+		Input::GetInstance()->SetMouseRightButton(false);
+		break;
+
 	case WM_DESTROY: // windowが破棄された
 		/// OSにアプリの終了を伝える
 		PostQuitMessage(0);

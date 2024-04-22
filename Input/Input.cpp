@@ -24,13 +24,27 @@ void Input::Begin() {
 #ifdef _DEBUG
 	ImGui::Begin("Input");
 
-	ImGui::DragFloat2("mousePos", &mousePos_.x, 0.0f);
+	if(ImGui::TreeNode("Mouse")) {
 
-	ImGui::Text("mouseLeftButton: %d", mouse_.leftButton_);
+		ImGui::DragFloat2("pos", &mouse_.position.x, 0.0f);
+
+		ImGui::Text("leftButton: %d", mouse_.leftButton);
+		ImGui::Text("rightButton: %d", mouse_.rightButton);
+
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 #endif // _DEBUG
 
-	mouse_.preLeftButton_ = mouse_.leftButton_;
+	mouse_.preLeftButton = mouse_.leftButton;
+	mouse_.preRightButton = mouse_.rightButton;
+
+}
+
+void Input::Reset() {
+
+	mouse_.leftButton = false;
+	mouse_.rightButton = false;
 
 }

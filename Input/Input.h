@@ -8,8 +8,17 @@ class Input final {
 public:
 
 	struct Mouse {
-		bool leftButton_ = false;
-		bool preLeftButton_ = false;
+
+		///- 左ボタン
+		bool leftButton = false;
+		bool preLeftButton = false;
+
+		///- 右ボタン
+		bool rightButton = false;
+		bool preRightButton = false;
+
+		Vec2f position = { 0.0f,0.0f };
+
 	};
 
 
@@ -23,20 +32,25 @@ public:
 	/// winAppでセットする用; 他での使用禁止
 	/// </summary>
 	void SetMousePos(const Vec2f& position) {
-		mousePos_ = position;
+		mouse_.position = position;
 	}
 
 	void SetMouseLeftButton(bool isPush) {
-		mouse_.leftButton_ = isPush;
+		mouse_.leftButton = isPush;
 	}
 
-	const Vec2f& GetMousePos() const { return mousePos_; }
+	void SetMouseRightButton(bool isPush) {
+		mouse_.rightButton = isPush;
+	}
+
+
+	const Vec2f& GetMousePos() const { return mouse_.position; }
 	const Mouse& GetMouse() const { return mouse_; }
+
+	void Reset();
 
 private:
 
-
-	Vec2f mousePos_ = { 0.0f,0.0f };
 	Mouse mouse_;
 
 private:
