@@ -55,13 +55,22 @@ LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 		return true;
 	}
 
+
+	Input::GetInstance()->SetMouseLeftButton(false);
+
+
 	switch (msg) {
-	case WM_MOUSEMOVE:
+	case WM_MOUSEMOVE: ///- マウスが動いた
 
 		Input::GetInstance()->SetMousePos(
 			{ static_cast<float>(GET_X_LPARAM(lparam)),
 			static_cast<float>(GET_Y_LPARAM(lparam)) }
 		);
+
+		break;
+	case WM_LBUTTONDOWN: ///- 左ボタンが押された(mouse
+		Input::GetInstance()->SetMouseLeftButton(true);
+
 
 		break;
 	case WM_DESTROY: // windowが破棄された

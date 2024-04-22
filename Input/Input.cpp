@@ -2,6 +2,8 @@
 
 #include "ImGuiManager.h"
 
+#pragma comment (lib, "dinput8.lib")
+#pragma comment (lib, "dxguid.lib")
 
 
 Input* Input::GetInstance() {
@@ -12,6 +14,8 @@ Input* Input::GetInstance() {
 
 
 void Input::Init() {
+
+	mouse_ = Mouse();
 }
 
 
@@ -22,7 +26,11 @@ void Input::Begin() {
 
 	ImGui::DragFloat2("mousePos", &mousePos_.x, 0.0f);
 
+	ImGui::Text("mouseLeftButton: %d", mouse_.leftButton_);
+
 	ImGui::End();
 #endif // _DEBUG
+
+	mouse_.preLeftButton_ = mouse_.leftButton_;
 
 }
