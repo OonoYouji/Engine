@@ -135,6 +135,8 @@ void Brush::Update() {
 
 void Brush::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+	///- 深度値のリセット; 必ず上側に表示されるようになる
+	DirectXCommon::GetInstance()->ClearDepthBuffer();
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
@@ -148,6 +150,7 @@ void Brush::Draw() {
 	///- 行列情報
 	worldTransform_.MakeWorldMatrix();
 	*wvpData_ = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+
 
 
 	///- 各種設定
@@ -171,18 +174,18 @@ void Brush::ConvertMousePosition() {
 	Matrix4x4 matInverseVPV = Matrix4x4::MakeInverse(matVPV);
 
 	///- スクリーン座標
-	Vec3f posNear = { mousePos_.x, mousePos_.y, 0.0f };
-	Vec3f posFar = { mousePos_.x, mousePos_.y, 1.0f };
+	posNear_ = { mousePos_.x, mousePos_.y, 0.0f };
+	posFar_ = { mousePos_.x, mousePos_.y, 1.0f };
 
 	///- スクリーンからワールド座標に
-	posNear = Matrix4x4::Transform(posNear, matInverseVPV);
-	posFar = Matrix4x4::Transform(posFar, matInverseVPV);
+	posNear_ = Matrix4x4::Transform(posNear_, matInverseVPV);
+	posFar_ = Matrix4x4::Transform(posFar_, matInverseVPV);
 
 	///- マウスレイのベクトル
-	Vec3f mouseDirection = Vec3f::Normalize(posFar - posNear);
+	mouseLayDirection_ = (posFar_ - posNear_);
 
 	///- カメラから設定オブジェクトの距離
-	worldTransform_.translate = posNear + (mouseDirection * distanceTestObject_);
+	//worldTransform_.translate = posNear_ + (mouseLayDirection_ * distanceTestObject_);
 
 }
 

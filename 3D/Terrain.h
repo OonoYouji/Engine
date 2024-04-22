@@ -57,4 +57,21 @@ private:
 	Vector4 color_;
 
 
+	///- 法線ベクトル
+	Vec3f normalVector_;
+
+	float distance_;
+
+
+	/// <summary>
+	/// 法線ベクトルの計算
+	/// </summary>
+	void NormalVector();
+
+public:
+
+	const Vec3f& GetNormalVector() const { return normalVector_; }
+
+	float GetDistance() const { return distance_; }
+
 };

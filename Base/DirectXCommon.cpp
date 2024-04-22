@@ -2,6 +2,8 @@
 
 #include <format>
 
+#include <d3dx12.h>
+
 #include <DxDescriptors.h>
 #include <DxCommand.h>
 #include <TextureManager.h>
@@ -840,6 +842,16 @@ ID3D12Resource* DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
 	assert(SUCCEEDED(result));
 
 	return resource;
+}
+
+
+
+void DirectXCommon::ClearDepthBuffer() {
+	// 深度ステンシルビュー用デスクリプタヒープのハンドルを取得
+	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvH =
+		CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptors_->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart());
+	// 深度バッファのクリア
+	command_->GetList()->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 }
 
 

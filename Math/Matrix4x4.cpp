@@ -164,6 +164,29 @@ Vec3f Matrix4x4::Transform(const Vec3f& v, const Matrix4x4& m) {
 	return result;
 }
 
+Vec3f Matrix4x4::Transform(const Vec4f& v, const Matrix4x4& m) {
+	//w=1がデカルト座標系であるので(x,y,1)のベクトルとしてmatrixとの積をとる
+	Vec3f result{ 0.0f,0.0f,0.0f };
+
+	result.x = v.x * m.m_[0][0] + v.y * m.m_[1][0] + v.z * m.m_[2][0] + 1.0f * m.m_[3][0];
+	result.y = v.x * m.m_[0][1] + v.y * m.m_[1][1] + v.z * m.m_[2][1] + 1.0f * m.m_[3][1];
+	result.z = v.x * m.m_[0][2] + v.y * m.m_[1][2] + v.z * m.m_[2][2] + 1.0f * m.m_[3][2];
+	float w = v.x * m.m_[0][3] + v.y * m.m_[1][3] + v.z * m.m_[2][3] + 1.0f * m.m_[3][3];
+
+	//ベクトルに対して基本的な操作を行う行列でwが0になることはありえない
+	//wが0.0fになった場合プログラムを停止する
+	assert(w != 0.0f);
+
+	//w=1がデカルト座標系であるので、w除算することで同次座標をデカルト座標に戻す
+	result.x /= w;
+	result.y /= w;
+	result.z /= w;
+
+	return result;
+}
+
+
+
 Matrix4x4 Matrix4x4::MakeOrthographicMatrix(float l, float t, float r, float b, float near, float far) {
 	return Matrix4x4{
 		2.0f / (r - l), 0.0f, 0.0f, 0.0f,

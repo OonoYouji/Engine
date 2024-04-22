@@ -202,6 +202,19 @@ void Terrain::Init() {
 	//worldTransform_.scale = { 0.001f,1.0f,0.001f };
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
+
+	/// TODO しっかりとした計算を
+	normalVector_ = Vec3f(0.0f, 1.0f, 0.0f);
+
+	/*Vec4f vec4CrossV1 = vertexData_[1].position - vertexData_[0].position;
+	Vec4f vec4CrossV2 = vertexData_[0].position - vertexData_[vertexData_.size() - 1].position;
+	Vec3f crossV1 = { vec4CrossV1.x, vec4CrossV1.y, vec4CrossV1.z };
+	Vec3f crossV2 = { vec4CrossV2.x, vec4CrossV2.y, vec4CrossV2.z };
+	normalVector_ = Vector3::Cross(crossV1, crossV2);*/
+
+	NormalVector();
+
+
 }
 
 
@@ -216,6 +229,9 @@ void Terrain::Update() {
 	ImGui::DragFloat3("translate", &worldTransform_.translate.x, 0.25f);
 	ImGui::ColorEdit4("color", &color_.x);
 
+	ImGui::Spacing();
+	//ImGui::DragFloat3("rotate", )
+
 	static int index = 0;
 	ImGui::SliderInt("vertexIndex", &index, 0, static_cast<int>(vertexData_.size() - 1));
 	ImGui::DragFloat4("vertex", &vertexData_[index].position.x, 0.25f);
@@ -223,6 +239,13 @@ void Terrain::Update() {
 
 	ImGui::Spacing();
 	ImGui::Text("vertexData dataSize: %d", sizeof(VertexData) * vertexData_.size());
+
+	ImGui::Spacing();
+	ImGui::DragFloat3("normalVector", &normalVector_.x, 0.0f);
+
+	if(ImGui::Button("normalVector Reset")) {
+		NormalVector();
+	}
 
 	ImGui::End();
 #endif // _DEBUG
@@ -266,5 +289,26 @@ void Terrain::Draw() {
 
 	///- 描画 (DrawCall)
 	commandList->DrawIndexedInstanced(UINT(indexData_.size()), 1, 0, 0, 0);
+
+}
+
+
+
+void Terrain::NormalVector() {
+
+
+	///- local頂点をworld座標に変換
+
+	Vec3f worldVertex[3] = {
+		Mat4::Transform(vertexData_[0].position, worldTransform_.worldMatrix),
+		Mat4::Transform(vertexData_[1].position, worldTransform_.worldMatrix),
+		Mat4::Transform(vertexData_[vertexData_.size() - 1].position, worldTransform_.worldMatrix)
+	};
+
+
+	normalVector_ = Vector3::Cross(worldVertex[1] - worldVertex[0], worldVertex[0] - worldVertex[2]);
+	normalVector_ = Vector3::Normalize(normalVector_);
+
+	distance_ = Vector3::Dot(worldVertex[0], normalVector_);
 
 }

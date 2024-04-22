@@ -49,10 +49,29 @@ private: ///- メンバ変数
 
 	Vec3f mousePos_;
 	WorldTransform worldTransform_;
-	
+
+	Vec3f mouseLayDirection_;
+
 	float distanceTestObject_;
 	float circleRadius_;
 
+	Vec3f posNear_;
+	Vec3f posFar_;
+
+
 	void ConvertMousePosition();
+
+
+
+public: ///- 
+
+	const Vec3f& GetLayDir() const { return mouseLayDirection_; }
+
+	const Vec3f& GetNearPos() const { return posNear_; }
+	const Vec3f& GetFarPos() const { return posFar_; }
+
+	void SetWorldPosition(const Vec3f& position) {
+		worldTransform_.translate = position;
+	}
 
 };

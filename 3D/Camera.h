@@ -39,4 +39,6 @@ public:
 
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
 
+	const Vec3f& GetPosition() const { return worldPos_; }
+
 };

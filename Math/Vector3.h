@@ -16,9 +16,30 @@ public:
 
 public:
 
+	/// <summary>
+	/// ベクトルの長さ
+	/// </summary>
 	static float Length(const Vector3& v);
 
+	/// <summary>
+	/// 正規化
+	/// </summary>
 	static Vector3 Normalize(const Vector3& v);
+
+	/// <summary>
+	/// 外積
+	/// </summary>
+	static Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
+	/// <summary>
+	/// 内積
+	/// </summary>
+	static float Dot(const Vector3& v1, const Vector3& v2);
+
+	/// <summary>
+	/// 線形補完
+	/// </summary>
+	static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
 
 public:
 
@@ -29,7 +50,7 @@ public:
 	inline Vector3 operator/(float value) const;
 	inline Vector3 operator*(float value) const;
 
-	
+
 };
 
 

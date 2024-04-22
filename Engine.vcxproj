@@ -152,6 +152,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="3D\Camera.cpp" />
     <ClCompile Include="3D\Sphere.cpp" />
     <ClCompile Include="3D\Terrain.cpp" />
+    <ClCompile Include="3D\TerrainOperator.cpp" />
     <ClCompile Include="Base\DirectXCommon.cpp" />
     <ClCompile Include="Base\DxCommand.cpp" />
     <ClCompile Include="Base\DxDescriptors.cpp" />
@@ -184,6 +185,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="3D\Brush.h" />
     <ClInclude Include="3D\Sphere.h" />
     <ClInclude Include="3D\Terrain.h" />
+    <ClInclude Include="3D\TerrainOperator.h" />
     <ClInclude Include="Base\DxCommand.h" />
     <ClInclude Include="Base\DxDescriptors.h" />
     <ClInclude Include="Base\TextureManager.h" />

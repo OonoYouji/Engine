@@ -258,6 +258,9 @@ public:
 	std::vector<ComPtr<ID3D12Resource>> GetSwapChainResource() { return swapChainResource_; }
 
 
+	void ClearDepthBuffer();
+
+
 private:
 
 	DirectXCommon() = default;

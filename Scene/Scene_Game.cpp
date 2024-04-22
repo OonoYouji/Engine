@@ -17,6 +17,9 @@ void Scene_Game::Init() {
 	brush_ = std::make_unique<Brush>();
 	brush_->Init();
 
+	terrainOperator_ = std::make_unique<TerrainOperator>();
+	terrainOperator_->Init(terrain_.get(), brush_.get());
+
 }
 
 void Scene_Game::Update() {
@@ -24,7 +27,8 @@ void Scene_Game::Update() {
 	terrain_->Update();
 	brush_->Update();
 
-	
+	terrainOperator_->Update();
+
 }
 
 void Scene_Game::Draw() {
@@ -36,6 +40,7 @@ void Scene_Game::Draw() {
 	terrain_->Draw();
 	brush_->Draw();
 
+	//terrainOperator_->Draw();
 
 
 }
@@ -44,5 +49,7 @@ void Scene_Game::Finalize() {
 
 	terrain_.reset();
 	brush_.reset();
+
+	terrainOperator_.reset();
 
 }
