@@ -28,6 +28,8 @@ private:
 	Terrain* pTerrain_;
 	Brush* pBrush_;
 
+	bool isOperating_;
+	float raisePower_;
 
 
 	bool Collision();
@@ -35,5 +37,6 @@ private:
 	void BrushPositionCalc();
 
 	Vec3f TerrainLocalPosition();
+
 
 };

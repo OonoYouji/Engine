@@ -33,33 +33,10 @@ PerlinNoise::~PerlinNoise() {}
 
 void PerlinNoise::Init() {
 
-	for(size_t x = 0; x < noises_.size(); x++) {
-		for(size_t z = 0; z < noises_[x].size(); z++) {
-			noises_[x][z] = Noise({ static_cast<float>(x) / 10.0f, 0.0f, static_cast<float>(z) / 10.0f });
-		}
-	}
 
 }
 
 void PerlinNoise::Update() {
-
-#ifdef _DEBUG
-
-	ImGui::Begin("Noise");
-
-	for(size_t x = 0; x < 10; x++) {
-
-		for(size_t z = 0; z < 10; z++) {
-
-			ImGui::Text("%f,  ", noises_[x][z]);
-
-		}
-		ImGui::Spacing();
-	}
-
-	ImGui::End();
-
-#endif // _DEBUG
 
 
 }

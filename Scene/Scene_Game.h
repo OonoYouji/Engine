@@ -33,6 +33,5 @@ private:
 
 	std::unique_ptr<TerrainOperator> terrainOperator_;
 
-	std::unique_ptr<PerlinNoise> perlinNoise_;
 
 };

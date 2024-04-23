@@ -30,11 +30,11 @@ public:
 
 	void Draw();
 
-private:
-
 	///- 縦横の分割数
-	//static const int kSubdivision_ = 100;
-	int kSubdivision_;
+	static const int kSubdivision = 100;
+
+
+private:
 
 
 	///- 描画用Resource
@@ -46,7 +46,8 @@ private:
 	D3D12_INDEX_BUFFER_VIEW indexBuffer_;
 
 	///- 書き込み用データ
-	std::vector<VertexData> vertexData_;
+	std::vector<std::vector<VertexData>> vertexData_;
+	std::vector<VertexData> flattenedVertexData_;
 	VertexData* pVertexData_ = nullptr;
 	void* pVertexMappedData_ = nullptr;
 
@@ -86,15 +87,26 @@ public:
 
 	Vec3f GetLTPos() const {
 		return worldTransform_.translate + Vec3f{
-			-kSubdivision_ / 2.0f, 0.0f, kSubdivision_ / 2.0f
+			-kSubdivision / 2.0f, 0.0f, kSubdivision / 2.0f
 		};
 	}
 
 
 	Vec3f GetRBPos() const {
 		return worldTransform_.translate + Vec3f{
-			kSubdivision_ / 2.0f, 0.0f, -kSubdivision_ / 2.0f
+			kSubdivision / 2.0f, 0.0f, -kSubdivision / 2.0f
 		};
 	}
+
+
+	/// <summary>
+	/// 頂点データをフラット化する
+	/// </summary>
+	void TransferVertexData();
+
+	void TransferFlattenedVertexData();
+
+	void SetVertexHeight(int row, int col, float height);
+
 
 };

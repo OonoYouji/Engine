@@ -21,15 +21,45 @@ void TerrainOperator::Init(Terrain* terrain, Brush* brush) {
 	pBrush_ = brush;
 
 
+	isOperating_ = false;
+
+	raisePower_ = 0.5f;
+
 }
 
 
 
 void TerrainOperator::Update() {
 
+
+
+#ifdef _DEBUG
+
+	ImGui::Begin("Brush");
+
+	ImGui::Checkbox("IsOperating", &isOperating_);
+	if(isOperating_) {
+		ImGui::Text("IsOperating: True");
+	} else {
+		ImGui::Text("IsOperating: False");
+	}
+
+	ImGui::Spacing();
+
+	ImGui::SliderFloat("raisePower", &raisePower_, 0.0f, 1.0f);
+
+	ImGui::End();
+
+#endif // _DEBUG
+
+
+
+
+
 	/// -------------------------------------
 	/// ↓ ブラシと地形の当たり判定をとる
 	/// -------------------------------------
+
 
 	///- 色リセット
 	pBrush_->SetColot({ 1.0f,1.0f,1.0f,1.0f });
@@ -39,12 +69,29 @@ void TerrainOperator::Update() {
 
 
 	///- 地形との当たり判定; XZのみで判定を取る
-	if(Collision()) {
+	if(Collision() && isOperating_) {
 		if(input_->GetMouse().leftButton) {
 			pBrush_->SetColot({ 0.25f,0.0f,0.0f,1.0f });
 
 			///- 地形上のどこにブラシがあるか計算
+			Vec3f localPos = TerrainLocalPosition();
+			int rowIndex = (pTerrain_->kSubdivision / 2) + static_cast<int>(localPos.z);
+			int colIndex = (pTerrain_->kSubdivision / 2) + static_cast<int>(localPos.x);
 
+			///- 操作する範囲の設定
+			int operatorRange = static_cast<int>(pBrush_->GetRadius());
+
+			for(int32_t row = -operatorRange; row < operatorRange; row++) {
+				for(int32_t col = -operatorRange; col < operatorRange; col++) {
+
+					float height = 1.0f - (row / operatorRange) * (col / operatorRange);
+					pTerrain_->SetVertexHeight(rowIndex + row, colIndex + col, height * raisePower_);
+
+				}
+			}
+
+			///- 頂点を操作したのでフラット化する
+			pTerrain_->TransferFlattenedVertexData();
 
 		}
 	}
@@ -71,7 +118,7 @@ bool TerrainOperator::Collision() {
 		if(pBrush_->GetWorldPos().z > pTerrain_->GetRBPos().z
 		   && pBrush_->GetWorldPos().z < pTerrain_->GetLTPos().z) {
 
-			
+
 
 
 			return true;
@@ -108,5 +155,5 @@ void TerrainOperator::BrushPositionCalc() {
 
 
 Vec3f TerrainOperator::TerrainLocalPosition() {
-	return pTerrain_->GetWorldPos() - pBrush_->GetWorldPos();
+	return  pBrush_->GetWorldPos() - pTerrain_->GetWorldPos();
 }

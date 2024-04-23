@@ -76,5 +76,9 @@ public: ///-
 
 	void SetColot(const Vec4f& color);
 	const Vec3f& GetWorldPos() const { return worldTransform_.translate; }
+	
+
+	float GetRadius() const { return circleRadius_; }
+
 
 };

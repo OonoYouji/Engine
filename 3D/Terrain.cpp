@@ -27,16 +27,19 @@ void Terrain::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 
-	kSubdivision_ = 100;
+	//kSubdivision = 100;
 
 
 	///- 頂点数の調整
-	int indexCount = (kSubdivision_) * (kSubdivision_);
+	int indexCount = (kSubdivision) * (kSubdivision);
 	indexCount *= 6;	//- 図形1個分の頂点数をかける(四角形)
 	indexData_.resize(indexCount);
 
-	int vertexCount = (kSubdivision_ + 1) * (kSubdivision_ + 1);
+	int vertexCount = (kSubdivision + 1);
 	vertexData_.resize(vertexCount);
+	for(uint32_t i = 0; i < vertexData_.size(); i++) {
+		vertexData_[i].resize(vertexCount);
+	}
 
 
 	/// -------------------------------------------------
@@ -49,16 +52,16 @@ void Terrain::Init() {
 	/// -----------------------
 
 	///- 頂点インデックスの設定用
-	//uint32_t indices[kSubdivision_ + 1][kSubdivision_ + 1]{};
+	//uint32_t indices[kSubdivision + 1][kSubdivision + 1]{};
 	std::vector<std::vector<uint32_t>> indices;
-	indices.resize(kSubdivision_ + 1);
+	indices.resize(kSubdivision + 1);
 	for(uint32_t i = 0; i < indices.size(); i++) {
-		indices[i].resize(kSubdivision_ + 1);
+		indices[i].resize(kSubdivision + 1);
 	}
 
 	int number = 0;
-	for(uint32_t row = 0; row < uint32_t(kSubdivision_ + 1); row++) {
-		for(uint32_t col = 0; col < uint32_t(kSubdivision_ + 1); col++) {
+	for(uint32_t row = 0; row < uint32_t(kSubdivision + 1); row++) {
+		for(uint32_t col = 0; col < uint32_t(kSubdivision + 1); col++) {
 			indices[row][col] = number;
 			++number;
 		}
@@ -66,8 +69,8 @@ void Terrain::Init() {
 
 
 	uint32_t startIndex = 0;
-	for(uint32_t row = 0; row < uint32_t(kSubdivision_); row++) {
-		for(uint32_t col = 0; col < uint32_t(kSubdivision_); col++) {
+	for(uint32_t row = 0; row < uint32_t(kSubdivision); row++) {
+		for(uint32_t col = 0; col < uint32_t(kSubdivision); col++) {
 
 			indexData_[startIndex + 0] = indices[row + 0][col + 0];
 			indexData_[startIndex + 1] = indices[row + 1][col + 0];
@@ -86,16 +89,16 @@ void Terrain::Init() {
 	/// ↓ 頂点データ
 	/// -----------------------
 
-	uint32_t index = 0;
-	for(int32_t row = 0; row <= kSubdivision_; row++) {
-		for(int32_t col = 0; col <= kSubdivision_; col++) {
+	//uint32_t index = 0;
+	for(int32_t row = 0; row <= kSubdivision; row++) {
+		for(int32_t col = 0; col <= kSubdivision; col++) {
 
 
 			/// -----------------------
 			/// ↓ Position
 			/// -----------------------
 
-			vertexData_[index + 0].position = {
+			vertexData_[row][col].position = {
 				float(col), 0.0f,
 				float(row), 1.0f
 			};
@@ -106,22 +109,20 @@ void Terrain::Init() {
 			/// -----------------------
 
 
-			vertexData_[index + 0].texcoord = {
-				float(col + 0) / float(kSubdivision_ + 1),
-				1.0f - (float(row + 0) / float(kSubdivision_ + 1))
+			vertexData_[row][col].texcoord = {
+				float(col + 0) / float(kSubdivision + 1),
+				1.0f - (float(row + 0) / float(kSubdivision + 1))
 			};
 
 
 			///- 地形の中心が原点になるように移動
-			vertexData_[index].position -= Vec4f{
-				static_cast<float>(kSubdivision_ + 1) / 2.0f,
+			vertexData_[row][col].position -= Vec4f{
+				static_cast<float>(kSubdivision + 1) / 2.0f,
 				0.0f,
-				static_cast<float>(kSubdivision_ + 1) / 2.0f,
+				static_cast<float>(kSubdivision + 1) / 2.0f,
 				0.0f
 			};
 
-
-			++index;
 
 		}
 	}
@@ -138,18 +139,23 @@ void Terrain::Init() {
 	/// ↓ VertexResource
 	/// -------------------------
 
+	///- 頂点データをフラットにする
+	for(auto& vertexData : vertexData_) {
+		flattenedVertexData_.insert(flattenedVertexData_.end(), vertexData.begin(), vertexData.end());
+	}
+
 	///- 頂点数分確保
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertexData_.size()));
+	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * flattenedVertexData_.size()));
 
 	///- vertexBufferViewの作成
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertexData_.size());
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * flattenedVertexData_.size());
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	///- 頂点データの書き込み
-	pVertexData_ = vertexData_.data();
+	pVertexData_ = flattenedVertexData_.data();
 	vertexResource_->Map(0, nullptr, &pVertexMappedData_);
-	memcpy(pVertexMappedData_, pVertexData_, vertexData_.size() * sizeof(VertexData));
+	memcpy(pVertexMappedData_, pVertexData_, flattenedVertexData_.size() * sizeof(VertexData));
 	vertexResource_->Unmap(0, nullptr);
 
 
@@ -211,12 +217,23 @@ void Terrain::Init() {
 	///- ノイズから地形の高さを計算
 
 	noise_ = std::make_unique<PerlinNoise>(uint32_t(123));
-	for(uint32_t index = 0; index < vertexData_.size(); ++index) {
+	/*for(uint32_t index = 0; index < vertexData_.size(); ++index) {
 		vertexData_[index].position.y =
 			noise_->GetNoise(
-				Vec2f{ vertexData_[index].position.x, vertexData_[index].position.z } / (float(kSubdivision_) / 10.0f)
-			) * (10.0f * float(kSubdivision_) / 100.0f);
-	}
+				Vec2f{ vertexData_[index].position.x, vertexData_[index].position.z } / (float(kSubdivision) / 10.0f)
+			) * (10.0f * float(kSubdivision) / 100.0f);
+	}*/
+
+	/*for(uint32_t row = 0; row < vertexData_.size(); ++row) {
+		for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
+
+			vertexData_[row][col].position.y =
+				noise_->GetNoise(
+					Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(kSubdivision) / 10.0f)
+				) * (10.0f * float(kSubdivision) / 100.0f);
+
+		}
+	}*/
 
 
 	///- 法線ベクトルを計算
@@ -228,6 +245,12 @@ void Terrain::Init() {
 
 
 void Terrain::Update() {
+	///- 最初に行う処理
+
+	TransferFlattenedVertexData();
+
+
+
 	///- ImGuiでデバッグ
 #ifdef _DEBUG
 	ImGui::Begin("Terrain");
@@ -240,14 +263,16 @@ void Terrain::Update() {
 	ImGui::Spacing();
 	//ImGui::DragFloat3("rotate", )
 
-	static int index = 0;
-	ImGui::SliderInt("vertexIndex", &index, 0, static_cast<int>(vertexData_.size() - 1));
-	ImGui::DragFloat4("vertex", &vertexData_[index].position.x, 0.25f);
-	ImGui::DragFloat3("normal", &vertexData_[index].normal.x, 0.0f);
+	static int rowIndex = 0;
+	static int colIndex = 0;
+	ImGui::SliderInt("vertexRowIndex", &rowIndex, 0, static_cast<int>(vertexData_.size() - 1));
+	ImGui::SliderInt("vertexColIndex", &colIndex, 0, static_cast<int>(vertexData_[0].size() - 1));
+	ImGui::DragFloat4("vertex", &vertexData_[rowIndex][colIndex].position.x, 0.25f);
+	ImGui::DragFloat3("normal", &vertexData_[rowIndex][colIndex].normal.x, 0.0f);
 	//ImGui::DragFloat2("texcoord", &vertexData_[index].texcoord.x, 0.0f);
 
 	ImGui::Spacing();
-	ImGui::Text("vertexData dataSize: %d", sizeof(VertexData) * vertexData_.size());
+	ImGui::Text("vertexData dataSize: %d", sizeof(VertexData) * flattenedVertexData_.size());
 
 	ImGui::Spacing();
 	ImGui::DragFloat3("normalVector", &normalVector_.x, 0.0f);
@@ -263,11 +288,15 @@ void Terrain::Update() {
 	ImGui::SliderInt("seed", &seed, 0, static_cast<int>(std::pow(2, 32)));
 	if(ImGui::Button("ResetSeed")) {
 		noise_->ResetSheed(seed);
-		for(uint32_t index = 0; index < vertexData_.size(); ++index) {
-			vertexData_[index].position.y =
-				noise_->GetNoise(
-					Vec2f{ vertexData_[index].position.x, vertexData_[index].position.z } / (float(kSubdivision_) / 10.0f)
-				) * (10.0f * float(kSubdivision_) / 100.0f);
+		for(uint32_t row = 0; row < vertexData_.size(); ++row) {
+			for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
+
+				vertexData_[row][col].position.y =
+					noise_->GetNoise(
+						Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(kSubdivision) / 10.0f)
+					) * (10.0f * float(kSubdivision) / 100.0f);
+
+			}
 		}
 	}
 
@@ -284,6 +313,7 @@ void Terrain::Update() {
 
 
 
+
 }
 
 
@@ -296,7 +326,7 @@ void Terrain::Draw() {
 	///- データの書き込み
 
 	///- 頂点情報
-	memcpy(pVertexMappedData_, pVertexData_, vertexData_.size() * sizeof(VertexData));
+	memcpy(pVertexMappedData_, pVertexData_, flattenedVertexData_.size() * sizeof(VertexData));
 	//memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
 
 	///- 色情報
@@ -329,9 +359,9 @@ void Terrain::NormalVector() {
 	///- local頂点をworld座標に変換
 
 	Vec3f worldVertex[3] = {
-		Mat4::Transform(vertexData_[0].position, worldTransform_.worldMatrix),
-		Mat4::Transform(vertexData_[1].position, worldTransform_.worldMatrix),
-		Mat4::Transform(vertexData_[vertexData_.size() - 1].position, worldTransform_.worldMatrix)
+		Mat4::Transform(vertexData_[0][0].position, worldTransform_.worldMatrix),
+		Mat4::Transform(vertexData_[1][0].position, worldTransform_.worldMatrix),
+		Mat4::Transform(vertexData_[0][1].position, worldTransform_.worldMatrix)
 	};
 
 
@@ -346,7 +376,7 @@ void Terrain::NormalVector() {
 
 	Vec3f vertexPos[3]{};
 	int vertexIndex = 0;
-	for(uint32_t index = 0; index < vertexData_.size(); index++) {
+	for(uint32_t index = 0; index < flattenedVertexData_.size(); index++) {
 
 		///- 三角形の頂点
 		vertexIndex = index;
@@ -358,19 +388,19 @@ void Terrain::NormalVector() {
 		switch(vertexIndex % 3) {
 		case 0:
 			for(uint8_t i = 0; i < 3; i++) {
-				vertexPos[i] = Vec3f::Convert4To3(vertexData_[indexData_[vertexIndex + i]].position);
+				vertexPos[i] = Vec3f::Convert4To3(flattenedVertexData_[indexData_[vertexIndex + i]].position);
 			}
 
 			break;
 		case 1:
 			for(int8_t i = -1; i < 2; i++) {
-				vertexPos[i + 1] = Vec3f::Convert4To3(vertexData_[indexData_[vertexIndex + i]].position);
+				vertexPos[i + 1] = Vec3f::Convert4To3(flattenedVertexData_[indexData_[vertexIndex + i]].position);
 			}
 
 			break;
 		case 2:
 			for(int8_t i = -2; i < 1; i++) {
-				vertexPos[i + 2] = Vec3f::Convert4To3(vertexData_[indexData_[vertexIndex + i]].position);
+				vertexPos[i + 2] = Vec3f::Convert4To3(flattenedVertexData_[indexData_[vertexIndex + i]].position);
 			}
 
 			break;
@@ -378,11 +408,47 @@ void Terrain::NormalVector() {
 
 
 
-		vertexData_[index].normal =
+		flattenedVertexData_[index].normal =
 			Vec3f::Normalize(Vec3f::Cross(vertexPos[0] - vertexPos[2], vertexPos[1] - vertexPos[0]));
 
 
 	}
 
 
+
+	for(uint32_t row = 0; row < vertexData_.size(); row++) {
+		for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
+			vertexData_[row][col] =
+				flattenedVertexData_[(vertexData_.size() * row) + col];
+		}
+	}
+
+
+}
+
+
+
+void Terrain::TransferVertexData() {
+
+	for(uint32_t row = 0; row < vertexData_.size(); row++) {
+		for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
+			vertexData_[row][col] =
+				flattenedVertexData_[(vertexData_.size() * row) + col];
+		}
+	}
+
+}
+
+void Terrain::TransferFlattenedVertexData() {
+
+	///- フラット化頂点データに二次元配列の頂点データを挿入
+	flattenedVertexData_.clear();
+	for(auto& vertexData : vertexData_) {
+		flattenedVertexData_.insert(flattenedVertexData_.end(), vertexData.begin(), vertexData.end());
+	}
+}
+
+
+void Terrain::SetVertexHeight(int row, int col, float height) {
+	vertexData_[row][col].position.y += height;
 }

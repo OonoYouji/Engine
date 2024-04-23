@@ -19,8 +19,6 @@ public:
 
 private:
 
-	std::array<std::array<float, 10>, 10> noises_;
-
 
 	std::array<uint8_t, 512> p_;
 
