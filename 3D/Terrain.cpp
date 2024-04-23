@@ -31,7 +31,7 @@ void Terrain::Init() {
 
 
 	///- 頂点数の調整
-	int indexCount = (kSubdivision_ + 1) * (kSubdivision_ + 1);
+	int indexCount = (kSubdivision_) * (kSubdivision_);
 	indexCount *= 6;	//- 図形1個分の頂点数をかける(四角形)
 	indexData_.resize(indexCount);
 
@@ -65,9 +65,9 @@ void Terrain::Init() {
 	}
 
 
+	uint32_t startIndex = 0;
 	for(uint32_t row = 0; row < uint32_t(kSubdivision_); row++) {
 		for(uint32_t col = 0; col < uint32_t(kSubdivision_); col++) {
-			uint32_t startIndex = (row * kSubdivision_ + col) * 6;
 
 			indexData_[startIndex + 0] = indices[row + 0][col + 0];
 			indexData_[startIndex + 1] = indices[row + 1][col + 0];
@@ -76,6 +76,7 @@ void Terrain::Init() {
 			indexData_[startIndex + 4] = indices[row + 0][col + 1];
 			indexData_[startIndex + 5] = indices[row + 1][col + 0];
 
+			startIndex += 6;
 		}
 	}
 
@@ -209,7 +210,7 @@ void Terrain::Init() {
 
 	///- ノイズから地形の高さを計算
 
-	noise_ = std::make_unique<PerlinNoise>(uint32_t(3216841245));
+	noise_ = std::make_unique<PerlinNoise>(uint32_t(1315));
 	for(uint32_t index = 0; index < vertexData_.size(); ++index) {
 		vertexData_[index].position.y =
 			noise_->GetNoise(Vector3::Convert4To3(vertexData_[index].position));
@@ -331,39 +332,49 @@ void Terrain::NormalVector() {
 
 	///- 地形の各頂点の法線ベクトルを計算
 
-	int tmp = 0;
-	for(uint32_t index = 0; index < vertexData_.size(); ++index) {
+
+	for(uint32_t index = 0; index < vertexData_.size(); index++) {
 
 		///- 三角形の頂点
-		Vec3f vertexPos[3]{};
-		for(uint8_t i = 0; i < 3; i++) {
-			vertexPos[i] = Vec3f::Convert4To3(vertexData_[indexData_[tmp + i]].position);
+		int vertexIndex = 0;
+		while(indexData_[vertexIndex] != index) {
+			vertexIndex++;
 		}
 
 
-		vertexData_[index].normal = 
+		Vec3f vertexPos[3]{};
+
+		switch(vertexIndex % 3) {
+		case 0:
+			for(uint8_t i = 0; i < 3; i++) {
+				vertexPos[i] = Vec3f::Convert4To3(vertexData_[indexData_[vertexIndex + i]].position);
+			}
+
+			break;
+		case 1:
+			for(int8_t i = -1; i < 2; i++) {
+				vertexPos[i + 1] = Vec3f::Convert4To3(vertexData_[indexData_[vertexIndex + i]].position);
+			}
+
+			break;
+		case 2:
+			for(int8_t i = -2; i < 1; i++) {
+				vertexPos[i + 2] = Vec3f::Convert4To3(vertexData_[indexData_[vertexIndex + i]].position);
+			}
+
+			break;
+		}
+
+
+
+		vertexData_[index].normal =
 			Vec3f::Normalize(Vec3f::Cross(vertexPos[0] - vertexPos[2], vertexPos[1] - vertexPos[0]));
 		/*vertexData_[indexData_[index + 1]].normal = Vec3f::Cross(vertexPos[1] - vertexPos[2], vertexPos[0] - vertexPos[1]);;
 		vertexData_[indexData_[index + 2]].normal = Vec3f::Cross(vertexPos[2] - vertexPos[0], vertexPos[1] - vertexPos[2]);;*/
 
 
-		///- 正規化
-		/*for(uint8_t i = 0; i < 3; i++) {
-			vertexData_[indexData_[index + i]].normal = Vec3f::Normalize(vertexData_[indexData_[index + i]].normal);
-		}*/
 
-		tmp += 3;
 	}
-
-
-	//int indexDataIndex = 0;
-	//for(uint32_t index = 0; index < vertexData_.size(); index++) {
-
-	//	vertexData_[indexData_[indexDataIndex]].normal =
-	//		Vec3f::Cross(vertexPos[0] - vertexPos[2], vertexPos[1] - vertexPos[0]);
-
-	//	//vertexData_[index].normal = { 0.0f,1.0f,0.0f };
-	//}
 
 
 }
