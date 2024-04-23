@@ -44,7 +44,7 @@ private: ///- メンバ変数
 	VertexData* pData_ = nullptr;
 	void* pMappedData_;
 	Material* materialData_ = nullptr;
-	TransformMatrix* matrixData_  = nullptr;
+	TransformMatrix* matrixData_ = nullptr;
 
 
 	Vec3f mousePos_;
@@ -75,5 +75,6 @@ public: ///-
 	}
 
 	void SetColot(const Vec4f& color);
+	const Vec3f& GetWorldPos() const { return worldTransform_.translate; }
 
 };

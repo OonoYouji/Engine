@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Input.h"
+#include "Vector3.h"
 
 class Terrain;
 class Brush;
@@ -28,6 +29,11 @@ private:
 	Brush* pBrush_;
 
 
+
 	bool Collision();
+
+	void BrushPositionCalc();
+
+	Vec3f TerrainLocalPosition();
 
 };

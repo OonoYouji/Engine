@@ -82,4 +82,19 @@ public:
 
 	float GetDistance() const { return distance_; }
 
+	const Vec3f& GetWorldPos() const { return worldTransform_.translate; }
+
+	Vec3f GetLTPos() const {
+		return worldTransform_.translate + Vec3f{
+			-kSubdivision_ / 2.0f, 0.0f, kSubdivision_ / 2.0f
+		};
+	}
+
+
+	Vec3f GetRBPos() const {
+		return worldTransform_.translate + Vec3f{
+			kSubdivision_ / 2.0f, 0.0f, -kSubdivision_ / 2.0f
+		};
+	}
+
 };

@@ -171,4 +171,8 @@ float PerlinNoise::GetNoise(const Vec2f& v) {
 	return Noise(v) * 0.5f + 0.5f;
 }
 
+void PerlinNoise::ResetSheed(uint32_t seed) {
+	SetSeed(seed);
+}
+
 

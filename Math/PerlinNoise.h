@@ -45,4 +45,6 @@ public:
 
 	float GetNoise(const Vec2f& v);
 
+	void ResetSheed(uint32_t seed);
+
 };

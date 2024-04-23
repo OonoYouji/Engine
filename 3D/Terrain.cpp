@@ -27,7 +27,7 @@ void Terrain::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 
-	kSubdivision_ = 10;
+	kSubdivision_ = 100;
 
 
 	///- 頂点数の調整
@@ -259,6 +259,19 @@ void Terrain::Update() {
 	ImGui::Spacing();
 
 
+	static int seed = 0;
+	ImGui::SliderInt("seed", &seed, 0, static_cast<int>(std::pow(2, 32)));
+	if(ImGui::Button("ResetSeed")) {
+		noise_->ResetSheed(seed);
+		for(uint32_t index = 0; index < vertexData_.size(); ++index) {
+			vertexData_[index].position.y =
+				noise_->GetNoise(
+					Vec2f{ vertexData_[index].position.x, vertexData_[index].position.z } / (float(kSubdivision_) / 10.0f)
+				) * (10.0f * float(kSubdivision_) / 100.0f);
+		}
+	}
+
+
 	ImGui::End();
 #endif // _DEBUG
 
@@ -268,6 +281,7 @@ void Terrain::Update() {
 	/// -----------------------------------
 
 	//worldTransform_.rotate.y += 1.0f / 128.0f;
+
 
 
 }
@@ -330,16 +344,16 @@ void Terrain::NormalVector() {
 	///- 地形の各頂点の法線ベクトルを計算
 
 
+	Vec3f vertexPos[3]{};
+	int vertexIndex = 0;
 	for(uint32_t index = 0; index < vertexData_.size(); index++) {
 
 		///- 三角形の頂点
-		int vertexIndex = index;
+		vertexIndex = index;
 		while(indexData_[vertexIndex] != index) {
 			vertexIndex++;
 		}
 
-
-		Vec3f vertexPos[3]{};
 
 		switch(vertexIndex % 3) {
 		case 0:
@@ -366,9 +380,6 @@ void Terrain::NormalVector() {
 
 		vertexData_[index].normal =
 			Vec3f::Normalize(Vec3f::Cross(vertexPos[0] - vertexPos[2], vertexPos[1] - vertexPos[0]));
-		/*vertexData_[indexData_[index + 1]].normal = Vec3f::Cross(vertexPos[1] - vertexPos[2], vertexPos[0] - vertexPos[1]);;
-		vertexData_[indexData_[index + 2]].normal = Vec3f::Cross(vertexPos[2] - vertexPos[0], vertexPos[1] - vertexPos[2]);;*/
-
 
 
 	}

@@ -25,6 +25,9 @@ public:
 
 	inline Vector4 operator+(const Vector4& other)const;
 	inline Vector4 operator-(const Vector4& other)const;
+	inline Vector4 operator/(const Vector4& other)const;
+
+	inline Vector4 operator/(float value)const;
 
 	inline Vector4& operator-= (const Vector4& other);
 
@@ -47,6 +50,23 @@ inline Vector4 Vector4::operator-(const Vector4& other) const {
 		this->y - other.y,
 		this->z - other.z,
 		this->w - other.w
+	);
+}
+inline Vector4 Vector4::operator/(const Vector4& other) const {
+	return Vector4(
+		this->x / other.x,
+		this->y / other.y,
+		this->z / other.z,
+		this->w / other.w
+	);
+}
+
+inline Vector4 Vector4::operator/(float value) const {
+	return Vector4(
+		this->x / value,
+		this->y / value,
+		this->z / value,
+		this->w / value
 	);
 }
 
