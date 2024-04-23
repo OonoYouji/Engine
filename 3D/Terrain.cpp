@@ -27,7 +27,7 @@ void Terrain::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 
-	kSubdivision_ = 100;
+	kSubdivision_ = 200;
 
 
 	///- 頂点数の調整
@@ -210,23 +210,17 @@ void Terrain::Init() {
 
 	///- ノイズから地形の高さを計算
 
-	noise_ = std::make_unique<PerlinNoise>(uint32_t(1315));
+	noise_ = std::make_unique<PerlinNoise>(uint32_t(123));
 	for(uint32_t index = 0; index < vertexData_.size(); ++index) {
 		vertexData_[index].position.y =
-			noise_->GetNoise(Vector3::Convert4To3(vertexData_[index].position));
+			noise_->GetNoise(
+				Vec2f{ vertexData_[index].position.x, vertexData_[index].position.z } / (float(kSubdivision_) / 10.0f)
+			) * (10.0f * float(kSubdivision_) / 100.0f);
 	}
 
 
 	///- 法線ベクトルを計算
 	NormalVector();
-
-
-
-
-
-
-
-
 
 
 }
@@ -261,6 +255,9 @@ void Terrain::Update() {
 	if(ImGui::Button("normalVector Reset")) {
 		NormalVector();
 	}
+
+	ImGui::Spacing();
+
 
 	ImGui::End();
 #endif // _DEBUG
@@ -336,7 +333,7 @@ void Terrain::NormalVector() {
 	for(uint32_t index = 0; index < vertexData_.size(); index++) {
 
 		///- 三角形の頂点
-		int vertexIndex = 0;
+		int vertexIndex = index;
 		while(indexData_[vertexIndex] != index) {
 			vertexIndex++;
 		}

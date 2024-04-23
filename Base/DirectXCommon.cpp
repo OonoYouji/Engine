@@ -1277,6 +1277,7 @@ void DirectXCommon::PostDraw() {
 
 	///- 次のフレームのためにQueueをリセットする
 	command_->ResetCommandList();
+	ClearDepthBuffer();
 
 }
 

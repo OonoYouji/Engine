@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "Vector3.h"
-
+#include "Vector2.h"
 
 
 class  PerlinNoise {
@@ -33,10 +33,16 @@ private:
 
 	float Grad(int hash, float x, float y, float z);
 
+	float Grad(int hash, float x, float y);
+
 	float Noise(const Vec3f& vector);
+
+	float Noise(const Vec2f& vector);
 
 public:
 
 	float GetNoise(const Vec3f& v);
+
+	float GetNoise(const Vec2f& v);
 
 };
