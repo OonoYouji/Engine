@@ -27,7 +27,7 @@ void Terrain::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 
-	kSubdivision_ = 200;
+	kSubdivision_ = 10;
 
 
 	///- 頂点数の調整

@@ -50,7 +50,7 @@ void Brush::Init() {
 	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
-	materialData_->enableLighting = true;
+	materialData_->enableLighting = false;
 
 	///- 行列リソースの生成; 書き込み
 	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
@@ -148,7 +148,7 @@ void Brush::Draw() {
 	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
 
 	///- 色情報
-	materialData_->color = { 0.0f,0.0f,0.0f,1.0f };
+	//materialData_->color = { 0.0f,0.0f,0.0f,1.0f };
 	///- 行列情報
 	worldTransform_.MakeWorldMatrix();
 	matrixData_->World = worldTransform_.worldMatrix;
@@ -190,6 +190,12 @@ void Brush::ConvertMousePosition() {
 
 	///- カメラから設定オブジェクトの距離
 	//worldTransform_.translate = posNear_ + (mouseLayDirection_ * distanceTestObject_);
+
+}
+
+void Brush::SetColot(const Vec4f& color) {
+
+	materialData_->color = color;
 
 }
 

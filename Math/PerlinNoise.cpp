@@ -74,7 +74,7 @@ void PerlinNoise::SetSeed([[maybe_unused]] uint32_t seed) {
 	}
 
 	///- p_の中身をランダムにシャッフルする
-	//std::shuffle(p_.begin(), p_.begin() + 256, std::default_random_engine(seed));
+	std::shuffle(p_.begin(), p_.begin() + 256, std::default_random_engine(seed));
 
 	///- 256以降に上記で生成した値をコピー
 	for(size_t i = 0; i < 256; i++) {

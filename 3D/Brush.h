@@ -74,4 +74,6 @@ public: ///-
 		worldTransform_.translate = position;
 	}
 
+	void SetColot(const Vec4f& color);
+
 };

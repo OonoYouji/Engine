@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Input.h"
 
 class Terrain;
 class Brush;
@@ -21,6 +22,7 @@ public:
 
 private:
 
+	Input* input_ = nullptr;
 
 	Terrain* pTerrain_;
 	Brush* pBrush_;
