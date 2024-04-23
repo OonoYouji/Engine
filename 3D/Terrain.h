@@ -8,8 +8,12 @@
 #include "WorldTransform.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "DirectionalLight.h"
+
 
 using namespace Microsoft::WRL;
+
+class PerlinNoise;
 
 /// <summary>
 /// 地形
@@ -50,8 +54,8 @@ private:
 	uint32_t* pIndexData_;
 	void* pIndexMappedData_;
 
-	Vector4* materialData_ = nullptr;
-	Matrix4x4* wvpData_ = nullptr;
+	Material* materialData_ = nullptr;
+	TransformMatrix* matrixData_ = nullptr;
 
 	WorldTransform worldTransform_;
 	Vector4 color_;
@@ -61,6 +65,10 @@ private:
 	Vec3f normalVector_;
 
 	float distance_;
+
+
+	///- noise取得用
+	std::unique_ptr<PerlinNoise> noise_;
 
 
 	/// <summary>

@@ -20,6 +20,10 @@ void Scene_Game::Init() {
 	terrainOperator_ = std::make_unique<TerrainOperator>();
 	terrainOperator_->Init(terrain_.get(), brush_.get());
 
+
+	perlinNoise_ = std::make_unique<PerlinNoise>(10);
+	perlinNoise_->Init();
+
 }
 
 void Scene_Game::Update() {
@@ -29,11 +33,13 @@ void Scene_Game::Update() {
 
 	terrainOperator_->Update();
 
+	perlinNoise_->Update();
+
 }
 
 void Scene_Game::Draw() {
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
 	//Engine::TestDraw();
 
@@ -51,5 +57,7 @@ void Scene_Game::Finalize() {
 	brush_.reset();
 
 	terrainOperator_.reset();
+
+	perlinNoise_.reset();
 
 }

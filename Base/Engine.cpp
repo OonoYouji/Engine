@@ -10,6 +10,7 @@
 #include <DirectXCommon.h>
 #include <ImGuiManager.h>
 #include <TextureManager.h>
+#include <DirectionalLight.h>
 #include <Input.h>
 #include <Camera.h>
 
@@ -99,6 +100,8 @@ namespace {
 		directXCommon_->PreDraw();
 		imGuiManager_->BeginFrame();
 		input_->Begin();
+
+		Light::GetInstance()->Update();
 
 		camera_->Update();
 
@@ -204,6 +207,8 @@ void Engine::Initialize(const std::string& title) {
 	sTextureManager_ = TextureManager::GetInstance();
 	sTextureManager_->Initialize();
 
+	Light::GetInstance()->Init();
+
 }
 
 void Engine::Finalize() {
@@ -211,6 +216,8 @@ void Engine::Finalize() {
 
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();
+
+	Light::GetInstance()->Finalize();
 
 	sImGuiManager->Finalize();
 

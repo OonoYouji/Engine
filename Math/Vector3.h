@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Vector4.h"
+
 class Vector3 final {
 public:
 
@@ -40,6 +42,11 @@ public:
 	/// 線形補完
 	/// </summary>
 	static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+
+	/// <summary>
+	/// Vector4をVector3に変換
+	/// </summary>
+	static Vector3 Convert4To3(const Vec4f& v);
 
 public:
 

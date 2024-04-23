@@ -43,8 +43,8 @@ private: ///- メンバ変数
 	std::vector<VertexData> vertexData_;
 	VertexData* pData_ = nullptr;
 	void* pMappedData_;
-	Vector4* materialData_ = nullptr;
-	Matrix4x4* wvpData_ = nullptr;
+	Material* materialData_ = nullptr;
+	TransformMatrix* matrixData_  = nullptr;
 
 
 	Vec3f mousePos_;

@@ -10,6 +10,7 @@
 #include "Brush.h"
 #include "Sphere.h"
 #include "TerrainOperator.h"
+#include "PerlinNoise.h"
 
 
 class Scene_Game final
@@ -31,5 +32,7 @@ private:
 	std::unique_ptr<Brush> brush_;
 
 	std::unique_ptr<TerrainOperator> terrainOperator_;
+
+	std::unique_ptr<PerlinNoise> perlinNoise_;
 
 };

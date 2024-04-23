@@ -9,6 +9,9 @@
 #include "Engine.h"
 #include "Input.h"
 
+#include "PerlinNoise.h"
+#include "DirectionalLight.h"
+
 
 Terrain::Terrain() {}
 Terrain::~Terrain() {
@@ -24,12 +27,12 @@ void Terrain::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 
-	kSubdivision_ = 10;
+	kSubdivision_ = 100;
 
 
 	///- 頂点数の調整
 	int indexCount = (kSubdivision_ + 1) * (kSubdivision_ + 1);
-	indexCount *= 6;	//- 三角形1個分の頂点数をかける
+	indexCount *= 6;	//- 図形1個分の頂点数をかける(四角形)
 	indexData_.resize(indexCount);
 
 	int vertexCount = (kSubdivision_ + 1) * (kSubdivision_ + 1);
@@ -173,19 +176,20 @@ void Terrain::Init() {
 	/// ↓ MaterialResource
 	/// -------------------------
 
-	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector4)));
+	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	*materialData_ = { 1.0f,1.0f,1.0f,1.0f };
-
+	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
+	materialData_->enableLighting = true;
 
 
 	/// -------------------------
 	/// ↓ wvpResource
 	/// -------------------------
 
-	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(Matrix4x4)));
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
-	*wvpData_ = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
+	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&matrixData_));
+	matrixData_->World = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
+	matrixData_->WVP = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
 
 
@@ -199,20 +203,29 @@ void Terrain::Init() {
 
 
 	worldTransform_.Init();
-	//worldTransform_.scale = { 0.001f,1.0f,0.001f };
+	//worldTransform_.scale = { 0.1f,0.1f,0.1f };
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 
-	/// TODO しっかりとした計算を
-	normalVector_ = Vec3f(0.0f, 1.0f, 0.0f);
+	///- ノイズから地形の高さを計算
 
-	/*Vec4f vec4CrossV1 = vertexData_[1].position - vertexData_[0].position;
-	Vec4f vec4CrossV2 = vertexData_[0].position - vertexData_[vertexData_.size() - 1].position;
-	Vec3f crossV1 = { vec4CrossV1.x, vec4CrossV1.y, vec4CrossV1.z };
-	Vec3f crossV2 = { vec4CrossV2.x, vec4CrossV2.y, vec4CrossV2.z };
-	normalVector_ = Vector3::Cross(crossV1, crossV2);*/
+	noise_ = std::make_unique<PerlinNoise>(uint32_t(3216841245));
+	for(uint32_t index = 0; index < vertexData_.size(); ++index) {
+		vertexData_[index].position.y =
+			noise_->GetNoise(Vector3::Convert4To3(vertexData_[index].position));
+	}
 
+
+	///- 法線ベクトルを計算
 	NormalVector();
+
+
+
+
+
+
+
+
 
 
 }
@@ -235,7 +248,8 @@ void Terrain::Update() {
 	static int index = 0;
 	ImGui::SliderInt("vertexIndex", &index, 0, static_cast<int>(vertexData_.size() - 1));
 	ImGui::DragFloat4("vertex", &vertexData_[index].position.x, 0.25f);
-	ImGui::DragFloat2("texcoord", &vertexData_[index].texcoord.x, 0.0f);
+	ImGui::DragFloat3("normal", &vertexData_[index].normal.x, 0.0f);
+	//ImGui::DragFloat2("texcoord", &vertexData_[index].texcoord.x, 0.0f);
 
 	ImGui::Spacing();
 	ImGui::Text("vertexData dataSize: %d", sizeof(VertexData) * vertexData_.size());
@@ -274,18 +288,21 @@ void Terrain::Draw() {
 	//memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
 
 	///- 色情報
-	*materialData_ = color_;
+	materialData_->color = color_;
+
+
 	///- 行列情報
 	worldTransform_.MakeWorldMatrix();
-	*wvpData_ = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
-
+	matrixData_->World = worldTransform_.worldMatrix;
+	matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
 	///- 各種設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
+	Light::GetInstance()->SetConstantBuffer(commandList);
+
 
 	///- 描画 (DrawCall)
 	commandList->DrawIndexedInstanced(UINT(indexData_.size()), 1, 0, 0, 0);
@@ -310,5 +327,43 @@ void Terrain::NormalVector() {
 	normalVector_ = Vector3::Normalize(normalVector_);
 
 	distance_ = Vector3::Dot(worldVertex[0], normalVector_);
+
+
+	///- 地形の各頂点の法線ベクトルを計算
+
+	int tmp = 0;
+	for(uint32_t index = 0; index < vertexData_.size(); ++index) {
+
+		///- 三角形の頂点
+		Vec3f vertexPos[3]{};
+		for(uint8_t i = 0; i < 3; i++) {
+			vertexPos[i] = Vec3f::Convert4To3(vertexData_[indexData_[tmp + i]].position);
+		}
+
+
+		vertexData_[index].normal = 
+			Vec3f::Normalize(Vec3f::Cross(vertexPos[0] - vertexPos[2], vertexPos[1] - vertexPos[0]));
+		/*vertexData_[indexData_[index + 1]].normal = Vec3f::Cross(vertexPos[1] - vertexPos[2], vertexPos[0] - vertexPos[1]);;
+		vertexData_[indexData_[index + 2]].normal = Vec3f::Cross(vertexPos[2] - vertexPos[0], vertexPos[1] - vertexPos[2]);;*/
+
+
+		///- 正規化
+		/*for(uint8_t i = 0; i < 3; i++) {
+			vertexData_[indexData_[index + i]].normal = Vec3f::Normalize(vertexData_[indexData_[index + i]].normal);
+		}*/
+
+		tmp += 3;
+	}
+
+
+	//int indexDataIndex = 0;
+	//for(uint32_t index = 0; index < vertexData_.size(); index++) {
+
+	//	vertexData_[indexData_[indexDataIndex]].normal =
+	//		Vec3f::Cross(vertexPos[0] - vertexPos[2], vertexPos[1] - vertexPos[0]);
+
+	//	//vertexData_[index].normal = { 0.0f,1.0f,0.0f };
+	//}
+
 
 }

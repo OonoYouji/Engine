@@ -32,12 +32,22 @@ class DxDescriptors;
 struct VertexData {
 	Vec4f position;
 	Vec2f texcoord;
+	Vec3f normal;
 };
 
-struct Texture {
-	ComPtr<ID3D12Resource> vertexResource;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+
+struct Material {
+	Vec4f color;
+	int32_t enableLighting;
 };
+
+
+struct TransformMatrix {
+	Mat4 WVP;
+	Mat4 World;
+};
+
+
 
 /// -------------------------
 /// DirextX12の汎用クラス
@@ -89,7 +99,7 @@ private:
 	ComPtr<ID3DBlob> errorBlob_;
 	ComPtr<ID3D12RootSignature> rootSignature_;
 
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[2];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[3];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 
 	D3D12_BLEND_DESC blendDesc_;
@@ -101,19 +111,13 @@ private:
 
 	ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
-	ComPtr<ID3D12Resource> vertexResource_;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
-
 	D3D12_VIEWPORT viewport_;
 	Matrix4x4 viewportMatrix_;
 	D3D12_RECT scissorRect_;
 
 	///- 三角形の色を変えよう
-	D3D12_ROOT_PARAMETER rootParameters_[3];
-	ComPtr<ID3D12Resource> materialResource_;
-
-	///- 三角形を動かそう
-	ComPtr<ID3D12Resource> wvpResource_;
+	D3D12_ROOT_PARAMETER rootParameters_[4];
+	//ComPtr<ID3D12Resource> materialResource_;
 
 	///- テクスチャを貼ろう
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];

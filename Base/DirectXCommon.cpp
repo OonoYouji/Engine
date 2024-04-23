@@ -104,9 +104,9 @@ void DirectXCommon::Finalize() {
 	depthStencilResource_.Reset();
 
 
-	wvpResource_.Reset();
-	materialResource_.Reset();
-	vertexResource_.Reset();
+	//wvpResource_.Reset();
+	//materialResource_.Reset();
+	//vertexResource_.Reset();
 	graphicsPipelineState_.Reset();
 	pixelShaderBlob_.Reset();
 	vertexShaderBlob_.Reset();
@@ -484,6 +484,7 @@ void DirectXCommon::InitializeRootSignature() {
 	rootParameters_[0].ShaderVisibility =
 		D3D12_SHADER_VISIBILITY_PIXEL;					//- PixelShaderを使う
 	rootParameters_[0].Descriptor.ShaderRegister = 0;	//- レジスタ番号0とバインド
+	
 	///- VertexShader
 	rootParameters_[1].ParameterType =
 		D3D12_ROOT_PARAMETER_TYPE_CBV;					//- CBVを使う
@@ -500,6 +501,11 @@ void DirectXCommon::InitializeRootSignature() {
 	rootParameters_[2].DescriptorTable.pDescriptorRanges = descriptorRange_;
 	rootParameters_[2].DescriptorTable.NumDescriptorRanges =
 		_countof(descriptorRange_);						//- Tableで利用する数
+
+	///- right
+	rootParameters_[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		//- CBVを使う
+	rootParameters_[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//- PixelShaderで使う
+	rootParameters_[3].Descriptor.ShaderRegister = 1;
 
 
 	/// ----------------------------------------------
@@ -562,6 +568,12 @@ void DirectXCommon::InitializeInputLayout() {
 	inputElementDescs_[1].SemanticIndex = 0;
 	inputElementDescs_[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs_[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
+	inputElementDescs_[2].SemanticName = "NORMAL";
+	inputElementDescs_[2].SemanticIndex = 0;
+	inputElementDescs_[2].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 
 
 	inputLayoutDesc_.pInputElementDescs = inputElementDescs_;
@@ -685,20 +697,20 @@ void DirectXCommon::InitializeVertexResource() {
 	/// ↓ VertexResourceの初期化
 	/// ---------------------------
 
-	vertexResource_.Attach(CreateBufferResource(sizeof(VertexData) * 6));
+	//vertexResource_.Attach(CreateBufferResource(sizeof(VertexData) * 6));
 
 
-	/// ---------------------------
-	/// ↓ VertexBufferViewを作成
-	/// ---------------------------
+	///// ---------------------------
+	///// ↓ VertexBufferViewを作成
+	///// ---------------------------
 
-	///- 頂点バッファビューを作成
-	///- リソースの先頭のアドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	///- 使用するリソースのサイズ; 頂点数分確保する
-	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
-	///- 1頂点あたりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+	/////- 頂点バッファビューを作成
+	/////- リソースの先頭のアドレスから使う
+	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	/////- 使用するリソースのサイズ; 頂点数分確保する
+	//vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
+	/////- 1頂点あたりのサイズ
+	//vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 
 
@@ -706,24 +718,24 @@ void DirectXCommon::InitializeVertexResource() {
 	/// ↓ Resourceにデータを書き込む
 	/// ---------------------------
 
-	VertexData* vertexData = nullptr;
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	//VertexData* vertexData = nullptr;
+	//vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
-	///- 1枚目
-	vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };	//- 左下
-	vertexData[0].texcoord = { 0.0f,1.0f };
-	vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };	//- 上
-	vertexData[1].texcoord = { 0.5f,0.0f };
-	vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };	//- 右下
-	vertexData[2].texcoord = { 1.0f,1.0f };
+	/////- 1枚目
+	//vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };	//- 左下
+	//vertexData[0].texcoord = { 0.0f,1.0f };
+	//vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };	//- 上
+	//vertexData[1].texcoord = { 0.5f,0.0f };
+	//vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };	//- 右下
+	//vertexData[2].texcoord = { 1.0f,1.0f };
 
-	///- 2枚目
-	vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };	//- 左下
-	vertexData[3].texcoord = { 0.0f,1.0f };
-	vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };	//- 上
-	vertexData[4].texcoord = { 0.5f,0.0f };
-	vertexData[5].position = { 0.0f,-0.5f,-0.5f,1.0f };	//- 右下
-	vertexData[5].texcoord = { 1.0f,1.0f };
+	/////- 2枚目
+	//vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };	//- 左下
+	//vertexData[3].texcoord = { 0.0f,1.0f };
+	//vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };	//- 上
+	//vertexData[4].texcoord = { 0.5f,0.0f };
+	//vertexData[5].position = { 0.0f,-0.5f,-0.5f,1.0f };	//- 右下
+	//vertexData[5].texcoord = { 1.0f,1.0f };
 
 
 }
@@ -744,8 +756,8 @@ void DirectXCommon::InitializeViewport() {
 	viewport_.MaxDepth = 1.0f;
 
 	viewportMatrix_ = Matrix4x4::MakeViewportMatrix(
-		viewport_.TopLeftY, 
-		viewport_.TopLeftY, 
+		viewport_.TopLeftY,
+		viewport_.TopLeftY,
 		viewport_.Width,
 		viewport_.Height,
 		viewport_.MinDepth,
@@ -767,10 +779,10 @@ void DirectXCommon::InitializeViewport() {
 /// ---------------------------
 void DirectXCommon::InitializeMaterialResource() {
 
-	///- マテリアルリソースの生成
-	materialResource_.Attach(CreateBufferResource(sizeof(Vector4)));
+	/////- マテリアルリソースの生成
+	//materialResource_.Attach(CreateBufferResource(sizeof(Vector4)));
 
-	WriteColor({ 1.0f,0.0f,0.0f,1.0f });
+	//WriteColor({ 1.0f,0.0f,0.0f,1.0f });
 
 }
 
@@ -781,10 +793,10 @@ void DirectXCommon::InitializeMaterialResource() {
 /// ---------------------------
 void DirectXCommon::InitializeWVPResource() {
 
-	///- wvpリソースの生成
-	wvpResource_.Attach(CreateBufferResource(sizeof(Matrix4x4)));
+	/////- wvpリソースの生成
+	//wvpResource_.Attach(CreateBufferResource(sizeof(Matrix4x4)));
 
-	WriteWVPResource(Mat4::MakeIdentity());
+	//WriteWVPResource(Mat4::MakeIdentity());
 
 }
 
@@ -795,10 +807,10 @@ void DirectXCommon::InitializeWVPResource() {
 /// ---------------------------
 void DirectXCommon::WriteWVPResource(const Mat4& Matrix) {
 
-	///- データの書き込み
+	/*///- データの書き込み
 	Matrix4x4* wvpData = nullptr;
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	*wvpData = Matrix;
+	*wvpData = Matrix;*/
 
 }
 
@@ -1066,9 +1078,9 @@ ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTO
 /// ---------------------------
 void DirectXCommon::WriteColor(const Vector4& color) {
 	///- マテリアルにデータを書き込む
-	Vector4* materialData = nullptr;
+	/*Vector4* materialData = nullptr;
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	*materialData = color;
+	*materialData = color;*/
 }
 
 
@@ -1274,31 +1286,31 @@ void DirectXCommon::PostDraw() {
 /// ↓ 三角形の描画(テスト
 /// ---------------------------
 void DirectXCommon::TestDraw() {
-	ID3D12GraphicsCommandList* commandList = command_->GetList();
+	//ID3D12GraphicsCommandList* commandList = command_->GetList();
 
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-	ImGui::Begin("Triangle");
-	ImGui::SliderFloat4("color", &color_.x, 0.0f, 1.0f);
-	ImGui::End();
+	//ImGui::Begin("Triangle");
+	//ImGui::SliderFloat4("color", &color_.x, 0.0f, 1.0f);
+	//ImGui::End();
 
-	worldTransform_.rotate.y += 1.0f / 64.0f;
-	worldTransform_.MakeWorldMatrix();
-	WriteWVPResource(worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix());
-	WriteColor(color_);
+	//worldTransform_.rotate.y += 1.0f / 64.0f;
+	//worldTransform_.MakeWorldMatrix();
+	//WriteWVPResource(worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix());
+	//WriteColor(color_);
 
-	///- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	///- マテリアルのCBufferの場所を設定
-	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	///- wvp用のCBufferの場所を設定
-	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	///- DescriptorTableを設定する
-	//commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2_);
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
+	/////- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK
+	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	/////- マテリアルのCBufferの場所を設定
+	//commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	/////- wvp用のCBufferの場所を設定
+	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	/////- DescriptorTableを設定する
+	////commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2_);
+	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 
-	///- 描画 (DrawCall)
-	commandList->DrawInstanced(6, 1, 0, 0);
+	/////- 描画 (DrawCall)
+	//commandList->DrawInstanced(6, 1, 0, 0);
 
 }
 

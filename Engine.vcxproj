@@ -150,6 +150,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="2D\Sprite.cpp" />
     <ClCompile Include="3D\Brush.cpp" />
     <ClCompile Include="3D\Camera.cpp" />
+    <ClCompile Include="3D\DirectionalLight.cpp" />
     <ClCompile Include="3D\Sphere.cpp" />
     <ClCompile Include="3D\Terrain.cpp" />
     <ClCompile Include="3D\TerrainOperator.cpp" />
@@ -170,7 +171,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Base\GameManager.cpp" />
     <ClCompile Include="Input\Input.cpp" />
     <ClCompile Include="Math\Matrix4x4.cpp" />
-    <ClCompile Include="Math\#i.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
@@ -185,6 +185,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="2D\Sprite.h" />
     <ClInclude Include="3D\Brush.h" />
+    <ClInclude Include="3D\DirectionalLight.h" />
     <ClInclude Include="3D\Sphere.h" />
     <ClInclude Include="3D\Terrain.h" />
     <ClInclude Include="3D\TerrainOperator.h" />

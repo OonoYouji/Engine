@@ -10,7 +10,7 @@
 #include "ImGuiManager.h"
 #include "Camera.h"
 #include "Input.h"
-
+#include "DirectionalLight.h"
 
 
 using namespace std::numbers;
@@ -47,14 +47,16 @@ void Brush::Init() {
 	vertexResource_->Unmap(0, nullptr);
 
 	///- マテリアルリソースの生成; 情報の書き込み
-	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector4)));
+	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	*materialData_ = { 1.0f,1.0f,1.0f,1.0f };
+	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
+	materialData_->enableLighting = true;
 
 	///- 行列リソースの生成; 書き込み
-	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(Matrix4x4)));
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
-	*wvpData_ = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
+	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&matrixData_));
+	matrixData_->World = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
+	matrixData_->WVP = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
 
 	///- 頂点データの計算
@@ -146,10 +148,11 @@ void Brush::Draw() {
 	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
 
 	///- 色情報
-	*materialData_ = { 0.0f,0.0f,0.0f,1.0f };
+	materialData_->color = { 0.0f,0.0f,0.0f,1.0f };
 	///- 行列情報
 	worldTransform_.MakeWorldMatrix();
-	*wvpData_ = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+	matrixData_->World = worldTransform_.worldMatrix;
+	matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
 
 
@@ -159,6 +162,7 @@ void Brush::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
+	Light::GetInstance()->SetConstantBuffer(commandList);
 
 	///- 描画 (DrawCall)
 	commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);

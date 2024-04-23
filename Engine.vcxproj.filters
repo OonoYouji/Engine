@@ -97,10 +97,12 @@
     <ClCompile Include="3D\TerrainOperator.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
-    <ClCompile Include="Math\#i.cpp">
+    <ClCompile Include="Math\PerlinNoise.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Math\PerlinNoise.cpp" />
+    <ClCompile Include="3D\DirectionalLight.cpp">
+      <Filter>Source\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -266,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="Math\PerlinNoise.h">
       <Filter>Include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\DirectionalLight.h">
+      <Filter>Include\3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
