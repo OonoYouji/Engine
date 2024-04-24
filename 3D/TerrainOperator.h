@@ -38,5 +38,16 @@ private:
 
 	Vec3f TerrainLocalPosition();
 
+	/// <summary>
+	/// 地形の一部を上げる
+	/// </summary>
+	void Raise();
+
+
+	/// <summary>
+	/// 地形の一部を下げる
+	/// </summary>
+	void Lower();
+
 
 };

@@ -108,5 +108,13 @@ public:
 
 	void SetVertexHeight(int row, int col, float height);
 
+	void AddVertexHeight(int row, int col, float height);
+	void SubVertexHeight(int row, int col, float height);
+
+	/// <summary>
+	/// 配列の範囲内か確認する
+	/// 範囲内: True,  範囲外: False
+	/// </summary>
+	bool CheckRange(int row, int col);
 
 };

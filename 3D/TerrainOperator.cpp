@@ -70,30 +70,18 @@ void TerrainOperator::Update() {
 
 	///- 地形との当たり判定; XZのみで判定を取る
 	if(Collision() && isOperating_) {
+
+		///- 地形を上げる
 		if(input_->GetMouse().leftButton) {
-			pBrush_->SetColot({ 0.25f,0.0f,0.0f,1.0f });
-
-			///- 地形上のどこにブラシがあるか計算
-			Vec3f localPos = TerrainLocalPosition();
-			int rowIndex = (pTerrain_->kSubdivision / 2) + static_cast<int>(localPos.z);
-			int colIndex = (pTerrain_->kSubdivision / 2) + static_cast<int>(localPos.x);
-
-			///- 操作する範囲の設定
-			int operatorRange = static_cast<int>(pBrush_->GetRadius());
-
-			for(int32_t row = -operatorRange; row < operatorRange; row++) {
-				for(int32_t col = -operatorRange; col < operatorRange; col++) {
-
-					float height = 1.0f - (row / operatorRange) * (col / operatorRange);
-					pTerrain_->SetVertexHeight(rowIndex + row, colIndex + col, height * raisePower_);
-
-				}
-			}
-
-			///- 頂点を操作したのでフラット化する
-			pTerrain_->TransferFlattenedVertexData();
-
+			Raise();
 		}
+
+		///- 地形を下げる
+		if(input_->GetMouse().rightButton) {
+			Lower();
+		}
+
+
 	}
 
 }
@@ -156,4 +144,59 @@ void TerrainOperator::BrushPositionCalc() {
 
 Vec3f TerrainOperator::TerrainLocalPosition() {
 	return  pBrush_->GetWorldPos() - pTerrain_->GetWorldPos();
+}
+
+
+
+void TerrainOperator::Raise() {
+
+	///- 地形上のどこにブラシがあるか計算
+	Vec3f localPos = TerrainLocalPosition();
+	int rowIndex = (pTerrain_->kSubdivision / 2) + static_cast<int>(localPos.z);
+	int colIndex = (pTerrain_->kSubdivision / 2) + static_cast<int>(localPos.x);
+
+	///- 操作する範囲の設定
+	int operatorRange = static_cast<int>(pBrush_->GetRadius());
+
+	for(int32_t row = -operatorRange; row < operatorRange; row++) {
+		for(int32_t col = -operatorRange; col < operatorRange; col++) {
+
+			float height = 1.0f - (row / operatorRange) * (col / operatorRange);
+			pTerrain_->AddVertexHeight(rowIndex + row, colIndex + col, height * raisePower_);
+
+		}
+	}
+
+	///- 頂点を操作したのでフラット化する
+	pTerrain_->TransferFlattenedVertexData();
+
+
+}
+
+
+
+void TerrainOperator::Lower() {
+
+	///- 地形上のどこにブラシがあるか計算
+	Vec3f localPos = TerrainLocalPosition();
+	int rowIndex = (pTerrain_->kSubdivision / 2) + static_cast<int>(localPos.z);
+	int colIndex = (pTerrain_->kSubdivision / 2) + static_cast<int>(localPos.x);
+
+	///- 操作する範囲の設定
+	int operatorRange = static_cast<int>(pBrush_->GetRadius());
+
+	for(int32_t row = -operatorRange; row < operatorRange; row++) {
+		for(int32_t col = -operatorRange; col < operatorRange; col++) {
+
+			float height = 1.0f - (row / operatorRange) * (col / operatorRange);
+			pTerrain_->SubVertexHeight(rowIndex + row, colIndex + col, height * raisePower_);
+
+		}
+	}
+
+	///- 頂点を操作したのでフラット化する
+	pTerrain_->TransferFlattenedVertexData();
+
+
+
 }
