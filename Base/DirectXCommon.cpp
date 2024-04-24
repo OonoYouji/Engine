@@ -67,12 +67,8 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitializeRasterizer();
 	InitializeShaderBlob();
 	InitializePSO();
-	InitializeVertexResource();
-	InitializeMaterialResource();
-	InitializeWVPResource();
 	InitializeViewport();
 
-	InitializeTextureResource();
 	InitializeDepthStencil();
 
 	InitializeSprite();
