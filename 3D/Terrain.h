@@ -33,7 +33,7 @@ public:
 	void Draw();
 
 	///- 縦横の分割数
-	static const int kSubdivision = 100;
+	static const int kSubdivision = 10;
 
 
 private:
@@ -93,7 +93,15 @@ private:
 	/// </summary>
 	/// <param name="maxRow"></param>
 	/// <param name="maxCol"></param>
-	void IndexDataCulc(int maxRow, int maxCol);
+	void IndexDataCulc(uint32_t maxRow, uint32_t maxCol);
+
+	
+	void VertexDataCulc(uint32_t maxRow, uint32_t maxCol);
+
+
+	void CreateVertexResource(size_t flattendVertexDataSize);
+
+	void CreateIndexResource(size_t indexDataSize);
 
 
 public:

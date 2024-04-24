@@ -33,15 +33,15 @@ void Terrain::Init() {
 
 
 	///- 頂点数の調整
-	int indexCount = (kSubdivision) * (kSubdivision);
-	indexCount *= 6;	//- 図形1個分の頂点数をかける(四角形)
-	indexData_.resize(indexCount);
+	//int indexCount = (kSubdivision) * (kSubdivision);
+	//indexCount *= 6;	//- 図形1個分の頂点数をかける(四角形)
+	//indexData_.resize(indexCount);
 
-	int vertexCount = (kSubdivision + 1);
+	/*int vertexCount = (kSubdivision + 1);
 	vertexData_.resize(vertexCount);
 	for(uint32_t i = 0; i < vertexData_.size(); i++) {
 		vertexData_[i].resize(vertexCount);
-	}
+	}*/
 
 
 	/// -------------------------------------------------
@@ -54,82 +54,14 @@ void Terrain::Init() {
 	/// -----------------------
 
 	///- 頂点インデックスの設定用
-	//uint32_t indices[kSubdivision + 1][kSubdivision + 1]{};
-	std::vector<std::vector<uint32_t>> indices;
-	indices.resize(kSubdivision + 1);
-	for(uint32_t i = 0; i < indices.size(); i++) {
-		indices[i].resize(kSubdivision + 1);
-	}
-
-	int number = 0;
-	for(uint32_t row = 0; row < uint32_t(kSubdivision + 1); row++) {
-		for(uint32_t col = 0; col < uint32_t(kSubdivision + 1); col++) {
-			indices[row][col] = number;
-			++number;
-		}
-	}
-
-
-	uint32_t startIndex = 0;
-	for(uint32_t row = 0; row < uint32_t(kSubdivision); row++) {
-		for(uint32_t col = 0; col < uint32_t(kSubdivision); col++) {
-
-			indexData_[startIndex + 0] = indices[row + 0][col + 0];
-			indexData_[startIndex + 1] = indices[row + 1][col + 0];
-			indexData_[startIndex + 2] = indices[row + 0][col + 1];
-			indexData_[startIndex + 3] = indices[row + 1][col + 1];
-			indexData_[startIndex + 4] = indices[row + 0][col + 1];
-			indexData_[startIndex + 5] = indices[row + 1][col + 0];
-
-			startIndex += 6;
-		}
-	}
-
+	IndexDataCulc(kSubdivision, kSubdivision);
 
 
 	/// -----------------------
 	/// ↓ 頂点データ
 	/// -----------------------
 
-	//uint32_t index = 0;
-	for(int32_t row = 0; row <= kSubdivision; row++) {
-		for(int32_t col = 0; col <= kSubdivision; col++) {
-
-
-			/// -----------------------
-			/// ↓ Position
-			/// -----------------------
-
-			vertexData_[row][col].position = {
-				float(col), 0.0f,
-				float(row), 1.0f
-			};
-
-
-			/// -----------------------
-			/// ↓ Texcoord
-			/// -----------------------
-
-
-			vertexData_[row][col].texcoord = {
-				float(col + 0) / float(kSubdivision + 1),
-				1.0f - (float(row + 0) / float(kSubdivision + 1))
-			};
-
-
-			///- 地形の中心が原点になるように移動
-			vertexData_[row][col].position -= Vec4f{
-				static_cast<float>(kSubdivision + 1) / 2.0f,
-				0.0f,
-				static_cast<float>(kSubdivision + 1) / 2.0f,
-				0.0f
-			};
-
-
-		}
-	}
-
-
+	VertexDataCulc(kSubdivision, kSubdivision);
 
 
 	/// ------------------------------------------------- 
@@ -141,43 +73,13 @@ void Terrain::Init() {
 	/// ↓ VertexResource
 	/// -------------------------
 
-	///- 頂点データをフラットにする
-	for(auto& vertexData : vertexData_) {
-		flattenedVertexData_.insert(flattenedVertexData_.end(), vertexData.begin(), vertexData.end());
-	}
-
-	///- 頂点数分確保
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * flattenedVertexData_.size()));
-
-	///- vertexBufferViewの作成
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * flattenedVertexData_.size());
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	///- 頂点データの書き込み
-	pVertexData_ = flattenedVertexData_.data();
-	vertexResource_->Map(0, nullptr, &pVertexMappedData_);
-	memcpy(pVertexMappedData_, pVertexData_, flattenedVertexData_.size() * sizeof(VertexData));
-	vertexResource_->Unmap(0, nullptr);
-
-
+	CreateVertexResource(flattenedVertexData_.size());
 
 	/// -------------------------
 	/// ↓ IndexResource
 	/// -------------------------
 
-	///- 頂点数分確保
-	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(uint32_t) * indexData_.size()));
-	///- Bufferの設定
-	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
-	indexBuffer_.SizeInBytes = UINT(sizeof(uint32_t) * indexData_.size());
-	indexBuffer_.Format = DXGI_FORMAT_R32_UINT;
-
-	///- Resourceに対し情報を書き込む
-	pIndexData_ = indexData_.data();
-	indexResource_->Map(0, nullptr, &pIndexMappedData_);
-	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
-	indexResource_->Unmap(0, nullptr);
+	CreateIndexResource(indexData_.size());
 
 
 
@@ -220,12 +122,7 @@ void Terrain::Init() {
 
 	noise_ = std::make_unique<PerlinNoise>(uint32_t(123));
 	noisePower_ = 1.0f;
-	/*for(uint32_t index = 0; index < vertexData_.size(); ++index) {
-		vertexData_[index].position.y =
-			noise_->GetNoise(
-				Vec2f{ vertexData_[index].position.x, vertexData_[index].position.z } / (float(kSubdivision) / 10.0f)
-			) * (10.0f * float(kSubdivision) / 100.0f);
-	}*/
+
 
 	/*for(uint32_t row = 0; row < vertexData_.size(); ++row) {
 		for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
@@ -271,7 +168,7 @@ void Terrain::Update() {
 		ImGui::TreePop();
 	}
 
-	
+
 	ImGui::Spacing();
 
 
@@ -352,11 +249,19 @@ void Terrain::Update() {
 		///- 画像情報をコピー
 		image_ = InputImage::GetInstance()->GetInputImage();
 
-		rowSubdivision_ = image_.rows;
-		colSubdivision_ = image_.cols;
+		if(!image_.empty()) {
 
-		
+			rowSubdivision_ = image_.rows;
+			colSubdivision_ = image_.cols;
 
+			IndexDataCulc(rowSubdivision_, colSubdivision_);
+			VertexDataCulc(rowSubdivision_, colSubdivision_);
+
+			CreateIndexResource(indexData_.size());
+			CreateVertexResource(flattenedVertexData_.size());
+
+
+		}
 	}
 
 
@@ -377,6 +282,10 @@ void Terrain::Update() {
 }
 
 
+
+/// ------------------------------------------
+/// ↓ 
+/// ------------------------------------------
 void Terrain::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
@@ -387,7 +296,7 @@ void Terrain::Draw() {
 
 	///- 頂点情報
 	memcpy(pVertexMappedData_, pVertexData_, flattenedVertexData_.size() * sizeof(VertexData));
-	//memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
+	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
 
 	///- 色情報
 	materialData_->color = color_;
@@ -413,6 +322,10 @@ void Terrain::Draw() {
 
 
 
+
+/// ------------------------------------------
+/// ↓ 
+/// ------------------------------------------
 void Terrain::NormalVector() {
 
 
@@ -488,7 +401,15 @@ void Terrain::NormalVector() {
 
 
 
-void Terrain::IndexDataCulc(int maxRow, int maxCol) {
+/// ------------------------------------------
+/// ↓ 
+/// ------------------------------------------
+void Terrain::IndexDataCulc(uint32_t maxRow, uint32_t maxCol) {
+
+	int indexCount = (maxRow) * (maxCol);
+	indexCount *= 6;	//- 図形1個分の頂点数をかける(四角形)
+	indexData_.resize(indexCount);
+
 
 	///- 頂点インデックスの設定用
 	//uint32_t indices[kSubdivision + 1][kSubdivision + 1]{};
@@ -522,10 +443,128 @@ void Terrain::IndexDataCulc(int maxRow, int maxCol) {
 		}
 	}
 
+
+	pIndexData_ = indexData_.data();
+
 }
 
 
 
+/// ------------------------------------------
+/// ↓ 
+/// ------------------------------------------
+void Terrain::VertexDataCulc(uint32_t maxRow, uint32_t maxCol) {
+
+	vertexData_.resize(maxRow + 1);
+	for(uint32_t i = 0; i < vertexData_.size(); i++) {
+		vertexData_[i].resize(maxCol + 1);
+	}
+
+
+	for(int32_t row = 0; row <= int32_t(maxRow); row++) {
+		for(int32_t col = 0; col <= int32_t(maxCol); col++) {
+
+
+			/// -----------------------
+			/// ↓ Position
+			/// -----------------------
+
+			vertexData_[row][col].position = {
+				float(col), 0.0f,
+				float(row), 1.0f
+			};
+
+
+			/// -----------------------
+			/// ↓ Texcoord
+			/// -----------------------
+
+
+			vertexData_[row][col].texcoord = {
+				float(col + 0) / float(maxCol + 1),
+				1.0f - (float(row + 0) / float(maxRow + 1))
+			};
+
+
+
+			/// -----------------------
+			/// ↓ Normal
+			/// -----------------------
+
+			vertexData_[row][col].normal = Vec3f{ 0.0f,1.0f,0.0f };
+
+
+			///- 地形の中心が原点になるように移動
+			vertexData_[row][col].position -= Vec4f{
+				static_cast<float>(maxCol + 1) / 2.0f,
+				0.0f,
+				static_cast<float>(maxRow + 1) / 2.0f,
+				0.0f
+			};
+
+		}
+	}
+
+
+	TransferFlattenedVertexData();
+	pVertexData_ = flattenedVertexData_.data();
+
+
+}
+
+
+
+/// ------------------------------------------
+/// ↓ 
+/// ------------------------------------------
+void Terrain::CreateVertexResource(size_t flattendVertexSize) {
+
+	///- 頂点数分確保
+	if(vertexResource_.Get()) { vertexResource_.Reset(); }
+	vertexResource_.Attach(DirectXCommon::GetInstance()->CreateBufferResource(sizeof(VertexData) * flattendVertexSize));
+
+	///- vertexBufferViewの作成
+	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * flattendVertexSize);
+	vertexBufferView_.StrideInBytes = sizeof(VertexData);
+
+	///- 頂点データの書き込み
+	//pVertexData_ = flattenedVertexData_.data();
+	vertexResource_->Map(0, nullptr, &pVertexMappedData_);
+	memcpy(pVertexMappedData_, pVertexData_, sizeof(VertexData) * flattendVertexSize);
+	vertexResource_->Unmap(0, nullptr);
+
+
+
+
+}
+
+
+
+/// ------------------------------------------
+/// ↓ 
+/// ------------------------------------------
+void Terrain::CreateIndexResource(size_t indexDataSize) {
+
+	///- 頂点数分確保
+	indexResource_.Attach(DirectXCommon::GetInstance()->CreateBufferResource(sizeof(uint32_t) * indexDataSize));
+	///- Bufferの設定
+	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	indexBuffer_.SizeInBytes = UINT(sizeof(uint32_t) * indexDataSize);
+	indexBuffer_.Format = DXGI_FORMAT_R32_UINT;
+
+	///- Resourceに対し情報を書き込む
+	//pIndexData_ = indexData_.data();
+	indexResource_->Map(0, nullptr, &pIndexMappedData_);
+	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexDataSize);
+	indexResource_->Unmap(0, nullptr);
+}
+
+
+
+/// ------------------------------------------
+/// ↓ 
+/// ------------------------------------------
 void Terrain::TransferVertexData() {
 
 	for(uint32_t row = 0; row < vertexData_.size(); row++) {
@@ -537,6 +576,12 @@ void Terrain::TransferVertexData() {
 
 }
 
+
+
+
+/// ------------------------------------------
+/// ↓ 
+/// ------------------------------------------
 void Terrain::TransferFlattenedVertexData() {
 
 	///- フラット化頂点データに二次元配列の頂点データを挿入
