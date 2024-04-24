@@ -686,61 +686,6 @@ void DirectXCommon::InitializePSO() {
 
 
 
-/// ---------------------------
-/// ↓ VertexResourceの初期化
-/// ---------------------------
-void DirectXCommon::InitializeVertexResource() {
-	HRESULT result = S_FALSE;
-
-
-	/// ---------------------------
-	/// ↓ VertexResourceの初期化
-	/// ---------------------------
-
-	//vertexResource_.Attach(CreateBufferResource(sizeof(VertexData) * 6));
-
-
-	///// ---------------------------
-	///// ↓ VertexBufferViewを作成
-	///// ---------------------------
-
-	/////- 頂点バッファビューを作成
-	/////- リソースの先頭のアドレスから使う
-	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	/////- 使用するリソースのサイズ; 頂点数分確保する
-	//vertexBufferView_.SizeInBytes = sizeof(VertexData) * 6;
-	/////- 1頂点あたりのサイズ
-	//vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-
-
-	/// ---------------------------
-	/// ↓ Resourceにデータを書き込む
-	/// ---------------------------
-
-	//VertexData* vertexData = nullptr;
-	//vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-	/////- 1枚目
-	//vertexData[0].position = { -0.5f,-0.5f,0.0f,1.0f };	//- 左下
-	//vertexData[0].texcoord = { 0.0f,1.0f };
-	//vertexData[1].position = { 0.0f,0.5f,0.0f,1.0f };	//- 上
-	//vertexData[1].texcoord = { 0.5f,0.0f };
-	//vertexData[2].position = { 0.5f,-0.5f,0.0f,1.0f };	//- 右下
-	//vertexData[2].texcoord = { 1.0f,1.0f };
-
-	/////- 2枚目
-	//vertexData[3].position = { -0.5f,-0.5f,0.5f,1.0f };	//- 左下
-	//vertexData[3].texcoord = { 0.0f,1.0f };
-	//vertexData[4].position = { 0.0f,0.0f,0.0f,1.0f };	//- 上
-	//vertexData[4].texcoord = { 0.5f,0.0f };
-	//vertexData[5].position = { 0.0f,-0.5f,-0.5f,1.0f };	//- 右下
-	//vertexData[5].texcoord = { 1.0f,1.0f };
-
-
-}
-
-
 
 /// ---------------------------
 /// ↓ viewportとscissorの初期化
@@ -769,48 +714,6 @@ void DirectXCommon::InitializeViewport() {
 	scissorRect_.right = kWindowSize.x;
 	scissorRect_.top = 0;
 	scissorRect_.bottom = kWindowSize.y;
-
-}
-
-
-
-/// ---------------------------
-/// ↓ MaterialResourceの初期化
-/// ---------------------------
-void DirectXCommon::InitializeMaterialResource() {
-
-	/////- マテリアルリソースの生成
-	//materialResource_.Attach(CreateBufferResource(sizeof(Vector4)));
-
-	//WriteColor({ 1.0f,0.0f,0.0f,1.0f });
-
-}
-
-
-
-/// ---------------------------
-/// ↓ wvpResourceの初期化
-/// ---------------------------
-void DirectXCommon::InitializeWVPResource() {
-
-	/////- wvpリソースの生成
-	//wvpResource_.Attach(CreateBufferResource(sizeof(Matrix4x4)));
-
-	//WriteWVPResource(Mat4::MakeIdentity());
-
-}
-
-
-
-/// ---------------------------
-/// ↓ wvpResourceへの書き込み
-/// ---------------------------
-void DirectXCommon::WriteWVPResource(const Mat4& Matrix) {
-
-	/*///- データの書き込み
-	Matrix4x4* wvpData = nullptr;
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
-	*wvpData = Matrix;*/
 
 }
 
@@ -984,64 +887,6 @@ void DirectXCommon::UploadTextureData(ID3D12Resource* texture, const DirectX::Sc
 
 
 /// ---------------------------
-/// ↓ TextureResourceの初期化
-/// ---------------------------
-void DirectXCommon::InitializeTextureResource() {
-
-	//srvHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
-
-	//DirectX::ScratchImage mipImages = LoadTexture("./Resources/Images/uvChecker.png");
-	//const  DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	//textureResource_ = CreateTextureResource(metadata);
-	//UploadTextureData(textureResource_.Get(), mipImages);
-
-	//- metadataを基にSRVの設定
-	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	//srvDesc.Format = metadata.format;
-	//srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	//srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	//srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
-
-	//- SRVを作成するDescriptorHeapの場所を決める
-	//ID3D12DescriptorHeap* srvHeap = DxDescriptors::GetInstance()->GetSRVHeap();
-	//textureSrvHandleCPU_ = srvHeap->GetCPUDescriptorHandleForHeapStart();
-	//textureSrvHandleGPU_ = srvHeap->GetGPUDescriptorHandleForHeapStart();
-	//- 先頭はImGuiが使っているのでその次を使う
-	//textureSrvHandleCPU_.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//textureSrvHandleGPU_.ptr += device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
-	//- srvの生成
-	//device_->CreateShaderResourceView(textureResource_.Get(), &srvDesc, textureSrvHandleCPU_);
-
-
-	// --------------------------
-	// ↓ 2枚目のテクスチャを作る
-	// --------------------------
-
-	//DirectX::ScratchImage mipImage2 = LoadTexture("./Resources/Images/monsterBall.png");
-	//const DirectX::TexMetadata& metadata2 = mipImage2.GetMetadata();
-	//textureResource2_ = CreateTextureResource(metadata2);
-	//UploadTextureData(textureResource2_.Get(), mipImage2);
-
-
-	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
-	//srvDesc2.Format = metadata2.format;
-	//srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	//srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	//srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
-
-	//textureSrvHandleCPU2_ = descriptors_->GetCPUDescriptorHandle(descriptors_->GetSRVHeap(), descriptors_->GetSRVSize(), 2);
-	//textureSrvHandleGPU2_ = descriptors_->GetGPUDescriptorHandle(descriptors_->GetSRVHeap(), descriptors_->GetSRVSize(), 2);
-
-	// srvの生成
-	//device_->CreateShaderResourceView(textureResource2_.Get(), &srvDesc2, textureSrvHandleCPU2_);
-
-
-}
-
-
-
-/// ---------------------------
 /// ↓ DescriptorRangeの初期化
 /// ---------------------------
 void DirectXCommon::InitializeDescriptorRange() {
@@ -1069,18 +914,6 @@ ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTO
 	assert(SUCCEEDED(result));
 
 	return heap;
-}
-
-
-
-/// ---------------------------
-/// ↓ 色の書き込み
-/// ---------------------------
-void DirectXCommon::WriteColor(const Vector4& color) {
-	///- マテリアルにデータを書き込む
-	/*Vector4* materialData = nullptr;
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	*materialData = color;*/
 }
 
 

@@ -167,16 +167,7 @@ private:
 
 	void InitializePSO();
 
-	void InitializeVertexResource();
-
 	void InitializeViewport();
-
-	void InitializeMaterialResource();
-
-	void InitializeWVPResource();
-
-	void WriteWVPResource(const Mat4& matrix);
-
 
 	void ClearRenderTarget();
 
@@ -186,11 +177,7 @@ private:
 
 	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
 
-	void InitializeTextureResource();
-
 	void InitializeDescriptorRange();
-
-	void WriteColor(const Vector4& color);
 
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
 
