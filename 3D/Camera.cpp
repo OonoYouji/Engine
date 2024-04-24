@@ -20,7 +20,7 @@ void Camera::Init() {
 
 	projectionMatrix_ = Matrix4x4::MakePerspectiveFovMatrix(
 		0.45f, static_cast<float>(kWindowSize.x) / static_cast<float>(kWindowSize.y),
-		0.1f, 100.0f);
+		0.1f, 1000.0f);
 
 	vpMatrix_ = viewMatrix_ * projectionMatrix_;
 
