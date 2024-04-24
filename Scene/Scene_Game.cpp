@@ -3,6 +3,8 @@
 #include "DirectXCommon.h"
 
 #include <imgui.h>
+#include "InputImage.h"
+
 
 Scene_Game::Scene_Game() { Init(); }
 Scene_Game::~Scene_Game() { Finalize(); }
@@ -21,9 +23,15 @@ void Scene_Game::Init() {
 	terrainOperator_->Init(terrain_.get(), brush_.get());
 
 
+	inputImage_ = InputImage::GetInstance();
+	inputImage_->Initialize();
+
 }
 
 void Scene_Game::Update() {
+
+	inputImage_->Update();
+
 
 	terrain_->Update();
 	brush_->Update();

@@ -12,6 +12,8 @@
 #include "PerlinNoise.h"
 #include "DirectionalLight.h"
 
+#include "InputImage.h"
+
 
 Terrain::Terrain() {}
 Terrain::~Terrain() {
@@ -256,8 +258,9 @@ void Terrain::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("Terrain");
 
-
+	/// ------------------------------------------------
 	///- 地形のトランスフォーム
+	/// ------------------------------------------------
 	if(ImGui::TreeNodeEx("Transform", true)) {
 
 		ImGui::DragFloat3("scale", &worldTransform_.scale.x, 0.25f);
@@ -268,9 +271,14 @@ void Terrain::Update() {
 		ImGui::TreePop();
 	}
 
+	
 	ImGui::Spacing();
 
+
+
+	/// ------------------------------------------------
 	///- 頂点の情報
+	/// ------------------------------------------------
 	if(ImGui::TreeNodeEx("VertexData", true)) {
 
 		ImGui::Text("vertexData dataSize: %d", sizeof(VertexData) * flattenedVertexData_.size());
@@ -291,13 +299,17 @@ void Terrain::Update() {
 	ImGui::Spacing();
 
 
+
 	ImGui::DragFloat3("normalVector", &normalVector_.x, 0.0f);
 
 	if(ImGui::Button("normalVector Reset")) {
 		NormalVector();
 	}
 
+
 	ImGui::Spacing();
+
+
 
 	ImGui::DragFloat("noisePower", &noisePower_, 0.25f);
 
@@ -328,6 +340,25 @@ void Terrain::Update() {
 			}
 		}
 	}
+
+
+
+	/// ------------------------------------------------
+	/// 入力した画像で地形を再生成
+	/// ------------------------------------------------
+
+	if(ImGui::Button("ReGenarate Terrain")) {
+
+		///- 画像情報をコピー
+		image_ = InputImage::GetInstance()->GetInputImage();
+
+		rowSubdivision_ = image_.rows;
+		colSubdivision_ = image_.cols;
+
+		
+
+	}
+
 
 
 	ImGui::End();
@@ -452,6 +483,44 @@ void Terrain::NormalVector() {
 		}
 	}
 
+
+}
+
+
+
+void Terrain::IndexDataCulc(int maxRow, int maxCol) {
+
+	///- 頂点インデックスの設定用
+	//uint32_t indices[kSubdivision + 1][kSubdivision + 1]{};
+	std::vector<std::vector<uint32_t>> indices;
+	indices.resize(maxRow + 1);
+	for(uint32_t i = 0; i < indices.size(); i++) {
+		indices[i].resize(maxCol + 1);
+	}
+
+	int number = 0;
+	for(uint32_t row = 0; row < uint32_t(maxRow + 1); row++) {
+		for(uint32_t col = 0; col < uint32_t(maxCol + 1); col++) {
+			indices[row][col] = number;
+			++number;
+		}
+	}
+
+
+	uint32_t startIndex = 0;
+	for(uint32_t row = 0; row < uint32_t(maxRow); row++) {
+		for(uint32_t col = 0; col < uint32_t(maxCol); col++) {
+
+			indexData_[startIndex + 0] = indices[row + 0][col + 0];
+			indexData_[startIndex + 1] = indices[row + 1][col + 0];
+			indexData_[startIndex + 2] = indices[row + 0][col + 1];
+			indexData_[startIndex + 3] = indices[row + 1][col + 1];
+			indexData_[startIndex + 4] = indices[row + 0][col + 1];
+			indexData_[startIndex + 5] = indices[row + 1][col + 0];
+
+			startIndex += 6;
+		}
+	}
 
 }
 

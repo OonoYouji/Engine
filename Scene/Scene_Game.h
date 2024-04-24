@@ -11,6 +11,7 @@
 #include "Sphere.h"
 #include "TerrainOperator.h"
 #include "PerlinNoise.h"
+#include "InputImage.h"
 
 
 class Scene_Game final
@@ -33,5 +34,6 @@ private:
 
 	std::unique_ptr<TerrainOperator> terrainOperator_;
 
+	InputImage* inputImage_ = nullptr;
 
 };

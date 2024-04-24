@@ -2,6 +2,8 @@
 
 #include <d3d12.h>
 #include <wrl/client.h>
+#include <opencv.hpp>
+
 
 #include "DirectXCommon.h"
 #include <cmath>
@@ -35,6 +37,11 @@ public:
 
 
 private:
+
+
+	///- 縦横分割比
+	int rowSubdivision_;
+	int colSubdivision_;
 
 
 	///- 描画用Resource
@@ -73,10 +80,21 @@ private:
 	std::unique_ptr<PerlinNoise> noise_;
 
 
+	cv::Mat image_;
+
+
 	/// <summary>
 	/// 法線ベクトルの計算
 	/// </summary>
 	void NormalVector();
+
+	/// <summary>
+	/// 縦横の最大頂点数からIndexDataを計算する
+	/// </summary>
+	/// <param name="maxRow"></param>
+	/// <param name="maxCol"></param>
+	void IndexDataCulc(int maxRow, int maxCol);
+
 
 public:
 
