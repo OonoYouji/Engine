@@ -217,6 +217,7 @@ void Terrain::Init() {
 	///- ノイズから地形の高さを計算
 
 	noise_ = std::make_unique<PerlinNoise>(uint32_t(123));
+	noisePower_ = 1.0f;
 	/*for(uint32_t index = 0; index < vertexData_.size(); ++index) {
 		vertexData_[index].position.y =
 			noise_->GetNoise(
@@ -298,6 +299,7 @@ void Terrain::Update() {
 
 	ImGui::Spacing();
 
+	ImGui::DragFloat("noisePower", &noisePower_, 0.25f);
 
 	static int seed = 0;
 	ImGui::SliderInt("seed", &seed, 0, static_cast<int>(std::pow(2, 32)));
@@ -309,7 +311,7 @@ void Terrain::Update() {
 				vertexData_[row][col].position.y =
 					noise_->GetNoise(
 						Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(kSubdivision) / 10.0f)
-					) * (10.0f * float(kSubdivision) / 100.0f);
+					) * (noisePower_ * float(kSubdivision) / 100.0f);
 
 			}
 		}

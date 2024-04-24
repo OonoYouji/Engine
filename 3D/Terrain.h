@@ -67,6 +67,7 @@ private:
 
 	float distance_;
 
+	float noisePower_;
 
 	///- noise取得用
 	std::unique_ptr<PerlinNoise> noise_;
