@@ -28,22 +28,6 @@ Terrain::~Terrain() {
 void Terrain::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
-
-	//kSubdivision = 100;
-
-
-	///- 頂点数の調整
-	//int indexCount = (kSubdivision) * (kSubdivision);
-	//indexCount *= 6;	//- 図形1個分の頂点数をかける(四角形)
-	//indexData_.resize(indexCount);
-
-	/*int vertexCount = (kSubdivision + 1);
-	vertexData_.resize(vertexCount);
-	for(uint32_t i = 0; i < vertexData_.size(); i++) {
-		vertexData_[i].resize(vertexCount);
-	}*/
-
-
 	/// -------------------------------------------------
 	/// ↓ 頂点計算
 	/// ------------------------------------------------- 
@@ -123,23 +107,11 @@ void Terrain::Init() {
 	noise_ = std::make_unique<PerlinNoise>(uint32_t(123));
 	noisePower_ = 1.0f;
 
-
-	/*for(uint32_t row = 0; row < vertexData_.size(); ++row) {
-		for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
-
-			vertexData_[row][col].position.y =
-				noise_->GetNoise(
-					Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(kSubdivision) / 10.0f)
-				) * (10.0f * float(kSubdivision) / 100.0f);
-
-		}
-	}*/
-
-
 	///- 法線ベクトルを計算
 	NormalVector();
 
 	verticalIntensity_ = 1.0f;
+	saveVerticalIntensity_ = verticalIntensity_;
 
 	image_ = cv::Mat();
 	saveImage_ = cv::Mat();
@@ -294,6 +266,8 @@ void Terrain::Update() {
 				}
 
 				TransferFlattenedVertexData();
+				///- ここで使用した高低差の力を保存しておく; 出力の時に使う
+				saveVerticalIntensity_ = verticalIntensity_;
 			}
 		}
 
@@ -303,22 +277,24 @@ void Terrain::Update() {
 		///- 出力用画像にセーブする
 		if(ImGui::Button("SaveImage")) {
 
+			TransferVertexData();
+
 			saveImage_ = image_;
-			/*cv::Mat resizeImage(int(vertexData_.size()), int(vertexData_[0].size()), saveImage_.type());
-			cv::resize(saveImage_, resizeImage, cv::Size(int(vertexData_.size()), int(vertexData_[0].size())));*/
+			
 
 			for(uint32_t row = 0; row < static_cast<uint32_t>(vertexData_.size() - 1); row++) {
 				for(uint32_t col = 0; col < static_cast<uint32_t>(vertexData_[0].size() - 1); col++) {
 
 					saveImage_.at<uint8_t>(row, col) =
-						static_cast<uint8_t>((vertexData_[row][col].position.y + (255.0f / 2.0f)) / verticalIntensity_);
+						static_cast<uint8_t>((vertexData_[row][col].position.y / saveVerticalIntensity_) + (255.0f / 2.0f) );
 
 				}
 			}
 
 			///- 上下反転しているので元に戻す
-			cv::flip(saveImage_, saveImage_, 0);
+			//cv::flip(saveImage_, saveImage_, 0);
 
+			cv::imshow("saveImage", saveImage_);
 			InputImage::GetInstance()->SetOutputImage(saveImage_);
 
 		}

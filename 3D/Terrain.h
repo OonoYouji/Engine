@@ -80,6 +80,7 @@ private:
 	std::unique_ptr<PerlinNoise> noise_;
 
 	float verticalIntensity_;
+	float saveVerticalIntensity_;
 
 	cv::Mat image_;
 	cv::Mat saveImage_;
