@@ -81,6 +81,7 @@ private:
 
 
 	cv::Mat image_;
+	cv::Mat saveImage_;
 
 
 	/// <summary>

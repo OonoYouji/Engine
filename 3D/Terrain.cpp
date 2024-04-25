@@ -139,6 +139,8 @@ void Terrain::Init() {
 	///- 法線ベクトルを計算
 	NormalVector();
 
+	image_ = cv::Mat();
+	saveImage_ = cv::Mat();
 
 }
 
@@ -254,16 +256,62 @@ void Terrain::Update() {
 			rowSubdivision_ = image_.rows;
 			colSubdivision_ = image_.cols;
 
+			///- 頂点インデックスデータの再計算
 			IndexDataCulc(rowSubdivision_, colSubdivision_);
 			VertexDataCulc(rowSubdivision_, colSubdivision_);
 
+			///- 計算したデータの大きさにresourceを作り直す
 			CreateIndexResource(indexData_.size());
 			CreateVertexResource(flattenedVertexData_.size());
 
+			///- 高さの調整
 
+			cv::Mat grayImage;
+			cv::cvtColor(image_, grayImage, cv::COLOR_BGR2GRAY);
+
+			cv::imshow("grayImage", grayImage);
+
+
+			cv::normalize(grayImage, grayImage, 0, 255, cv::NORM_MINMAX, CV_8U);
+
+
+			cv::flip(grayImage, grayImage, 0);
+			for(uint32_t row = 0; row < static_cast<uint32_t>(rowSubdivision_); row++) {
+				for(uint32_t col = 0; col < static_cast<uint32_t>(colSubdivision_); col++) {
+
+					vertexData_[row][col].position.y = grayImage.at<uint8_t>(row, col) - (255.0f / 2.0f);
+
+				}
+			}
+
+			TransferFlattenedVertexData();
 		}
 	}
 
+
+	ImGui::Spacing();
+
+	if(ImGui::Button("terrain -> image  save")) {
+
+		saveImage_ = image_;
+		/*cv::Mat resizeImage(int(vertexData_.size()), int(vertexData_[0].size()), saveImage_.type());
+		cv::resize(saveImage_, resizeImage, cv::Size(int(vertexData_.size()), int(vertexData_[0].size())));*/
+		
+		for(uint32_t row = 0; row < static_cast<uint32_t>(vertexData_.size() - 1); row++) {
+			for(uint32_t col = 0; col < static_cast<uint32_t>(vertexData_[0].size() - 1); col++) {
+
+				saveImage_.at<uint8_t>(row, col) = 
+					static_cast<uint8_t>(vertexData_[row][col].position.y + (255.0f / 2.0f));
+
+			}
+		}
+
+		///- 上下反転しているので元に戻す
+		cv::flip(saveImage_, saveImage_, 0);
+
+		InputImage::GetInstance()->SetOutputImage(saveImage_);
+
+	}
 
 
 	ImGui::End();
@@ -324,7 +372,7 @@ void Terrain::Draw() {
 
 
 /// ------------------------------------------
-/// ↓ 
+/// ↓ 法線ベクトルの計算
 /// ------------------------------------------
 void Terrain::NormalVector() {
 
@@ -402,7 +450,7 @@ void Terrain::NormalVector() {
 
 
 /// ------------------------------------------
-/// ↓ 
+/// ↓ インデックスデータの計算
 /// ------------------------------------------
 void Terrain::IndexDataCulc(uint32_t maxRow, uint32_t maxCol) {
 
@@ -451,7 +499,7 @@ void Terrain::IndexDataCulc(uint32_t maxRow, uint32_t maxCol) {
 
 
 /// ------------------------------------------
-/// ↓ 
+/// ↓ 頂点データの計算
 /// ------------------------------------------
 void Terrain::VertexDataCulc(uint32_t maxRow, uint32_t maxCol) {
 
@@ -529,13 +577,9 @@ void Terrain::CreateVertexResource(size_t flattendVertexSize) {
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	///- 頂点データの書き込み
-	//pVertexData_ = flattenedVertexData_.data();
 	vertexResource_->Map(0, nullptr, &pVertexMappedData_);
 	memcpy(pVertexMappedData_, pVertexData_, sizeof(VertexData) * flattendVertexSize);
 	vertexResource_->Unmap(0, nullptr);
-
-
-
 
 }
 
@@ -547,6 +591,7 @@ void Terrain::CreateVertexResource(size_t flattendVertexSize) {
 void Terrain::CreateIndexResource(size_t indexDataSize) {
 
 	///- 頂点数分確保
+	if(indexResource_.Get()) { indexResource_.Reset(); }
 	indexResource_.Attach(DirectXCommon::GetInstance()->CreateBufferResource(sizeof(uint32_t) * indexDataSize));
 	///- Bufferの設定
 	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -554,7 +599,6 @@ void Terrain::CreateIndexResource(size_t indexDataSize) {
 	indexBuffer_.Format = DXGI_FORMAT_R32_UINT;
 
 	///- Resourceに対し情報を書き込む
-	//pIndexData_ = indexData_.data();
 	indexResource_->Map(0, nullptr, &pIndexMappedData_);
 	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexDataSize);
 	indexResource_->Unmap(0, nullptr);

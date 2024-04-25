@@ -57,10 +57,8 @@ void InputImage::Update() {
 			///- 画像の読み込み
 			inputImage_ = cv::imread(directionFilePath_ + inputImageName_);
 
-
 			if(inputImage_.empty()) {
 				///- 入力に失敗したときの処理
-
 
 			} else {
 				///- 入力に成功したら
@@ -91,10 +89,17 @@ void InputImage::Update() {
 		ImGui::Spacing();
 
 		///- 出力する画像の名前設定
-		ImGui::InputText("OutputImageName", &outputImageName_[0], sizeof(outputImageName_));
+		static char name[256]{};
+		ImGui::InputText("OutputImageName", &name[0], sizeof(name));
+		if(ImGui::IsItemEdited()) {
+			outputImageName_ = name;
+		}
+
 		if(ImGui::Button("Export")) {
 
 			///- ここに画像の出力をいれる
+			cv::imshow("outputImage", outputImage_);
+			cv::imwrite(directionFilePath_ + outputImageName_, outputImage_);
 
 		}
 

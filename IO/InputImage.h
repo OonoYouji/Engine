@@ -22,6 +22,9 @@ public:
 	/// </summary>
 	const cv::Mat& GetInputImage() const { return inputImage_; }
 
+	void SetOutputImage(const cv::Mat& mat) {
+		outputImage_ = mat;
+	}
 
 private:
 
@@ -33,7 +36,7 @@ private:
 	std::string inputImageName_;
 
 	cv::Mat inputImage_;
-
+	cv::Mat outputImage_;
 
 
 
