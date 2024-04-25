@@ -79,6 +79,7 @@ private:
 	///- noise取得用
 	std::unique_ptr<PerlinNoise> noise_;
 
+	float verticalIntensity_;
 
 	cv::Mat image_;
 	cv::Mat saveImage_;

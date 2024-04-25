@@ -139,6 +139,8 @@ void Terrain::Init() {
 	///- 法線ベクトルを計算
 	NormalVector();
 
+	verticalIntensity_ = 1.0f;
+
 	image_ = cv::Mat();
 	saveImage_ = cv::Mat();
 
@@ -246,71 +248,82 @@ void Terrain::Update() {
 	/// 入力した画像で地形を再生成
 	/// ------------------------------------------------
 
-	if(ImGui::Button("ReGenarate Terrain")) {
 
-		///- 画像情報をコピー
-		image_ = InputImage::GetInstance()->GetInputImage();
+	if(ImGui::TreeNodeEx("Inmort/Export")) {
 
-		if(!image_.empty()) {
+		ImGui::SliderFloat("verticalIntensity", &verticalIntensity_, 0.0f, 1.0f);
 
-			rowSubdivision_ = image_.rows;
-			colSubdivision_ = image_.cols;
+		///- 読み込んだ画像から地形を再生成
+		if(ImGui::Button("Regenarate Terrain")) {
 
-			///- 頂点インデックスデータの再計算
-			IndexDataCulc(rowSubdivision_, colSubdivision_);
-			VertexDataCulc(rowSubdivision_, colSubdivision_);
+			///- 画像情報をコピー
+			image_ = InputImage::GetInstance()->GetInputImage();
 
-			///- 計算したデータの大きさにresourceを作り直す
-			CreateIndexResource(indexData_.size());
-			CreateVertexResource(flattenedVertexData_.size());
+			if(!image_.empty()) {
 
-			///- 高さの調整
+				rowSubdivision_ = image_.rows;
+				colSubdivision_ = image_.cols;
 
-			cv::Mat grayImage;
-			cv::cvtColor(image_, grayImage, cv::COLOR_BGR2GRAY);
+				///- 頂点インデックスデータの再計算
+				IndexDataCulc(rowSubdivision_, colSubdivision_);
+				VertexDataCulc(rowSubdivision_, colSubdivision_);
 
-			cv::imshow("grayImage", grayImage);
+				///- 計算したデータの大きさにresourceを作り直す
+				CreateIndexResource(indexData_.size());
+				CreateVertexResource(flattenedVertexData_.size());
+
+				///- 高さの調整
+
+				cv::Mat grayImage;
+				cv::cvtColor(image_, grayImage, cv::COLOR_BGR2GRAY);
+
+				cv::imshow("grayImage", grayImage);
 
 
-			cv::normalize(grayImage, grayImage, 0, 255, cv::NORM_MINMAX, CV_8U);
+				cv::normalize(grayImage, grayImage, 0, 255, cv::NORM_MINMAX, CV_8U);
 
 
-			cv::flip(grayImage, grayImage, 0);
-			for(uint32_t row = 0; row < static_cast<uint32_t>(rowSubdivision_); row++) {
-				for(uint32_t col = 0; col < static_cast<uint32_t>(colSubdivision_); col++) {
+				cv::flip(grayImage, grayImage, 0);
+				for(uint32_t row = 0; row < static_cast<uint32_t>(rowSubdivision_); row++) {
+					for(uint32_t col = 0; col < static_cast<uint32_t>(colSubdivision_); col++) {
 
-					vertexData_[row][col].position.y = grayImage.at<uint8_t>(row, col) - (255.0f / 2.0f);
+						vertexData_[row][col].position.y =
+							(grayImage.at<uint8_t>(row, col) - (255.0f / 2.0f)) * verticalIntensity_;
+
+					}
+				}
+
+				TransferFlattenedVertexData();
+			}
+		}
+
+		ImGui::Spacing();
+		ImGui::Spacing();
+
+		///- 出力用画像にセーブする
+		if(ImGui::Button("SaveImage")) {
+
+			saveImage_ = image_;
+			/*cv::Mat resizeImage(int(vertexData_.size()), int(vertexData_[0].size()), saveImage_.type());
+			cv::resize(saveImage_, resizeImage, cv::Size(int(vertexData_.size()), int(vertexData_[0].size())));*/
+
+			for(uint32_t row = 0; row < static_cast<uint32_t>(vertexData_.size() - 1); row++) {
+				for(uint32_t col = 0; col < static_cast<uint32_t>(vertexData_[0].size() - 1); col++) {
+
+					saveImage_.at<uint8_t>(row, col) =
+						static_cast<uint8_t>((vertexData_[row][col].position.y + (255.0f / 2.0f)) / verticalIntensity_);
 
 				}
 			}
 
-			TransferFlattenedVertexData();
-		}
-	}
+			///- 上下反転しているので元に戻す
+			cv::flip(saveImage_, saveImage_, 0);
 
+			InputImage::GetInstance()->SetOutputImage(saveImage_);
 
-	ImGui::Spacing();
-
-	if(ImGui::Button("terrain -> image  save")) {
-
-		saveImage_ = image_;
-		/*cv::Mat resizeImage(int(vertexData_.size()), int(vertexData_[0].size()), saveImage_.type());
-		cv::resize(saveImage_, resizeImage, cv::Size(int(vertexData_.size()), int(vertexData_[0].size())));*/
-		
-		for(uint32_t row = 0; row < static_cast<uint32_t>(vertexData_.size() - 1); row++) {
-			for(uint32_t col = 0; col < static_cast<uint32_t>(vertexData_[0].size() - 1); col++) {
-
-				saveImage_.at<uint8_t>(row, col) = 
-					static_cast<uint8_t>(vertexData_[row][col].position.y + (255.0f / 2.0f));
-
-			}
 		}
 
-		///- 上下反転しているので元に戻す
-		cv::flip(saveImage_, saveImage_, 0);
-
-		InputImage::GetInstance()->SetOutputImage(saveImage_);
-
+		ImGui::TreePop();
 	}
 
 
