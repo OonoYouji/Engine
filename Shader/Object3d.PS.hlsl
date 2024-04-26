@@ -42,16 +42,17 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		output.color = gMaterial.color * textureColor;
 	}
 
+	output.color = gMaterial.color * textureColor;
+
+
 	///- mouseの座標を黒色にする
 	if ((input.position.x - gMousePoint.position.x) > -10
 		&& (input.position.x - gMousePoint.position.x) < 10) {
 
 		if ((input.position.y - gMousePoint.position.y) > -10
-		&& (input.position.y - gMousePoint.position.y) < 10) {
+			&& (input.position.y - gMousePoint.position.y) < 10) {
 
 			output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
-			
-
 		}
 	}
 

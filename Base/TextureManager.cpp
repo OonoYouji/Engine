@@ -25,7 +25,14 @@ void TextureManager::Initialize() {
 	const std::string baseFilePath = "./Resources/Images/";
 	Load("uvChecker", baseFilePath + "uvChecker.png");
 	Load("monsterBall", baseFilePath + "monsterBall.png");
-	Load("garyMonsterBall", baseFilePath + "heightMap.png");
+	Load("aoi", baseFilePath + "aoi.png");
+	Load("dragon", baseFilePath + "dragon.png");
+	Load("sprite", baseFilePath + "sprite.png");
+	Load("yama", baseFilePath + "yama.png");
+	Load("face", baseFilePath + "face.jpg");
+	Load("goku", baseFilePath + "goku.png");
+	Load("clear1", baseFilePath + "clear1.png");
+	Load("sumple", baseFilePath + "sumple.png");
 	//Load("white1x1", baseFilePath + "white1x1.png");
 
 
