@@ -58,6 +58,11 @@ void Brush::Init() {
 	matrixData_->World = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 	matrixData_->WVP = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
+	///- マウスの座標
+	mousePointResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector2)));
+	mousePointResource_->Map(0, nullptr, reinterpret_cast<void**>(&mousePointData_));
+	*mousePointData_ = Vec2f{ 0.0f,0.0f };
+
 
 	///- 頂点データの計算
 	int index = 0;
@@ -106,7 +111,8 @@ void Brush::Init() {
 
 void Brush::Update() {
 	Input* input = Input::GetInstance();
-	mousePos_ = { input->GetMousePos().x, input->GetMousePos().y, 0.0f };
+	*mousePointData_ = input->GetMousePos();
+	mousePos_ = { mousePointData_->x, mousePointData_->y, 0.0f };
 
 	///- マウスのスクリーン座標をワールド座標に変換
 	ConvertMousePosition();
@@ -160,6 +166,7 @@ void Brush::Draw() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(4, mousePointResource_->GetGPUVirtualAddress());
 	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
 	Light::GetInstance()->SetConstantBuffer(commandList);

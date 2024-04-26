@@ -116,7 +116,7 @@ private:
 	D3D12_RECT scissorRect_;
 
 	///- 三角形の色を変えよう
-	D3D12_ROOT_PARAMETER rootParameters_[4];
+	D3D12_ROOT_PARAMETER rootParameters_[5];
 	//ComPtr<ID3D12Resource> materialResource_;
 
 	///- テクスチャを貼ろう

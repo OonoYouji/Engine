@@ -498,10 +498,17 @@ void DirectXCommon::InitializeRootSignature() {
 	rootParameters_[2].DescriptorTable.NumDescriptorRanges =
 		_countof(descriptorRange_);						//- Tableで利用する数
 
-	///- right
+	///- light
 	rootParameters_[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		//- CBVを使う
 	rootParameters_[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//- PixelShaderで使う
 	rootParameters_[3].Descriptor.ShaderRegister = 1;
+
+	///- mouse
+	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		//- CBVを使う
+	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//- PixelShaderで使う
+	rootParameters_[4].Descriptor.ShaderRegister = 3;
+
+
 
 
 	/// ----------------------------------------------

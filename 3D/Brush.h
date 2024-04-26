@@ -38,6 +38,7 @@ private: ///- メンバ変数
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	ComPtr<ID3D12Resource> materialResource_;
 	ComPtr<ID3D12Resource> wvpResource_;
+	ComPtr<ID3D12Resource> mousePointResource_;
 
 	///- 書き込み用データ
 	std::vector<VertexData> vertexData_;
@@ -46,7 +47,7 @@ private: ///- メンバ変数
 	Material* materialData_ = nullptr;
 	TransformMatrix* matrixData_ = nullptr;
 
-
+	Vec2f* mousePointData_;
 	Vec3f mousePos_;
 	WorldTransform worldTransform_;
 

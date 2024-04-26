@@ -47,8 +47,8 @@ void Scene_Game::Draw() {
 
 	//Engine::TestDraw();
 
-	terrain_->Draw();
 	brush_->Draw();
+	terrain_->Draw();
 
 	//terrainOperator_->Draw();
 
