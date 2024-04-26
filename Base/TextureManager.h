@@ -58,7 +58,7 @@ public:
 	/// textureのセット
 	/// </summary>
 	/// <param name="index"></param>
-	void SetGraphicsRootDescriptorTable(const std::string& textureName);
+	void SetGraphicsRootDescriptorTable(UINT rootParameterIndex, const std::string& textureName);
 
 
 private: ///- メンバ変数

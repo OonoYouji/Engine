@@ -218,7 +218,7 @@ void Sphere::Draw() {
 	///- wvp用のCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	///- DescriptorTableを設定する
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
 
 	///- 描画 (DrawCall)
 	commandList->DrawIndexedInstanced(UINT(indexData_.size()), 1, 0, 0, 0);

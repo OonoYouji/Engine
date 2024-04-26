@@ -488,12 +488,13 @@ void DirectXCommon::InitializeRootSignature() {
 		D3D12_SHADER_VISIBILITY_VERTEX;					//- VertexShaderを使う
 	rootParameters_[1].Descriptor.ShaderRegister = 0;	//- レジスタ番号0とバインド
 
-	///- 
 	InitializeDescriptorRange();
+
+	///- texutre
 	rootParameters_[2].ParameterType =
 		D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		//- DescriptorTableを使う
 	rootParameters_[2].ShaderVisibility =
-		D3D12_SHADER_VISIBILITY_PIXEL;					//- PixelShaderで使う
+		D3D12_SHADER_VISIBILITY_ALL;					//- PixelShaderで使う
 	rootParameters_[2].DescriptorTable.pDescriptorRanges = descriptorRange_;
 	rootParameters_[2].DescriptorTable.NumDescriptorRanges =
 		_countof(descriptorRange_);						//- Tableで利用する数
@@ -509,6 +510,14 @@ void DirectXCommon::InitializeRootSignature() {
 	rootParameters_[4].Descriptor.ShaderRegister = 3;
 
 
+	/////- texture
+	//rootParameters_[5].ParameterType =
+	//	D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		//- DescriptorTableを使う
+	//rootParameters_[5].ShaderVisibility =
+	//	D3D12_SHADER_VISIBILITY_VERTEX;					//- VertexShaderで使う
+	//rootParameters_[5].DescriptorTable.pDescriptorRanges = descriptorRange_;
+	//rootParameters_[5].DescriptorTable.NumDescriptorRanges =
+	//	_countof(descriptorRange_);						//- Tableで利用する数
 
 
 	/// ----------------------------------------------
@@ -523,6 +532,15 @@ void DirectXCommon::InitializeRootSignature() {
 	staticSamplers_[0].MaxLOD = D3D12_FLOAT32_MAX;	//- ありったけのMipMapを使う
 	staticSamplers_[0].ShaderRegister = 0;			//- レジスタ番号0を使う
 	staticSamplers_[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//- PixelShaderで使う
+
+	staticSamplers_[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;		//- バイリニアフィルタ
+	staticSamplers_[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;	//- 0~1の範囲外をリピート
+	staticSamplers_[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers_[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers_[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;	//- 比較しない
+	staticSamplers_[1].MaxLOD = D3D12_FLOAT32_MAX;	//- ありったけのMipMapを使う
+	staticSamplers_[1].ShaderRegister = 0;			//- レジスタ番号0を使う
+	staticSamplers_[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	//- VertexShaderで使う
 
 
 
@@ -895,7 +913,7 @@ void DirectXCommon::UploadTextureData(ID3D12Resource* texture, const DirectX::Sc
 void DirectXCommon::InitializeDescriptorRange() {
 
 	descriptorRange_[0].BaseShaderRegister = 0; //- 0から始まる
-	descriptorRange_[0].NumDescriptors = 1; //- 数は1つ
+	descriptorRange_[0].NumDescriptors = 2; //- textureの数
 	descriptorRange_[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
 	descriptorRange_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 

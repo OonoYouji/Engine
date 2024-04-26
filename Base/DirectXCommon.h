@@ -121,7 +121,7 @@ private:
 
 	///- テクスチャを貼ろう
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
-	D3D12_STATIC_SAMPLER_DESC staticSamplers_[1];
+	D3D12_STATIC_SAMPLER_DESC staticSamplers_[2];
 
 	///- 前後関係
 	ComPtr<ID3D12Resource> depthStencilResource_;

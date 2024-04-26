@@ -168,7 +168,7 @@ void Brush::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(4, mousePointResource_->GetGPUVirtualAddress());
 	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 	///- 描画 (DrawCall)

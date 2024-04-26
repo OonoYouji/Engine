@@ -25,6 +25,7 @@ void TextureManager::Initialize() {
 	const std::string baseFilePath = "./Resources/Images/";
 	Load("uvChecker", baseFilePath + "uvChecker.png");
 	Load("monsterBall", baseFilePath + "monsterBall.png");
+	Load("garyMonsterBall", baseFilePath + "heightMap.png");
 	//Load("white1x1", baseFilePath + "white1x1.png");
 
 
@@ -85,10 +86,10 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 /// textureのセット
 /// </summary>
 /// <param name="index"></param>
-void TextureManager::SetGraphicsRootDescriptorTable(const std::string& textureName) {
+void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, const std::string& textureName) {
 
 	/// texturesの範囲外参照しないように注意
-	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(2, textures_[textureName].srvHandleGPU);
+	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].srvHandleGPU);
 }
 
 

@@ -33,19 +33,21 @@ void Terrain::Init() {
 	/// ------------------------------------------------- 
 
 
+	rowSubdivision_ = 600;
+	colSubdivision_ = 1200;
 	/// -----------------------
 	/// ↓ 頂点インデックス
 	/// -----------------------
 
 	///- 頂点インデックスの設定用
-	IndexDataCulc(kSubdivision, kSubdivision);
+	IndexDataCulc(rowSubdivision_, colSubdivision_);
 
 
 	/// -----------------------
 	/// ↓ 頂点データ
 	/// -----------------------
 
-	VertexDataCulc(kSubdivision, kSubdivision);
+	VertexDataCulc(rowSubdivision_, colSubdivision_);
 
 
 	/// ------------------------------------------------- 
@@ -108,7 +110,7 @@ void Terrain::Init() {
 	noisePower_ = 1.0f;
 
 	///- 法線ベクトルを計算
-	NormalVector();
+	//NormalVector();
 
 	verticalIntensity_ = 1.0f;
 	saveVerticalIntensity_ = verticalIntensity_;
@@ -348,7 +350,8 @@ void Terrain::Draw() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
+	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "garyMonsterBall");
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 

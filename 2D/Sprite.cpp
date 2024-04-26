@@ -139,7 +139,7 @@ void Sprite::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2,"uvChecker");
 
 	///- DrawCall
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);

@@ -50,7 +50,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		&& (input.position.y - gMousePoint.position.y) < 10) {
 
 			output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
-			gBuffer.Store3(uint3(0, 0, 0));
+			
 
 		}
 	}
