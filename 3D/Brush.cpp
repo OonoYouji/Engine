@@ -143,37 +143,38 @@ void Brush::Update() {
 
 
 void Brush::Draw() {
-	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
-	///- 深度値のリセット; 必ず上側に表示されるようになる
-	DirectXCommon::GetInstance()->ClearDepthBuffer();
+	//ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+	/////- 深度値のリセット; 必ず上側に表示されるようになる
+	//DirectXCommon::GetInstance()->ClearDepthBuffer();
 
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-	///- データの書き込み
+	/////- データの書き込み
 
-	///- 頂点情報
-	memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
+	/////- 頂点情報
+	//memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
 
-	///- 色情報
-	//materialData_->color = { 0.0f,0.0f,0.0f,1.0f };
-	///- 行列情報
-	worldTransform_.MakeWorldMatrix();
-	matrixData_->World = worldTransform_.worldMatrix;
-	matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+	/////- 色情報
+	////materialData_->color = { 0.0f,0.0f,0.0f,1.0f };
+	/////- 行列情報
+	//worldTransform_.MakeWorldMatrix();
+	//matrixData_->World = worldTransform_.worldMatrix;
+	//matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
 
 
-	///- 各種設定
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(4, mousePointResource_->GetGPUVirtualAddress());
-	//commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
-	Light::GetInstance()->SetConstantBuffer(commandList);
+	/////- 各種設定
+	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	//commandList->SetGraphicsRootConstantBufferView(4, mousePointResource_->GetGPUVirtualAddress());
+	////commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
+	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
+	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "yama");
+	//Light::GetInstance()->SetConstantBuffer(commandList);
 
-	///- 描画 (DrawCall)
-	commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);
+	/////- 描画 (DrawCall)
+	//commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);
 
 }
 

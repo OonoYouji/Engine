@@ -51,5 +51,5 @@ void Light::Finalize() {
 
 
 void Light::SetConstantBuffer(ID3D12GraphicsCommandList* commandList) {
-	commandList->SetGraphicsRootConstantBufferView(3, resource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(5, resource_->GetGPUVirtualAddress());
 }
