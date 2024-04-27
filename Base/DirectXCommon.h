@@ -99,7 +99,7 @@ private:
 	ComPtr<ID3DBlob> errorBlob_;
 	ComPtr<ID3D12RootSignature> rootSignature_;
 
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[3];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[4];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 
 	D3D12_BLEND_DESC blendDesc_;

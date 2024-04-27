@@ -11,6 +11,7 @@ struct PixelShaderOutput {
 
 struct MousePoint {
 	float2 position;
+	//float3 worldPos;
 	float brushSize;
 };
 
@@ -33,15 +34,19 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
 
 
-	//output.color = gMaterial.color * textureColor;
+	//float len = length(input.worldPos - gMousePoint.worldPos);
+	//if (len < gMousePoint.brushSize) {
+	//	textureColor.r = 1.0f;
+	//}
 
-	//float2 diff = gMousePoint.position - input.position.xy;
-	//float brushShape = saturate(1.0f - length(diff) / gMousePoint.brushSize);
-	////if (brushShape != 0.0f) {
-	//	textureColor.rgb *= brushShape;
-	//	//textureColor.a = brushShape;
-	////}
+	//float3 diff = float3(gMousePoint.position.xy, input.position.z) - input.position.xyz;
+	//float brushShape = saturate(length(diff) / gMousePoint.brushSize);
+	//if (length(diff) < gMousePoint.brushSize) {
+	//	textureColor.rgb = float3(1.0f, 0.0f, 0.0f);
+	//	textureColor.a = brushShape;
+	//}
 
+	
 	///- Lightingする場合
 	if (gMaterial.enableLighting != 0) {
 		float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);

@@ -6,6 +6,9 @@
 
 
 #include <string>
+#include <iostream>
+#include <filesystem>
+#include <tchar.h>
 
 
 class InputImage final {
@@ -38,8 +41,10 @@ private:
 	cv::Mat inputImage_;
 	cv::Mat outputImage_;
 
+	TCHAR filePath_;
 
-
+	void ListFilesAndDirectories(const std::filesystem::path& directory);
+	bool GetSelectedFilePath(TCHAR* path);
 
 private:
 

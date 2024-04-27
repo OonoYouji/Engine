@@ -594,6 +594,11 @@ void DirectXCommon::InitializeInputLayout() {
 	inputElementDescs_[2].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
+	inputElementDescs_[3].SemanticName = "WORLDPOS";
+	inputElementDescs_[3].SemanticIndex = 0;
+	inputElementDescs_[3].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs_[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 
 
 	inputLayoutDesc_.pInputElementDescs = inputElementDescs_;

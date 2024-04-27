@@ -350,10 +350,8 @@ void Terrain::Draw() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
-	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "monsterBall");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "tileMap");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "tubasa");
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 

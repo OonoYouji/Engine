@@ -63,6 +63,7 @@ void Brush::Init() {
 	mousePointResource_->Map(0, nullptr, reinterpret_cast<void**>(&mousePointData_));
 	mousePointData_->position = Vec2f{ 0.0f,0.0f };
 	mousePointData_->size = 10.0f;
+	//mousePointData_->worldPos = Vec3f{ 0.0f,0.0f,0.0f };
 
 
 	///- 頂点データの計算
@@ -143,7 +144,7 @@ void Brush::Update() {
 
 
 void Brush::Draw() {
-	//ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	/////- 深度値のリセット; 必ず上側に表示されるようになる
 	//DirectXCommon::GetInstance()->ClearDepthBuffer();
 
@@ -167,7 +168,7 @@ void Brush::Draw() {
 	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	//commandList->SetGraphicsRootConstantBufferView(4, mousePointResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(4, mousePointResource_->GetGPUVirtualAddress());
 	////commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
 	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
 	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "yama");
@@ -198,7 +199,8 @@ void Brush::ConvertMousePosition() {
 	mouseLayDirection_ = (posFar_ - posNear_);
 
 	///- カメラから設定オブジェクトの距離
-	//worldTransform_.translate = posNear_ + (mouseLayDirection_ * distanceTestObject_);
+	worldTransform_.translate = posNear_ + (mouseLayDirection_ * distanceTestObject_);
+	//mousePointData_->worldPos = worldTransform_.translate;
 
 }
 
