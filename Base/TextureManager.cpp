@@ -33,6 +33,7 @@ void TextureManager::Initialize() {
 	Load("goku", baseFilePath + "goku.png");
 	Load("clear1", baseFilePath + "clear1.png");
 	Load("sumple", baseFilePath + "sumple.png");
+	Load("kiken", baseFilePath + "kiken.png");
 	//Load("white1x1", baseFilePath + "white1x1.png");
 
 

@@ -59,9 +59,10 @@ void Brush::Init() {
 	matrixData_->WVP = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
 	///- マウスの座標
-	mousePointResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector2)));
+	mousePointResource_.Attach(dxCommon->CreateBufferResource(sizeof(MousePoint)));
 	mousePointResource_->Map(0, nullptr, reinterpret_cast<void**>(&mousePointData_));
-	*mousePointData_ = Vec2f{ 0.0f,0.0f };
+	mousePointData_->position = Vec2f{ 0.0f,0.0f };
+	mousePointData_->size = 10.0f;
 
 
 	///- 頂点データの計算
@@ -111,8 +112,8 @@ void Brush::Init() {
 
 void Brush::Update() {
 	Input* input = Input::GetInstance();
-	*mousePointData_ = input->GetMousePos();
-	mousePos_ = { mousePointData_->x, mousePointData_->y, 0.0f };
+	mousePointData_->position = input->GetMousePos();
+	mousePos_ = { mousePointData_->position.x, mousePointData_->position.y, 0.0f };
 
 	///- マウスのスクリーン座標をワールド座標に変換
 	ConvertMousePosition();
@@ -123,7 +124,7 @@ void Brush::Update() {
 
 	ImGui::DragFloat4("worldMousePos", &worldTransform_.translate.x, 0.0f);
 	ImGui::DragFloat("cameraDistance", &distanceTestObject_, 0.25f);
-	ImGui::DragFloat("circleRadius", &circleRadius_, 0.01f);
+	ImGui::DragFloat("circleRadius", &mousePointData_->size, 0.01f);
 
 	ImGui::End();
 #endif // _DEBUG

@@ -11,6 +11,7 @@ struct PixelShaderOutput {
 
 struct MousePoint {
 	float2 position;
+	float brushSize;
 };
 
 struct WorldMousePosition {
@@ -31,6 +32,16 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	PixelShaderOutput output;
 	float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
 
+
+	//output.color = gMaterial.color * textureColor;
+
+	//float2 diff = gMousePoint.position - input.position.xy;
+	//float brushShape = saturate(1.0f - length(diff) / gMousePoint.brushSize);
+	////if (brushShape != 0.0f) {
+	//	textureColor.rgb *= brushShape;
+	//	//textureColor.a = brushShape;
+	////}
+
 	///- Lightingする場合
 	if (gMaterial.enableLighting != 0) {
 		float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
@@ -42,19 +53,17 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		output.color = gMaterial.color * textureColor;
 	}
 
-	output.color = gMaterial.color * textureColor;
-
 
 	///- mouseの座標を黒色にする
-	if ((input.position.x - gMousePoint.position.x) > -10
-		&& (input.position.x - gMousePoint.position.x) < 10) {
+	//if ((input.position.x - gMousePoint.position.x) > -10
+	//	&& (input.position.x - gMousePoint.position.x) < 10) {
 
-		if ((input.position.y - gMousePoint.position.y) > -10
-			&& (input.position.y - gMousePoint.position.y) < 10) {
+	//	if ((input.position.y - gMousePoint.position.y) > -10
+	//		&& (input.position.y - gMousePoint.position.y) < 10) {
 
-			output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
-		}
-	}
+	//		output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	//	}
+	//}
 
 	return output;
 }

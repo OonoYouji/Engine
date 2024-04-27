@@ -12,6 +12,11 @@
 #include "DirectXCommon.h"
 
 
+struct MousePoint {
+	Vec2f position;
+	float size;
+};
+
 
 /// <summary>
 /// 地形を弄るためのブラシ
@@ -47,7 +52,7 @@ private: ///- メンバ変数
 	Material* materialData_ = nullptr;
 	TransformMatrix* matrixData_ = nullptr;
 
-	Vec2f* mousePointData_;
+	MousePoint* mousePointData_;
 	Vec3f mousePos_;
 	WorldTransform worldTransform_;
 

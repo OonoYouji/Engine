@@ -351,7 +351,9 @@ void Terrain::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "sumple");
+	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
+	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(5, "yama");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 
