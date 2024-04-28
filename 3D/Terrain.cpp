@@ -186,19 +186,19 @@ void Terrain::Update() {
 
 
 
-	ImGui::DragFloat("noisePower", &noisePower_, 0.25f);
+	ImGui::SliderFloat("noisePower", &noisePower_, 0.0f, 1.0f);
 
 	static int seed = 0;
 	ImGui::SliderInt("seed", &seed, 0, static_cast<int>(std::pow(2, 32)));
-	if(ImGui::Button("ResetSeed")) {
+	if(ImGui::IsItemEdited()) {
 		noise_->ResetSheed(seed);
 		for(uint32_t row = 0; row < vertexData_.size(); ++row) {
 			for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
 
 				vertexData_[row][col].position.y =
 					noise_->GetNoise(
-						Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(kSubdivision) / 100.0f)
-					) * (noisePower_ * float(kSubdivision) / 100.0f);
+						Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(rowSubdivision_) * 0.5f)
+					) * (noisePower_);
 
 			}
 		}
@@ -282,13 +282,13 @@ void Terrain::Update() {
 			TransferVertexData();
 
 			saveImage_ = image_;
-			
+
 
 			for(uint32_t row = 0; row < static_cast<uint32_t>(vertexData_.size() - 1); row++) {
 				for(uint32_t col = 0; col < static_cast<uint32_t>(vertexData_[0].size() - 1); col++) {
 
 					saveImage_.at<uint8_t>(row, col) =
-						static_cast<uint8_t>((vertexData_[row][col].position.y / saveVerticalIntensity_) + (255.0f / 2.0f) );
+						static_cast<uint8_t>((vertexData_[row][col].position.y / saveVerticalIntensity_) + (255.0f / 2.0f));
 
 				}
 			}
