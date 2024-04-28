@@ -14,7 +14,14 @@
 
 struct MousePoint {
 	Vec2f position;
+	float patting[2];
+	Vec3f worldPos;
+	float patting2;
+	Vec3f rayDir;
+
 	float size;
+	int isUp;
+	int isDown;
 };
 
 
@@ -56,7 +63,7 @@ private: ///- メンバ変数
 	Vec3f mousePos_;
 	WorldTransform worldTransform_;
 
-	Vec3f mouseLayDirection_;
+	Vec3f mouseRayDirection_;
 
 	float distanceTestObject_;
 	float circleRadius_;
@@ -71,7 +78,7 @@ private: ///- メンバ変数
 
 public: ///- 
 
-	const Vec3f& GetLayDir() const { return mouseLayDirection_; }
+	const Vec3f& GetLayDir() const { return mouseRayDirection_; }
 
 	const Vec3f& GetNearPos() const { return posNear_; }
 	const Vec3f& GetFarPos() const { return posFar_; }
@@ -82,7 +89,7 @@ public: ///-
 
 	void SetColot(const Vec4f& color);
 	const Vec3f& GetWorldPos() const { return worldTransform_.translate; }
-	
+
 
 	float GetRadius() const { return circleRadius_; }
 

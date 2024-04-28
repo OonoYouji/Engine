@@ -9,15 +9,7 @@ struct PixelShaderOutput {
 	float4 color : SV_TARGET0;
 };
 
-struct MousePoint {
-	float2 position;
-	//float3 worldPos;
-	float brushSize;
-};
 
-struct WorldMousePosition {
-	float3 position;
-};
 
 
 Texture2D<float4> gTexture : register(t0);
@@ -26,7 +18,6 @@ SamplerState gSampler : register(s0);
 ///- 定数バッファ
 ConstantBuffer<Material> gMaterial : register(b0);
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
-ConstantBuffer<MousePoint> gMousePoint : register(b3);
 
 
 PixelShaderOutput main(VertexShaderOutput input) {
@@ -34,18 +25,19 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
 
 
-	//float len = length(input.worldPos - gMousePoint.worldPos);
-	//if (len < gMousePoint.brushSize) {
-	//	textureColor.r = 1.0f;
+	float len = length(input.worldPos - gMousePoint.worldPos);
+	float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
+	len = length(input.worldPos - mousePos);
+	if (len < gMousePoint.brushSize) {
+		textureColor.rgb = float3(0.5f, 0.5f, 0.5f) * clamp(1 - (len / gMousePoint.brushSize), 0.0f, 1.0f);
+	}
+	
+	//float3 diff = normalize(input.worldPos - gMousePoint.worldPos);
+	//float d = dot(diff, gMousePoint.layDir);
+	//if (d > 0.5f) {
+	//	output.color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+	//	return output;
 	//}
-
-	//float3 diff = float3(gMousePoint.position.xy, input.position.z) - input.position.xyz;
-	//float brushShape = saturate(length(diff) / gMousePoint.brushSize);
-	//if (length(diff) < gMousePoint.brushSize) {
-	//	textureColor.rgb = float3(1.0f, 0.0f, 0.0f);
-	//	textureColor.a = brushShape;
-	//}
-
 	
 	///- Lightingする場合
 	if (gMaterial.enableLighting != 0) {
@@ -66,7 +58,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	//	if ((input.position.y - gMousePoint.position.y) > -10
 	//		&& (input.position.y - gMousePoint.position.y) < 10) {
 
-	//		output.color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	//		output.color = float4(1.0f, 0.0f, 0.0f, 1.0f);
 	//	}
 	//}
 

@@ -12,3 +12,16 @@ struct DirectionalLight {
 };
 
 
+
+struct MousePoint {
+	float2 position;
+	float3 worldPos;
+	float3 rayDir;
+	float brushSize;
+	int isUp;
+	int isDown;
+};
+
+ConstantBuffer<MousePoint> gMousePoint : register(b3);
+
+//static bool gIsMouseDraw;

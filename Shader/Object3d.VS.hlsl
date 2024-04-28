@@ -17,14 +17,32 @@ Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s1);
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 
-
 VertexShaderOutput main(VertexShaderInput input) {
 	VertexShaderOutput output;
+
+
+	///- 輝度から頂点のY座標を加算
 	float4 clr = gTexture.SampleLevel(gSampler, input.texcoord, 0);
 	float4 pos = input.position + float4(0.0f, clr.r, 0.0f, 0.0f);
+	float4 worldPos = mul(pos, gTransformationMatrix.World);
+
+	float len = length(worldPos.xyz - gMousePoint.worldPos);
+	float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
+	len = length(worldPos.xyz - mousePos);
+	if (len < gMousePoint.brushSize) {
+		if (gMousePoint.isUp == true) {
+			pos.y += 10.0f;
+		}
+
+		if (gMousePoint.isDown == true) {
+			pos.y -= 10.0f;
+		}
+	}
+
 	output.position = mul(pos, gTransformationMatrix.WVP);
 	output.texcoord = input.texcoord;
 	output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.World));
-	output.worldPos = input.position.xyz;
+	output.worldPos = mul(pos, gTransformationMatrix.World).xyz;
+	
 	return output;
 }

@@ -351,7 +351,7 @@ void Terrain::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "tileMap");
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "tubasa");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 

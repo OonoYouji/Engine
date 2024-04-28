@@ -63,8 +63,10 @@ void Brush::Init() {
 	mousePointResource_->Map(0, nullptr, reinterpret_cast<void**>(&mousePointData_));
 	mousePointData_->position = Vec2f{ 0.0f,0.0f };
 	mousePointData_->size = 10.0f;
-	//mousePointData_->worldPos = Vec3f{ 0.0f,0.0f,0.0f };
-
+	mousePointData_->worldPos = Vec3f{ 0.0f,0.0f,0.0f };
+	mousePointData_->isUp = false;
+	mousePointData_->isDown = false;
+	mousePointData_->rayDir = Vec3f{ 0.0f,0.0f,0.0f };
 
 	///- 頂点データの計算
 	int index = 0;
@@ -115,6 +117,8 @@ void Brush::Update() {
 	Input* input = Input::GetInstance();
 	mousePointData_->position = input->GetMousePos();
 	mousePos_ = { mousePointData_->position.x, mousePointData_->position.y, 0.0f };
+	mousePointData_->isUp = input->GetMouse().leftButton;
+	mousePointData_->isDown = input->GetMouse().rightButton;
 
 	///- マウスのスクリーン座標をワールド座標に変換
 	ConvertMousePosition();
@@ -123,7 +127,7 @@ void Brush::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("Brush");
 
-	ImGui::DragFloat4("worldMousePos", &worldTransform_.translate.x, 0.0f);
+	ImGui::DragFloat4("worldMousePos", &mousePointData_->worldPos.x, 0.0f);
 	ImGui::DragFloat("cameraDistance", &distanceTestObject_, 0.25f);
 	ImGui::DragFloat("circleRadius", &mousePointData_->size, 0.01f);
 
@@ -196,11 +200,12 @@ void Brush::ConvertMousePosition() {
 	posFar_ = Matrix4x4::Transform(posFar_, matInverseVPV);
 
 	///- マウスレイのベクトル
-	mouseLayDirection_ = (posFar_ - posNear_);
+	mouseRayDirection_ = Vec3f::Normalize(posFar_ - posNear_);
+	mousePointData_->rayDir = mouseRayDirection_;
 
 	///- カメラから設定オブジェクトの距離
-	worldTransform_.translate = posNear_ + (mouseLayDirection_ * distanceTestObject_);
-	//mousePointData_->worldPos = worldTransform_.translate;
+	worldTransform_.translate = posNear_ + (mouseRayDirection_ * distanceTestObject_);
+	mousePointData_->worldPos = posNear_;
 
 }
 

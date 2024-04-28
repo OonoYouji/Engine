@@ -479,9 +479,9 @@ void DirectXCommon::InitializeRootSignature() {
 	descriptorRange_[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
 	descriptorRange_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	//descriptorRange_[1].BaseShaderRegister = 2; //- 0から始まる
+	//descriptorRange_[1].BaseShaderRegister = 0; //- 0から始まる
 	//descriptorRange_[1].NumDescriptors = 1; //- textureの数
-	//descriptorRange_[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
+	//descriptorRange_[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
 	//descriptorRange_[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 
@@ -510,7 +510,7 @@ void DirectXCommon::InitializeRootSignature() {
 
 	///- mouse
 	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	rootParameters_[4].Descriptor.ShaderRegister = 3;
 
 	///- light
@@ -614,8 +614,17 @@ void DirectXCommon::InitializeInputLayout() {
 void DirectXCommon::InitializeBlendState() {
 
 	///- すべての色要素を書き込む
-	blendDesc_.RenderTarget[0].RenderTargetWriteMask =
-		D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+	/*blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc_.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc_.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc_.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;*/
+	// SrcColor * SrcAlpha + DestColor * (1.0f - SrcAlpha)
 
 }
 

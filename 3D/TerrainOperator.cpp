@@ -135,7 +135,7 @@ void TerrainOperator::BrushPositionCalc() {
 
 	///- ↑で計算したtで線形補完する
 	///- ブラシの座標を地形の上ちょうどに表示されるように計算する
-	pBrush_->SetWorldPosition(Vector3::Lerp(pBrush_->GetNearPos(), pBrush_->GetFarPos(), t));
+	//pBrush_->SetWorldPosition(Vector3::Lerp(pBrush_->GetNearPos(), pBrush_->GetFarPos(), t));
 
 }
 
