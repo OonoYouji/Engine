@@ -172,7 +172,7 @@ void Brush::Draw() {
 	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(4, mousePointResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(6, mousePointResource_->GetGPUVirtualAddress());
 	////commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
 	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
 	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "yama");

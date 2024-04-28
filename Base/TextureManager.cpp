@@ -73,17 +73,10 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
-	///- SRVを作成するDescriptorHeapの場所を決める
-	//ID3D12DescriptorHeap* srvHeap = DxDescriptors::GetInstance()->GetSRVHeap();
-	//newTexture.srvHandleCPU = srvHeap->GetCPUDescriptorHandleForHeapStart();
-	//newTexture.srvHandleGPU = srvHeap->GetGPUDescriptorHandleForHeapStart();
-	///- 先頭はImGuiが使っているのでその次を使う
-
 	///- srvHandleの取得
 	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
 	newTexture.srvHandleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>(textures_.size() + 1));
 	newTexture.srvHandleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>(textures_.size() + 1));
-
 
 	///- srvの生成
 	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(newTexture.resource.Get(), &srvDesc, newTexture.srvHandleCPU);

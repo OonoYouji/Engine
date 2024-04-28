@@ -44,7 +44,6 @@ void Scene_Game::Update() {
 void Scene_Game::Draw() {
 
 	//ImGui::ShowDemoWindow();
-
 	//Engine::TestDraw();
 
 	brush_->Draw();

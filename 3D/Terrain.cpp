@@ -352,6 +352,7 @@ void Terrain::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "tileMap");
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(4, "dragon");
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 

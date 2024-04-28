@@ -479,10 +479,10 @@ void DirectXCommon::InitializeRootSignature() {
 	descriptorRange_[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
 	descriptorRange_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	//descriptorRange_[1].BaseShaderRegister = 0; //- 0から始まる
-	//descriptorRange_[1].NumDescriptors = 1; //- textureの数
-	//descriptorRange_[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
-	//descriptorRange_[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+	descriptorRange2_[0].BaseShaderRegister = 0; //- 0から始まる
+	descriptorRange2_[0].NumDescriptors = 1;	//- textureの数
+	descriptorRange2_[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
+	descriptorRange2_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 
 	///- RootParameter作成; PixelShaderのMaterialとVertexShaderのTransform
@@ -508,15 +508,21 @@ void DirectXCommon::InitializeRootSignature() {
 	rootParameters_[3].DescriptorTable.pDescriptorRanges = descriptorRange_;
 	rootParameters_[3].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange_);	//- Tableで利用する数
 
-	///- mouse
-	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-	rootParameters_[4].Descriptor.ShaderRegister = 3;
+	///- texture
+	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		//- DescriptorTableを使う
+	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;					//- VertexShaderで使う
+	rootParameters_[4].DescriptorTable.pDescriptorRanges = descriptorRange2_;
+	rootParameters_[4].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange2_);	//- Tableで利用する数
 
 	///- light
 	rootParameters_[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters_[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters_[5].Descriptor.ShaderRegister = 1;
+
+	///- mouse
+	rootParameters_[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters_[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+	rootParameters_[6].Descriptor.ShaderRegister = 3;
 
 
 	/// ----------------------------------------------
