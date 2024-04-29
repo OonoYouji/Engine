@@ -479,10 +479,17 @@ void DirectXCommon::InitializeRootSignature() {
 	descriptorRange_[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
 	descriptorRange_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-	descriptorRange2_[0].BaseShaderRegister = 0; //- 0から始まる
-	descriptorRange2_[0].NumDescriptors = 1;	//- textureの数
-	descriptorRange2_[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
-	descriptorRange2_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	descriptorRange_[1].BaseShaderRegister = 0; //- 0から始まる
+	descriptorRange_[1].NumDescriptors = 1; //- textureの数
+	descriptorRange_[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
+	descriptorRange_[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+
+	descriptorRange_[2].BaseShaderRegister = 3; //- 0から始まる
+	descriptorRange_[2].NumDescriptors = 1;	//- textureの数
+	descriptorRange_[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
+	descriptorRange_[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 
 	///- RootParameter作成; PixelShaderのMaterialとVertexShaderのTransform
@@ -499,20 +506,20 @@ void DirectXCommon::InitializeRootSignature() {
 	///- texutre
 	rootParameters_[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameters_[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters_[2].DescriptorTable.pDescriptorRanges = descriptorRange_;
-	rootParameters_[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange_);
+	rootParameters_[2].DescriptorTable.pDescriptorRanges = &descriptorRange_[0];
+	rootParameters_[2].DescriptorTable.NumDescriptorRanges = 1;
 
 	///- texture
 	rootParameters_[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		//- DescriptorTableを使う
 	rootParameters_[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;					//- VertexShaderで使う
-	rootParameters_[3].DescriptorTable.pDescriptorRanges = descriptorRange_;
-	rootParameters_[3].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange_);	//- Tableで利用する数
+	rootParameters_[3].DescriptorTable.pDescriptorRanges = &descriptorRange_[1];
+	rootParameters_[3].DescriptorTable.NumDescriptorRanges = 1;	//- Tableで利用する数
 
 	///- texture
 	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		//- DescriptorTableを使う
 	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;					//- VertexShaderで使う
-	rootParameters_[4].DescriptorTable.pDescriptorRanges = descriptorRange2_;
-	rootParameters_[4].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange2_);	//- Tableで利用する数
+	rootParameters_[4].DescriptorTable.pDescriptorRanges = &descriptorRange_[2];
+	rootParameters_[4].DescriptorTable.NumDescriptorRanges = 1;	//- Tableで利用する数
 
 	///- light
 	rootParameters_[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
@@ -1125,6 +1132,7 @@ void DirectXCommon::PostDraw() {
 
 	///- 描画用にバリアーを貼る
 	command_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
 
 	///- Commandを閉じる
 	result = commandList->Close();

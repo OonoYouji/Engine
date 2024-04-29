@@ -120,8 +120,8 @@ private:
 	//ComPtr<ID3D12Resource> materialResource_;
 
 	///- テクスチャを貼ろう
-	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
-	D3D12_DESCRIPTOR_RANGE descriptorRange2_[1];
+	D3D12_DESCRIPTOR_RANGE descriptorRange_[3];
+	//D3D12_DESCRIPTOR_RANGE descriptorRange2_[1];
 	D3D12_STATIC_SAMPLER_DESC staticSamplers_[2];
 
 	///- 前後関係

@@ -15,7 +15,7 @@ struct VertexShaderInput {
 
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s1);
-RWTexture2D<float4> gOutputTexture : register(u0);
+RWTexture2D<float4> gOutputTexture : register(u3);
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 
@@ -41,7 +41,7 @@ VertexShaderOutput main(VertexShaderInput input) {
 	}
 
 	float4 pos = input.position + float4(0.0f, clr.r, 0.0f, 0.0f);
-	//gOutputTexture[output.texcoord].rgba = clr.rgba;
+	//gOutputTexture[output.texcoord] = clr;
 	output.position = mul(pos, gTransformationMatrix.WVP);
 	output.texcoord = input.texcoord;
 	output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.World));
