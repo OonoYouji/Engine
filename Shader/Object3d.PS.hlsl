@@ -25,20 +25,17 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
 
 
-	float len = length(input.worldPos - gMousePoint.worldPos);
-	float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
-	len = length(input.worldPos - mousePos);
-	if (len < gMousePoint.brushSize) {
-		textureColor.rgb = float3(0.5f, 0.5f, 0.5f) * clamp(1 - (len / gMousePoint.brushSize), 0.0f, 1.0f);
+	///- マウスの座標に円を表示する
+	if (gMousePoint.isActive) {
+		float len = length(input.worldPos - gMousePoint.worldPos);
+		float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
+		len = length(input.worldPos - mousePos);
+		if (len < gMousePoint.brushSize) {
+			textureColor = gMaterial.color * clamp(1 - (len / gMousePoint.brushSize), 0.0f, 1.0f);
+		}
 	}
 	
-	//float3 diff = normalize(input.worldPos - gMousePoint.worldPos);
-	//float d = dot(diff, gMousePoint.layDir);
-	//if (d > 0.5f) {
-	//	output.color = float4(1.0f, 0.0f, 0.0f, 1.0f);
-	//	return output;
-	//}
-	
+
 	///- Lightingする場合
 	if (gMaterial.enableLighting != 0) {
 		float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
@@ -49,18 +46,6 @@ PixelShaderOutput main(VertexShaderOutput input) {
 
 		output.color = gMaterial.color * textureColor;
 	}
-
-
-	///- mouseの座標を黒色にする
-	//if ((input.position.x - gMousePoint.position.x) > -10
-	//	&& (input.position.x - gMousePoint.position.x) < 10) {
-
-	//	if ((input.position.y - gMousePoint.position.y) > -10
-	//		&& (input.position.y - gMousePoint.position.y) < 10) {
-
-	//		output.color = float4(1.0f, 0.0f, 0.0f, 1.0f);
-	//	}
-	//}
 
 	return output;
 }

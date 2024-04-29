@@ -146,10 +146,7 @@ void Terrain::Update() {
 		ImGui::TreePop();
 	}
 
-
-	ImGui::Spacing();
-
-
+	ImGui::Separator();
 
 	/// ------------------------------------------------
 	///- 頂点の情報
@@ -171,8 +168,8 @@ void Terrain::Update() {
 	}
 
 
+	ImGui::Separator();
 	ImGui::Spacing();
-
 
 
 	ImGui::DragFloat3("normalVector", &normalVector_.x, 0.0f);

@@ -67,6 +67,7 @@ void Brush::Init() {
 	mousePointData_->isUp = false;
 	mousePointData_->isDown = false;
 	mousePointData_->rayDir = Vec3f{ 0.0f,0.0f,0.0f };
+	mousePointData_->isActive_ = false;
 
 	///- 頂点データの計算
 	int index = 0;
@@ -127,9 +128,30 @@ void Brush::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("Brush");
 
-	ImGui::DragFloat4("worldMousePos", &mousePointData_->worldPos.x, 0.0f);
-	ImGui::DragFloat("cameraDistance", &distanceTestObject_, 0.25f);
-	ImGui::DragFloat("circleRadius", &mousePointData_->size, 0.01f);
+
+	ImGui::DragFloat3("WorldPosition", &mousePointData_->worldPos.x, 0.0f);
+	ImGui::DragFloat2("ScreenPosition", &mousePointData_->position.x, 0.0f);
+
+	ImGui::Separator();
+
+	if(ImGui::TreeNodeEx("Parameter", true)) {
+
+		ImGui::DragFloat("circleRadius", &mousePointData_->size, 0.01f);
+
+		ImGui::Spacing();
+
+		static bool isActive = false;
+		ImGui::Checkbox("IsActive", &isActive);
+		if(ImGui::IsItemEdited()) {
+			mousePointData_->isActive_ = isActive;
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+
+
 
 	ImGui::End();
 #endif // _DEBUG

@@ -23,11 +23,19 @@ private:
 	Vec3f localFront_;
 	Vec3f direction_;
 
+	float fovY_;
+	float farZ_;
+
 	Matrix4x4 worldMatrix_;
 	Matrix4x4 viewMatrix_;
 	Matrix4x4 projectionMatrix_;
 
 	Matrix4x4 vpMatrix_;
+
+	/// <summary>
+	/// ProjectionMatrixの再計算
+	/// </summary>
+	void MakeProjectionMatrix();
 
 public:
 

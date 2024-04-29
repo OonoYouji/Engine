@@ -22,6 +22,7 @@ struct MousePoint {
 	float size;
 	int isUp;
 	int isDown;
+	int isActive_;
 };
 
 

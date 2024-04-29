@@ -34,9 +34,13 @@ void Light::Update() {
 	ImGui::Begin("Light");
 
 	ImGui::DragFloat3("nextDirection", &nextDir_.x, 0.01f);
-	if(ImGui::Button("SetDirection")) {
+	if(ImGui::IsItemEdited()) {
 		directinalLight_->direction = Vec3f::Normalize(nextDir_);
 	}
+
+	ImGui::ColorEdit4("Color", &directinalLight_->color.x);
+
+	ImGui::DragFloat("Intensity", &directinalLight_->intensity, 0.05f);
 
 	ImGui::End();
 #endif // _DEBUG

@@ -27,16 +27,18 @@ VertexShaderOutput main(VertexShaderInput input) {
 	float4 clr = gTexture.SampleLevel(gSampler, input.texcoord, 0);
 	float4 worldPos = mul(input.position, gTransformationMatrix.World);
 
-	float len = length(worldPos.xyz - gMousePoint.worldPos);
-	float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
-	len = length(worldPos.xyz - mousePos);
-	if (len < gMousePoint.brushSize) {
-		if (gMousePoint.isUp == true) {
-			clr.r += 1.0f;
-		}
+	if (gMousePoint.isActive) {
+		float len = length(worldPos.xyz - gMousePoint.worldPos);
+		float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
+		len = length(worldPos.xyz - mousePos);
+		if (len < gMousePoint.brushSize) {
+			if (gMousePoint.isUp == true) {
+				clr.r += 1.0f;
+			}
 
-		if (gMousePoint.isDown == true) {
-			clr.r -= 1.0f;
+			if (gMousePoint.isDown == true) {
+				clr.r -= 1.0f;
+			}
 		}
 	}
 

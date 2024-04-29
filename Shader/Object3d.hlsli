@@ -20,6 +20,7 @@ struct MousePoint {
 	float brushSize;
 	int isUp;
 	int isDown;
+	int isActive;
 };
 
 ConstantBuffer<MousePoint> gMousePoint : register(b3);

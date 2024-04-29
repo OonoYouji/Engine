@@ -35,7 +35,7 @@ void TerrainOperator::Update() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("Brush");
+	/*ImGui::Begin("Brush");
 
 	ImGui::Checkbox("IsOperating", &isOperating_);
 	if(isOperating_) {
@@ -48,7 +48,7 @@ void TerrainOperator::Update() {
 
 	ImGui::SliderFloat("raisePower", &raisePower_, 0.0f, 1.0f);
 
-	ImGui::End();
+	ImGui::End();*/
 
 #endif // _DEBUG
 
