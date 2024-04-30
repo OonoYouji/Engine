@@ -21,6 +21,10 @@ struct MousePoint {
 	int isUp;
 	int isDown;
 	int isActive;
+
+	int calcState;
+
+	float power;
 };
 
 ConstantBuffer<MousePoint> gMousePoint : register(b3);

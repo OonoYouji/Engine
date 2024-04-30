@@ -32,6 +32,7 @@ void TextureManager::Initialize() {
 	Load("clear1", baseFilePath + "clear1.png");
 	Load("kiken", baseFilePath + "kiken.png");
 	Load("tileMap", baseFilePath + "tileMap.png");
+	Load("GrayTexture", baseFilePath + "GrayTexture.png");
 	//Load("white1x1", baseFilePath + "white1x1.png");
 
 

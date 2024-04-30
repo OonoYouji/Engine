@@ -12,6 +12,11 @@
 #include "DirectXCommon.h"
 
 
+enum class CalcState {
+	Add,
+	Mul
+};
+
 struct MousePoint {
 	Vec2f position;
 	float patting[2];
@@ -22,7 +27,12 @@ struct MousePoint {
 	float size;
 	int isUp;
 	int isDown;
-	int isActive_;
+	int isActive;
+
+	int calcState;
+
+	float power;
+
 };
 
 

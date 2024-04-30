@@ -30,13 +30,13 @@ void Scene_Game::Init() {
 
 void Scene_Game::Update() {
 
-	inputImage_->Update();
+	//inputImage_->Update();
 
 
 	terrain_->Update();
 	brush_->Update();
 
-	terrainOperator_->Update();
+	//terrainOperator_->Update();
 
 
 }

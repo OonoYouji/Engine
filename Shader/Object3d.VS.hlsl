@@ -35,20 +35,22 @@ VertexShaderOutput main(VertexShaderInput input) {
 		len = length(worldPos.xyz - mousePos);
 		if (len < gMousePoint.brushSize) {
 			if (gMousePoint.isUp == true) {
-				gOutputTexture[input.texcoord * dimension].r += 1.0f;
+				gOutputTexture[input.texcoord * dimension].r += ((1.0f - len / gMousePoint.brushSize) * 0.25f) * gMousePoint.power;
 			}
 
 			if (gMousePoint.isDown == true) {
-				//gOutputTexture[input.texcoord].r -= 1.0f;
-				gOutputTexture[input.texcoord * dimension].r -= 1.0f;
-				//clr.r -= 1.0f;
+				gOutputTexture[input.texcoord * dimension].r -= ((1.0f - len / gMousePoint.brushSize) * 0.25f) * gMousePoint.power;
 			}
 		}
 	}
 
-	clr += gOutputTexture[input.texcoord * dimension];
+	if (gMousePoint.calcState == 0) {
+		clr += gOutputTexture[input.texcoord * dimension];
+	} else {
+		clr *= gOutputTexture[input.texcoord * dimension];
+	}
+
 	float4 pos = input.position + float4(0.0f, clr.r, 0.0f, 0.0f);
-	//gOutputTexture[output.texcoord] = clr;
 	output.position = mul(pos, gTransformationMatrix.WVP);
 	output.texcoord = input.texcoord;
 	output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.World));
