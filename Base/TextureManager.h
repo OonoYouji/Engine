@@ -24,9 +24,14 @@ public:
 	/// テクスチャ1枚あたりのデータ
 	/// </summary>
 	struct Texture {
-		ComPtr<ID3D12Resource> resource;
+		ComPtr<ID3D12Resource> srvResource;
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
+
+		ComPtr<ID3D12Resource> uavResource;
+		D3D12_CPU_DESCRIPTOR_HANDLE uavHandleCPU;
+		D3D12_GPU_DESCRIPTOR_HANDLE uavHandleGPU;
+
 	};
 
 
@@ -59,6 +64,12 @@ public:
 	/// </summary>
 	/// <param name="index"></param>
 	void SetGraphicsRootDescriptorTable(UINT rootParameterIndex, const std::string& textureName);
+	
+	/// <summary>
+	/// textureのセット
+	/// </summary>
+	/// <param name="index"></param>
+	void SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, const std::string& textureName);
 
 
 private: ///- メンバ変数
@@ -78,6 +89,7 @@ private: ///- メンバ変数
 	/// DirextX12のTextureResourceを作る
 	/// </summary>
 	ComPtr<ID3D12Resource> CreataTextureResouece(ID3D12Device* device, const DirectX::TexMetadata& metadata);
+	ComPtr<ID3D12Resource> CreataTextureResoueceUAV(ID3D12Device* device, const DirectX::TexMetadata& metadata);
 
 
 	/// <summary>

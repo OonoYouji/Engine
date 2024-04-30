@@ -349,7 +349,7 @@ void Terrain::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "yama"); ///- terrain
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "yama");	 ///- heightMap
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(4, "yama");  ///- operation
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "yama");  ///- operation
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 

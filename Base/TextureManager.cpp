@@ -25,21 +25,21 @@ void TextureManager::Initialize() {
 	const std::string baseFilePath = "./Resources/Images/";
 	Load("uvChecker", baseFilePath + "uvChecker.png");
 	Load("monsterBall", baseFilePath + "monsterBall.png");
-	Load("aoi", baseFilePath + "aoi.png");
 	Load("dragon", baseFilePath + "dragon.png");
 	Load("sprite", baseFilePath + "sprite.png");
 	Load("yama", baseFilePath + "yama.png");
-	Load("face", baseFilePath + "face.jpg");
 	Load("goku", baseFilePath + "goku.png");
 	Load("clear1", baseFilePath + "clear1.png");
-	Load("sumple", baseFilePath + "sumple.png");
 	Load("kiken", baseFilePath + "kiken.png");
-	Load("hukiti", baseFilePath + "hukiti.jpg");
-	Load("tubasa", baseFilePath + "tubasa.png");
 	Load("tileMap", baseFilePath + "tileMap.png");
 	//Load("white1x1", baseFilePath + "white1x1.png");
 
 
+	/*Load("aoi", baseFilePath + "aoi.png");
+	Load("face", baseFilePath + "face.jpg");
+	Load("sumple", baseFilePath + "sumple.png");
+	Load("hukiti", baseFilePath + "hukiti.jpg");
+	Load("tubasa", baseFilePath + "tubasa.png");*/
 
 }
 
@@ -63,8 +63,10 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 	Texture newTexture{};
 	DirectX::ScratchImage mipImages = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	newTexture.resource = CreataTextureResouece(DirectXCommon::GetInstance()->GetDevice(), metadata);
-	UploadTextureData(newTexture.resource.Get(), mipImages);
+	newTexture.srvResource = CreataTextureResouece(DirectXCommon::GetInstance()->GetDevice(), metadata);
+	newTexture.uavResource = CreataTextureResoueceUAV(DirectXCommon::GetInstance()->GetDevice(), metadata);
+	UploadTextureData(newTexture.srvResource.Get(), mipImages);
+	UploadTextureData(newTexture.uavResource.Get(), mipImages);
 
 	///- metadataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -73,13 +75,23 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
+	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
+	uavDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // テクスチャのフォーマットを設定
+	uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D; // テクスチャの次元を設定
+	uavDesc.Texture2D.MipSlice = 0; // テクスチャのミップレベルを設定
+
 	///- srvHandleの取得
 	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
-	newTexture.srvHandleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>(textures_.size() + 1));
-	newTexture.srvHandleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>(textures_.size() + 1));
+	newTexture.srvHandleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() * 2) + 1));
+	newTexture.srvHandleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() * 2) + 1));
+
+	///- uavHandleの取得
+	newTexture.uavHandleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() * 2) + 2));
+	newTexture.uavHandleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() * 2) + 2));
 
 	///- srvの生成
-	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(newTexture.resource.Get(), &srvDesc, newTexture.srvHandleCPU);
+	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(newTexture.srvResource.Get(), &srvDesc, newTexture.srvHandleCPU);
+	DirectXCommon::GetInstance()->GetDevice()->CreateUnorderedAccessView(newTexture.uavResource.Get(), nullptr, &uavDesc, newTexture.uavHandleCPU);
 
 	textures_[textureName] = newTexture;
 
@@ -94,6 +106,12 @@ void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, con
 
 	/// texturesの範囲外参照しないように注意
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].srvHandleGPU);
+}
+
+void TextureManager::SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, const std::string& textureName) {
+
+	/// texturesの範囲外参照しないように注意
+	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].uavHandleGPU);
 }
 
 
@@ -135,7 +153,7 @@ ComPtr<ID3D12Resource> TextureManager::CreataTextureResouece(ID3D12Device* devic
 	desc.Format = metadata.format;	//- TextureのFormat
 	desc.SampleDesc.Count = 1;	//- サンプリングカウント; 1固定
 	desc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);	//- Textureの次元数
-
+	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
 	/// --------------------------------------
 	/// ↓ 利用するHeapの設定
@@ -157,6 +175,50 @@ ComPtr<ID3D12Resource> TextureManager::CreataTextureResouece(ID3D12Device* devic
 		D3D12_HEAP_FLAG_NONE,	//- Heapの特殊な設定
 		&desc,					//- Resourceの設定
 		D3D12_RESOURCE_STATE_GENERIC_READ,	//- 初回のResourceState; Textureは基本読むだけ
+		nullptr,				//- Clear最適値; 使わないのでnullptr
+		IID_PPV_ARGS(&resource)
+	);
+	assert(SUCCEEDED(result));
+
+	return resource;
+}
+
+ComPtr<ID3D12Resource> TextureManager::CreataTextureResoueceUAV(ID3D12Device* device, const DirectX::TexMetadata& metadata) {
+
+
+	/// --------------------------------------
+	/// ↓ metadataを基にResourceの設定
+	/// --------------------------------------
+	D3D12_RESOURCE_DESC desc{};
+	desc.Width = UINT(metadata.width);		//- textureの幅
+	desc.Height = UINT(metadata.height);	//- textureの高さ
+	desc.MipLevels = UINT16(metadata.mipLevels);		//- mipmapの数
+	desc.DepthOrArraySize = UINT16(metadata.arraySize);	//- 奥行き or 配列Textureの配列数
+	desc.Format = metadata.format;	//- TextureのFormat
+	desc.SampleDesc.Count = 1;	//- サンプリングカウント; 1固定
+	desc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);	//- Textureの次元数
+	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+	/// --------------------------------------
+	/// ↓ 利用するHeapの設定
+	/// --------------------------------------
+
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;	//- 細かい設定を行う
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK; //- WriteBackポリシーでCPUアクセス可能
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;	//- プロセッサの近くに配置
+
+
+	/// --------------------------------------
+	/// ↓ Resourceを生成
+	/// --------------------------------------
+
+	ComPtr<ID3D12Resource> resource;
+	HRESULT result = device->CreateCommittedResource(
+		&heapProperties,		//- Heapの設定
+		D3D12_HEAP_FLAG_NONE,	//- Heapの特殊な設定
+		&desc,					//- Resourceの設定
+		D3D12_RESOURCE_STATE_UNORDERED_ACCESS,	//- 初回のResourceState; Textureは基本読むだけ
 		nullptr,				//- Clear最適値; 使わないのでnullptr
 		IID_PPV_ARGS(&resource)
 	);

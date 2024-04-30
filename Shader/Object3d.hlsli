@@ -24,5 +24,6 @@ struct MousePoint {
 };
 
 ConstantBuffer<MousePoint> gMousePoint : register(b3);
+RWTexture2D<float4> gOutputTexture : register(u3);
 
 //static bool gIsMouseDraw;

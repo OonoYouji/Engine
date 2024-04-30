@@ -24,6 +24,9 @@ VertexShaderOutput main(VertexShaderInput input) {
 
 	///- 輝度から頂点のY座標を加算
 	float4 clr = gTexture.SampleLevel(gSampler, input.texcoord, 0);
+	uint2 dimension;
+	gOutputTexture.GetDimensions(dimension.x, dimension.y);
+
 	float4 worldPos = mul(input.position, gTransformationMatrix.World);
 
 	if (gMousePoint.isActive) {
@@ -32,15 +35,18 @@ VertexShaderOutput main(VertexShaderInput input) {
 		len = length(worldPos.xyz - mousePos);
 		if (len < gMousePoint.brushSize) {
 			if (gMousePoint.isUp == true) {
-				clr.r += 1.0f;
+				gOutputTexture[input.texcoord * dimension].r += 1.0f;
 			}
 
 			if (gMousePoint.isDown == true) {
-				clr.r -= 1.0f;
+				//gOutputTexture[input.texcoord].r -= 1.0f;
+				gOutputTexture[input.texcoord * dimension].r -= 1.0f;
+				//clr.r -= 1.0f;
 			}
 		}
 	}
 
+	clr += gOutputTexture[input.texcoord * dimension];
 	float4 pos = input.position + float4(0.0f, clr.r, 0.0f, 0.0f);
 	//gOutputTexture[output.texcoord] = clr;
 	output.position = mul(pos, gTransformationMatrix.WVP);

@@ -486,8 +486,8 @@ void DirectXCommon::InitializeRootSignature() {
 	descriptorRange_[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 
-	descriptorRange_[2].BaseShaderRegister = 3; //- 0から始まる
-	descriptorRange_[2].NumDescriptors = 1;	//- textureの数
+	descriptorRange_[2].BaseShaderRegister = 3;
+	descriptorRange_[2].NumDescriptors = 1;
 	descriptorRange_[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
 	descriptorRange_[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
@@ -510,14 +510,14 @@ void DirectXCommon::InitializeRootSignature() {
 	rootParameters_[2].DescriptorTable.NumDescriptorRanges = 1;
 
 	///- texture
-	rootParameters_[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		//- DescriptorTableを使う
-	rootParameters_[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;					//- VertexShaderで使う
+	rootParameters_[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//- DescriptorTableを使う
+	rootParameters_[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;			//- VertexShaderで使う
 	rootParameters_[3].DescriptorTable.pDescriptorRanges = &descriptorRange_[1];
 	rootParameters_[3].DescriptorTable.NumDescriptorRanges = 1;	//- Tableで利用する数
 
 	///- texture
-	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//- DescriptorTableを使う
-	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;			//- PixelShaderで使う
+	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 	rootParameters_[4].DescriptorTable.pDescriptorRanges = &descriptorRange_[2];
 	rootParameters_[4].DescriptorTable.NumDescriptorRanges = 1;	//- Tableで利用する数
 

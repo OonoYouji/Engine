@@ -14,7 +14,6 @@ struct PixelShaderOutput {
 
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
-RWTexture2D<float4> gOutputTexture : register(u3);
 
 ///- 定数バッファ
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -32,14 +31,10 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
 		len = length(input.worldPos - mousePos);
 		if (len < gMousePoint.brushSize) {
-
-			textureColor = gMaterial.color * clamp(1 - (len / gMousePoint.brushSize), 0.0f, 1.0f);
-
+			//textureColor = gMaterial.color * clamp(1 - (len / gMousePoint.brushSize), 0.0f, 1.0f);
 			if (gMousePoint.isUp) {
-				gOutputTexture[input.texcoord] = float4(1.0f, 0.0f, 0.0f, 0.0f);
-
+				textureColor = float4(1.0f, 0.0f, 0.0f, 0.0f);
 			}
-			
 		}
 	}
 	
@@ -48,12 +43,13 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	if (gMaterial.enableLighting != 0) {
 		float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
 		float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-		output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+		output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity * (1.0f * gMousePoint.isActive);
 	} else {
 		///- Lightingしない場合
 
-		output.color = gMaterial.color * textureColor;
+		output.color = gMaterial.color * textureColor * (1.0f * gMousePoint.isActive);
 	}
+
 
 	return output;
 }
