@@ -516,8 +516,8 @@ void DirectXCommon::InitializeRootSignature() {
 	rootParameters_[3].DescriptorTable.NumDescriptorRanges = 1;	//- Tableで利用する数
 
 	///- texture
-	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;		//- DescriptorTableを使う
-	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;					//- VertexShaderで使う
+	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//- DescriptorTableを使う
+	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;			//- PixelShaderで使う
 	rootParameters_[4].DescriptorTable.pDescriptorRanges = &descriptorRange_[2];
 	rootParameters_[4].DescriptorTable.NumDescriptorRanges = 1;	//- Tableで利用する数
 

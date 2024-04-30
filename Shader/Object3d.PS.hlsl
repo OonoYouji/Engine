@@ -14,6 +14,7 @@ struct PixelShaderOutput {
 
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
+RWTexture2D<float4> gOutputTexture : register(u3);
 
 ///- 定数バッファ
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -31,7 +32,14 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
 		len = length(input.worldPos - mousePos);
 		if (len < gMousePoint.brushSize) {
+
 			textureColor = gMaterial.color * clamp(1 - (len / gMousePoint.brushSize), 0.0f, 1.0f);
+
+			if (gMousePoint.isUp) {
+				gOutputTexture[input.texcoord] = float4(1.0f, 0.0f, 0.0f, 0.0f);
+
+			}
+			
 		}
 	}
 	

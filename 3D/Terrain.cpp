@@ -347,9 +347,9 @@ void Terrain::Draw() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "tileMap"); ///- terrain
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");	 ///- heightMap
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(4, "dragon");  ///- operation
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "yama"); ///- terrain
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "yama");	 ///- heightMap
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(4, "yama");  ///- operation
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 

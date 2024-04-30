@@ -15,7 +15,6 @@ struct VertexShaderInput {
 
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s1);
-RWTexture2D<float4> gOutputTexture : register(u3);
 
 ConstantBuffer<TransformationMatrix> gTransformationMatrix : register(b0);
 
