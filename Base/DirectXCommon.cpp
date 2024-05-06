@@ -308,16 +308,6 @@ void DirectXCommon::InitializeSwapChain() {
 void DirectXCommon::InitialiezRenderTarget() {
 	HRESULT result = S_FALSE;
 
-
-	/// ---------------------------
-	/// ↓ DescriptorHeapを生成
-	/// ---------------------------
-	/*rtvDescriptorHeap_ = nullptr;
-	rtvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	assert(rtvDescriptorHeap_);*/
-
-
-
 	/// ---------------------------
 	/// ↓ SwapChainResourceを生成
 	/// ---------------------------
@@ -331,7 +321,6 @@ void DirectXCommon::InitialiezRenderTarget() {
 		result = swapChain_->GetBuffer(i, IID_PPV_ARGS(&swapChainResource_[i]));
 		assert(SUCCEEDED(result));
 	}
-
 
 
 	/// ---------------------------
@@ -628,16 +617,6 @@ void DirectXCommon::InitializeBlendState() {
 
 	///- すべての色要素を書き込む
 	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-	/*blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc_.RenderTarget[0].BlendEnable = TRUE;
-	blendDesc_.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc_.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	blendDesc_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;*/
-	// SrcColor * SrcAlpha + DestColor * (1.0f - SrcAlpha)
 
 }
 
@@ -971,8 +950,6 @@ ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTO
 void DirectXCommon::InitializeDepthStencil() {
 
 	depthStencilResource_ = CreateDepthStencilTextureResource(kWindowSize.x, kWindowSize.y);
-
-	//dsvDescriptorHeap_ = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	///- Heap上にDSVを構築する
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};

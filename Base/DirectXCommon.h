@@ -138,6 +138,8 @@ private:
 	WorldTransform worldTransform_;
 	Vector4 color_;
 
+	
+
 private:
 
 	/// -----------------------------------

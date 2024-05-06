@@ -33,8 +33,8 @@ void Terrain::Init() {
 	/// ------------------------------------------------- 
 
 
-	rowSubdivision_ = 1000;
-	colSubdivision_ = 1000;
+	rowSubdivision_ = 128;
+	colSubdivision_ = 128;
 	/// -----------------------
 	/// ↓ 頂点インデックス
 	/// -----------------------
@@ -133,6 +133,7 @@ void Terrain::Update() {
 #ifdef _DEBUG
 	ImGui::Begin("Terrain");
 
+
 	/// ------------------------------------------------
 	///- 地形のトランスフォーム
 	/// ------------------------------------------------
@@ -220,86 +221,86 @@ void Terrain::Update() {
 	/// ------------------------------------------------
 
 
-	if(ImGui::TreeNodeEx("Inmort/Export")) {
+	//if(ImGui::TreeNodeEx("Inmort/Export")) {
 
-		ImGui::SliderFloat("verticalIntensity", &verticalIntensity_, 0.0f, 1.0f);
+	//	ImGui::SliderFloat("verticalIntensity", &verticalIntensity_, 0.0f, 1.0f);
 
-		///- 読み込んだ画像から地形を再生成
-		if(ImGui::Button("Regenarate Terrain")) {
+	//	///- 読み込んだ画像から地形を再生成
+	//	if(ImGui::Button("Regenarate Terrain")) {
 
-			///- 画像情報をコピー
-			image_ = InputImage::GetInstance()->GetInputImage();
+	//		///- 画像情報をコピー
+	//		image_ = InputImage::GetInstance()->GetInputImage();
 
-			if(!image_.empty()) {
+	//		if(!image_.empty()) {
 
-				rowSubdivision_ = image_.rows;
-				colSubdivision_ = image_.cols;
+	//			rowSubdivision_ = image_.rows;
+	//			colSubdivision_ = image_.cols;
 
-				///- 頂点インデックスデータの再計算
-				IndexDataCulc(rowSubdivision_, colSubdivision_);
-				VertexDataCulc(rowSubdivision_, colSubdivision_);
+	//			///- 頂点インデックスデータの再計算
+	//			IndexDataCulc(rowSubdivision_, colSubdivision_);
+	//			VertexDataCulc(rowSubdivision_, colSubdivision_);
 
-				///- 計算したデータの大きさにresourceを作り直す
-				CreateIndexResource(indexData_.size());
-				CreateVertexResource(flattenedVertexData_.size());
+	//			///- 計算したデータの大きさにresourceを作り直す
+	//			CreateIndexResource(indexData_.size());
+	//			CreateVertexResource(flattenedVertexData_.size());
 
-				///- 高さの調整
+	//			///- 高さの調整
 
-				cv::Mat grayImage;
-				cv::cvtColor(image_, grayImage, cv::COLOR_BGR2GRAY);
+	//			cv::Mat grayImage;
+	//			cv::cvtColor(image_, grayImage, cv::COLOR_BGR2GRAY);
 
-				cv::imshow("grayImage", grayImage);
-
-
-				cv::normalize(grayImage, grayImage, 0, 255, cv::NORM_MINMAX, CV_8U);
+	//			cv::imshow("grayImage", grayImage);
 
 
-				cv::flip(grayImage, grayImage, 0);
-				for(uint32_t row = 0; row < static_cast<uint32_t>(rowSubdivision_); row++) {
-					for(uint32_t col = 0; col < static_cast<uint32_t>(colSubdivision_); col++) {
-
-						vertexData_[row][col].position.y =
-							(grayImage.at<uint8_t>(row, col) - (255.0f / 2.0f)) * verticalIntensity_;
-
-					}
-				}
-
-				TransferFlattenedVertexData();
-				///- ここで使用した高低差の力を保存しておく; 出力の時に使う
-				saveVerticalIntensity_ = verticalIntensity_;
-			}
-		}
-
-		ImGui::Spacing();
-		ImGui::Spacing();
-
-		///- 出力用画像にセーブする
-		if(ImGui::Button("SaveImage")) {
-
-			TransferVertexData();
-
-			saveImage_ = image_;
+	//			cv::normalize(grayImage, grayImage, 0, 255, cv::NORM_MINMAX, CV_8U);
 
 
-			for(uint32_t row = 0; row < static_cast<uint32_t>(vertexData_.size() - 1); row++) {
-				for(uint32_t col = 0; col < static_cast<uint32_t>(vertexData_[0].size() - 1); col++) {
+	//			cv::flip(grayImage, grayImage, 0);
+	//			for(uint32_t row = 0; row < static_cast<uint32_t>(rowSubdivision_); row++) {
+	//				for(uint32_t col = 0; col < static_cast<uint32_t>(colSubdivision_); col++) {
 
-					saveImage_.at<uint8_t>(row, col) =
-						static_cast<uint8_t>((vertexData_[row][col].position.y / saveVerticalIntensity_) + (255.0f / 2.0f));
+	//					vertexData_[row][col].position.y =
+	//						(grayImage.at<uint8_t>(row, col) - (255.0f / 2.0f)) * verticalIntensity_;
 
-				}
-			}
+	//				}
+	//			}
 
-			///- 上下反転しているので元に戻す
-			//cv::flip(saveImage_, saveImage_, 0);
+	//			TransferFlattenedVertexData();
+	//			///- ここで使用した高低差の力を保存しておく; 出力の時に使う
+	//			saveVerticalIntensity_ = verticalIntensity_;
+	//		}
+	//	}
 
-			cv::imshow("saveImage", saveImage_);
-			InputImage::GetInstance()->SetOutputImage(saveImage_);
+	//	ImGui::Spacing();
+	//	ImGui::Spacing();
 
-		}
+	//	///- 出力用画像にセーブする
+	//	if(ImGui::Button("SaveImage")) {
 
-		ImGui::TreePop();
-	}
+	//		TransferVertexData();
+
+	//		saveImage_ = image_;
+
+
+	//		for(uint32_t row = 0; row < static_cast<uint32_t>(vertexData_.size() - 1); row++) {
+	//			for(uint32_t col = 0; col < static_cast<uint32_t>(vertexData_[0].size() - 1); col++) {
+
+	//				saveImage_.at<uint8_t>(row, col) =
+	//					static_cast<uint8_t>((vertexData_[row][col].position.y / saveVerticalIntensity_) + (255.0f / 2.0f));
+
+	//			}
+	//		}
+
+	//		///- 上下反転しているので元に戻す
+	//		//cv::flip(saveImage_, saveImage_, 0);
+
+	//		cv::imshow("saveImage", saveImage_);
+	//		InputImage::GetInstance()->SetOutputImage(saveImage_);
+
+	//	}
+
+	//	ImGui::TreePop();
+	//}
 
 
 	ImGui::End();
@@ -348,7 +349,7 @@ void Terrain::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "tileMap"); ///- terrain
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "yama");	 ///- heightMap
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "GrayTexture");	 ///- heightMap
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "GrayTexture");  ///- operation
 	Light::GetInstance()->SetConstantBuffer(commandList);
 

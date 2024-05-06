@@ -43,7 +43,7 @@ void PerlinNoise::Update() {
 
 
 
-void PerlinNoise::SetSeed([[maybe_unused]] uint32_t seed) {
+void PerlinNoise::SetSeed(uint32_t seed) {
 
 	///- 0~255までの値を格納
 	for(size_t i = 0; i < 256; i++) {
@@ -113,11 +113,18 @@ float PerlinNoise::Noise(const Vec3f& vector) {
 	const int BA = p_[B] + z;
 	const int BB = p_[B + 1] + z;
 
-	return Lerp(w, Lerp(v, Lerp(u, Grad(p_[AA], V.x, V.y, V.z), Grad(p_[BA], V.x - 1, V.y, V.z)),
-						Lerp(u, Grad(p_[AB], V.x, V.y - 1, V.z), Grad(p_[BB], V.x - 1, V.y - 1, V.z))),
-				Lerp(v, Lerp(u, Grad(p_[AA + 1], V.x, V.y, V.z - 1), Grad(p_[BA + 1], V.x - 1, V.y, V.z - 1)),
-					 Lerp(u, Grad(p_[AB + 1], V.x, V.y - 1, V.z - 1), Grad(p_[BB + 1], V.x - 1, V.y - 1, V.z - 1))));
+	float lerpAA = Lerp(u, Grad(p_[AA], V.x, V.y, V.z), Grad(p_[BA], V.x - 1, V.y, V.z));
+	float lerpAB = Lerp(u, Grad(p_[AB], V.x, V.y - 1, V.z), Grad(p_[BB], V.x - 1, V.y - 1, V.z));
+	float lerpA = Lerp(v, lerpAA, lerpAB);
+
+	float lerpBA = Lerp(u, Grad(p_[AA + 1], V.x, V.y, V.z - 1), Grad(p_[BA + 1], V.x - 1, V.y, V.z - 1));
+	float lerpBB = Lerp(u, Grad(p_[AB + 1], V.x, V.y - 1, V.z - 1), Grad(p_[BB + 1], V.x - 1, V.y - 1, V.z - 1));
+	float lerpB = Lerp(v, lerpBA, lerpBB);
+
+	return Lerp(w, lerpA, lerpB);
 }
+
+
 
 float PerlinNoise::Noise(const Vec2f& vector) {
 	Vec2f V = vector;
@@ -137,16 +144,25 @@ float PerlinNoise::Noise(const Vec2f& vector) {
 	int BA = p_[B];
 	int BB = p_[B + 1];
 
-	return Lerp(v, Lerp(u, Grad(p_[AA], V.x, V.y), Grad(p_[BA], V.x - 1, V.y)), Lerp(u, Grad(p_[AB], V.x, V.y - 1), Grad(p_[BB], V.x - 1, V.y - 1)));
+	float lerpA = Lerp(u, Grad(p_[AA], V.x, V.y), Grad(p_[BA], V.x - 1, V.y));
+	float lerpB = Lerp(u, Grad(p_[AB], V.x, V.y - 1), Grad(p_[BB], V.x - 1, V.y - 1));
+
+	return Lerp(v, lerpA, lerpB);
 }
+
+
 
 float PerlinNoise::GetNoise(const Vec3f& v) {
 	return Noise(v) * 0.5f + 0.5f;
 }
 
+
+
 float PerlinNoise::GetNoise(const Vec2f& v) {
 	return Noise(v) * 0.5f + 0.5f;
 }
+
+
 
 void PerlinNoise::ResetSheed(uint32_t seed) {
 	SetSeed(seed);
