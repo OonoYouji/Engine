@@ -36,7 +36,7 @@ void Camera::Update() {
 	/// -------------------------------------------
 	/// ↓ 拡縮・回転・平行移動
 	/// -------------------------------------------
-	if(ImGui::TreeNodeEx("Transform", true)) {
+	if(ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 		ImGui::DragFloat3("scale", &scale_.x, 0.25f);
 		ImGui::DragFloat3("rotate", &rotate_.x, 1.0f / 64.0f);
@@ -51,7 +51,7 @@ void Camera::Update() {
 	/// -------------------------------------------
 	/// ↓ 各種パラメータ
 	/// -------------------------------------------
-	if(ImGui::TreeNodeEx("Parameters", true)) {
+	if(ImGui::TreeNodeEx("Parameters", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 		///- 視野角
 		ImGui::DragFloat("FovY", &fovY_, 0.025f, 0.1f, 3.0f);

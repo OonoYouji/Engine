@@ -18,6 +18,9 @@ void Scene_Game::Init() {
 	sphere_ = std::make_unique<Sphere>();
 	sphere_->Init();
 
+	model_ = std::make_unique<Model>();
+	model_->Initialize("./Resources/Objects/Axis", "axis.obj");
+
 }
 
 void Scene_Game::Update() {
@@ -29,15 +32,15 @@ void Scene_Game::Update() {
 void Scene_Game::Draw() {
 
 	//ImGui::ShowDemoWindow();
-	//Engine::TestDraw();
 
 
-	sphere_->Draw();
+	//sphere_->Draw();
+	model_->Draw();
 
 }
 
 void Scene_Game::Finalize() {
 
 	sphere_.reset();
-
+	model_.reset();
 }

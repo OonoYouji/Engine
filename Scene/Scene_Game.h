@@ -12,6 +12,7 @@
 #include "TerrainOperator.h"
 #include "PerlinNoise.h"
 #include "InputImage.h"
+#include <Model.h>
 
 
 class Scene_Game final
@@ -29,5 +30,7 @@ public:
 private:
 
 	std::unique_ptr<Sphere> sphere_;
+
+	std::unique_ptr<Model> model_;
 
 };

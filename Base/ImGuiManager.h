@@ -3,10 +3,11 @@
 #include <d3d12.h>
 #include <wrl/client.h>
 
-
 #include "Externals/imgui/imgui.h"
 #include "Externals/imgui/imgui_impl_dx12.h"
 #include "Externals/imgui/imgui_impl_win32.h"
+
+#include <cmath>
 
 
 class WinApp;
@@ -32,5 +33,10 @@ public:
 
 	void BeginFrame();
 	void EndFrame();
+
+private:
+
+	void StyleSetting();
+	ImVec4 ColorToVec4(uint32_t color);
 
 };

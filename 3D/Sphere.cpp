@@ -242,7 +242,7 @@ void Sphere::DebugDraw() {
 #ifdef _DEBUG
 	ImGui::Begin("Sphere");
 
-	if(ImGui::TreeNodeEx("Transform", true)) {
+	if(ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 		ImGui::DragFloat3("Scale", &worldTransform_.scale.x, 0.025f);
 		ImGui::DragFloat3("Rotation", &worldTransform_.rotate.x, 0.025f);
@@ -253,7 +253,7 @@ void Sphere::DebugDraw() {
 
 	ImGui::Separator();
 
-	if(ImGui::TreeNodeEx("Parameter", true)) {
+	if(ImGui::TreeNodeEx("Parameter", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 		static bool enableLighting = static_cast<bool>(materialData_->enableLighting);
 		ImGui::Checkbox("EnableLighting", &enableLighting);

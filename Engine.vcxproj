@@ -157,6 +157,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="3D\Brush.cpp" />
     <ClCompile Include="3D\Camera.cpp" />
     <ClCompile Include="3D\DirectionalLight.cpp" />
+    <ClCompile Include="3D\Model.cpp" />
     <ClCompile Include="3D\Sphere.cpp" />
     <ClCompile Include="3D\Terrain.cpp" />
     <ClCompile Include="3D\TerrainOperator.cpp" />
@@ -193,6 +194,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="2D\Sprite.h" />
     <ClInclude Include="3D\Brush.h" />
     <ClInclude Include="3D\DirectionalLight.h" />
+    <ClInclude Include="3D\Model.h" />
     <ClInclude Include="3D\Sphere.h" />
     <ClInclude Include="3D\Terrain.h" />
     <ClInclude Include="3D\TerrainOperator.h" />
