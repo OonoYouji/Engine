@@ -100,7 +100,7 @@ void Terrain::Init() {
 
 
 	worldTransform_.Init();
-	worldTransform_.scale = { 0.1f,0.1f,0.1f };
+	worldTransform_.scale = { 0.5f,12.0f,0.5f };
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 
@@ -195,7 +195,7 @@ void Terrain::Update() {
 
 				vertexData_[row][col].position.y =
 					noise_->GetNoise(
-						Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(rowSubdivision_) * 0.5f)
+						Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(rowSubdivision_) * 0.2f)
 					) * (noisePower_);
 
 			}
@@ -348,8 +348,8 @@ void Terrain::Draw() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "tileMap"); ///- terrain
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "GrayTexture");	 ///- heightMap
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "dragon");	 ///- terrain
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");	 ///- heightMap
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "GrayTexture");  ///- operation
 	Light::GetInstance()->SetConstantBuffer(commandList);
 

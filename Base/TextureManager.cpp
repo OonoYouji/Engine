@@ -23,6 +23,7 @@ TextureManager* TextureManager::GetInstance() {
 void TextureManager::Initialize() {
 
 	const std::string baseFilePath = "./Resources/Images/";
+
 	Load("uvChecker", baseFilePath + "uvChecker.png");
 	Load("monsterBall", baseFilePath + "monsterBall.png");
 	Load("dragon", baseFilePath + "dragon.png");
@@ -30,17 +31,9 @@ void TextureManager::Initialize() {
 	Load("yama", baseFilePath + "yama.png");
 	Load("goku", baseFilePath + "goku.png");
 	Load("clear1", baseFilePath + "clear1.png");
-	Load("kiken", baseFilePath + "kiken.png");
 	Load("tileMap", baseFilePath + "tileMap.png");
 	Load("GrayTexture", baseFilePath + "GrayTexture.png");
-	//Load("white1x1", baseFilePath + "white1x1.png");
 
-
-	/*Load("aoi", baseFilePath + "aoi.png");
-	Load("face", baseFilePath + "face.jpg");
-	Load("sumple", baseFilePath + "sumple.png");
-	Load("hukiti", baseFilePath + "hukiti.jpg");
-	Load("tubasa", baseFilePath + "tubasa.png");*/
 
 }
 
