@@ -14,7 +14,7 @@ void Camera::Init() {
 	scale_ = { 1.0f,1.0f,1.0f };
 	//rotate_ = { 0.26f,0.0f,0.0f };
 	rotate_ = { 0.5f, 0.0f, 0.0f };
-	worldPos_ = { 0.0f,50.0f, -100.0f };
+	worldPos_ = { 0.0f,3.25f, -5.5f };
 
 	fovY_ = 0.45f;
 	farZ_ = 1000.0f;

@@ -28,6 +28,8 @@ public:
 	void Initialize(WinApp* winApp, DirectXCommon* dxCommon);
 	void Finalize();
 
+	void RenderMultiViewport();
+
 	void BeginFrame();
 	void EndFrame();
 

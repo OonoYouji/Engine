@@ -11,6 +11,7 @@
 #include <Engine.h>
 #include <Environment.h>
 #include "ImGuiManager.h"
+#include <imgui.h>
 
 #include <Vector4.h>
 
@@ -327,7 +328,8 @@ void DirectXCommon::InitialiezRenderTarget() {
 	/// ↓ RTVの設定
 	/// ---------------------------
 
-	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	//rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
 	///- ディスクリプタの先頭を取得
@@ -469,18 +471,6 @@ void DirectXCommon::InitializeRootSignature() {
 	descriptorRange_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 
-	descriptorRange_[1].BaseShaderRegister = 0; //- 0から始まる
-	descriptorRange_[1].NumDescriptors = 1; //- textureの数
-	descriptorRange_[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
-	descriptorRange_[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-
-	descriptorRange_[2].BaseShaderRegister = 3;
-	descriptorRange_[2].NumDescriptors = 1;
-	descriptorRange_[2].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_UAV;
-	descriptorRange_[2].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-
 	///- RootParameter作成; PixelShaderのMaterialとVertexShaderのTransform
 	///- PixelShader
 	rootParameters_[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		//- CBVを使う
@@ -496,29 +486,12 @@ void DirectXCommon::InitializeRootSignature() {
 	rootParameters_[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameters_[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters_[2].DescriptorTable.pDescriptorRanges = &descriptorRange_[0];
-	rootParameters_[2].DescriptorTable.NumDescriptorRanges = 1;
-
-	///- texture
-	rootParameters_[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;	//- DescriptorTableを使う
-	rootParameters_[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;			//- VertexShaderで使う
-	rootParameters_[3].DescriptorTable.pDescriptorRanges = &descriptorRange_[1];
-	rootParameters_[3].DescriptorTable.NumDescriptorRanges = 1;	//- Tableで利用する数
-
-	///- texture
-	rootParameters_[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters_[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-	rootParameters_[4].DescriptorTable.pDescriptorRanges = &descriptorRange_[2];
-	rootParameters_[4].DescriptorTable.NumDescriptorRanges = 1;	//- Tableで利用する数
+	rootParameters_[2].DescriptorTable.NumDescriptorRanges = descriptorRange_[0].NumDescriptors;
 
 	///- light
-	rootParameters_[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters_[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters_[5].Descriptor.ShaderRegister = 1;
-
-	///- mouse
-	rootParameters_[6].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters_[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-	rootParameters_[6].Descriptor.ShaderRegister = 3;
+	rootParameters_[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters_[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters_[3].Descriptor.ShaderRegister = 1;
 
 
 	/// ----------------------------------------------
@@ -533,16 +506,6 @@ void DirectXCommon::InitializeRootSignature() {
 	staticSamplers_[0].MaxLOD = D3D12_FLOAT32_MAX;	//- ありったけのMipMapを使う
 	staticSamplers_[0].ShaderRegister = 0;			//- レジスタ番号0を使う
 	staticSamplers_[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//- PixelShaderで使う
-
-	staticSamplers_[1].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;		//- バイリニアフィルタ
-	staticSamplers_[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;	//- 0~1の範囲外をリピート
-	staticSamplers_[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers_[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers_[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;	//- 比較しない
-	staticSamplers_[1].MaxLOD = D3D12_FLOAT32_MAX;	//- ありったけのMipMapを使う
-	staticSamplers_[1].ShaderRegister = 1;			//- レジスタ番号0を使う
-	staticSamplers_[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	//- VertexShaderで使う
-
 
 
 	desc.pParameters = rootParameters_;					//- ルートパラメータ配列へのポインタ
@@ -593,14 +556,8 @@ void DirectXCommon::InitializeInputLayout() {
 
 	inputElementDescs_[2].SemanticName = "NORMAL";
 	inputElementDescs_[2].SemanticIndex = 0;
-	inputElementDescs_[2].Format = DXGI_FORMAT_R32G32_FLOAT;
+	inputElementDescs_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescs_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs_[3].SemanticName = "WORLDPOS";
-	inputElementDescs_[3].SemanticIndex = 0;
-	inputElementDescs_[3].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs_[3].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
 
 
 	inputLayoutDesc_.pInputElementDescs = inputElementDescs_;
@@ -691,7 +648,7 @@ void DirectXCommon::InitializePSO() {
 
 	///- 書き込むRTVの情報
 	desc.NumRenderTargets = 1;
-	desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	///- 利用するトロポジ(形状)のタイプ; 三角形
 	desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	///- 画面に色を打ち込みかの設定
@@ -1118,6 +1075,8 @@ void DirectXCommon::PostDraw() {
 	///- コマンドをキックする
 	ID3D12CommandList* commandLists[] = { commandList };
 	command_->GetQueue()->ExecuteCommandLists(1, commandLists);
+
+	ImGuiManager::GetInstance()->RenderMultiViewport();
 
 	///- GPUとOSに画面の交換を行うように通知する
 	swapChain_->Present(1, 0);

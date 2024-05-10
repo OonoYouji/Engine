@@ -21,6 +21,12 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+
+	ImGuiIO& imGuiIO = ImGui::GetIO();
+	imGuiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	imGuiIO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+
 	ImGui::StyleColorsDark();
 	ImGui_ImplWin32_Init(winApp->GetHWND());
 	ImGui_ImplDX12_Init(
@@ -31,6 +37,8 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 		srvHeap->GetCPUDescriptorHandleForHeapStart(),
 		srvHeap->GetGPUDescriptorHandleForHeapStart()
 	);
+
+	
 }
 
 void ImGuiManager::Finalize() {
@@ -43,7 +51,20 @@ void ImGuiManager::Finalize() {
 
 }
 
+
+void ImGuiManager::RenderMultiViewport() {
+
+	// Update and Render additional Platform Windows
+	if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+
+}
+
 void ImGuiManager::BeginFrame() {
+
+
 
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -56,6 +77,11 @@ void ImGuiManager::BeginFrame() {
 }
 
 void ImGuiManager::EndFrame() {
+
+
+
+	
+
 
 	ImGui::Render();
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), DxCommand::GetInstance()->GetList());

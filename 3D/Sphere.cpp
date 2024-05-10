@@ -6,13 +6,14 @@
 #include "ImGuiManager.h"
 #include "Engine.h"
 #include "DxCommand.h"
+#include "DirectionalLight.h"
 
 using namespace std::numbers;
 
 
 Sphere::Sphere() {}
 Sphere::~Sphere() {
-	wvpResource_.Reset();
+	transformMatrixResource_.Reset();
 	materialResource_.Reset();
 	vertexResource_.Reset();
 }
@@ -97,8 +98,15 @@ void Sphere::Init() {
 				1.0f - float(latIndex + 1) / float(subdivision_)
 			};
 
+
 		}
 	}
+
+
+	for(uint32_t i = 0; i < vertexData_.size(); i++) {
+		vertexData_[i].normal = Vec3f::Normalize(Vec3f::Convert4To3(vertexData_[i].position));
+	}
+
 
 
 	/// -----------------------------------------------
@@ -166,9 +174,10 @@ void Sphere::Init() {
 	/// -----------------------------------------------
 
 	///- マテリアルリソースの生成; 情報の書き込み
-	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector4)));
+	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	*materialData_ = { 1.0f,1.0f,1.0f,1.0f };
+	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
+	materialData_->enableLighting = true;
 
 
 
@@ -177,9 +186,10 @@ void Sphere::Init() {
 	/// -----------------------------------------------
 
 	///- 行列リソースの生成; 書き込み
-	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(Matrix4x4)));
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
-	*wvpData_ = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
+	transformMatrixResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
+	transformMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformMatrixData_));
+	transformMatrixData_->World = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
+	transformMatrixData_->WVP = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
 
 	///- 
@@ -207,21 +217,54 @@ void Sphere::Draw() {
 
 	///- 行列情報
 	worldTransform_.MakeWorldMatrix();
-	*wvpData_ = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+	transformMatrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+	transformMatrixData_->World = worldTransform_.worldMatrix;
 	///- 色情報
-	*materialData_ = color_;
+	materialData_->color = color_;
 
 	///- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///- マテリアルのCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	///- wvp用のCBufferの場所を設定
-	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, transformMatrixResource_->GetGPUVirtualAddress());
 	///- DescriptorTableを設定する
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
+	///- Light
+	Light::GetInstance()->SetConstantBuffer(commandList);
 
 	///- 描画 (DrawCall)
 	commandList->DrawIndexedInstanced(UINT(indexData_.size()), 1, 0, 0, 0);
 
+}
+
+void Sphere::DebugDraw() {
+#ifdef _DEBUG
+	ImGui::Begin("Sphere");
+
+	if(ImGui::TreeNodeEx("Transform", true)) {
+
+		ImGui::DragFloat3("Scale", &worldTransform_.scale.x, 0.025f);
+		ImGui::DragFloat3("Rotation", &worldTransform_.rotate.x, 0.025f);
+		ImGui::DragFloat3("Translation", &worldTransform_.translate.x, 0.25f);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+
+	if(ImGui::TreeNodeEx("Parameter", true)) {
+
+		static bool enableLighting = static_cast<bool>(materialData_->enableLighting);
+		ImGui::Checkbox("EnableLighting", &enableLighting);
+		if(ImGui::IsItemEdited()) {
+			materialData_->enableLighting = static_cast<int32_t>(enableLighting);
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
+#endif // _DEBUG
 }
 

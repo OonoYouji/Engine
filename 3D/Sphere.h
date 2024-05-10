@@ -26,12 +26,14 @@ public:
 	void Init();
 	void Draw();
 
+	void DebugDraw();
+
 private:
 
 	ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	ComPtr<ID3D12Resource> materialResource_;
-	ComPtr<ID3D12Resource> wvpResource_;
+	ComPtr<ID3D12Resource> transformMatrixResource_;
 
 	ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBuffer_;
@@ -44,8 +46,8 @@ private:
 	VertexData* pData_ = nullptr;
 	void* pMappedData_ = nullptr;
 
-	Vec4f* materialData_ = nullptr;
-	Matrix4x4* wvpData_ = nullptr;
+	Material* materialData_ = nullptr;
+	TransformMatrix* transformMatrixData_ = nullptr;
 
 	Vec4f color_;
 

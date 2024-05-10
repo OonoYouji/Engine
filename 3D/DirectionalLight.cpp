@@ -18,7 +18,6 @@ Light* Light::GetInstance() {
 void Light::Init() {
 
 	resource_.Attach(DirectXCommon::GetInstance()->CreateBufferResource(sizeof(DirectionalLight)));
-
 	resource_->Map(0, nullptr, reinterpret_cast<void**>(&directinalLight_));
 
 	directinalLight_->color = { 1.0f,1.0f,1.0f,1.0f };
@@ -55,5 +54,5 @@ void Light::Finalize() {
 
 
 void Light::SetConstantBuffer(ID3D12GraphicsCommandList* commandList) {
-	commandList->SetGraphicsRootConstantBufferView(5, resource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(3, resource_->GetGPUVirtualAddress());
 }

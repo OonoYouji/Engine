@@ -99,7 +99,7 @@ private:
 	ComPtr<ID3DBlob> errorBlob_;
 	ComPtr<ID3D12RootSignature> rootSignature_;
 
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[4];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[3];
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 
 	D3D12_BLEND_DESC blendDesc_;
@@ -116,13 +116,13 @@ private:
 	D3D12_RECT scissorRect_;
 
 	///- 三角形の色を変えよう
-	D3D12_ROOT_PARAMETER rootParameters_[7];
+	D3D12_ROOT_PARAMETER rootParameters_[4];
 	//ComPtr<ID3D12Resource> materialResource_;
 
 	///- テクスチャを貼ろう
-	D3D12_DESCRIPTOR_RANGE descriptorRange_[3];
+	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
 	//D3D12_DESCRIPTOR_RANGE descriptorRange2_[1];
-	D3D12_STATIC_SAMPLER_DESC staticSamplers_[2];
+	D3D12_STATIC_SAMPLER_DESC staticSamplers_[1];
 
 	///- 前後関係
 	ComPtr<ID3D12Resource> depthStencilResource_;

@@ -19,6 +19,19 @@ public:
 
 public:
 
+
+	/// <summary>
+	/// 正規化
+	/// </summary>
+	static Vector4 Normalize(const Vector4& v);
+
+	/// <summary>
+	/// ベクトルの長さ
+	/// </summary>
+	static float Length(const Vector4& v);
+
+public:
+
 	/*-----------------------------------
 		演算子オーバーロード
 	-----------------------------------*/

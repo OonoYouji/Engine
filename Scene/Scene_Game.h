@@ -28,12 +28,6 @@ public:
 
 private:
 
-
-	std::unique_ptr<Terrain> terrain_;
-	std::unique_ptr<Brush> brush_;
-
-	std::unique_ptr<TerrainOperator> terrainOperator_;
-
-	InputImage* inputImage_ = nullptr;
+	std::unique_ptr<Sphere> sphere_;
 
 };

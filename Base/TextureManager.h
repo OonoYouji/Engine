@@ -28,9 +28,9 @@ public:
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
 
-		ComPtr<ID3D12Resource> uavResource;
+		/*ComPtr<ID3D12Resource> uavResource;
 		D3D12_CPU_DESCRIPTOR_HANDLE uavHandleCPU;
-		D3D12_GPU_DESCRIPTOR_HANDLE uavHandleGPU;
+		D3D12_GPU_DESCRIPTOR_HANDLE uavHandleGPU;*/
 
 	};
 
