@@ -11,11 +11,15 @@
 
 using namespace Microsoft::WRL;
 
-
 /// <summary>
 /// 3Dモデル
 /// </summary>
 class Model {
+private:
+	struct MaterialData {
+		std::string textureFilePath;
+		std::string textureName;
+	};
 public:
 
 
@@ -26,10 +30,13 @@ public:
 
 	void Draw();
 
+	void DebugDraw(const std::string& windowName);
+
 private:
 
 	
 	std::vector<VertexData> vertices_;
+	MaterialData material_;
 	WorldTransform worldTransform_;
 
 	///- Vertex
@@ -49,5 +56,6 @@ public:
 
 	Model LoadObjFile(const std::string& directoryPath, const std::string& fileName);
 
+	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& fileName);
 
 };

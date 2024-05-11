@@ -19,7 +19,7 @@ void Scene_Game::Init() {
 	sphere_->Init();
 
 	model_ = std::make_unique<Model>();
-	model_->Initialize("./Resources/Objects/Axis", "axis.obj");
+	model_->Initialize("./Resources/Objects/Monkey", "monkey.obj");
 
 }
 
@@ -27,6 +27,7 @@ void Scene_Game::Update() {
 
 	sphere_->DebugDraw();
 
+	model_->DebugDraw("Model");
 }
 
 void Scene_Game::Draw() {

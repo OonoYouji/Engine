@@ -77,6 +77,8 @@ void ImGuiManager::BeginFrame() {
 
 
 
+
+#ifdef _DEBUG
 	ImGui::Begin("main window", NULL, ImGuiWindowFlags_NoResize);
 	ImGui::SetWindowSize(ImVec2(1280.0f, 720.0f));
 	ImGui::End();
@@ -98,6 +100,7 @@ void ImGuiManager::BeginFrame() {
 
 	ImGui::Begin("Tab D", NULL, ImGuiWindowFlags_NoMove);
 	ImGui::End();
+#endif // _DEBUG
 
 
 }

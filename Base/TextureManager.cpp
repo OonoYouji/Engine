@@ -54,6 +54,10 @@ void TextureManager::Finalize() {
 /// <param name="filePath"></param>
 void TextureManager::Load(const std::string& textureName, const std::string& filePath) {
 
+	if(textures_.find(textureName) != textures_.end()) {
+		return;
+	}
+
 	Texture newTexture{};
 	DirectX::ScratchImage mipImages = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
+#include <string>
 
 #include <Vector4.h>
 #include <Vector3.h>
@@ -17,7 +18,13 @@
 
 
 Model::Model() {}
-Model::~Model() {}
+Model::~Model() {
+
+	vertexResource_.Reset();
+	materialResource_.Reset();
+	transformMatrixResource_.Reset();
+
+}
 
 
 
@@ -32,7 +39,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 
 	///- 頂点リソース
-	vertexResource_ = dxCommon->CreateBufferResource(sizeof(VertexData) * vertices_.size());
+	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertices_.size()));
 
 	///- 頂点バッファビュー
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -48,9 +55,9 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 	/// ↓ Material Resourceの生成
 	/// ------------------------------------------
-	
+
 	///- マテリアルリソース
-	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material));
+	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
 
 	///- マッピング
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
@@ -64,7 +71,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 
 	///- トランスフォームマトリクス
-	transformMatrixResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix));
+	transformMatrixResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
 
 	///- マッピング
 	transformMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformMatrixData_));
@@ -104,12 +111,43 @@ void Model::Draw() {
 	///- wvp用のCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(1, transformMatrixResource_->GetGPUVirtualAddress());
 	///- DescriptorTableを設定する
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, material_.textureName);
 	///- Light
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 	commandList->DrawInstanced(UINT(vertices_.size()), 1, 0, 0);
 
+}
+
+
+void Model::DebugDraw(const std::string& windowName) {
+#ifdef _DEBUG
+	ImGui::Begin(windowName.c_str());
+
+	if(ImGui::TreeNodeEx("Transform", true)) {
+
+		ImGui::DragFloat3("Rotate", &worldTransform_.rotate.x, 0.025f);
+		ImGui::DragFloat3("Translate", &worldTransform_.translate.x, 0.25f);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+
+	if(ImGui::TreeNodeEx("Material", true)) {
+
+		ImGui::ColorEdit4("Color", &materialData_->color.x);
+		static bool enableLighting = materialData_->enableLighting;
+		ImGui::Checkbox("EnableLighting", &enableLighting);
+		if(ImGui::IsItemEdited()) {
+			materialData_->enableLighting = enableLighting;
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
+#endif // _DEBUG
 }
 
 
@@ -150,6 +188,8 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 
 			Vec4f position;
 			s >> position.x >> position.y >> position.z;
+			position.x *= -1.0f;
+			position.z *= -1.0f;
 			position.w = 1.0f;
 			positions.push_back(position);
 
@@ -157,17 +197,21 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 
 			Vec2f texcoord;
 			s >> texcoord.x >> texcoord.y;
+			texcoord.y = 1.0f - texcoord.y;
 			texcoords.push_back(texcoord);
 
 		} else if(identifier == "vn") {		///- normal
 
 			Vec3f normal;
 			s >> normal.x >> normal.y >> normal.z;
+			normal.x *= -1.0f;
+			normal.z *= -1.0f;
 			normals.push_back(normal);
 
 		} else if(identifier == "f") {		///- triangle
 
 			///- 面は三角形限定
+			VertexData triangle[3]{};
 			for(int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
 				std::string vertexDefinition;
 				s >> vertexDefinition;
@@ -187,15 +231,59 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 				Vec4f position = positions[elementIndices[0] - 1];
 				Vec2f texcoord = texcoords[elementIndices[1] - 1];
 				Vec3f normal = normals[elementIndices[2] - 1];
-				VertexData vertex = { position, texcoord, normal };
-				model.vertices_.push_back(vertex);
+				triangle[faceVertex] = { position, texcoord, normal };
 
 
 			}
+
+			///- 頂点を逆順で保存する (モデルが右手座標系のため)
+			model.vertices_.push_back(triangle[0]);
+			model.vertices_.push_back(triangle[1]);
+			model.vertices_.push_back(triangle[2]);
+
+		} else if(identifier == "mtllib") {
+
+			std::string materialFilename;
+			s >> materialFilename;
+			model.material_ = LoadMaterialTemplateFile(directoryPath, materialFilename);
+			TextureManager::GetInstance()->Load(model.material_.textureName, model.material_.textureFilePath);
 
 		}
 
 	}
 
 	return model;
+}
+
+
+
+Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& fileName) {
+	MaterialData materialData;
+	std::string line;
+	std::ifstream file(directoryPath + "/" + fileName);
+	assert(file.is_open() && "マテリアルの読み込みに失敗しましたファイルパスを確認してください");
+
+	while(std::getline(file, line)) {
+		std::string identifier;
+		std::istringstream s(line);
+		s >> identifier;
+
+		///- identifierに応じた処理
+		if(identifier == "map_Kd") {
+			std::string textureFileName;
+			s >> textureFileName;
+
+			///- 連結してファイルパスにする
+			materialData.textureFilePath = directoryPath + "/" + textureFileName;
+
+			///- .objを消してテクスチャの名前とする
+			for(uint32_t i = 0; i < 4; i++) {
+				textureFileName.pop_back();
+			}
+			materialData.textureName = textureFileName;
+		}
+
+	}
+
+	return materialData;
 }
