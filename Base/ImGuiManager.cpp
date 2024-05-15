@@ -24,7 +24,7 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
 	ImGuiIO& imGuiIO = ImGui::GetIO();
 	imGuiIO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	imGuiIO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	//imGuiIO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 
 	ImGui::StyleColorsDark();
@@ -54,11 +54,11 @@ void ImGuiManager::Finalize() {
 
 void ImGuiManager::RenderMultiViewport() {
 
-	// Update and Render additional Platform Windows
-	if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-	}
+	//// Update and Render additional Platform Windows
+	//if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+	//	ImGui::UpdatePlatformWindows();
+	//	ImGui::RenderPlatformWindowsDefault();
+	//}
 
 }
 
