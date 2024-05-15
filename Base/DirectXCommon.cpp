@@ -328,8 +328,8 @@ void DirectXCommon::InitialiezRenderTarget() {
 	/// ↓ RTVの設定
 	/// ---------------------------
 
-	//rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	//rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
 	///- ディスクリプタの先頭を取得
@@ -648,7 +648,7 @@ void DirectXCommon::InitializePSO() {
 
 	///- 書き込むRTVの情報
 	desc.NumRenderTargets = 1;
-	desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	///- 利用するトロポジ(形状)のタイプ; 三角形
 	desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	///- 画面に色を打ち込みかの設定

@@ -45,7 +45,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		output.color = gMaterial.color * textureColor;
 	}
 
-	output.color.rgb = LinearToSRGB(output.color.rgb);
+	//output.color.rgb = LinearToSRGB(output.color.rgb);
 
 	return output;
 }
