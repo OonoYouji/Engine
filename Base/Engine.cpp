@@ -193,13 +193,14 @@ void Engine::Initialize(const std::string& title) {
 	sDirectXCommon = DirectXCommon::GetInstance();
 	sDirectXCommon->Initialize(sWinApp);
 
+	///- Inputの初期化
+	sInput = Input::GetInstance();
+	sInput->Initialize(sWinApp);
+
 	///- ImGuiの初期化
 	sImGuiManager = ImGuiManager::GetInstance();
 	sImGuiManager->Initialize(sWinApp, sDirectXCommon);
 
-	///- Inputの初期化
-	sInput = Input::GetInstance();
-	sInput->Init();
 
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();
@@ -222,6 +223,8 @@ void Engine::Finalize() {
 	sImGuiManager->Finalize();
 
 	sTextureManager_->Finalize();
+
+	sInput->Finalize();
 
 	sDirectXCommon->Finalize();
 

@@ -1,7 +1,13 @@
 #pragma once
 
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
+#include <wrl/client.h>
+
 #include "Vector2.h"
 
+using namespace Microsoft::WRL;
+class WinApp;
 
 
 class Input final {
@@ -26,6 +32,9 @@ public:
 
 	void Init();
 
+	void Initialize(WinApp* winApp);
+	void Finalize();
+
 	void Begin();
 
 	/// <summary>
@@ -49,9 +58,18 @@ public:
 
 	void Reset();
 
+
+	BYTE* Key() { return keys_; }
+
 private:
 
 	Mouse mouse_;
+
+	ComPtr<IDirectInput8> directInput_;
+	ComPtr<IDirectInputDevice8> keyboard_;
+
+	BYTE keys_[256];
+	BYTE preKeys_[256];
 
 private:
 
