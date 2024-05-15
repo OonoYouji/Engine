@@ -4,7 +4,7 @@
 
 #include <Environment.h>
 #include "ImGuiManager.h"
-
+#include <Input.h>
 
 Camera::Camera() { Init(); }
 Camera::~Camera() { Finalize(); }
@@ -44,7 +44,7 @@ void Camera::Update() {
 
 		ImGui::TreePop();
 	}
-
+	
 
 	ImGui::Separator();
 

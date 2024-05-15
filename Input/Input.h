@@ -4,72 +4,59 @@
 #include <dinput.h>
 #include <wrl/client.h>
 
+#include <cmath>
+
 #include "Vector2.h"
 
 using namespace Microsoft::WRL;
 class WinApp;
 
+///- Inputクラスのインスタンス
+//#define INPUT Input::GetInstance()
 
+
+/// <summary>
+/// 入力全般
+/// </summary>
 class Input final {
 public:
 
-	struct Mouse {
 
-		///- 左ボタン
-		bool leftButton = false;
-		bool preLeftButton = false;
-
-		///- 右ボタン
-		bool rightButton = false;
-		bool preRightButton = false;
-
-		Vec2f position = { 0.0f,0.0f };
-
-	};
-
-
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
+	/// <returns></returns>
 	static Input* GetInstance();
 
-	void Init();
+
 
 	void Initialize(WinApp* winApp);
 	void Finalize();
 
 	void Begin();
 
-	/// <summary>
-	/// winAppでセットする用; 他での使用禁止
-	/// </summary>
-	void SetMousePos(const Vec2f& position) {
-		mouse_.position = position;
-	}
 
-	void SetMouseLeftButton(bool isPush) {
-		mouse_.leftButton = isPush;
-	}
-
-	void SetMouseRightButton(bool isPush) {
-		mouse_.rightButton = isPush;
-	}
+	/// -------------------------------------
+	/// ↓ キーボードの入力処理
+	/// -------------------------------------
 
 
-	const Vec2f& GetMousePos() const { return mouse_.position; }
-	const Mouse& GetMouse() const { return mouse_; }
+	bool PressKey(uint8_t keyCode) const { return keys_[keyCode]; }
+	bool TriggerKey(uint8_t keyCode) const { return keys_[keyCode] && !preKeys_[keyCode]; }
+	bool ReleaseKey(uint8_t keyCode) const { return !keys_[keyCode] && preKeys_[keyCode]; }
 
-	void Reset();
-
-
-	BYTE* Key() { return keys_; }
 
 private:
 
-	Mouse mouse_;
-
 	ComPtr<IDirectInput8> directInput_;
 	ComPtr<IDirectInputDevice8> keyboard_;
+	ComPtr<IDirectInputDevice8> mouse_;
 
+	///- キーボードの入力状況
 	BYTE keys_[256];
 	BYTE preKeys_[256];
+
+	DIMOUSESTATE mouseState_;
 
 private:
 

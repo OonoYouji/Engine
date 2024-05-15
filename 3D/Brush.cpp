@@ -117,11 +117,11 @@ void Brush::Init() {
 
 
 void Brush::Update() {
-	Input* input = Input::GetInstance();
+	/*Input* input = Input::GetInstance();
 	mousePointData_->position = input->GetMousePos();
 	mousePos_ = { mousePointData_->position.x, mousePointData_->position.y, 0.0f };
 	mousePointData_->isUp = input->GetMouse().leftButton;
-	mousePointData_->isDown = input->GetMouse().rightButton;
+	mousePointData_->isDown = input->GetMouse().rightButton;*/
 
 	///- マウスのスクリーン座標をワールド座標に変換
 	ConvertMousePosition();

@@ -71,7 +71,7 @@ void TerrainOperator::Update() {
 	///- 地形との当たり判定; XZのみで判定を取る
 	if(Collision() && isOperating_) {
 
-		///- 地形を上げる
+		/*///- 地形を上げる
 		if(input_->GetMouse().leftButton) {
 			Raise();
 		}
@@ -79,7 +79,7 @@ void TerrainOperator::Update() {
 		///- 地形を下げる
 		if(input_->GetMouse().rightButton) {
 			Lower();
-		}
+		}*/
 
 
 	}
