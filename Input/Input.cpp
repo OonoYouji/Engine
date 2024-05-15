@@ -9,14 +9,18 @@
 #include <WinApp.h>
 
 
-Input* Input::GetInstance() {
-	static Input instance;
+///- instanceを設定
+InputManager* Input::manager_ = InputManager::GetInstance();
+
+
+InputManager* InputManager::GetInstance() {
+	static InputManager instance;
 	return &instance;
 }
 
 
 
-void Input::Initialize(WinApp* winApp) {
+void InputManager::Initialize(WinApp* winApp) {
 	HRESULT result = S_FALSE;
 
 	/// ---------------------------------
@@ -72,10 +76,13 @@ void Input::Initialize(WinApp* winApp) {
 		winApp->GetHWND(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 	assert(SUCCEEDED(result));
 
+
+
+
 }
 
 
-void Input::Finalize() {
+void InputManager::Finalize() {
 	directInput_.Reset();
 	keyboard_.Reset();
 	mouse_.Reset();
@@ -83,24 +90,34 @@ void Input::Finalize() {
 
 
 
-void Input::Begin() {
+void InputManager::Begin() {
 
 	///- キーボード情報の取得開始
 	keyboard_->Acquire();
 	memcpy(preKeys_, keys_, 256);
 	keyboard_->GetDeviceState(sizeof(keys_), keys_);
 
-	///- マウスの情報を所得開始
+	///- マウスの情報を取得開始
 	mouse_->Acquire();
 	mouse_->GetDeviceState(sizeof(mouseState_), &mouseState_);
 
+	DebugDraw(true);
+}
+
+
+void InputManager::DebugDraw([[maybe_unused]] bool isDraw) {
 #ifdef _DEBUG
+	if(!isDraw) { return; }
 	ImGui::Begin("Inputs");
 
+
+	/// --------------------------------
+	/// ↓ Keyboard
+	/// --------------------------------
 	if(ImGui::TreeNodeEx("Keyboard", true)) {
 
 		for(uint32_t index = 0; index < 256; ++index) {
-			if(keys_[index]) {
+			if(Input::PressKey(index)) {
 				ImGui::Text("Key: %d", index);
 			}
 		}
@@ -108,6 +125,9 @@ void Input::Begin() {
 		ImGui::TreePop();
 	}
 
+	/// --------------------------------
+	/// ↓ Mouse
+	/// --------------------------------
 	if(ImGui::TreeNodeEx("Mouse", true)) {
 
 		float position[] = {
@@ -128,7 +148,4 @@ void Input::Begin() {
 
 	ImGui::End();
 #endif // _DEBUG
-
-
-
 }

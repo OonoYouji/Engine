@@ -46,7 +46,7 @@ namespace {
 		ImGuiManager* imGuiManager_ = nullptr;
 		TextureManager* textureManager_ = nullptr;
 
-		Input* input_ = nullptr;
+		InputManager* input_ = nullptr;
 		//std::unique_ptr<Camera> camera_ = nullptr;
 		Camera* camera_ = nullptr;
 
@@ -91,7 +91,7 @@ namespace {
 		directXCommon_ = DirectXCommon::GetInstance();
 		imGuiManager_ = ImGuiManager::GetInstance();
 		textureManager_ = TextureManager::GetInstance();
-		input_ = Input::GetInstance();
+		input_ = InputManager::GetInstance();
 		//camera_ = std::make_unique<Camera>();
 	}
 
@@ -162,7 +162,7 @@ namespace {
 	DirectXCommon* sDirectXCommon = nullptr;
 	ImGuiManager* sImGuiManager = nullptr;
 	TextureManager* sTextureManager_ = nullptr;
-	Input* sInput = nullptr;
+	InputManager* sInput = nullptr;
 
 	std::unique_ptr<EngineSystem> sEngineSystem = nullptr;
 
@@ -194,7 +194,7 @@ void Engine::Initialize(const std::string& title) {
 	sDirectXCommon->Initialize(sWinApp);
 
 	///- Inputの初期化
-	sInput = Input::GetInstance();
+	sInput = InputManager::GetInstance();
 	sInput->Initialize(sWinApp);
 
 	///- ImGuiの初期化

@@ -15,7 +15,7 @@ TerrainOperator::~TerrainOperator() {}
 
 void TerrainOperator::Init(Terrain* terrain, Brush* brush) {
 
-	input_ = Input::GetInstance();
+	input_ = InputManager::GetInstance();
 
 	pTerrain_ = terrain;
 	pBrush_ = brush;

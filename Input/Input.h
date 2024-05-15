@@ -11,14 +11,12 @@
 using namespace Microsoft::WRL;
 class WinApp;
 
-///- Inputクラスのインスタンス
-//#define INPUT Input::GetInstance()
-
 
 /// <summary>
-/// 入力全般
+/// 入力処理を行うクラス
 /// </summary>
-class Input final {
+class InputManager final {
+	friend class Input;
 public:
 
 
@@ -26,24 +24,27 @@ public:
 	/// インスタンスの取得
 	/// </summary>
 	/// <returns></returns>
-	static Input* GetInstance();
+	static InputManager* GetInstance();
 
-
-
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize(WinApp* winApp);
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	void Finalize();
 
+	/// <summary>
+	/// 更新の最初に行う
+	/// </summary>
 	void Begin();
 
-
-	/// -------------------------------------
-	/// ↓ キーボードの入力処理
-	/// -------------------------------------
-
-
-	bool PressKey(uint8_t keyCode) const { return keys_[keyCode]; }
-	bool TriggerKey(uint8_t keyCode) const { return keys_[keyCode] && !preKeys_[keyCode]; }
-	bool ReleaseKey(uint8_t keyCode) const { return !keys_[keyCode] && preKeys_[keyCode]; }
+	/// <summary>
+	/// imguiでデバッグ表示
+	/// </summary>
+	void DebugDraw(bool isDraw);
 
 
 private:
@@ -60,13 +61,32 @@ private:
 
 private:
 
-	Input() = default;
-	~Input() = default;
+	InputManager() = default;
+	~InputManager() = default;
 
-	Input& operator=(const Input&) = delete;
-	Input(const Input&) = delete;
-	Input(Input&&) = delete;
+	InputManager& operator=(const InputManager&) = delete;
+	InputManager(const InputManager&) = delete;
+	InputManager(InputManager&&) = delete;
 
 };
 
 
+/// <summary>
+/// 入力の所得を行うクラス
+/// </summary>
+class Input final {
+public:
+	static bool PressKey(uint8_t keyCode) { return manager_->keys_[keyCode]; }
+	static bool TriggerKey(uint8_t keyCode) { return manager_->keys_[keyCode] && !manager_->preKeys_[keyCode]; }
+	static bool ReleaseKey(uint8_t keyCode) { return !manager_->keys_[keyCode] && manager_->preKeys_[keyCode]; }
+private:
+
+	static InputManager* manager_;
+
+
+	Input() = default;
+	~Input() = default;
+	Input& operator=(const Input&) = delete;
+	Input(const Input&) = delete;
+	Input(Input&&) = delete;
+};

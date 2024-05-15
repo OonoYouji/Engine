@@ -23,7 +23,7 @@ public:
 
 private:
 
-	Input* input_ = nullptr;
+	InputManager* input_ = nullptr;
 
 	Terrain* pTerrain_;
 	Brush* pBrush_;
