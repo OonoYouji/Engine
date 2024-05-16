@@ -57,7 +57,7 @@ private:
 	BYTE keys_[256];
 	BYTE preKeys_[256];
 
-	DIMOUSESTATE mouseState_;
+	DIMOUSESTATE2 mouseState_;
 
 private:
 
@@ -79,6 +79,11 @@ public:
 	static bool PressKey(uint8_t keyCode) { return manager_->keys_[keyCode]; }
 	static bool TriggerKey(uint8_t keyCode) { return manager_->keys_[keyCode] && !manager_->preKeys_[keyCode]; }
 	static bool ReleaseKey(uint8_t keyCode) { return !manager_->keys_[keyCode] && manager_->preKeys_[keyCode]; }
+
+	static bool PressMouse(uint8_t mouseCode) { return manager_->mouseState_.rgbButtons[mouseCode]; }
+	static Vec2f MouseVelocity() {
+		return Vec2f(static_cast<float>(manager_->mouseState_.lX), static_cast<float>(manager_->mouseState_.lY));
+	}
 private:
 
 	static InputManager* manager_;

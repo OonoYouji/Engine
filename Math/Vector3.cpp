@@ -21,6 +21,12 @@ Vector3::Vector3(const Vector3& obj) {
 	*this = obj;
 }
 
+Vector3::Vector3(const Vector2& v, float x) {
+	this->x = v.x;
+	this->y = v.y;
+	this->z = z;
+}
+
 
 float Vector3::Length(const Vector3& v) {
 	return std::sqrtf(std::powf(v.x, 2.0f) + std::powf(v.y, 2.0f) + std::powf(v.z, 2.0f));

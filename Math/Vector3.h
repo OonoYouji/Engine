@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vector4.h"
+#include "Vector2.h"
 
 class Vector3 final {
 public:
@@ -9,6 +10,7 @@ public:
 	Vector3(float x, float y, float z);
 	Vector3(const Vector3& obj);
 
+	Vector3(const Vector2& v, float x);
 
 	~Vector3() = default;
 
@@ -64,6 +66,10 @@ public:
 	inline Vector3 operator/(float value) const;
 	inline Vector3 operator*(float value) const;
 
+	inline Vector3& operator+=(const Vector3& other);
+	inline Vector3& operator-=(const Vector3& other);
+	inline Vector3& operator*=(const Vector3& other);
+	inline Vector3& operator/=(const Vector3& other);
 
 };
 
@@ -109,6 +115,23 @@ inline Vector3 Vector3::operator*(float value) const {
 		this->y * value,
 		this->z * value
 	);
+}
+
+inline Vector3& Vector3::operator+=(const Vector3& other) {
+	(*this) = (*this) + other;
+	return *this;
+}
+inline Vector3& Vector3::operator-=(const Vector3& other) {
+	(*this) = (*this) - other;
+	return *this;
+}
+inline Vector3& Vector3::operator*=(const Vector3& other) {
+	(*this) = (*this) * other;
+	return *this;
+}
+inline Vector3& Vector3::operator/=(const Vector3& other) {
+	(*this) = (*this) / other;
+	return *this;
 }
 
 

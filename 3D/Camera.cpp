@@ -42,8 +42,8 @@ void Camera::Update() {
 	vpMatrix_ = viewProjection_.matView * viewProjection_.matProjection;
 
 #ifdef _DEBUG
-	debugCamera_->Update();
 	if(isDebugCameraActive_) {
+		debugCamera_->Update();
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 		vpMatrix_ = viewProjection_.matView * viewProjection_.matProjection;

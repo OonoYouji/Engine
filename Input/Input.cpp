@@ -69,7 +69,7 @@ void InputManager::Initialize(WinApp* winApp) {
 		GUID_SysMouse, &mouse_, NULL);
 	assert(SUCCEEDED(result) && "マウスデバイスの生成に失敗しました");
 
-	result = mouse_->SetDataFormat(&c_dfDIMouse);
+	result = mouse_->SetDataFormat(&c_dfDIMouse2);
 	assert(SUCCEEDED(result));
 
 	result = mouse_->SetCooperativeLevel(
@@ -137,7 +137,7 @@ void InputManager::DebugDraw([[maybe_unused]] bool isDraw) {
 		};
 		ImGui::DragFloat3("velocity", &position[0], 0.0f);
 
-		for(uint32_t index = 0; index < 4; ++index) {
+		for(uint32_t index = 0; index < 8; ++index) {
 			if(mouseState_.rgbButtons[index]) {
 				ImGui::Text("Button: %d", index);
 			}

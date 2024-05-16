@@ -36,6 +36,10 @@ private:
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
 
+	Vec3f velocity_;
+	const float kSpeed_ = 0.025f;
+
+
 public:
 	const ViewProjection& GetViewProjection() const { return viewProjection_; }
 };

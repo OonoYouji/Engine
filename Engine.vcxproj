@@ -154,7 +154,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="2D\Sprite.cpp" />
-    <ClCompile Include="3D\BaseCamera.cpp" />
     <ClCompile Include="3D\Brush.cpp" />
     <ClCompile Include="3D\Camera.cpp" />
     <ClCompile Include="3D\DebugCamera.cpp" />
@@ -194,7 +193,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2D\Sprite.h" />
-    <ClInclude Include="3D\BaseCamera.h" />
     <ClInclude Include="3D\Brush.h" />
     <ClInclude Include="3D\DebugCamera.h" />
     <ClInclude Include="3D\DirectionalLight.h" />
