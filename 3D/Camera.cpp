@@ -88,6 +88,9 @@ void Camera::DebugDraw() {
 
 		ImGui::Checkbox("IsActive", &isDebugCameraActive_);
 		debugCamera_->DebugDraw();
+		if(!isDebugCameraActive_) {
+			debugCamera_->Draw();
+		}
 
 		ImGui::TreePop();
 	}

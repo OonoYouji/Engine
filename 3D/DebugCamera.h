@@ -5,6 +5,7 @@
 #include <Camera.h>
 #include <Vector3.h>
 #include <WorldTransform.h>
+#include <Model.h>
 
 /// <summary>
 /// デバッグカメラ
@@ -26,6 +27,11 @@ public:
 	void Update();
 
 	/// <summary>
+	/// 描画処理
+	/// </summary>
+	void Draw();
+
+	/// <summary>
 	/// ImGuiでデバッグ表示
 	/// </summary>
 	/// <param name="imguiName"></param>
@@ -35,6 +41,7 @@ private:
 
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
+	std::unique_ptr<Model> model_;
 
 	Vec3f velocity_;
 	const float kSpeed_ = 0.025f;

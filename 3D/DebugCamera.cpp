@@ -13,6 +13,8 @@ void DebugCamera::Initalize() {
 	viewProjection_.UpdateProjection();
 	viewProjection_.fovY = 0.45f;
 	viewProjection_.farZ = 1000.0f;
+	model_ = std::make_unique<Model>();
+	model_->Initialize("./Resources/Objects/Camera", "Camera.obj");
 }
 
 
@@ -41,6 +43,11 @@ void DebugCamera::Update() {
 	worldTransform_.UpdateWorldMatrix();
 	viewProjection_.matView = Mat4::MakeInverse(worldTransform_.worldMatrix);
 	viewProjection_.UpdateProjection();
+	model_->SetWorldTransform(worldTransform_);
+}
+
+void DebugCamera::Draw() {
+	model_->Draw();
 }
 
 

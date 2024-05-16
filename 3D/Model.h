@@ -58,4 +58,8 @@ public:
 
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& fileName);
 
+	void SetWorldTransform(const WorldTransform& worldTransform) {
+		worldTransform_ = worldTransform;
+	}
+
 };

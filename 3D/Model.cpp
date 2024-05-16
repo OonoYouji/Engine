@@ -124,13 +124,7 @@ void Model::DebugDraw(const std::string& windowName) {
 #ifdef _DEBUG
 	ImGui::Begin(windowName.c_str());
 
-	if(ImGui::TreeNodeEx("Transform", true)) {
-
-		ImGui::DragFloat3("Rotate", &worldTransform_.rotate.x, 0.025f);
-		ImGui::DragFloat3("Translate", &worldTransform_.translate.x, 0.25f);
-
-		ImGui::TreePop();
-	}
+	worldTransform_.ImGuiTreeNodeDebug();
 
 	ImGui::Separator();
 
