@@ -40,3 +40,4 @@ private:
 	ImVec4 ColorToVec4(uint32_t color);
 
 };
+

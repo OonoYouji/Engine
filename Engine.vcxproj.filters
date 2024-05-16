@@ -109,6 +109,12 @@
     <ClCompile Include="3D\Model.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="3D\DebugCamera.cpp">
+      <Filter>Source\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\BaseCamera.cpp">
+      <Filter>Source\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -288,6 +294,12 @@
       <Filter>Include\IO</Filter>
     </ClInclude>
     <ClInclude Include="3D\Model.h">
+      <Filter>Include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\DebugCamera.h">
+      <Filter>Include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\BaseCamera.h">
       <Filter>Include\3D</Filter>
     </ClInclude>
   </ItemGroup>

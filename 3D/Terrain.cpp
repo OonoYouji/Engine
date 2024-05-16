@@ -99,7 +99,7 @@ void Terrain::Init() {
 	/// ------------------------------------------------- 
 
 
-	worldTransform_.Init();
+	worldTransform_.Initialize();
 	worldTransform_.scale = { 0.5f,12.0f,0.5f };
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
@@ -340,7 +340,7 @@ void Terrain::Draw() {
 
 
 	///- 行列情報
-	worldTransform_.MakeWorldMatrix();
+	worldTransform_.UpdateWorldMatrix();
 	matrixData_->World = worldTransform_.worldMatrix;
 	matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 

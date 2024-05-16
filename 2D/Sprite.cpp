@@ -99,7 +99,7 @@ void Sprite::Init() {
 	transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
 	*transformationMatrixData_ = Matrix4x4::MakeIdentity();
 
-	transform_.Init();
+	transform_.Initialize();
 
 	Matrix4x4 viewMatrixSprite = Matrix4x4::MakeIdentity();
 	Matrix4x4 projectionMatrixSprite = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, float(kWindowSize.x), float(kWindowSize.y), 0.0f, 100.0f);

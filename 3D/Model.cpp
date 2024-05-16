@@ -81,7 +81,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 
 
-	worldTransform_.Init();
+	worldTransform_.Initialize();
 
 }
 
@@ -97,7 +97,7 @@ void Model::Draw() {
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
 	///- Data
-	worldTransform_.MakeWorldMatrix();
+	worldTransform_.UpdateWorldMatrix();
 	transformMatrixData_->World = worldTransform_.worldMatrix;
 	transformMatrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 

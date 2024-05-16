@@ -16,6 +16,13 @@ public:
 
 	float x, y, z;
 
+	static const Vector3 up;
+	static const Vector3 down;
+	static const Vector3 left;
+	static const Vector3 right;
+	static const Vector3 back;
+	static const Vector3 front;
+
 public:
 
 	/// <summary>

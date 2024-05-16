@@ -107,7 +107,7 @@ void Brush::Init() {
 	}
 
 
-	worldTransform_.Init();
+	worldTransform_.Initialize();
 
 	distanceTestObject_ = 1.0f;
 	circleRadius_ = 0.0f;

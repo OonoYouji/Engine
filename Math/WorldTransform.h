@@ -3,6 +3,10 @@
 #include <Vector3.h>
 #include <Matrix4x4.h>
 
+
+/// <summary>
+/// World
+/// </summary>
 struct WorldTransform {
 public:
 
@@ -11,7 +15,7 @@ public:
 	/// 初期化関数
 	/// -------------------------
 
-	void Init();
+	void Initialize();
 
 
 	/// -------------------------
@@ -29,6 +33,8 @@ public:
 	/// メンバ関数
 	/// -------------------------
 
-	void MakeWorldMatrix();
+	void UpdateWorldMatrix();
+
+	void ImGuiTreeNodeDebug();
 
 };

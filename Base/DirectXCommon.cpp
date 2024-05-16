@@ -74,7 +74,7 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 	InitializeSprite();
 
-	worldTransform_.Init();
+	worldTransform_.Initialize();
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 }
@@ -972,7 +972,7 @@ void DirectXCommon::InitializeSprite() {
 	transformationMatrixResourceSprite_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
 	*transformationMatrixDataSprite = Matrix4x4::MakeIdentity();
 
-	transformSprite_.Init();
+	transformSprite_.Initialize();
 
 	Matrix4x4 worldMatrixSprite = transformSprite_.worldMatrix;
 	Matrix4x4 viewMatrixSprite = Matrix4x4::MakeIdentity();

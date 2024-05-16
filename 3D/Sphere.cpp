@@ -193,7 +193,7 @@ void Sphere::Init() {
 
 
 	///- 
-	worldTransform_.Init();
+	worldTransform_.Initialize();
 	//worldTransform_.scale = { 0.001f,1.0f,0.001f };
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
@@ -216,7 +216,7 @@ void Sphere::Draw() {
 	memcpy(pIndexMappedData_, pIndexData_, indexData_.size() * sizeof(uint32_t));
 
 	///- 行列情報
-	worldTransform_.MakeWorldMatrix();
+	worldTransform_.UpdateWorldMatrix();
 	transformMatrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 	transformMatrixData_->World = worldTransform_.worldMatrix;
 	///- 色情報

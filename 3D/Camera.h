@@ -1,7 +1,24 @@
 #pragma once
 
+#include <memory>
+
 #include <Vector3.h>
 #include <Matrix4x4.h>
+#include <WorldTransform.h>
+
+class DebugCamera;
+
+/// <summary>
+/// カメラに必須な構造体
+/// </summary>
+struct ViewProjection {
+	Mat4 matView;
+	Mat4 matProjection;
+	float fovY;
+	float farZ;
+	void UpdateProjection();
+	ViewProjection& operator=(const ViewProjection& other);
+};
 
 class Camera final {
 public:
@@ -11,42 +28,29 @@ public:
 
 	void Init();
 	void Update();
-	void Draw();
+	void DebugDraw();
 	void Finalize();
 
 private:
 
-	Vec3f scale_;
-	Vec3f rotate_;
-	Vec3f worldPos_;
+	WorldTransform worldTransform_;
+	ViewProjection viewProjection_;
 
 	Vec3f localFront_;
 	Vec3f direction_;
+	Mat4 vpMatrix_;
 
-	float fovY_;
-	float farZ_;
-
-	Matrix4x4 worldMatrix_;
-	Matrix4x4 viewMatrix_;
-	Matrix4x4 projectionMatrix_;
-
-	Matrix4x4 vpMatrix_;
-
-	/// <summary>
-	/// ProjectionMatrixの再計算
-	/// </summary>
-	void MakeProjectionMatrix();
-
+#ifdef _DEBUG
+	std::unique_ptr<DebugCamera> debugCamera_;
+	bool isDebugCameraActive_;
+#endif // _DEBUG
 public:
 
-	const Matrix4x4& GetVpMatrix() const { return vpMatrix_; }
-
-	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix_; }
-
-	const Matrix4x4& GetViewMatrix() const { return viewMatrix_; }
-
-	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
-
-	const Vec3f& GetPosition() const { return worldPos_; }
+	const Mat4& GetVpMatrix() const { return vpMatrix_; }
+	const Mat4& GetProjectionMatrix() const { return viewProjection_.matProjection; }
+	const Mat4& GetViewMatrix() const { return viewProjection_.matView; }
+	const Mat4& GetWorldMatrix() const { return worldTransform_.worldMatrix; }
+	const Vec3f& GetPosition() const { return worldTransform_.translate; }
 
 };
+
