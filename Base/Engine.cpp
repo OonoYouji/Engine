@@ -47,8 +47,7 @@ namespace {
 		TextureManager* textureManager_ = nullptr;
 
 		InputManager* input_ = nullptr;
-		//std::unique_ptr<Camera> camera_ = nullptr;
-		Camera* camera_ = nullptr;
+		std::unique_ptr<Camera> camera_ = nullptr;
 
 		uint32_t indexTriangle_ = 0;
 
@@ -67,13 +66,6 @@ namespace {
 
 		std::wstring ConvertString(const std::string& str);
 
-		void TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate);
-		void TestDraw(const Matrix4x4& worldMatrix);
-
-		void TestDraw();
-
-		//void DrawTriangle(const Vec3f& v1, const Vec3f& v2, const Vec3f& v3, uint32_t color);
-
 		inline Camera* GetCamera();
 
 		void Reset();
@@ -82,11 +74,10 @@ namespace {
 
 
 	EngineSystem::~EngineSystem() {
-		SafeDelete(camera_);
 	}
 
 	void EngineSystem::Initialize() {
-		camera_ = new Camera();
+		camera_ = std::make_unique<Camera>();
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
 		imGuiManager_ = ImGuiManager::GetInstance();
@@ -135,22 +126,8 @@ namespace {
 		return result;
 	}
 
-	void EngineSystem::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
-		//dxc_->TestDraw(v1, v2, v3, scale, rotate, translate);
-	}
-
-	void EngineSystem::TestDraw(const Matrix4x4& worldMatrix) {
-		//directXCommon_->TestDraw(worldMatrix);
-	}
-
-	void EngineSystem::TestDraw() {
-		directXCommon_->TestDraw();
-	}
-
-
 	inline Camera* EngineSystem::GetCamera() {
-		//return camera_.get();
-		return camera_;
+		return camera_.get();
 	}
 
 	void EngineSystem::Reset() {
@@ -252,18 +229,6 @@ std::wstring Engine::ConvertString(const std::string& string) {
 
 int Engine::ProcessMessage() {
 	return sEngineSystem->ProcessMessage();
-}
-
-void Engine::TestDraw(const Vector4& v1, const Vector4& v2, const Vector4& v3, const Vec3f& scale, const Vec3f& rotate, Vec3f& translate) {
-	sEngineSystem->TestDraw(v1, v2, v3, scale, rotate, translate);
-}
-
-void Engine::TestDraw(const Matrix4x4& worldMatrix) {
-	sEngineSystem->TestDraw(worldMatrix);
-}
-
-void Engine::TestDraw() {
-	sEngineSystem->TestDraw();
 }
 
 Camera* Engine::GetCamera() {

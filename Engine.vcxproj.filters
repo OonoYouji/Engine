@@ -180,6 +180,12 @@
     <Filter Include="Source\IO">
       <UniqueIdentifier>{ff655c82-c9d0-4c65-a22a-e6cf800067dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader\Terrain">
+      <UniqueIdentifier>{0c8631fa-091c-4243-b6f7-cf695d9b4523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Object3D">
+      <UniqueIdentifier>{33c7da47-58ad-4987-a1c9-262f7f3d3985}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\WorldTransform.h">
@@ -298,21 +304,21 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\Object3d.PS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\Object3d.VS.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\Object3D</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shader\Object3d.hlsli">
-      <Filter>Shader</Filter>
-    </None>
+    <FxCompile Include="Shader\Object3d.PS.hlsl">
+      <Filter>Shader\Object3D</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt">
       <Filter>Include\ImGui</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\Object3d.hlsli">
+      <Filter>Shader\Object3D</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -72,11 +72,6 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 
 	InitializeDepthStencil();
 
-	InitializeSprite();
-
-	worldTransform_.Initialize();
-	color_ = { 1.0f,1.0f,1.0f,1.0f };
-
 }
 
 
@@ -95,15 +90,9 @@ void DirectXCommon::Finalize() {
 	DxDescriptors::GetInstance()->Finalize();
 
 
-	transformationMatrixResourceSprite_.Reset();
-	vertexResourceSprite_.Reset();
-
 	depthStencilResource_.Reset();
 
 
-	//wvpResource_.Reset();
-	//materialResource_.Reset();
-	//vertexResource_.Reset();
 	graphicsPipelineState_.Reset();
 	pixelShaderBlob_.Reset();
 	vertexShaderBlob_.Reset();
@@ -120,10 +109,7 @@ void DirectXCommon::Finalize() {
 		swapChainResource_[i].Reset();
 	}
 	swapChain_.Reset();
-	//commandList_.Reset();
-	//commandAllocator_.Reset();
-	//commandQueue_.Reset();
-
+	
 	///- Commandの解放
 	command_->Finalize();
 
@@ -597,10 +583,10 @@ void DirectXCommon::InitializeRasterizer() {
 void DirectXCommon::InitializeShaderBlob() {
 
 	///- Shaderをコンパイルする
-	vertexShaderBlob_ = CompileShader(L"./Shader/Object3d.VS.hlsl", L"vs_6_0");
+	vertexShaderBlob_ = CompileShader(L"./Shader/Object3D/Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 
-	pixelShaderBlob_ = CompileShader(L"./Shader/Object3d.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob_ = CompileShader(L"./Shader/Object3D/Object3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 
 
@@ -775,99 +761,6 @@ void DirectXCommon::ClearRenderTarget() {
 
 
 
-/// ---------------------------
-/// ↓ Textureデータを読む
-/// ---------------------------
-DirectX::ScratchImage DirectXCommon::LoadTexture(const std::string& filePath) {
-	///- テクスチャを読み込む
-	DirectX::ScratchImage image{};
-	std::wstring filePathW = Engine::ConvertString(filePath);
-	HRESULT result = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-	assert(SUCCEEDED(result));
-
-	///- ミップマップの作成
-	DirectX::ScratchImage mipImages{};
-	result = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(result));
-
-	return mipImages;
-}
-
-
-
-/// ---------------------------
-/// ↓ DirextX12のTextureResourceを作成
-/// ---------------------------
-ComPtr<ID3D12Resource> DirectXCommon::CreateTextureResource(const DirectX::TexMetadata& metadata) {
-
-	/// --------------------------------------
-	/// ↓ metadataを基にResourceの設定
-	/// --------------------------------------
-	D3D12_RESOURCE_DESC desc{};
-	desc.Width = UINT(metadata.width);		//- textureの幅
-	desc.Height = UINT(metadata.height);	//- textureの高さ
-	desc.MipLevels = UINT16(metadata.mipLevels);		//- mipmapの数
-	desc.DepthOrArraySize = UINT16(metadata.arraySize);	//- 奥行き or 配列Textureの配列数
-	desc.Format = metadata.format;	//- TextureのFormat
-	desc.SampleDesc.Count = 1;	//- サンプリングカウント; 1固定
-	desc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension);	//- Textureの次元数
-
-
-	/// --------------------------------------
-	/// ↓ 利用するHeapの設定
-	/// --------------------------------------
-
-	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;	//- 細かい設定を行う
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK; //- WriteBackポリシーでCPUアクセス可能
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;	//- プロセッサの近くに配置
-
-
-	/// --------------------------------------
-	/// ↓ Resourceを生成
-	/// --------------------------------------
-
-	ComPtr<ID3D12Resource> resource;
-	HRESULT result = device_->CreateCommittedResource(
-		&heapProperties,		//- Heapの設定
-		D3D12_HEAP_FLAG_NONE,	//- Heapの特殊な設定
-		&desc,					//- Resourceの設定
-		D3D12_RESOURCE_STATE_GENERIC_READ,	//- 初回のResourceState; Textureは基本読むだけ
-		nullptr,				//- Clear最適値; 使わないのでnullptr
-		IID_PPV_ARGS(&resource)
-	);
-	assert(SUCCEEDED(result));
-
-	return resource;
-}
-
-
-
-/// ---------------------------
-/// ↓ TextureResourceにデータを転送する
-/// ---------------------------
-void DirectXCommon::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
-	///- meta情報を取得
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-
-	///- 全MipMapについて
-	for(size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
-		///- MipMapLevelを指定して各Imageを取得
-		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-		///- Textureに転送
-		HRESULT result = texture->WriteToSubresource(
-			UINT(mipLevel),
-			nullptr,		//- 全領域へコピー
-			img->pixels,	//- 元データアドレス
-			UINT(img->rowPitch),	//- 1ラインサイズ
-			UINT(img->slicePitch)	//- 1枚サイズ
-		);
-		assert(SUCCEEDED(result));
-	}
-
-}
-
-
 
 /// ---------------------------
 /// ↓ DescriptorRangeの初期化
@@ -915,70 +808,6 @@ void DirectXCommon::InitializeDepthStencil() {
 
 	///- DsvHeapの先頭にDsvを作る
 	device_->CreateDepthStencilView(depthStencilResource_.Get(), &dsvDesc, DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart());
-
-}
-
-
-
-/// ---------------------------
-/// ↓ スプライトの表示に必要な変数の初期化
-/// ---------------------------
-void DirectXCommon::InitializeSprite() {
-
-	///- 頂点リソースの生成
-	vertexResourceSprite_.Attach(CreateBufferResource(sizeof(VertexData) * 6));
-
-	///- 頂点バッファビューを作成する
-	///- リソースの先頭アドレスから使う
-	vertexBufferViewSprite_.BufferLocation = vertexResourceSprite_->GetGPUVirtualAddress();
-	///- 使用するリソースのサイズは頂点の数分
-	vertexBufferViewSprite_.SizeInBytes = sizeof(VertexData) * 6;
-	///- 1頂点当たりのサイズ
-	vertexBufferViewSprite_.StrideInBytes = sizeof(VertexData);
-
-	/// ---------------------------
-	/// ↓ 頂点データを設定
-	/// ---------------------------
-
-	VertexData* vertexDataSprite = nullptr;
-	vertexResourceSprite_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
-
-	///- 1枚目
-	vertexDataSprite[0].position = { 0.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[0].texcoord = { 0.0f,1.0f };
-	vertexDataSprite[1].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[1].texcoord = { 0.0f,0.0f };
-	vertexDataSprite[2].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[2].texcoord = { 1.0f,1.0f };
-
-	///- 2枚目
-	vertexDataSprite[3].position = { 0.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[3].texcoord = { 0.0f,0.0f };
-	vertexDataSprite[4].position = { 640.0f,0.0f,0.0f,1.0f };
-	vertexDataSprite[4].texcoord = { 1.0f,0.0f };
-	vertexDataSprite[5].position = { 640.0f,360.0f,0.0f,1.0f };
-	vertexDataSprite[5].texcoord = { 1.0f,1.0f };
-
-
-	/// ---------------------------
-	/// ↓ Transform周りを作る
-	/// ---------------------------
-
-	transformationMatrixResourceSprite_.Attach(CreateBufferResource(sizeof(Matrix4x4)));
-
-	///- データを書き込む
-	Matrix4x4* transformationMatrixDataSprite = nullptr;
-	///- 書き込むためのアドレスを取得
-	transformationMatrixResourceSprite_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
-	*transformationMatrixDataSprite = Matrix4x4::MakeIdentity();
-
-	transformSprite_.Initialize();
-
-	Matrix4x4 worldMatrixSprite = transformSprite_.worldMatrix;
-	Matrix4x4 viewMatrixSprite = Matrix4x4::MakeIdentity();
-	Matrix4x4 projectionMatrixSprite = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, float(kWindowSize.x), float(kWindowSize.y), 0.0f, 100.0f);
-	Matrix4x4 wvpMatrixSprite = worldMatrixSprite * (viewMatrixSprite * projectionMatrixSprite);
-	*transformationMatrixDataSprite = wvpMatrixSprite;
 
 }
 
@@ -1098,51 +927,3 @@ void DirectXCommon::PostDraw() {
 
 }
 
-
-
-/// ---------------------------
-/// ↓ 三角形の描画(テスト
-/// ---------------------------
-void DirectXCommon::TestDraw() {
-	//ID3D12GraphicsCommandList* commandList = command_->GetList();
-
-	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-	//ImGui::Begin("Triangle");
-	//ImGui::SliderFloat4("color", &color_.x, 0.0f, 1.0f);
-	//ImGui::End();
-
-	//worldTransform_.rotate.y += 1.0f / 64.0f;
-	//worldTransform_.MakeWorldMatrix();
-	//WriteWVPResource(worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix());
-	//WriteColor(color_);
-
-	/////- 形状を設定; PSOに設定している物とはまだ別; 同じものを設定すると考えておけばOK
-	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	/////- マテリアルのCBufferの場所を設定
-	//commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	/////- wvp用のCBufferの場所を設定
-	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
-	/////- DescriptorTableを設定する
-	////commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU2_);
-	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable("uvChecker");
-
-	/////- 描画 (DrawCall)
-	//commandList->DrawInstanced(6, 1, 0, 0);
-
-}
-
-
-
-/// <summary>
-/// Spriteの描画
-/// </summary>
-void DirectXCommon::DrawSprite() {
-	ID3D12GraphicsCommandList* commandList = command_->GetList();
-
-
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferViewSprite_);
-	commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite_->GetGPUVirtualAddress());
-	commandList->DrawInstanced(6, 1, 0, 0);
-
-}

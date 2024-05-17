@@ -25,14 +25,6 @@ public:
 
 	static int ProcessMessage();
 
-
-	static void TestDraw(
-		const Vector4& v1, const Vector4& v2, const Vector4& v3, 
-		const Vec3f& scale, const Vec3f& rotate, Vec3f& translate
-	);
-	static void TestDraw(const Matrix4x4& worldMatrix);
-	static void TestDraw();
-
 	static Camera* GetCamera();
 
 private:

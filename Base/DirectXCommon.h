@@ -117,28 +117,13 @@ private:
 
 	///- 三角形の色を変えよう
 	D3D12_ROOT_PARAMETER rootParameters_[4];
-	//ComPtr<ID3D12Resource> materialResource_;
 
 	///- テクスチャを貼ろう
 	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
-	//D3D12_DESCRIPTOR_RANGE descriptorRange2_[1];
 	D3D12_STATIC_SAMPLER_DESC staticSamplers_[1];
 
 	///- 前後関係
 	ComPtr<ID3D12Resource> depthStencilResource_;
-	//ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap_;
-
-	///- Spriteの表示
-	ComPtr<ID3D12Resource> vertexResourceSprite_;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite_;
-	ComPtr<ID3D12Resource> transformationMatrixResourceSprite_;
-	WorldTransform transformSprite_;
-
-
-	WorldTransform worldTransform_;
-	Vector4 color_;
-
-	
 
 private:
 
@@ -174,19 +159,11 @@ private:
 
 	void ClearRenderTarget();
 
-	DirectX::ScratchImage LoadTexture(const std::string& filePath);
-
-	ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
-
-	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
-
 	void InitializeDescriptorRange();
 
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
 
 	void InitializeDepthStencil();
-
-	void InitializeSprite();
 
 public:
 
