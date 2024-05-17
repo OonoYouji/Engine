@@ -2,31 +2,27 @@
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
-#include <cassert>
-#include <cmath>	
 #include <dxgidebug.h>
 #include <dxcapi.h>
 #include <DirectXTex.h>
-
-/// ComPtr用
 #include <wrl/client.h>
 
 #include <string>
-
+#include <cassert>
+#include <cmath>	
+#include <memory>
 
 #include <WorldTransform.h>
 #include <Camera.h>
-#include <memory>
-
 #include "Vector2.h"
 #include "Vector4.h"
 
 using namespace Microsoft::WRL;
 
-
 class WinApp;
 class DxCommand;
 class DxDescriptors;
+class ShaderCompile;
 
 
 struct VertexData {
@@ -69,15 +65,12 @@ private:
 
 	///- DirectX Command
 	DxCommand* command_;
-
 	///- Descriptors
 	DxDescriptors* descriptors_;
-
 
 	ComPtr<IDXGISwapChain4> swapChain_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 
-	//ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap_;
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
 	std::vector<ComPtr<ID3D12Resource>>swapChainResource_;
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
@@ -90,10 +83,7 @@ private:
 	uint64_t fenceValue_;
 	HANDLE fenceEvent_;
 
-	///- 三角形を表示しよう
-	ComPtr<IDxcUtils> dxcUtils_;
-	ComPtr<IDxcCompiler3> dxcCompiler_;
-	ComPtr<IDxcIncludeHandler> includeHandler_;
+	std::unique_ptr<ShaderCompile> shaderCompile_;
 
 	ComPtr<ID3DBlob> signatureBlob_;
 	ComPtr<ID3DBlob> errorBlob_;
@@ -138,10 +128,6 @@ private:
 	void InitialiezRenderTarget();
 
 	void InitializeFence();
-
-	void InitializeDxcCompiler();
-
-	IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 	void InitializeRootSignature();
 
@@ -197,8 +183,6 @@ public:
 	/// </summary>
 	void PostDraw();
 
-	void TestDraw();
-
 	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 	ID3D12Device* GetDevice() { return device_.Get(); }
@@ -207,20 +191,9 @@ public:
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 
-
-	void DrawSprite();
-
-
-	//const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU2_; }
-
-
 	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
-
-	//const D3D12_GPU_DESCRIPTOR_HANDLE& GetTextureSrvHandleGPU() const { return textureSrvHandleGPU_; }
-
-
+	
 	const Matrix4x4& GetViewportMatrix() const { return viewportMatrix_; }
-
 
 	/// <summary>
 	/// swapChainResource getter
@@ -228,9 +201,7 @@ public:
 	/// <returns></returns>
 	std::vector<ComPtr<ID3D12Resource>> GetSwapChainResource() { return swapChainResource_; }
 
-
 	void ClearDepthBuffer();
-
 
 private:
 

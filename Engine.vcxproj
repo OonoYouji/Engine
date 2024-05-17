@@ -112,7 +112,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Input;$(ProjectDir)3D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Math;$(ProjectDir)Base;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Input;$(ProjectDir)3D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Math;$(ProjectDir)Base/ShaderCompile;$(ProjectDir)Base/PiplineState;$(ProjectDir)Base;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -167,6 +167,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Base\DxDescriptors.cpp" />
     <ClCompile Include="Base\Engine.cpp" />
     <ClCompile Include="Base\ImGuiManager.cpp" />
+    <ClCompile Include="Base\PiplineStateObject\PiplineStateObject.cpp" />
+    <ClCompile Include="Base\ShaderCompile\ShaderCompile.cpp" />
     <ClCompile Include="Base\TextureManager.cpp" />
     <ClCompile Include="Base\WinApp.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
@@ -202,6 +204,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="3D\TerrainOperator.h" />
     <ClInclude Include="Base\DxCommand.h" />
     <ClInclude Include="Base\DxDescriptors.h" />
+    <ClInclude Include="Base\PiplineStateObject\PiplineStateObject.h" />
+    <ClInclude Include="Base\ShaderCompile\ShaderCompile.h" />
     <ClInclude Include="Base\TextureManager.h" />
     <ClInclude Include="Config\Environment.h" />
     <ClInclude Include="3D\Camera.h" />
@@ -232,16 +236,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="SceneTransition\NormalTransition.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\Object3d.PS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Shader\Object3d.VS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -250,7 +244,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\Object3d.hlsli" />
+    <None Include="Shader\Object3D\Object3d.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\Object3D\Object3d.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shader\Object3D\Object3d.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

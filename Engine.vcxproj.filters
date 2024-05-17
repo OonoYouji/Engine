@@ -112,6 +112,12 @@
     <ClCompile Include="3D\DebugCamera.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="Base\PiplineStateObject\PiplineStateObject.cpp">
+      <Filter>Source\Base\PiplineStateObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\ShaderCompile\ShaderCompile.cpp">
+      <Filter>Source\Base\ShaderCompile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -180,11 +186,23 @@
     <Filter Include="Source\IO">
       <UniqueIdentifier>{ff655c82-c9d0-4c65-a22a-e6cf800067dd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shader\Terrain">
-      <UniqueIdentifier>{0c8631fa-091c-4243-b6f7-cf695d9b4523}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shader\Object3D">
       <UniqueIdentifier>{33c7da47-58ad-4987-a1c9-262f7f3d3985}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Texture3D">
+      <UniqueIdentifier>{0c8631fa-091c-4243-b6f7-cf695d9b4523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Base\PiplineStateObject">
+      <UniqueIdentifier>{6c8acbdc-1784-4e5f-b6b5-21c27bf6d948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Base\PiplineStateObject">
+      <UniqueIdentifier>{6e0160ef-a21a-48e6-91fb-d45393c0341c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Base\ShaderCompile">
+      <UniqueIdentifier>{c4425bfe-db7a-481d-84d8-31b522864782}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Base\ShaderCompile">
+      <UniqueIdentifier>{0e82a95d-2f73-438b-9a4f-187d7a7e188c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -302,14 +320,12 @@
     <ClInclude Include="3D\DebugCamera.h">
       <Filter>Include\3D</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shader\Object3d.VS.hlsl">
-      <Filter>Shader\Object3D</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\Object3d.PS.hlsl">
-      <Filter>Shader\Object3D</Filter>
-    </FxCompile>
+    <ClInclude Include="Base\PiplineStateObject\PiplineStateObject.h">
+      <Filter>Include\Base\PiplineStateObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\ShaderCompile\ShaderCompile.h">
+      <Filter>Include\Base\ShaderCompile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt">
@@ -317,8 +333,16 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\Object3d.hlsli">
+    <None Include="Shader\Object3D\Object3d.hlsli">
       <Filter>Shader\Object3D</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\Object3D\Object3d.PS.hlsl">
+      <Filter>Shader\Object3D</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Object3D\Object3d.VS.hlsl">
+      <Filter>Shader\Object3D</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
