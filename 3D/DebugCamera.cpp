@@ -22,12 +22,20 @@ void DebugCamera::Initalize() {
 void DebugCamera::Update() {
 
 	velocity_ = { 0.0f,0.0f,0.0f };
-	if(Input::PressKey(DIK_W)) { velocity_ += Vec3f::back; }
+	/*if(Input::PressKey(DIK_W)) { velocity_ += Vec3f::back; }
 	if(Input::PressKey(DIK_A)) { velocity_ += Vec3f::left; }
 	if(Input::PressKey(DIK_S)) { velocity_ += Vec3f::front; }
-	if(Input::PressKey(DIK_D)) { velocity_ += Vec3f::right; }
-	if(Input::PressKey(DIK_SPACE)) { velocity_ += Vec3f::up; }
-	if(Input::PressKey(DIK_LSHIFT)) { velocity_ += Vec3f::down; }
+	if(Input::PressKey(DIK_D)) { velocity_ += Vec3f::right; }*/
+	//if(Input::PressKey(DIK_SPACE)) { velocity_ += Vec3f::up; }
+	//if(Input::PressKey(DIK_LSHIFT)) { velocity_ += Vec3f::down; }
+
+	if(Input::PressMouse(2)) {
+		velocity_ += (Vec3f(Input::MouseVelocity(), 0.0f) / 256.0f) * -1.0f;
+		velocity_.y *= -1.0f;
+		velocity_.z = 0.0f;
+	}
+
+	velocity_.z = Input::MouseWheel() / 256.0f;
 
 	if(Input::PressMouse(0)) {
 		worldTransform_.rotate.x += Input::MouseVelocity().y / 256.0f;
@@ -35,7 +43,7 @@ void DebugCamera::Update() {
 	}
 
 	//velocity_ = Vec3f::Normalize(velocity_) * (kSpeed_ * (1.0f + Input::PressKey(DIK_LSHIFT)));
-	velocity_ = Vec3f::Normalize(velocity_) * kSpeed_;
+	//velocity_ = Vec3f::Normalize(velocity_) * kSpeed_;
 	velocity_ = Mat4::Transform(velocity_, Mat4::MakeRotate(worldTransform_.rotate));
 	worldTransform_.translate += velocity_;
 

@@ -84,6 +84,7 @@ public:
 	static Vec2f MouseVelocity() {
 		return Vec2f(static_cast<float>(manager_->mouseState_.lX), static_cast<float>(manager_->mouseState_.lY));
 	}
+	static float  MouseWheel() { return static_cast<float>(manager_->mouseState_.lZ); }
 private:
 
 	static InputManager* manager_;
