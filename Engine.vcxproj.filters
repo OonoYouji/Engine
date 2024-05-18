@@ -192,9 +192,6 @@
     <Filter Include="Shader\Object3D">
       <UniqueIdentifier>{33c7da47-58ad-4987-a1c9-262f7f3d3985}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shader\Texture3D">
-      <UniqueIdentifier>{0c8631fa-091c-4243-b6f7-cf695d9b4523}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include\Base\PiplineStateObject">
       <UniqueIdentifier>{6c8acbdc-1784-4e5f-b6b5-21c27bf6d948}</UniqueIdentifier>
     </Filter>
@@ -206,6 +203,9 @@
     </Filter>
     <Filter Include="Source\Base\ShaderCompile">
       <UniqueIdentifier>{0e82a95d-2f73-438b-9a4f-187d7a7e188c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Terrain">
+      <UniqueIdentifier>{0c8631fa-091c-4243-b6f7-cf695d9b4523}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -342,6 +342,9 @@
     <None Include="Shader\Object3D\Object3d.hlsli">
       <Filter>Shader\Object3D</Filter>
     </None>
+    <None Include="Shader\Terrain\Terrain.hlsli">
+      <Filter>Shader\Terrain</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Object3D\Object3d.PS.hlsl">
@@ -349,6 +352,12 @@
     </FxCompile>
     <FxCompile Include="Shader\Object3D\Object3d.VS.hlsl">
       <Filter>Shader\Object3D</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Terrain\Terrain.PS.hlsl">
+      <Filter>Shader\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Terrain\Terrain.VS.hlsl">
+      <Filter>Shader\Terrain</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
