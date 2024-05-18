@@ -13,6 +13,8 @@
 #include <WinApp.h>
 #include <Environment.h>
 #include <ImGuiManager.h>
+#include <ShaderBlob.h>
+#include <PipelineStateObject.h>
 #include <Vector4.h>
 
 #pragma comment(lib, "d3d12.lib")
@@ -52,7 +54,6 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	descriptors_ = DxDescriptors::GetInstance();
 	descriptors_->Initialize();
 
-
 	InitializeSwapChain();
 	InitialiezRenderTarget();
 	InitializeFence();
@@ -60,12 +61,30 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	shaderCompile_ = std::make_unique<ShaderCompile>();
 	shaderCompile_->Initialize();
 
-	InitializeRootSignature();
-	InitializeInputLayout();
-	InitializeBlendState();
-	InitializeRasterizer();
-	InitializeShaderBlob();
-	InitializePSO();
+	object3D_ = std::make_unique<ShaderBlob>();
+	object3D_->Initialize(
+		shaderCompile_.get(),
+		L"./Shader/Object3D/Object3d.VS.hlsl", L"vs_6_0",
+		L"./Shader/Object3D/Object3d.PS.hlsl", L"ps_6_0"
+	);
+
+	object3dPSO_ = std::make_unique<PipelineStateObject>();
+	object3dPSO_->SetInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	object3dPSO_->SetInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT);
+	object3dPSO_->SetInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT);
+
+	object3dPSO_->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
+
+	object3dPSO_->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	object3dPSO_->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
+	object3dPSO_->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	object3dPSO_->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
+
+	object3dPSO_->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_PIXEL);
+
+	object3dPSO_->Initialize(device_.Get(), object3D_.get());
+
+
 	InitializeViewport();
 
 	InitializeDepthStencil();
@@ -88,8 +107,8 @@ void DirectXCommon::Finalize() {
 	depthStencilResource_.Reset();
 
 	graphicsPipelineState_.Reset();
-	pixelShaderBlob_.Reset();
-	vertexShaderBlob_.Reset();
+	object3D_.reset();
+	object3dPSO_.reset();
 	rootSignature_.Reset();
 	errorBlob_.Reset();
 	signatureBlob_.Reset();
@@ -101,7 +120,7 @@ void DirectXCommon::Finalize() {
 		swapChainResource_[i].Reset();
 	}
 	swapChain_.Reset();
-	
+
 	///- Commandの解放
 	command_->Finalize();
 
@@ -111,7 +130,6 @@ void DirectXCommon::Finalize() {
 #ifdef _DEBUG
 	debugController_.Reset();
 #endif // _DEBUG
-
 
 
 	/// ---------------------------
@@ -491,11 +509,11 @@ void DirectXCommon::InitializeRasterizer() {
 void DirectXCommon::InitializeShaderBlob() {
 
 	///- Shaderをコンパイルする
-	vertexShaderBlob_ = shaderCompile_->CompileShader(L"./Shader/Object3D/Object3d.VS.hlsl", L"vs_6_0");
+	/*vertexShaderBlob_ = shaderCompile_->CompileShader(L"./Shader/Object3D/Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 
 	pixelShaderBlob_ = shaderCompile_->CompileShader(L"./Shader/Object3D/Object3d.PS.hlsl", L"ps_6_0");
-	assert(pixelShaderBlob_ != nullptr);
+	assert(pixelShaderBlob_ != nullptr);*/
 
 
 }
@@ -529,12 +547,12 @@ void DirectXCommon::InitializePSO() {
 
 	//- Shader
 	desc.VS = {
-		vertexShaderBlob_->GetBufferPointer(),
-		vertexShaderBlob_->GetBufferSize()
+		object3D_->GetVS()->GetBufferPointer(),
+		object3D_->GetVS()->GetBufferSize()
 	};
 	desc.PS = {
-		pixelShaderBlob_->GetBufferPointer(),
-		pixelShaderBlob_->GetBufferSize()
+		object3D_->GetPS()->GetBufferPointer(),
+		object3D_->GetPS()->GetBufferSize()
 	};
 
 	desc.BlendState = blendDesc_;			//- BlendState
@@ -786,8 +804,10 @@ void DirectXCommon::PreDraw() {
 	commandList->RSSetScissorRects(1, &scissorRect_);
 
 	///- RootSignatureを設定; PSOとは別に別途設定が必要
-	commandList->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList->SetPipelineState(graphicsPipelineState_.Get());
+	/*commandList->SetGraphicsRootSignature(rootSignature_.Get());
+	commandList->SetPipelineState(graphicsPipelineState_.Get());*/
+
+	object3dPSO_->SetCommandList(commandList);
 
 }
 

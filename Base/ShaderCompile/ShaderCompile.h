@@ -24,6 +24,9 @@ public:
 	/// <summary>
 	/// Shaderをコンパイルする
 	/// </summary>
+	/// <param name="filePath: ">Shaderへのファイルパス</param>
+	/// <param name="profile: ">Shaderのバージョン</param>
+	/// <returns>コンパイルしたShaderBlob</returns>
 	ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
 private:

@@ -23,7 +23,8 @@ class WinApp;
 class DxCommand;
 class DxDescriptors;
 class ShaderCompile;
-
+class ShaderBlob;
+class PipelineStateObject;
 
 struct VertexData {
 	Vec4f position;
@@ -84,6 +85,7 @@ private:
 	HANDLE fenceEvent_;
 
 	std::unique_ptr<ShaderCompile> shaderCompile_;
+	std::unique_ptr<PipelineStateObject> object3dPSO_;
 
 	ComPtr<ID3DBlob> signatureBlob_;
 	ComPtr<ID3DBlob> errorBlob_;
@@ -93,11 +95,9 @@ private:
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
 
 	D3D12_BLEND_DESC blendDesc_;
-
 	D3D12_RASTERIZER_DESC rasterizerDesc_;
 
-	ComPtr<IDxcBlob> vertexShaderBlob_;
-	ComPtr<IDxcBlob> pixelShaderBlob_;
+	std::unique_ptr<ShaderBlob> object3D_;
 
 	ComPtr<ID3D12PipelineState> graphicsPipelineState_;
 
@@ -130,16 +130,12 @@ private:
 	void InitializeFence();
 
 	void InitializeRootSignature();
-
 	void InitializeInputLayout();
-
 	void InitializeBlendState();
-
 	void InitializeRasterizer();
-
 	void InitializeShaderBlob();
-
 	void InitializePSO();
+
 
 	void InitializeViewport();
 
