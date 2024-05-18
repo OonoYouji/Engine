@@ -32,12 +32,10 @@ struct VertexData {
 	Vec3f normal;
 };
 
-
 struct Material {
 	Vec4f color;
 	int32_t enableLighting;
 };
-
 
 struct TransformMatrix {
 	Mat4 WVP;
@@ -85,32 +83,12 @@ private:
 	HANDLE fenceEvent_;
 
 	std::unique_ptr<ShaderCompile> shaderCompile_;
-	std::unique_ptr<PipelineStateObject> object3dPSO_;
-
-	ComPtr<ID3DBlob> signatureBlob_;
-	ComPtr<ID3DBlob> errorBlob_;
-	ComPtr<ID3D12RootSignature> rootSignature_;
-
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[3];
-	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc_;
-
-	D3D12_BLEND_DESC blendDesc_;
-	D3D12_RASTERIZER_DESC rasterizerDesc_;
-
 	std::unique_ptr<ShaderBlob> object3D_;
-
-	ComPtr<ID3D12PipelineState> graphicsPipelineState_;
+	std::unique_ptr<PipelineStateObject> object3dPSO_;
 
 	D3D12_VIEWPORT viewport_;
 	Matrix4x4 viewportMatrix_;
 	D3D12_RECT scissorRect_;
-
-	///- 三角形の色を変えよう
-	D3D12_ROOT_PARAMETER rootParameters_[4];
-
-	///- テクスチャを貼ろう
-	D3D12_DESCRIPTOR_RANGE descriptorRange_[1];
-	D3D12_STATIC_SAMPLER_DESC staticSamplers_[1];
 
 	///- 前後関係
 	ComPtr<ID3D12Resource> depthStencilResource_;
@@ -129,19 +107,9 @@ private:
 
 	void InitializeFence();
 
-	void InitializeRootSignature();
-	void InitializeInputLayout();
-	void InitializeBlendState();
-	void InitializeRasterizer();
-	void InitializeShaderBlob();
-	void InitializePSO();
-
-
 	void InitializeViewport();
 
 	void ClearRenderTarget();
-
-	void InitializeDescriptorRange();
 
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
 
@@ -179,8 +147,6 @@ public:
 	/// </summary>
 	void PostDraw();
 
-	ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-
 	ID3D12Device* GetDevice() { return device_.Get(); }
 
 	const DXGI_SWAP_CHAIN_DESC1& GetSwapChainDesc() const { return swapChainDesc_; }
@@ -191,10 +157,6 @@ public:
 	
 	const Matrix4x4& GetViewportMatrix() const { return viewportMatrix_; }
 
-	/// <summary>
-	/// swapChainResource getter
-	/// </summary>
-	/// <returns></returns>
 	std::vector<ComPtr<ID3D12Resource>> GetSwapChainResource() { return swapChainResource_; }
 
 	void ClearDepthBuffer();

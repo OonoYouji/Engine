@@ -68,7 +68,6 @@ public:
 	/// <param name="shaderVisibility"></param>
 	void SetStaticSampler(uint32_t shaderRegister, D3D12_SHADER_VISIBILITY shaderVisibility);
 
-
 	/// <summary>
 	/// CommandListにRootSignatureとPipelineStateを設定する
 	/// </summary>
@@ -91,7 +90,6 @@ private:
 	/// RootSignatureの生成
 	/// </summary>
 	void CreateRootSignature(ID3D12Device* device);
-
 
 	/// <summary>
 	/// ID3D12PipelineStateの生成

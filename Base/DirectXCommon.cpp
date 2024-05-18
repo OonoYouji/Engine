@@ -106,12 +106,8 @@ void DirectXCommon::Finalize() {
 
 	depthStencilResource_.Reset();
 
-	graphicsPipelineState_.Reset();
-	object3D_.reset();
 	object3dPSO_.reset();
-	rootSignature_.Reset();
-	errorBlob_.Reset();
-	signatureBlob_.Reset();
+	object3D_.reset();
 	shaderCompile_.reset();
 
 	CloseHandle(fenceEvent_);
@@ -170,7 +166,6 @@ void DirectXCommon::InitializeDXGIDevice() {
 	assert(SUCCEEDED(result));
 
 
-
 	/// ---------------------------
 	/// ↓ Adapterを生成; 
 	/// ---------------------------
@@ -198,8 +193,6 @@ void DirectXCommon::InitializeDXGIDevice() {
 
 	///- for()が終了してもadapterが取得できなかった場合起動できない
 	assert(useAdapter_ != nullptr);
-
-
 
 
 	/// ---------------------------
@@ -367,222 +360,6 @@ void DirectXCommon::InitializeFence() {
 
 
 /// ---------------------------
-/// ↓ RootSignatureの初期化
-/// ---------------------------
-void DirectXCommon::InitializeRootSignature() {
-	HRESULT result = S_FALSE;
-
-	///- RootSignatureの作成
-	D3D12_ROOT_SIGNATURE_DESC desc{};
-	desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
-
-	descriptorRange_[0].BaseShaderRegister = 0; //- 0から始まる
-	descriptorRange_[0].NumDescriptors = 1; //- textureの数
-	descriptorRange_[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
-	descriptorRange_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-
-	///- RootParameter作成; PixelShaderのMaterialとVertexShaderのTransform
-	///- PixelShader
-	rootParameters_[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		//- CBVを使う
-	rootParameters_[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//- PixelShaderを使う
-	rootParameters_[0].Descriptor.ShaderRegister = 0;	//- レジスタ番号0とバインド
-
-	///- VertexShader
-	rootParameters_[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;		//- CBVを使う
-	rootParameters_[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;	//- VertexShaderを使う
-	rootParameters_[1].Descriptor.ShaderRegister = 0;	//- レジスタ番号0とバインド
-
-	///- texutre
-	rootParameters_[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters_[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters_[2].DescriptorTable.pDescriptorRanges = &descriptorRange_[0];
-	rootParameters_[2].DescriptorTable.NumDescriptorRanges = descriptorRange_[0].NumDescriptors;
-
-	///- light
-	rootParameters_[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters_[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters_[3].Descriptor.ShaderRegister = 1;
-
-
-	/// ----------------------------------------------
-	/// ↓ Samplerの設定
-	/// ----------------------------------------------
-
-	staticSamplers_[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;		//- バイリニアフィルタ
-	staticSamplers_[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;		//- 0~1の範囲外をリピート
-	staticSamplers_[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers_[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers_[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;	//- 比較しない
-	staticSamplers_[0].MaxLOD = D3D12_FLOAT32_MAX;	//- ありったけのMipMapを使う
-	staticSamplers_[0].ShaderRegister = 0;			//- レジスタ番号0を使う
-	staticSamplers_[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//- PixelShaderで使う
-
-
-	desc.pParameters = rootParameters_;					//- ルートパラメータ配列へのポインタ
-	desc.NumParameters = _countof(rootParameters_);		//- 配列の長さ
-
-	desc.pStaticSamplers = staticSamplers_;
-	desc.NumStaticSamplers = _countof(staticSamplers_);
-
-	///- シリアライズしてバイナリ
-	result = D3D12SerializeRootSignature(
-		&desc,
-		D3D_ROOT_SIGNATURE_VERSION_1,
-		&signatureBlob_,
-		&errorBlob_
-	);
-	if(FAILED(result)) {
-		Engine::ConsolePrint(reinterpret_cast<char*>(errorBlob_->GetBufferPointer()));
-		assert(false);
-	}
-
-	///- バイナリを元に生成
-	result = device_->CreateRootSignature(
-		0, signatureBlob_->GetBufferPointer(),
-		signatureBlob_->GetBufferSize(),
-		IID_PPV_ARGS(&rootSignature_)
-	);
-	assert(SUCCEEDED(result));
-
-}
-
-
-
-/// ---------------------------
-/// ↓ InputLayoutの初期化
-/// ---------------------------
-void DirectXCommon::InitializeInputLayout() {
-
-	///- InputLayout
-	inputElementDescs_[0].SemanticName = "POSITION";
-	inputElementDescs_[0].SemanticIndex = 0;
-	inputElementDescs_[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs_[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs_[1].SemanticName = "TEXCOORD";
-	inputElementDescs_[1].SemanticIndex = 0;
-	inputElementDescs_[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs_[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs_[2].SemanticName = "NORMAL";
-	inputElementDescs_[2].SemanticIndex = 0;
-	inputElementDescs_[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs_[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-
-	inputLayoutDesc_.pInputElementDescs = inputElementDescs_;
-	inputLayoutDesc_.NumElements = _countof(inputElementDescs_);
-
-}
-
-
-
-/// ---------------------------
-/// ↓ BlendStateの初期化
-/// ---------------------------
-void DirectXCommon::InitializeBlendState() {
-
-	///- すべての色要素を書き込む
-	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-}
-
-
-
-/// ---------------------------
-/// ↓ Rasterizerの初期化
-/// ---------------------------
-void DirectXCommon::InitializeRasterizer() {
-
-	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;	//- 裏面を表示しない
-	rasterizerDesc_.FillMode = D3D12_FILL_MODE_SOLID;	//- 三角形の中を塗りつぶす
-
-}
-
-
-
-/// ---------------------------
-/// ↓ ShaderBlobの初期化
-/// ---------------------------
-void DirectXCommon::InitializeShaderBlob() {
-
-	///- Shaderをコンパイルする
-	/*vertexShaderBlob_ = shaderCompile_->CompileShader(L"./Shader/Object3D/Object3d.VS.hlsl", L"vs_6_0");
-	assert(vertexShaderBlob_ != nullptr);
-
-	pixelShaderBlob_ = shaderCompile_->CompileShader(L"./Shader/Object3D/Object3d.PS.hlsl", L"ps_6_0");
-	assert(pixelShaderBlob_ != nullptr);*/
-
-
-}
-
-
-
-/// ---------------------------
-/// ↓ PSOの初期化
-/// ---------------------------
-void DirectXCommon::InitializePSO() {
-	HRESULT result = S_FALSE;
-
-
-	/// ---------------------------
-	/// ↓ depthStencilの設定
-	/// ---------------------------
-
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	depthStencilDesc.DepthEnable = true;	//- Depth機能の有効化
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;	//- 書き込みする
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;	//- 比較関数の設定; 近ければ描画される
-
-
-	/// ---------------------------
-	/// ↓ PSOの設定
-	/// ---------------------------
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc{};
-	desc.pRootSignature = rootSignature_.Get();	//- RootSignature
-	desc.InputLayout = inputLayoutDesc_;		//- InputLayout
-
-	//- Shader
-	desc.VS = {
-		object3D_->GetVS()->GetBufferPointer(),
-		object3D_->GetVS()->GetBufferSize()
-	};
-	desc.PS = {
-		object3D_->GetPS()->GetBufferPointer(),
-		object3D_->GetPS()->GetBufferSize()
-	};
-
-	desc.BlendState = blendDesc_;			//- BlendState
-	desc.RasterizerState = rasterizerDesc_; //- RasterizerState
-
-	///- 書き込むRTVの情報
-	desc.NumRenderTargets = 1;
-	desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	///- 利用するトロポジ(形状)のタイプ; 三角形
-	desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	///- 画面に色を打ち込みかの設定
-	desc.SampleDesc.Count = 1;
-	desc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	///- DepthStencilの設定
-	desc.DepthStencilState = depthStencilDesc;
-	desc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
-	///- 実際に生成
-	result = device_->CreateGraphicsPipelineState(
-		&desc, IID_PPV_ARGS(&graphicsPipelineState_)
-	);
-	assert(SUCCEEDED(result));
-
-
-}
-
-
-
-
-/// ---------------------------
 /// ↓ viewportとscissorの初期化
 /// ---------------------------
 void DirectXCommon::InitializeViewport() {
@@ -683,39 +460,6 @@ void DirectXCommon::ClearRenderTarget() {
 	command_->GetList()->ClearRenderTargetView(
 		rtvHandles_[bbIndex], clearColor, 0, nullptr
 	);
-}
-
-
-
-
-/// ---------------------------
-/// ↓ DescriptorRangeの初期化
-/// ---------------------------
-void DirectXCommon::InitializeDescriptorRange() {
-
-	descriptorRange_[0].BaseShaderRegister = 0; //- 0から始まる
-	descriptorRange_[0].NumDescriptors = 2; //- textureの数
-	descriptorRange_[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //- SRVを使う
-	descriptorRange_[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-
-}
-
-
-
-/// ---------------------------
-/// ↓ DescriptorHeap作成関数
-/// ---------------------------
-ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
-	ComPtr<ID3D12DescriptorHeap> heap;
-	D3D12_DESCRIPTOR_HEAP_DESC desc{};
-	desc.Type = heapType;
-	desc.NumDescriptors = numDescriptors;
-	desc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-	HRESULT result = device_->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&heap));
-	assert(SUCCEEDED(result));
-
-	return heap;
 }
 
 
