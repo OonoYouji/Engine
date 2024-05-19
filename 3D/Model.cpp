@@ -108,7 +108,7 @@ void Model::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, transformMatrixResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, material_.textureName);
-	Light::GetInstance()->SetConstantBuffer(commandList);
+	Light::GetInstance()->SetConstantBuffer(3, commandList);
 
 	commandList->DrawInstanced(UINT(vertices_.size()), 1, 0, 0);
 }

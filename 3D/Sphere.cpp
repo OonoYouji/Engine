@@ -231,7 +231,7 @@ void Sphere::Draw() {
 	///- DescriptorTableを設定する
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
 	///- Light
-	Light::GetInstance()->SetConstantBuffer(commandList);
+	Light::GetInstance()->SetConstantBuffer(3, commandList);
 
 	///- 描画 (DrawCall)
 	commandList->DrawIndexedInstanced(UINT(indexData_.size()), 1, 0, 0, 0);

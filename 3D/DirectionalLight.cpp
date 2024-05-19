@@ -53,6 +53,6 @@ void Light::Finalize() {
 
 
 
-void Light::SetConstantBuffer(ID3D12GraphicsCommandList* commandList) {
-	commandList->SetGraphicsRootConstantBufferView(3, resource_->GetGPUVirtualAddress());
+void Light::SetConstantBuffer(uint32_t rootParameterIndex, ID3D12GraphicsCommandList* commandList) {
+	commandList->SetGraphicsRootConstantBufferView(static_cast<UINT>(rootParameterIndex), resource_->GetGPUVirtualAddress());
 }

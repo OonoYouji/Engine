@@ -24,14 +24,9 @@ public:
 	/// テクスチャ1枚あたりのデータ
 	/// </summary>
 	struct Texture {
-		ComPtr<ID3D12Resource> srvResource;
-		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
-		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
-
-		/*ComPtr<ID3D12Resource> uavResource;
-		D3D12_CPU_DESCRIPTOR_HANDLE uavHandleCPU;
-		D3D12_GPU_DESCRIPTOR_HANDLE uavHandleGPU;*/
-
+		ComPtr<ID3D12Resource> resource;
+		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU;
+		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU;
 	};
 
 
@@ -60,11 +55,18 @@ public:
 	void Load(const std::string& textureName, const std::string& filePath);
 
 	/// <summary>
+	/// uav用Textureデータを読み込む
+	/// </summary>
+	/// <param name="textureName"></param>
+	/// <param name="filePath"></param>
+	void LoadUav(const std::string& textureName, const std::string& filePath);
+
+	/// <summary>
 	/// textureのセット
 	/// </summary>
 	/// <param name="index"></param>
 	void SetGraphicsRootDescriptorTable(UINT rootParameterIndex, const std::string& textureName);
-	
+
 	/// <summary>
 	/// textureのセット
 	/// </summary>
@@ -75,6 +77,7 @@ public:
 private: ///- メンバ変数
 
 	std::map<std::string, Texture> textures_;
+	std::map<std::string, Texture> uavTextures_;
 
 
 	/// <summary>
@@ -83,7 +86,6 @@ private: ///- メンバ変数
 	/// <param name="filePath"> テクスチャのファイルパス </param>
 	/// <returns> mipMap付きのデータ </returns>
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
-
 
 	/// <summary>
 	/// DirextX12のTextureResourceを作る

@@ -34,6 +34,17 @@ void TextureManager::Initialize() {
 	Load("tileMap", baseFilePath + "tileMap.png");
 	Load("GrayTexture", baseFilePath + "GrayTexture.png");
 
+	LoadUav("uvChecker", baseFilePath + "uvChecker.png");
+	LoadUav("monsterBall", baseFilePath + "monsterBall.png");
+	LoadUav("dragon", baseFilePath + "dragon.png");
+	LoadUav("sprite", baseFilePath + "sprite.png");
+	LoadUav("yama", baseFilePath + "yama.png");
+	LoadUav("goku", baseFilePath + "goku.png");
+	LoadUav("clear1", baseFilePath + "clear1.png");
+	LoadUav("tileMap", baseFilePath + "tileMap.png");
+	LoadUav("GrayTexture", baseFilePath + "GrayTexture.png");
+
+
 
 }
 
@@ -61,11 +72,8 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 	Texture newTexture{};
 	DirectX::ScratchImage mipImages = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	newTexture.srvResource = CreataTextureResouece(DirectXCommon::GetInstance()->GetDevice(), metadata);
-	UploadTextureData(newTexture.srvResource.Get(), mipImages);
-
-	//newTexture.uavResource = CreataTextureResoueceUAV(DirectXCommon::GetInstance()->GetDevice(), metadata);
-	//UploadTextureData(newTexture.uavResource.Get(), mipImages);
+	newTexture.resource = CreataTextureResouece(DirectXCommon::GetInstance()->GetDevice(), metadata);
+	UploadTextureData(newTexture.resource.Get(), mipImages);
 
 	///- metadataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -74,26 +82,45 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = UINT(metadata.mipLevels);
 
-	//D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
-	//uavDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // テクスチャのフォーマットを設定
-	//uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D; // テクスチャの次元を設定
-	//uavDesc.Texture2D.MipSlice = 0; // テクスチャのミップレベルを設定
-
 	///- srvHandleの取得
 	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
-	newTexture.srvHandleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() * 2) + 1));
-	newTexture.srvHandleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() * 2) + 1));
-
-	/*///- uavHandleの取得
-	newTexture.uavHandleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() * 2) + 2));
-	newTexture.uavHandleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() * 2) + 2));*/
+	newTexture.handleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() + uavTextures_.size()) + 1));
+	newTexture.handleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() + uavTextures_.size()) + 1));
 
 	///- srvの生成
-	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(newTexture.srvResource.Get(), &srvDesc, newTexture.srvHandleCPU);
-	//DirectXCommon::GetInstance()->GetDevice()->CreateUnorderedAccessView(newTexture.uavResource.Get(), nullptr, &uavDesc, newTexture.uavHandleCPU);
+	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(newTexture.resource.Get(), &srvDesc, newTexture.handleCPU);
 
 	textures_[textureName] = newTexture;
 
+}
+
+
+void TextureManager::LoadUav(const std::string& textureName, const std::string& filePath) {
+
+	if(uavTextures_.find(textureName) != uavTextures_.end()) {
+		return;
+	}
+
+	Texture newTexture{};
+	DirectX::ScratchImage mipImages = LoadTexture(filePath);
+	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+	newTexture.resource = CreataTextureResoueceUAV(DirectXCommon::GetInstance()->GetDevice(), metadata);
+	UploadTextureData(newTexture.resource.Get(), mipImages);
+
+	///- metadataを基にSRVの設定
+	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
+	uavDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;			//- テクスチャのフォーマットを設定
+	uavDesc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;	//- テクスチャの次元を設定
+	uavDesc.Texture2D.MipSlice = 0;							//- テクスチャのミップレベルを設定
+
+	///- uavhandleの取得
+	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
+	newTexture.handleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() + uavTextures_.size()) + 1));
+	newTexture.handleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() + uavTextures_.size()) + 1));
+
+	DirectXCommon::GetInstance()->GetDevice()->CreateUnorderedAccessView(newTexture.resource.Get(), nullptr, &uavDesc, newTexture.handleCPU);
+
+	uavTextures_[textureName] = newTexture;
 }
 
 
@@ -104,13 +131,13 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, const std::string& textureName) {
 
 	/// texturesの範囲外参照しないように注意
-	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].srvHandleGPU);
+	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].handleGPU);
 }
 
 void TextureManager::SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, const std::string& textureName) {
 
 	/// texturesの範囲外参照しないように注意
-	//DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].uavHandleGPU);
+	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, uavTextures_[textureName].handleGPU);
 }
 
 

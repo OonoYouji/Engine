@@ -1,10 +1,12 @@
 #pragma once
 
-#include "Vector3.h"
-#include "Vector4.h"
-
 #include <d3d12.h>
 #include <wrl/client.h>
+
+#include <cmath>
+
+#include "Vector3.h"
+#include "Vector4.h"
 
 
 using namespace Microsoft::WRL;
@@ -35,7 +37,7 @@ public:
 	void Finalize();
 
 
-	void SetConstantBuffer(ID3D12GraphicsCommandList* commandList);
+	void SetConstantBuffer(uint32_t rootParameterIndex, ID3D12GraphicsCommandList* commandList);
 
 private:
 

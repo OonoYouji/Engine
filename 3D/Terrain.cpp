@@ -5,14 +5,13 @@
 #include <DxCommand.h>
 #include <DxDescriptors.h>
 #include <TextureManager.h>
-#include "ImGuiManager.h"
-#include "Engine.h"
-#include "Input.h"
-
-#include "PerlinNoise.h"
-#include "DirectionalLight.h"
-
-#include "InputImage.h"
+#include <ImGuiManager.h>
+#include <Engine.h>
+#include <Input.h>
+#include <PerlinNoise.h>
+#include <DirectionalLight.h>
+#include <InputImage.h>
+#include <PipelineStateObjectManager.h>
 
 
 Terrain::Terrain() {}
@@ -326,11 +325,6 @@ void Terrain::Update() {
 void Terrain::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-	commandList->IASetIndexBuffer(&indexBuffer_);
-
-	///- データの書き込み
-
 	///- 頂点情報
 	memcpy(pVertexMappedData_, pVertexData_, flattenedVertexData_.size() * sizeof(VertexData));
 	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
@@ -338,11 +332,15 @@ void Terrain::Draw() {
 	///- 色情報
 	materialData_->color = color_;
 
-
 	///- 行列情報
 	worldTransform_.UpdateWorldMatrix();
 	matrixData_->World = worldTransform_.worldMatrix;
 	matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+
+	///- psoを設定
+	PipelineStateObjectManager::GetInstance()->SetCommandList(1, commandList);
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetIndexBuffer(&indexBuffer_);
 
 	///- 各種設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -351,7 +349,7 @@ void Terrain::Draw() {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "dragon");	 ///- terrain
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");	 ///- heightMap
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "GrayTexture");  ///- operation
-	Light::GetInstance()->SetConstantBuffer(commandList);
+	Light::GetInstance()->SetConstantBuffer(1, commandList);
 
 
 	///- 描画 (DrawCall)
