@@ -15,6 +15,7 @@
 #include <ImGuiManager.h>
 #include <ShaderBlob.h>
 #include <PipelineStateObject.h>
+#include <PipelineStateObjectManager.h>
 #include <Vector4.h>
 
 #pragma comment(lib, "d3d12.lib")
@@ -58,31 +59,8 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	InitialiezRenderTarget();
 	InitializeFence();
 
-	shaderCompile_ = std::make_unique<ShaderCompile>();
-	shaderCompile_->Initialize();
-
-	object3D_ = std::make_unique<ShaderBlob>();
-	object3D_->Initialize(
-		shaderCompile_.get(),
-		L"./Shader/Object3D/Object3d.VS.hlsl", L"vs_6_0",
-		L"./Shader/Object3D/Object3d.PS.hlsl", L"ps_6_0"
-	);
-
-	object3dPSO_ = std::make_unique<PipelineStateObject>();
-	object3dPSO_->SetInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
-	object3dPSO_->SetInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT);
-	object3dPSO_->SetInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT);
-
-	object3dPSO_->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
-
-	object3dPSO_->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-	object3dPSO_->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
-	object3dPSO_->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-	object3dPSO_->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
-
-	object3dPSO_->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_PIXEL);
-
-	object3dPSO_->Initialize(device_.Get(), object3D_.get());
+	PipelineStateObjectManager* psoManager = PipelineStateObjectManager::GetInstance();
+	psoManager->Initialize(device_.Get());
 
 
 	InitializeViewport();
@@ -105,10 +83,6 @@ void DirectXCommon::Finalize() {
 	DxDescriptors::GetInstance()->Finalize();
 
 	depthStencilResource_.Reset();
-
-	object3dPSO_.reset();
-	object3D_.reset();
-	shaderCompile_.reset();
 
 	CloseHandle(fenceEvent_);
 	fence_.Reset();
@@ -546,13 +520,6 @@ void DirectXCommon::PreDraw() {
 	///- viewport; scissorRectを設定
 	commandList->RSSetViewports(1, &viewport_);
 	commandList->RSSetScissorRects(1, &scissorRect_);
-
-	///- RootSignatureを設定; PSOとは別に別途設定が必要
-	/*commandList->SetGraphicsRootSignature(rootSignature_.Get());
-	commandList->SetPipelineState(graphicsPipelineState_.Get());*/
-
-	object3dPSO_->SetCommandList(commandList);
-
 }
 
 
@@ -576,8 +543,6 @@ void DirectXCommon::PostDraw() {
 	///- コマンドをキックする
 	ID3D12CommandList* commandLists[] = { commandList };
 	command_->GetQueue()->ExecuteCommandLists(1, commandLists);
-
-	ImGuiManager::GetInstance()->RenderMultiViewport();
 
 	///- GPUとOSに画面の交換を行うように通知する
 	swapChain_->Present(1, 0);

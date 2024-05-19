@@ -121,6 +121,9 @@
     <ClCompile Include="Base\PiplineStateObject\ShaderBlob.cpp">
       <Filter>Source\Base\PiplineStateObject</Filter>
     </ClCompile>
+    <ClCompile Include="Base\PiplineStateObject\PipelineStateObjectManager.cpp">
+      <Filter>Source\Base\PiplineStateObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -330,6 +333,9 @@
       <Filter>Include\Base\ShaderCompile</Filter>
     </ClInclude>
     <ClInclude Include="Base\PiplineStateObject\ShaderBlob.h">
+      <Filter>Include\Base\PiplineStateObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\PiplineStateObject\PipelineStateObjectManager.h">
       <Filter>Include\Base\PiplineStateObject</Filter>
     </ClInclude>
   </ItemGroup>

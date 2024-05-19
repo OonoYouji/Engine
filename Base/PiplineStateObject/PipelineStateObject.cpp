@@ -26,7 +26,7 @@ void PipelineStateObject::SetInputElement(const std::string& semanticName, uint3
 	/// };
 
 	D3D12_INPUT_ELEMENT_DESC desc{};
-	desc.SemanticName = semanticNames_.rbegin()->c_str();			//- "POSITION"
+	desc.SemanticName = semanticNames_.rbegin()->c_str();		//- "POSITION"
 	desc.SemanticIndex = semanticIndex;							//- "0"
 	desc.Format = format;										//- "DXGI_FORMAT_R32G32B32A32_FLOAT"
 	desc.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;		//- 

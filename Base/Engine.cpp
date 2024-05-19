@@ -13,6 +13,7 @@
 #include <DirectionalLight.h>
 #include <Input.h>
 #include <Camera.h>
+#include <PipelineStateObjectManager.h>
 
 template<class T>
 void SafeDelete(T* t) {
@@ -178,7 +179,6 @@ void Engine::Initialize(const std::string& title) {
 	sImGuiManager = ImGuiManager::GetInstance();
 	sImGuiManager->Initialize(sWinApp, sDirectXCommon);
 
-
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();
 
@@ -200,6 +200,8 @@ void Engine::Finalize() {
 	sImGuiManager->Finalize();
 
 	sTextureManager_->Finalize();
+
+	PipelineStateObjectManager::GetInstance()->Finalize();
 
 	sInput->Finalize();
 

@@ -25,6 +25,7 @@ class DxDescriptors;
 class ShaderCompile;
 class ShaderBlob;
 class PipelineStateObject;
+class PipelineStateObjectManager;
 
 struct VertexData {
 	Vec4f position;
@@ -82,9 +83,7 @@ private:
 	uint64_t fenceValue_;
 	HANDLE fenceEvent_;
 
-	std::unique_ptr<ShaderCompile> shaderCompile_;
-	std::unique_ptr<ShaderBlob> object3D_;
-	std::unique_ptr<PipelineStateObject> object3dPSO_;
+
 
 	D3D12_VIEWPORT viewport_;
 	Matrix4x4 viewportMatrix_;

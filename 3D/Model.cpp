@@ -15,6 +15,7 @@
 #include <TextureManager.h>
 #include <ImGuiManager.h>
 #include <DirectionalLight.h>
+#include <PipelineStateObjectManager.h>
 
 
 Model::Model() {}
@@ -93,30 +94,23 @@ void Model::Draw() {
 	///- 頂点情報のコピー
 	std::memcpy(vertexData_, vertices_.data(), sizeof(VertexData) * vertices_.size());
 
-	///- IASet
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
 	///- Data
 	worldTransform_.UpdateWorldMatrix();
 	transformMatrixData_->World = worldTransform_.worldMatrix;
 	transformMatrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
+	///- 使用するpsoの設定
+	PipelineStateObjectManager::GetInstance()->SetCommandList(0, commandList);
+	///- IASet
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
-	///- Resource Setting
-
-	///- 形状を設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	///- マテリアルのCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	///- wvp用のCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(1, transformMatrixResource_->GetGPUVirtualAddress());
-	///- DescriptorTableを設定する
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, material_.textureName);
-	///- Light
 	Light::GetInstance()->SetConstantBuffer(commandList);
 
 	commandList->DrawInstanced(UINT(vertices_.size()), 1, 0, 0);
-
 }
 
 
