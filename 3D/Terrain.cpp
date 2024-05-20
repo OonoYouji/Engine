@@ -17,9 +17,10 @@
 Terrain::Terrain() {}
 Terrain::~Terrain() {
 	///- 解放処理
-	wvpResource_.Reset();
+	matrixResource_.Reset();
 	materialResource_.Reset();
 	vertexResource_.Reset();
+	indexResource_.Reset();
 }
 
 
@@ -72,20 +73,20 @@ void Terrain::Init() {
 	/// ↓ MaterialResource
 	/// -------------------------
 
-	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
+	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
 	materialData_->enableLighting = true;
 
 
 	/// -------------------------
-	/// ↓ wvpResource
+	/// ↓ MatrixResource
 	/// -------------------------
 
-	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
-	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&matrixData_));
-	matrixData_->World = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
-	matrixData_->WVP = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
+	matrixResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix));
+	matrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&matrixData_));
+	matrixData_->World = Matrix4x4::MakeIdentity();
+	matrixData_->WVP = Matrix4x4::MakeIdentity();
 
 
 
@@ -324,6 +325,7 @@ void Terrain::Update() {
 /// ------------------------------------------
 void Terrain::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+	PipelineStateObjectManager::GetInstance()->SetCommandList(1, commandList);
 
 	///- 頂点情報
 	memcpy(pVertexMappedData_, pVertexData_, flattenedVertexData_.size() * sizeof(VertexData));
@@ -338,18 +340,17 @@ void Terrain::Draw() {
 	matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
 	///- psoを設定
-	PipelineStateObjectManager::GetInstance()->SetCommandList(1, commandList);
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList->IASetIndexBuffer(&indexBuffer_);
 
 	///- 各種設定
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, matrixResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "dragon");	 ///- terrain
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");	 ///- heightMap
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "GrayTexture");  ///- operation
-	Light::GetInstance()->SetConstantBuffer(1, commandList);
+	Light::GetInstance()->SetConstantBuffer(5, commandList);
 
 
 	///- 描画 (DrawCall)
@@ -558,7 +559,7 @@ void Terrain::CreateVertexResource(size_t flattendVertexSize) {
 
 	///- 頂点数分確保
 	if(vertexResource_.Get()) { vertexResource_.Reset(); }
-	vertexResource_.Attach(DirectXCommon::GetInstance()->CreateBufferResource(sizeof(VertexData) * flattendVertexSize));
+	vertexResource_ = DirectXCommon::GetInstance()->CreateBufferResource(sizeof(VertexData) * flattendVertexSize);
 
 	///- vertexBufferViewの作成
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -581,7 +582,7 @@ void Terrain::CreateIndexResource(size_t indexDataSize) {
 
 	///- 頂点数分確保
 	if(indexResource_.Get()) { indexResource_.Reset(); }
-	indexResource_.Attach(DirectXCommon::GetInstance()->CreateBufferResource(sizeof(uint32_t) * indexDataSize));
+	indexResource_ = DirectXCommon::GetInstance()->CreateBufferResource(sizeof(uint32_t) * indexDataSize);
 	///- Bufferの設定
 	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
 	indexBuffer_.SizeInBytes = UINT(sizeof(uint32_t) * indexDataSize);

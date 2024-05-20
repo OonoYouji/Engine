@@ -29,7 +29,7 @@ void Sprite::Init() {
 	/// ---------------------------------
 	/// ↓ 頂点リソースの初期化
 	/// ---------------------------------
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * 4));
+	vertexResource_ = dxCommon->CreateBufferResource(sizeof(VertexData) * 4);
 
 	///- 頂点バッファビューを作成
 	///- リソースの先頭のアドレスから使う
@@ -64,7 +64,7 @@ void Sprite::Init() {
 	/// ---------------------------------
 	/// ↓ Indexリソースの初期化
 	/// ---------------------------------
-	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(uint32_t) * 6));
+	indexResource_ = dxCommon->CreateBufferResource(sizeof(uint32_t) * 6);
 
 	///- リソースの先頭アドレスから使用する
 	indexBufferView_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -91,7 +91,7 @@ void Sprite::Init() {
 	/// ---------------------------
 
 
-	transformationMatrixResource_.Attach(dxCommon->CreateBufferResource(sizeof(Matrix4x4)));
+	transformationMatrixResource_ = dxCommon->CreateBufferResource(sizeof(Matrix4x4));
 
 	///- データを書き込む
 	transformationMatrixData_ = nullptr;
@@ -111,7 +111,7 @@ void Sprite::Init() {
 	/// ---------------------------------
 	/// ↓ マテリアルリソースの初期化
 	/// ---------------------------------
-	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Vector4)));
+	materialResource_ = dxCommon->CreateBufferResource(sizeof(Vector4));
 	materialData_ = nullptr;
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	*materialData_ = { 1.0f,1.0f,1.0f,1.0f };
@@ -139,7 +139,7 @@ void Sprite::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2,"uvChecker");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
 
 	///- DrawCall
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);

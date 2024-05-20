@@ -119,7 +119,7 @@ void Sphere::Init() {
 	/// -----------------------------------------------
 
 	///- 頂点数分確保
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertexData_.size()));
+	vertexResource_ = dxCommon->CreateBufferResource(sizeof(VertexData) * vertexData_.size());
 
 	///- vertexBufferViewの作成
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -155,7 +155,7 @@ void Sphere::Init() {
 	}
 
 	///- リソースの生成
-	indexResource_.Attach(dxCommon->CreateBufferResource(sizeof(uint32_t) * indexData_.size()));
+	indexResource_ = dxCommon->CreateBufferResource(sizeof(uint32_t) * indexData_.size());
 
 	///- bufferの設定
 	indexBuffer_.BufferLocation = indexResource_->GetGPUVirtualAddress();
@@ -174,7 +174,7 @@ void Sphere::Init() {
 	/// -----------------------------------------------
 
 	///- マテリアルリソースの生成; 情報の書き込み
-	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
+	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
 	materialData_->enableLighting = true;
@@ -186,7 +186,7 @@ void Sphere::Init() {
 	/// -----------------------------------------------
 
 	///- 行列リソースの生成; 書き込み
-	transformMatrixResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
+	transformMatrixResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix));
 	transformMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformMatrixData_));
 	transformMatrixData_->World = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 	transformMatrixData_->WVP = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列

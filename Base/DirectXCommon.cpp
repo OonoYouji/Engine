@@ -368,9 +368,9 @@ void DirectXCommon::InitializeViewport() {
 /// ---------------------------
 /// ↓ BufferResourceの生成
 /// ---------------------------
-ID3D12Resource* DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
+ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
 	HRESULT result = S_FALSE;
-	ID3D12Resource* resource = nullptr;
+	ComPtr<ID3D12Resource> resource = nullptr;
 
 	///- 頂点リソース用のヒープ設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};

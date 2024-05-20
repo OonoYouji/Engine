@@ -55,7 +55,7 @@ void TextureManager::Initialize() {
 void TextureManager::Finalize() {
 
 	textures_.clear();
-
+	uavTextures_.clear();
 }
 
 

@@ -11,7 +11,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "DirectionalLight.h"
-
+#include <PipelineStateObjectManager.h>
 
 using namespace std::numbers;
 
@@ -21,6 +21,7 @@ Brush::~Brush() {
 	wvpResource_.Reset();
 	materialResource_.Reset();
 	vertexResource_.Reset();
+	mousePointResource_.Reset();
 }
 
 
@@ -33,7 +34,7 @@ void Brush::Init() {
 
 
 	///- 頂点数分確保
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertexData_.size()));
+	vertexResource_ = dxCommon->CreateBufferResource(sizeof(VertexData) * vertexData_.size());
 
 	///- vertexBufferViewの作成
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -47,19 +48,19 @@ void Brush::Init() {
 	vertexResource_->Unmap(0, nullptr);
 
 	///- マテリアルリソースの生成; 情報の書き込み
-	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
+	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material));
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
 	materialData_->enableLighting = false;
 
 	///- 行列リソースの生成; 書き込み
-	wvpResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
+	wvpResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix));
 	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&matrixData_));
 	matrixData_->World = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 	matrixData_->WVP = Matrix4x4::MakeIdentity(); //- とりあえずの単位行列
 
 	///- マウスの座標
-	mousePointResource_.Attach(dxCommon->CreateBufferResource(sizeof(MousePoint)));
+	mousePointResource_ = dxCommon->CreateBufferResource(sizeof(MousePoint));
 	mousePointResource_->Map(0, nullptr, reinterpret_cast<void**>(&mousePointData_));
 	mousePointData_->position = Vec2f{ 0.0f,0.0f };
 	mousePointData_->size = 10.0f;
@@ -218,6 +219,7 @@ void Brush::Draw() {
 	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	//commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+	PipelineStateObjectManager::GetInstance()->SetCommandList(1, commandList);
 	commandList->SetGraphicsRootConstantBufferView(6, mousePointResource_->GetGPUVirtualAddress());
 	////commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
 	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");

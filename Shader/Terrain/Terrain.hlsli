@@ -45,6 +45,5 @@ struct DirectionalLight {
 /// ------------------------------------
 /// ConstantBuffer
 /// ------------------------------------
-
 ConstantBuffer<MousePoint> gMousePoint : register(b3);
 RWTexture2D<float4> gOutputTexture : register(u3);

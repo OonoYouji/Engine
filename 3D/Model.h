@@ -1,10 +1,10 @@
 #pragma once
 
+#include <wrl/client.h>
+
 #include <vector>
 #include <string>
 #include <memory>
-
-#include <wrl/client.h>
 
 #include <DirectXCommon.h>
 #include <WorldTransform.h>

@@ -30,6 +30,8 @@ void DebugCamera::Update() {
 	}
 
 	velocity_.z = Input::MouseWheel() / 256.0f;
+	velocity_.x *= 1.0f + Vec3f::Length(worldTransform_.translate) / 32.0f;
+	velocity_.y *= 1.0f + Vec3f::Length(worldTransform_.translate) / 32.0f;
 
 	if(Input::PressMouse(1)) {
 		worldTransform_.rotate.x += Input::MouseVelocity().y / 256.0f;

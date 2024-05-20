@@ -82,7 +82,7 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	pipelineStateObjects_.back()->Initialize(device, shaderBlob.get());
 
 
-
+	shaderBlob.reset();
 }
 
 

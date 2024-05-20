@@ -40,7 +40,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 
 	///- 頂点リソース
-	vertexResource_.Attach(dxCommon->CreateBufferResource(sizeof(VertexData) * vertices_.size()));
+	vertexResource_ = dxCommon->CreateBufferResource(sizeof(VertexData) * vertices_.size());
 
 	///- 頂点バッファビュー
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -58,7 +58,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 
 	///- マテリアルリソース
-	materialResource_.Attach(dxCommon->CreateBufferResource(sizeof(Material)));
+	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material));
 
 	///- マッピング
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
@@ -72,7 +72,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 
 	///- トランスフォームマトリクス
-	transformMatrixResource_.Attach(dxCommon->CreateBufferResource(sizeof(TransformMatrix)));
+	transformMatrixResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix));
 
 	///- マッピング
 	transformMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformMatrixData_));

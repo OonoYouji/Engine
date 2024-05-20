@@ -152,7 +152,7 @@ public:
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 
-	ID3D12Resource* CreateBufferResource(size_t sizeInBytes);
+	ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 	
 	const Matrix4x4& GetViewportMatrix() const { return viewportMatrix_; }
 
