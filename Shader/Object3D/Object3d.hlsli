@@ -1,11 +1,17 @@
-struct VertexShaderOutput {
+struct VSInput {
+	float4 position : POSITION0;
+	float2 texcoord : TEXCOORD0;
+	float3 normal : NORMAL0;
+};
+
+
+struct VSOutput {
 	float4 position : SV_POSITION;
 	float2 texcoord : TEXCOORD0;
 	float3 normal : NORMAL0;
 };
 
-struct DirectionalLight {
-	float4 color;
-	float3 direction;
-	float intensity;
+
+struct PSOutput {
+	float4 color : SV_TARGET0;
 };

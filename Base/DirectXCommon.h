@@ -27,21 +27,6 @@ class ShaderBlob;
 class PipelineStateObject;
 class PipelineStateObjectManager;
 
-struct VertexData {
-	Vec4f position;
-	Vec2f texcoord;
-	Vec3f normal;
-};
-
-struct Material {
-	Vec4f color;
-	int32_t enableLighting;
-};
-
-struct TransformMatrix {
-	Mat4 WVP;
-	Mat4 World;
-};
 
 
 
