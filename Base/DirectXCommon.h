@@ -28,8 +28,6 @@ class PipelineStateObject;
 class PipelineStateObjectManager;
 
 
-
-
 /// -------------------------
 /// DirextX12の汎用クラス
 /// -------------------------

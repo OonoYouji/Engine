@@ -15,6 +15,9 @@ Scene_Game::~Scene_Game() { Finalize(); }
 void Scene_Game::Init() {
 	Light::GetInstance()->Init();
 
+	sphere_ = std::make_unique<Sphere>();
+	sphere_->Init();
+
 	model_ = std::make_unique<Model>();
 	model_->Initialize("./Resources/Objects/Monkey", "monkey.obj");
 
@@ -38,7 +41,7 @@ void Scene_Game::Update() {
 void Scene_Game::Draw() {
 
 	//ImGui::ShowDemoWindow();
-	//sphere_->Draw();
+	sphere_->Draw();
 	//model_->Draw();
 
 	brush_->Draw();
@@ -48,6 +51,7 @@ void Scene_Game::Draw() {
 
 void Scene_Game::Finalize() {
 
+	sphere_.reset();
 	model_.reset();
 	terrain_.reset();
 	brush_.reset();

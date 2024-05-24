@@ -45,6 +45,10 @@ void PipelineStateObject::SetRootParameter(D3D12_ROOT_PARAMETER_TYPE parameterTy
 
 }
 
+void PipelineStateObject::SetCBV(D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t shaderRegister) {
+	SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, shaderVisibilty, shaderRegister);
+}
+
 
 void PipelineStateObject::SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE parameterType, D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t descriptorIndex) {
 	D3D12_ROOT_PARAMETER rootParameter{};
@@ -194,4 +198,3 @@ void PipelineStateObject::CreatePipelineState(ID3D12Device* device, ShaderBlob* 
 	assert(SUCCEEDED(result));
 
 }
-

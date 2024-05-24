@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 
+#include <CBuffer.h>
 
 ///- ComPtrの省略用
 using namespace Microsoft::WRL;

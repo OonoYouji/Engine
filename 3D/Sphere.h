@@ -10,6 +10,7 @@
 #include "Vector4.h"
 #include "Matrix4x4.h"
 #include "WorldTransform.h"
+#include <CBuffer.h>
 
 
 using namespace Microsoft::WRL;
@@ -29,6 +30,7 @@ public:
 	void DebugDraw();
 
 private:
+	const uint32_t subdivision_ = 16;
 
 	ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
@@ -54,7 +56,6 @@ private:
 	WorldTransform worldTransform_;
 
 
-	uint32_t subdivision_;
 
 
 };

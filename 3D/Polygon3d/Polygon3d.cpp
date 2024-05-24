@@ -20,4 +20,5 @@ void Polygon3d::Draw() {
 	PipelineStateObjectManager::GetInstance()->SetCommandList(2, commandList);
 
 
+
 }

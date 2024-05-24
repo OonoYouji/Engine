@@ -11,7 +11,7 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 #include "DirectionalLight.h"
-
+#include "CBuffer.h"
 
 using namespace Microsoft::WRL;
 

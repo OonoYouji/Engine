@@ -8,6 +8,7 @@
 
 #include <DirectXCommon.h>
 #include <WorldTransform.h>
+#include <CBuffer.h>
 
 using namespace Microsoft::WRL;
 

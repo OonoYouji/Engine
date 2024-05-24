@@ -10,7 +10,7 @@
 #include "Matrix4x4.h"
 #include "WorldTransform.h"
 #include "DirectXCommon.h"
-
+#include <CBuffer.h>
 
 enum class CalcState {
 	Add,

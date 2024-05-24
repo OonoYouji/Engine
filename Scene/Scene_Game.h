@@ -29,6 +29,7 @@ public:
 
 private:
 
+	std::unique_ptr<Sphere> sphere_;
 	std::unique_ptr<Model> model_;
 	std::unique_ptr<Terrain> terrain_;
 	std::unique_ptr<Brush> brush_;

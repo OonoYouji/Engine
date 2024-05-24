@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "DxCommand.h"
 #include "DirectionalLight.h"
+#include <PipelineStateObjectManager.h>
 
 using namespace std::numbers;
 
@@ -22,9 +23,6 @@ Sphere::~Sphere() {
 
 void Sphere::Init() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-
-	///- 分割数の指定
-	subdivision_ = 16;
 
 	///- 頂点数の計算
 	///- 縦の分割数 x 横の分割数 x 6
@@ -206,6 +204,7 @@ void Sphere::Init() {
 void Sphere::Draw() {
 
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+	PipelineStateObjectManager::GetInstance()->SetCommandList(0, commandList);
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList->IASetIndexBuffer(&indexBuffer_);

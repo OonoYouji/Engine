@@ -45,6 +45,8 @@ public:
 	/// <param name="shaderRegister"></param>
 	void SetRootParameter(D3D12_ROOT_PARAMETER_TYPE parameterType, D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t shaderRegister);
 
+	void SetCBV(D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t shaderRegister);
+
 	/// <summary>
 	/// 新しいRootParameterの設定 (DescriptorRangeを設定するver)
 	/// </summary>
@@ -99,3 +101,4 @@ private:
 	void CreatePipelineState(ID3D12Device* device, ShaderBlob* shaderBlob);
 
 };
+
