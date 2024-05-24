@@ -129,6 +129,8 @@ public:
 	/// </summary>
 	void PostDraw();
 
+	void WaitExecution();
+
 	ID3D12Device* GetDevice() { return device_.Get(); }
 
 	const DXGI_SWAP_CHAIN_DESC1& GetSwapChainDesc() const { return swapChainDesc_; }

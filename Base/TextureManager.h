@@ -27,6 +27,7 @@ public:
 		ComPtr<ID3D12Resource> resource;
 		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU;
 		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU;
+		ComPtr<ID3D12Resource> intermediateResource;
 	};
 
 
@@ -97,7 +98,10 @@ private: ///- メンバ変数
 	/// <summary>
 	/// TextureResourceにデータを転送する
 	/// </summary>
-	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+	ComPtr<ID3D12Resource> UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+	ComPtr<ID3D12Resource> UploadTextureDataUav(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
+
+	void CreateBarrier(ID3D12GraphicsCommandList* commandList, ID3D12Resource* pTexture, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
 
 private:
 

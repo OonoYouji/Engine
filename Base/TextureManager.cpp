@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 
+#include <d3dx12.h>
 #include "DirectXCommon.h"
 #include <DxDescriptors.h>
 #include <DxCommand.h>
@@ -73,7 +74,14 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 	DirectX::ScratchImage mipImages = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	newTexture.resource = CreataTextureResouece(DirectXCommon::GetInstance()->GetDevice(), metadata);
-	UploadTextureData(newTexture.resource.Get(), mipImages);
+	newTexture.intermediateResource = UploadTextureData(newTexture.resource.Get(), mipImages);
+
+
+	DxCommand* command = DxCommand::GetInstance();
+	command->Close();
+	DirectXCommon::GetInstance()->WaitExecution();
+	command->ResetCommandList();
+	newTexture.intermediateResource.Reset();
 
 	///- metadataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -105,7 +113,13 @@ void TextureManager::LoadUav(const std::string& textureName, const std::string& 
 	DirectX::ScratchImage mipImages = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	newTexture.resource = CreataTextureResoueceUAV(DirectXCommon::GetInstance()->GetDevice(), metadata);
-	UploadTextureData(newTexture.resource.Get(), mipImages);
+	newTexture.intermediateResource = UploadTextureDataUav(newTexture.resource.Get(), mipImages);
+
+	DxCommand* command = DxCommand::GetInstance();
+	command->Close();
+	DirectXCommon::GetInstance()->WaitExecution();
+	command->ResetCommandList();
+	newTexture.intermediateResource.Reset();
 
 	///- metadataを基にSRVの設定
 	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
@@ -129,15 +143,26 @@ void TextureManager::LoadUav(const std::string& textureName, const std::string& 
 /// </summary>
 /// <param name="index"></param>
 void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, const std::string& textureName) {
-
 	/// texturesの範囲外参照しないように注意
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].handleGPU);
 }
 
 void TextureManager::SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, const std::string& textureName) {
-
 	/// texturesの範囲外参照しないように注意
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, uavTextures_[textureName].handleGPU);
+}
+
+
+void TextureManager::CreateBarrier(ID3D12GraphicsCommandList* commandList, ID3D12Resource* pTexture, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after) {
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = pTexture;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Transition.StateBefore = before;
+	barrier.Transition.StateAfter = after;
+	commandList->ResourceBarrier(1, &barrier);
+
 }
 
 
@@ -186,9 +211,7 @@ ComPtr<ID3D12Resource> TextureManager::CreataTextureResouece(ID3D12Device* devic
 	/// --------------------------------------
 
 	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;	//- 細かい設定を行う
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK; //- WriteBackポリシーでCPUアクセス可能
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;	//- プロセッサの近くに配置
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;	//- 細かい設定を行う
 
 
 	/// --------------------------------------
@@ -200,7 +223,7 @@ ComPtr<ID3D12Resource> TextureManager::CreataTextureResouece(ID3D12Device* devic
 		&heapProperties,		//- Heapの設定
 		D3D12_HEAP_FLAG_NONE,	//- Heapの特殊な設定
 		&desc,					//- Resourceの設定
-		D3D12_RESOURCE_STATE_GENERIC_READ,	//- 初回のResourceState; Textureは基本読むだけ
+		D3D12_RESOURCE_STATE_COPY_DEST,	//- 初回のResourceState; Textureは基本読むだけ
 		nullptr,				//- Clear最適値; 使わないのでnullptr
 		IID_PPV_ARGS(&resource)
 	);
@@ -244,7 +267,7 @@ ComPtr<ID3D12Resource> TextureManager::CreataTextureResoueceUAV(ID3D12Device* de
 		&heapProperties,		//- Heapの設定
 		D3D12_HEAP_FLAG_NONE,	//- Heapの特殊な設定
 		&desc,					//- Resourceの設定
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS,	//- 初回のResourceState; Textureは基本読むだけ
+		D3D12_RESOURCE_STATE_COPY_DEST,	//- 初回のResourceState; Textureは基本読むだけ
 		nullptr,				//- Clear最適値; 使わないのでnullptr
 		IID_PPV_ARGS(&resource)
 	);
@@ -257,28 +280,39 @@ ComPtr<ID3D12Resource> TextureManager::CreataTextureResoueceUAV(ID3D12Device* de
 /// <summary>
 /// TextureResourceにデータを転送する
 /// </summary>
-void TextureManager::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
+[[nodiscard]]
+ComPtr<ID3D12Resource> TextureManager::UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
 
-	///- metadataを取得
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+	ID3D12Device* device = DirectXCommon::GetInstance()->GetDevice();
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
-	///- 全MipMapについて
-	for(size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
+	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+	DirectX::PrepareUpload(device, mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
+	uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, static_cast<UINT>(subresources.size()));
+	ComPtr<ID3D12Resource> intermediateResource = DirectXCommon::GetInstance()->CreateBufferResource(intermediateSize);
 
-		///- MipMapLevelを指定して各Imageを取得
-		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-		///- Textureに転送
-		HRESULT result = texture->WriteToSubresource(
-			UINT(mipLevel),
-			nullptr,				//- 全領域へコピー
-			img->pixels,			//- 元データへアクセス
-			UINT(img->rowPitch),	//- 1ラインサイズ
-			UINT(img->slicePitch)	//- 1枚サイズ
-		);
+	UpdateSubresources(commandList, texture, intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
+	CreateBarrier(commandList, texture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
 
-		assert(SUCCEEDED(result));
-	}
+	return intermediateResource;
 
+}
+
+[[nodiscard]]
+ComPtr<ID3D12Resource> TextureManager::UploadTextureDataUav(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
+
+	ID3D12Device* device = DirectXCommon::GetInstance()->GetDevice();
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+
+	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+	DirectX::PrepareUpload(device, mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
+	uint64_t intermediateSize = GetRequiredIntermediateSize(texture, 0, static_cast<UINT>(subresources.size()));
+	ComPtr<ID3D12Resource> intermediateResource = DirectXCommon::GetInstance()->CreateBufferResource(intermediateSize);
+
+	UpdateSubresources(commandList, texture, intermediateResource.Get(), 0, 0, static_cast<UINT>(subresources.size()), subresources.data());
+	CreateBarrier(commandList, texture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+
+	return intermediateResource;
 }
 
 

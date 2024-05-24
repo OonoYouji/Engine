@@ -536,17 +536,25 @@ void DirectXCommon::PostDraw() {
 	command_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 
-	///- Commandを閉じる
-	result = commandList->Close();
-	assert(SUCCEEDED(result));
+	/////- Commandを閉じる
+	//result = commandList->Close();
+	//assert(SUCCEEDED(result));
 
 	///- コマンドをキックする
-	ID3D12CommandList* commandLists[] = { commandList };
-	command_->GetQueue()->ExecuteCommandLists(1, commandLists);
+	command_->Close();
 
 	///- GPUとOSに画面の交換を行うように通知する
 	swapChain_->Present(1, 0);
 
+	WaitExecution();
+
+	///- 次のフレームのためにQueueをリセットする
+	command_->ResetCommandList();
+	ClearDepthBuffer();
+
+}
+
+void DirectXCommon::WaitExecution() {
 	///- GPUにSignalを送信
 	fenceValue_++;
 	command_->GetQueue()->Signal(fence_.Get(), fenceValue_);
@@ -556,11 +564,6 @@ void DirectXCommon::PostDraw() {
 		fence_->SetEventOnCompletion(fenceValue_, fenceEvent_);
 		WaitForSingleObject(fenceEvent_, INFINITE);
 	}
-
-
-	///- 次のフレームのためにQueueをリセットする
-	command_->ResetCommandList();
-	ClearDepthBuffer();
-
 }
+
 

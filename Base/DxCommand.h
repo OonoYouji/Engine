@@ -61,6 +61,8 @@ public:
 	ID3D12GraphicsCommandList* GetList() const { return commandList_.Get(); }
 
 
+	void Close();
+
 private:
 
 	ComPtr<ID3D12CommandQueue> commandQueue_;

@@ -107,3 +107,10 @@ void DxCommand::ResetCommandList() {
 	assert(SUCCEEDED(result));
 
 }
+
+void DxCommand::Close() {
+	HRESULT result = commandList_->Close();
+	assert(SUCCEEDED(result));
+	ID3D12CommandList* commandLists[] = { commandList_.Get() };
+	commandQueue_->ExecuteCommandLists(1, commandLists);
+}
