@@ -5,6 +5,7 @@
 #include <Vector2.h>
 #include <Vector3.h>
 #include <Vector4.h>
+#include <Matrix3x3.h>
 #include <Matrix4x4.h>
 
 
@@ -34,6 +35,8 @@ struct Polygon3dVertexData {
 struct Material {
 	Vec4f color;
 	int32_t enableLighting;
+	float p[3];
+	Mat4 uvTransform;
 };
 
 

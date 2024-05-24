@@ -176,7 +176,7 @@ void Sphere::Init() {
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
 	materialData_->enableLighting = true;
-
+	materialData_->uvTransform = Mat4::MakeIdentity();
 
 
 	/// -----------------------------------------------

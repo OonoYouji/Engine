@@ -15,6 +15,9 @@ Scene_Game::~Scene_Game() { Finalize(); }
 void Scene_Game::Init() {
 	Light::GetInstance()->Init();
 
+	sprite_ = std::make_unique<Sprite>();
+	sprite_->Initialize();
+	
 	sphere_ = std::make_unique<Sphere>();
 	sphere_->Init();
 
@@ -32,6 +35,7 @@ void Scene_Game::Init() {
 void Scene_Game::Update() {
 
 	model_->DebugDraw("Model");
+	sprite_->DebugDraw("Sprite");
 
 	brush_->Update();
 	terrain_->Update();
@@ -42,6 +46,7 @@ void Scene_Game::Draw() {
 
 	//ImGui::ShowDemoWindow();
 	sphere_->Draw();
+	sprite_->Draw();
 	//model_->Draw();
 
 	brush_->Draw();
@@ -52,7 +57,9 @@ void Scene_Game::Draw() {
 void Scene_Game::Finalize() {
 
 	sphere_.reset();
+	sprite_.reset();
 	model_.reset();
 	terrain_.reset();
 	brush_.reset();
+
 }

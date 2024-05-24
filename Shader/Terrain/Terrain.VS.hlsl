@@ -1,5 +1,7 @@
 #include "Terrain.hlsli"
 
+#include "../CBuffer/TransformationMatrix.hlsli"
+
 struct VSInput {
 	float4 position : POSITION0;
 	float2 texcoord : TEXCOORD0;

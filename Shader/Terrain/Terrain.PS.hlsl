@@ -1,5 +1,7 @@
 #include "Terrain.hlsli"
 
+#include "../CBuffer/Material.hlsli"
+
 struct PSOutput {
 	float4 color : SV_TARGET0;
 };

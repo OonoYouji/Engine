@@ -130,6 +130,9 @@
     <ClCompile Include="Base\CBuffer\CBuffer.cpp">
       <Filter>Source\Base\CBuffer</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Matrix3x3.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -367,6 +370,9 @@
     </ClInclude>
     <ClInclude Include="Base\CBuffer\CBuffer.h">
       <Filter>Include\Base\CBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix3x3.h">
+      <Filter>Include\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

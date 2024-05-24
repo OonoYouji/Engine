@@ -6,19 +6,6 @@ struct VSOutput {
 	float3 worldPos : WORLDPOS0;
 };
 
-
-struct TransformationMatrix {
-	float4x4 WVP;
-	float4x4 World;
-};
-
-
-struct Material {
-	float4 color;
-	int enableLighting;
-};
-
-
 struct MousePoint {
 	float2 position;
 	float3 worldPos;

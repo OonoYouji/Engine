@@ -27,7 +27,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Init();
+	void Initialize();
 
 	/// <summary>
 	/// 描画
@@ -37,7 +37,7 @@ public:
 	/// <summary>
 	/// ImGuiを使って編集
 	/// </summary>
-	void ImGui(const std::string& windowName);
+	void DebugDraw(const std::string& windowName);
 
 public: ///- 
 
@@ -54,12 +54,16 @@ private: ///- メンバ変数
 	ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 
-	WorldTransform transform_;
+	WorldTransform worldTransform_;
 
-	Vector4* materialData_;
+	Material* materialData_;
 	VertexData* vertexData_;
 	uint32_t* indexData_ = nullptr;
 	std::vector<Vector4> localVertex_;
-	Matrix4x4* transformationMatrixData_;
+	TransformMatrix* transformationMatrixData_;
+
+	Vec3f uvScale_;
+	Vec3f uvRotate_;
+	Vec3f uvTranslate_;
 
 };

@@ -5,6 +5,8 @@
 #include "ImGuiManager.h"
 #include "DxCommand.h"
 #include <TextureManager.h>
+#include <DirectionalLight.h>
+#include <PipelineStateObjectManager.h>
 
 Sprite::Sprite() {}
 Sprite::~Sprite() {
@@ -18,7 +20,7 @@ Sprite::~Sprite() {
 /// <summary>
 /// 初期化
 /// </summary>
-void Sprite::Init() {
+void Sprite::Initialize() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 
@@ -38,7 +40,6 @@ void Sprite::Init() {
 	vertexBufferView_.SizeInBytes = sizeof(VertexData) * 4;
 	///- 1頂点あたりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
 
 	vertexData_ = nullptr;
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
@@ -91,30 +92,33 @@ void Sprite::Init() {
 	/// ---------------------------
 
 
-	transformationMatrixResource_ = dxCommon->CreateBufferResource(sizeof(Matrix4x4));
+	transformationMatrixResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix));
 
 	///- データを書き込む
 	transformationMatrixData_ = nullptr;
 	///- 書き込むためのアドレスを取得
 	transformationMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData_));
-	*transformationMatrixData_ = Matrix4x4::MakeIdentity();
+	transformationMatrixData_->World = Matrix4x4::MakeIdentity();
+	transformationMatrixData_->WVP = Matrix4x4::MakeIdentity();
 
-	transform_.Initialize();
+	worldTransform_.Initialize();
 
 	Matrix4x4 viewMatrixSprite = Matrix4x4::MakeIdentity();
 	Matrix4x4 projectionMatrixSprite = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, float(kWindowSize.x), float(kWindowSize.y), 0.0f, 100.0f);
-	Matrix4x4 wvpMatrixSprite = transform_.worldMatrix * (viewMatrixSprite * projectionMatrixSprite);
-	*transformationMatrixData_ = wvpMatrixSprite;
+	Matrix4x4 wvpMatrixSprite = worldTransform_.worldMatrix * (viewMatrixSprite * projectionMatrixSprite);
+	transformationMatrixData_->WVP = wvpMatrixSprite;
 
 
 
 	/// ---------------------------------
 	/// ↓ マテリアルリソースの初期化
 	/// ---------------------------------
-	materialResource_ = dxCommon->CreateBufferResource(sizeof(Vector4));
+	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material));
 	materialData_ = nullptr;
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	*materialData_ = { 1.0f,1.0f,1.0f,1.0f };
+	materialData_->color = { 1.0f,1.0f,1.0f,1.0f };
+	materialData_->enableLighting = false;
+	materialData_->uvTransform = Mat4::MakeIdentity();
 
 }
 
@@ -124,9 +128,20 @@ void Sprite::Init() {
 /// </summary>
 void Sprite::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+	PipelineStateObjectManager::GetInstance()->SetCommandList(0, commandList);
 
 	///- マテリアルにデータをRGBAデータを書き込む
-	*materialData_ = color;
+	materialData_->color = color;
+
+	materialData_->uvTransform = Mat4::MakeAffine(uvScale_, uvRotate_, uvTranslate_);
+
+	worldTransform_.UpdateWorldMatrix();
+	transformationMatrixData_->World = worldTransform_.worldMatrix;
+
+	Matrix4x4 viewMatrixSprite = Matrix4x4::MakeIdentity();
+	Matrix4x4 projectionMatrixSprite = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, float(kWindowSize.x), float(kWindowSize.y), 0.0f, 100.0f);
+	Matrix4x4 wvpMatrixSprite = worldTransform_.worldMatrix * (viewMatrixSprite * projectionMatrixSprite);
+	transformationMatrixData_->WVP = wvpMatrixSprite;
 
 	///- 頂点データに中心点のプラスして書き込む
 	for(uint32_t index = 0; index < 4; index++) {
@@ -136,10 +151,12 @@ void Sprite::Draw() {
 
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList->IASetIndexBuffer(&indexBufferView_);
-	commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
+
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResource_->GetGPUVirtualAddress());
 
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
+	Light::GetInstance()->SetConstantBuffer(3, commandList);
 
 	///- DrawCall
 	commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
@@ -147,13 +164,22 @@ void Sprite::Draw() {
 }
 
 
-void Sprite::ImGui([[maybe_unused]] const std::string& windowName) {
+void Sprite::DebugDraw([[maybe_unused]] const std::string& windowName) {
 #ifdef _DEBUG
 
 	ImGui::Begin(windowName.c_str());
 
 	ImGui::DragFloat2("position", &position.x, 1.0f);
 	ImGui::ColorEdit4("color", &color.x);
+
+	if(ImGui::TreeNodeEx("uvTransform", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+		ImGui::DragFloat2("Scale", &uvScale_.x, 0.025f);
+		ImGui::SliderAngle("Rotate", &uvRotate_.z, 0.025f);
+		ImGui::DragFloat2("Translate", &uvTranslate_.x, 0.025f);
+
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 
