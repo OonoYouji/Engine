@@ -153,6 +153,10 @@ void TextureManager::SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, 
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, uavTextures_[textureName].handleGPU);
 }
 
+ID3D12Resource* TextureManager::GetUavTextureResource(const std::string& name) {
+	return uavTextures_.at(name).resource.Get();
+}
+
 
 void TextureManager::CreateBarrier(ID3D12GraphicsCommandList* commandList, ID3D12Resource* pTexture, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after) {
 	D3D12_RESOURCE_BARRIER barrier{};

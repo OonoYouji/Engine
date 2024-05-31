@@ -1,6 +1,7 @@
 #pragma once
 
 #include <d3d12.h>
+#include <d3dx12.h>
 #include <wrl/client.h>
 #include <opencv.hpp>
 
@@ -82,8 +83,10 @@ private:
 	float verticalIntensity_;
 	float saveVerticalIntensity_;
 
-	cv::Mat image_;
-	cv::Mat saveImage_;
+
+	///- GPUで操作した地形をCPUに戻す
+	ComPtr<ID3D12Resource> readBackResource_;
+	void* readBackData_ = nullptr;
 
 
 	/// <summary>
@@ -98,14 +101,23 @@ private:
 	/// <param name="maxCol"></param>
 	void IndexDataCulc(uint32_t maxRow, uint32_t maxCol);
 
-	
 	void VertexDataCulc(uint32_t maxRow, uint32_t maxCol);
-
 
 	void CreateVertexResource(size_t flattendVertexDataSize);
 
 	void CreateIndexResource(size_t indexDataSize);
 
+	/// <summary>
+	/// ReadBackResourcecを作成する
+	/// </summary>
+	void CreateReadBackResource();
+
+	/// <summary>
+	/// GPUから読み込む
+	/// </summary>
+	void ReadBack();
+
+	void OutputImage();
 
 public:
 

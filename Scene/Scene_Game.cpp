@@ -15,66 +15,31 @@ Scene_Game::~Scene_Game() { Finalize(); }
 void Scene_Game::Init() {
 	Light::GetInstance()->Init();
 
-	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize();
-
-	sphere_ = std::make_unique<Sphere>();
-	sphere_->Init();
-
-	model_ = std::make_unique<Model>();
-	model_->Initialize("./Resources/Objects/Background", "Background.obj");
-	modelWorldTransform_.Initialize();
-	modelWorldTransform_.translate.z = 5.0f;
-	model_->SetWorldTransform(&modelWorldTransform_);
-	model_->SetColor(Vec4f(0.1f, 0.1f, 0.1f, 1.0f));
-
 	terrain_ = std::make_unique<Terrain>();
 	terrain_->Init();
 
 	brush_ = std::make_unique<Brush>();
 	brush_->Init();
 
-	triangleEffect_ = std::make_unique<TriangleEffect>();
-	triangleEffect_->Initialize();
-
-
 }
 
 void Scene_Game::Update() {
 
-	model_->DebugDraw("Model");
-	//sprite_->DebugDraw("Sprite");
-
-	//brush_->Update();
-	//terrain_->Update();
-
-	triangleEffect_->Update();
-
+	brush_->Update();
+	terrain_->Update();
 
 }
 
 void Scene_Game::Draw() {
 
-	//ImGui::ShowDemoWindow();
-	//sphere_->Draw();
-	//sprite_->Draw();
-	model_->Draw();
-
-	//brush_->Draw();
-	//terrain_->Draw();
-
-	triangleEffect_->Draw();
-
+	brush_->Draw();
+	terrain_->Draw();
 
 }
 
 void Scene_Game::Finalize() {
 
-	sphere_.reset();
-	sprite_.reset();
-	model_.reset();
 	terrain_.reset();
 	brush_.reset();
-	triangleEffect_.reset();
 
 }

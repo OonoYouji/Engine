@@ -14,6 +14,19 @@
 #include <PipelineStateObjectManager.h>
 
 
+
+
+Vec3f CalculateLuminance(const unsigned char* pixel) {
+	float r = pixel[0];
+	float g = pixel[1];
+	float b = pixel[2];
+	return Vec3f(r, g, b);
+}
+
+
+
+
+
 Terrain::Terrain() {}
 Terrain::~Terrain() {
 	///- 解放処理
@@ -21,6 +34,7 @@ Terrain::~Terrain() {
 	materialResource_.Reset();
 	vertexResource_.Reset();
 	indexResource_.Reset();
+	readBackResource_.Reset();
 }
 
 
@@ -90,7 +104,7 @@ void Terrain::Init() {
 
 
 
-
+	CreateReadBackResource();
 
 
 
@@ -115,18 +129,14 @@ void Terrain::Init() {
 	verticalIntensity_ = 1.0f;
 	saveVerticalIntensity_ = verticalIntensity_;
 
-	image_ = cv::Mat();
-	saveImage_ = cv::Mat();
-
 }
 
 
 
 void Terrain::Update() {
+
 	///- 最初に行う処理
-
 	TransferFlattenedVertexData();
-
 
 
 	///- ImGuiでデバッグ
@@ -183,7 +193,6 @@ void Terrain::Update() {
 	ImGui::Spacing();
 
 
-
 	ImGui::SliderFloat("noisePower", &noisePower_, 0.0f, 1.0f);
 
 	static int seed = 0;
@@ -216,91 +225,9 @@ void Terrain::Update() {
 
 
 
-	/// ------------------------------------------------
-	/// 入力した画像で地形を再生成
-	/// ------------------------------------------------
-
-
-	//if(ImGui::TreeNodeEx("Inmort/Export")) {
-
-	//	ImGui::SliderFloat("verticalIntensity", &verticalIntensity_, 0.0f, 1.0f);
-
-	//	///- 読み込んだ画像から地形を再生成
-	//	if(ImGui::Button("Regenarate Terrain")) {
-
-	//		///- 画像情報をコピー
-	//		image_ = InputImage::GetInstance()->GetInputImage();
-
-	//		if(!image_.empty()) {
-
-	//			rowSubdivision_ = image_.rows;
-	//			colSubdivision_ = image_.cols;
-
-	//			///- 頂点インデックスデータの再計算
-	//			IndexDataCulc(rowSubdivision_, colSubdivision_);
-	//			VertexDataCulc(rowSubdivision_, colSubdivision_);
-
-	//			///- 計算したデータの大きさにresourceを作り直す
-	//			CreateIndexResource(indexData_.size());
-	//			CreateVertexResource(flattenedVertexData_.size());
-
-	//			///- 高さの調整
-
-	//			cv::Mat grayImage;
-	//			cv::cvtColor(image_, grayImage, cv::COLOR_BGR2GRAY);
-
-	//			cv::imshow("grayImage", grayImage);
-
-
-	//			cv::normalize(grayImage, grayImage, 0, 255, cv::NORM_MINMAX, CV_8U);
-
-
-	//			cv::flip(grayImage, grayImage, 0);
-	//			for(uint32_t row = 0; row < static_cast<uint32_t>(rowSubdivision_); row++) {
-	//				for(uint32_t col = 0; col < static_cast<uint32_t>(colSubdivision_); col++) {
-
-	//					vertexData_[row][col].position.y =
-	//						(grayImage.at<uint8_t>(row, col) - (255.0f / 2.0f)) * verticalIntensity_;
-
-	//				}
-	//			}
-
-	//			TransferFlattenedVertexData();
-	//			///- ここで使用した高低差の力を保存しておく; 出力の時に使う
-	//			saveVerticalIntensity_ = verticalIntensity_;
-	//		}
-	//	}
-
-	//	ImGui::Spacing();
-	//	ImGui::Spacing();
-
-	//	///- 出力用画像にセーブする
-	//	if(ImGui::Button("SaveImage")) {
-
-	//		TransferVertexData();
-
-	//		saveImage_ = image_;
-
-
-	//		for(uint32_t row = 0; row < static_cast<uint32_t>(vertexData_.size() - 1); row++) {
-	//			for(uint32_t col = 0; col < static_cast<uint32_t>(vertexData_[0].size() - 1); col++) {
-
-	//				saveImage_.at<uint8_t>(row, col) =
-	//					static_cast<uint8_t>((vertexData_[row][col].position.y / saveVerticalIntensity_) + (255.0f / 2.0f));
-
-	//			}
-	//		}
-
-	//		///- 上下反転しているので元に戻す
-	//		//cv::flip(saveImage_, saveImage_, 0);
-
-	//		cv::imshow("saveImage", saveImage_);
-	//		InputImage::GetInstance()->SetOutputImage(saveImage_);
-
-	//	}
-
-	//	ImGui::TreePop();
-	//}
+	if(ImGui::Button("Output")) {
+		OutputImage();
+	}
 
 
 	ImGui::End();
@@ -311,8 +238,7 @@ void Terrain::Update() {
 	/// ↓ 更新処理ここから
 	/// -----------------------------------
 
-	//worldTransform_.rotate.y += 1.0f / 128.0f;
-
+	ReadBack();
 
 
 
@@ -592,6 +518,102 @@ void Terrain::CreateIndexResource(size_t indexDataSize) {
 	indexResource_->Map(0, nullptr, &pIndexMappedData_);
 	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexDataSize);
 	indexResource_->Unmap(0, nullptr);
+}
+
+
+void Terrain::CreateReadBackResource() {
+	ID3D12Resource* pTexture = TextureManager::GetInstance()->GetUavTextureResource("GrayTexture");
+	D3D12_RESOURCE_DESC readBackDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pTexture, 0, 1));
+
+	D3D12_HEAP_PROPERTIES heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
+	ID3D12Device* device = DirectXCommon::GetInstance()->GetDevice();
+	HRESULT hr = device->CreateCommittedResource(
+		&heapProps,
+		D3D12_HEAP_FLAG_NONE,
+		&readBackDesc,
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		nullptr,
+		IID_PPV_ARGS(&readBackResource_)
+	);
+	assert(SUCCEEDED(hr));
+
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+	CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(
+		pTexture,
+		D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+		D3D12_RESOURCE_STATE_COPY_SOURCE
+	);
+	commandList->ResourceBarrier(1, &transition);
+
+	D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint{};
+	UINT numRows;
+	UINT64 rowSizeInBytes;
+	UINT64 totalBytes;
+	D3D12_RESOURCE_DESC textureDesc = pTexture->GetDesc();
+	device->GetCopyableFootprints(&textureDesc, 0, 1, 0, &footprint, &numRows, &rowSizeInBytes, &totalBytes);
+
+	D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
+	srcLocation.pResource = pTexture;
+	srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+	srcLocation.SubresourceIndex = 0;
+
+	D3D12_TEXTURE_COPY_LOCATION dstLocation = {};
+	dstLocation.pResource = readBackResource_.Get();
+	dstLocation.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+	dstLocation.PlacedFootprint = footprint;
+
+	commandList->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, nullptr);
+
+	///- copy後のbarrier設定
+	CD3DX12_RESOURCE_BARRIER transitionAfterCopy = CD3DX12_RESOURCE_BARRIER::Transition(
+		pTexture,
+		D3D12_RESOURCE_STATE_COPY_SOURCE,
+		D3D12_RESOURCE_STATE_UNORDERED_ACCESS
+	);
+	commandList->ResourceBarrier(1, &transitionAfterCopy);
+
+}
+
+
+void Terrain::ReadBack() {
+	D3D12_RANGE readRange = { 0, 0 };
+	readBackResource_->Map(0, &readRange, &readBackData_);
+
+
+
+
+
+	readBackResource_->Unmap(0, nullptr);
+
+}
+
+void Terrain::OutputImage() {
+	//CreateReadBackResource();
+
+	readBackResource_->Map(0, nullptr, &readBackData_);
+
+	ID3D12Resource* pTexture = TextureManager::GetInstance()->GetUavTextureResource("GrayTexture");
+	UINT height = pTexture->GetDesc().Height;
+	UINT width = static_cast<UINT>(pTexture->GetDesc().Width);
+
+	cv::Mat image(height, width, CV_8UC4);
+
+	for(UINT y = 0; y < height; ++y) {
+		for(UINT x = 0; x < width; ++x) {
+			size_t pixelIndex = (y * width + x);
+			Vec3f color = CalculateLuminance(static_cast<unsigned char*>(readBackData_) + pixelIndex);
+			image.at<cv::Vec3b>(y, x) = cv::Vec3b(
+				static_cast<uchar>(std::clamp(color.x, 0.0f, 255.0f)),
+				static_cast<uchar>(std::clamp(color.y, 0.0f, 255.0f)),
+				static_cast<uchar>(std::clamp(color.z, 0.0f, 255.0f))
+			);
+		}
+	}
+
+	cv::imwrite("output.png", image);
+	cv::imshow("output.png", image);
+
+	readBackResource_->Unmap(0, nullptr);
 }
 
 
