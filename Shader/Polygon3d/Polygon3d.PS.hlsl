@@ -1,4 +1,4 @@
-#include "SolidColor.hlsli"
+#include "Polygon3d.hlsli"
 
 #include "../CBuffer/Material.hlsli"
 #include "../CBuffer/DirectionalLight.hlsli"
@@ -24,7 +24,7 @@ PSOutput main(VSOutput input) {
 		float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
 		output.color = gMaterial.color * gDirectionalLight.color * cos * gDirectionalLight.intensity;
 	} else {
-		output = gMaterial.color;
+		output.color = gMaterial.color;
 	}
 
 	return output;

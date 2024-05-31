@@ -402,7 +402,7 @@
     <None Include="Shader\CBuffer\Material.hlsli">
       <Filter>Shader\CBuffer</Filter>
     </None>
-    <None Include="Shader\Polygon3d\SolidColor.hlsli">
+    <None Include="Shader\Polygon3d\Polygon3d.hlsli">
       <Filter>Shader\Polygon3d</Filter>
     </None>
   </ItemGroup>
@@ -419,10 +419,10 @@
     <FxCompile Include="Shader\Terrain\Terrain.VS.hlsl">
       <Filter>Shader\Terrain</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\Polygon3d\SolidColor.PS.hlsl">
+    <FxCompile Include="Shader\Polygon3d\Polygon3d.PS.hlsl">
       <Filter>Shader\Polygon3d</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\Polygon3d\SolidColor.VS.hlsl">
+    <FxCompile Include="Shader\Polygon3d\Polygon3d.VS.hlsl">
       <Filter>Shader\Polygon3d</Filter>
     </FxCompile>
   </ItemGroup>

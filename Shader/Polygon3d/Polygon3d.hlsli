@@ -5,11 +5,11 @@ struct VSInput {
 
 
 ///// -----------------------------------------
-///// ↓ PSInput = VSOutput
+///// PSInput = VSOutput
 ///// -----------------------------------------
 struct VSOutput {
-	float4 position;
-	float3 normal;
+	float4 position : SV_POSITION;
+	float3 normal : NORMAL;
 };
 
 

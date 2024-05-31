@@ -86,11 +86,11 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	/// ----------------------------------------------
 
 
-	/*shaderBlob.reset(new ShaderBlob());
+	shaderBlob.reset(new ShaderBlob());
 	shaderBlob->Initialize(
 		shaderCompile_.get(),
-		L"./Shader/Polygon3d/SolidColor.VS.hlsl", L"vs_6_0",
-		L"./Shader/Polygon3d/SolidColor.PS.hlsl", L"ps_6_0"
+		L"./Shader/Polygon3d/Polygon3d.VS.hlsl", L"vs_6_0",
+		L"./Shader/Polygon3d/Polygon3d.PS.hlsl", L"ps_6_0"
 	);
 
 	pipelineStateObjects_.push_back(std::make_unique<PipelineStateObject>());
@@ -102,7 +102,7 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1); ///- DirectionalLight
 	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0); ///- TransformationMatrix
 
-	pipelineStateObjects_.back()->Initialize(device, shaderBlob.get());*/
+	pipelineStateObjects_.back()->Initialize(device, shaderBlob.get());
 
 	shaderBlob.reset();
 }
