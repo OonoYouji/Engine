@@ -79,11 +79,6 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	transformMatrixData_->WVP = Mat4::MakeIdentity();
 	transformMatrixData_->World = Mat4::MakeIdentity();
 
-
-
-
-	worldTransform_.Initialize();
-
 }
 
 
@@ -95,9 +90,9 @@ void Model::Draw() {
 	std::memcpy(vertexData_, vertices_.data(), sizeof(VertexData) * vertices_.size());
 
 	///- Data
-	worldTransform_.UpdateWorldMatrix();
-	transformMatrixData_->World = worldTransform_.worldMatrix;
-	transformMatrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+	worldTransform_->UpdateWorldMatrix(); 
+	transformMatrixData_->World = worldTransform_->worldMatrix;
+	transformMatrixData_->WVP = worldTransform_->worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
 	///- 使用するpsoの設定
 	PipelineStateObjectManager::GetInstance()->SetCommandList(0, commandList);
@@ -118,7 +113,7 @@ void Model::DebugDraw(const std::string& windowName) {
 #ifdef _DEBUG
 	ImGui::Begin(windowName.c_str());
 
-	worldTransform_.ImGuiTreeNodeDebug();
+	worldTransform_->ImGuiTreeNodeDebug();
 
 	ImGui::Separator();
 

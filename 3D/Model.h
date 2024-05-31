@@ -35,10 +35,10 @@ public:
 
 private:
 
-	
+
 	std::vector<VertexData> vertices_;
 	MaterialData material_;
-	WorldTransform worldTransform_;
+	WorldTransform* worldTransform_;
 
 	///- Vertex
 	ComPtr<ID3D12Resource> vertexResource_;
@@ -59,10 +59,10 @@ public:
 
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& fileName);
 
-	void SetWorldTransform(const WorldTransform& worldTransform) {
+	void SetWorldTransform(WorldTransform* worldTransform) {
 		worldTransform_ = worldTransform;
 	}
-	
+
 	void SetColor(const Vec4f& color) {
 		materialData_->color = color;
 	}

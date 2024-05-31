@@ -17,16 +17,15 @@ void Scene_Game::Init() {
 
 	sprite_ = std::make_unique<Sprite>();
 	sprite_->Initialize();
-	
+
 	sphere_ = std::make_unique<Sphere>();
 	sphere_->Init();
 
 	model_ = std::make_unique<Model>();
 	model_->Initialize("./Resources/Objects/Background", "Background.obj");
-	WorldTransform wt;
-	wt.Initialize();
-	wt.translate.z = 5.0f;
-	model_->SetWorldTransform(wt);
+	modelWorldTransform_.Initialize();
+	modelWorldTransform_.translate.z = 5.0f;
+	model_->SetWorldTransform(&modelWorldTransform_);
 	model_->SetColor(Vec4f(0.1f, 0.1f, 0.1f, 1.0f));
 
 	terrain_ = std::make_unique<Terrain>();
@@ -34,7 +33,7 @@ void Scene_Game::Init() {
 
 	brush_ = std::make_unique<Brush>();
 	brush_->Init();
-	
+
 	triangleEffect_ = std::make_unique<TriangleEffect>();
 	triangleEffect_->Initialize();
 

@@ -44,7 +44,8 @@ void DebugCamera::Update() {
 	worldTransform_.UpdateWorldMatrix();
 	viewProjection_.matView = Mat4::MakeInverse(worldTransform_.worldMatrix);
 	viewProjection_.UpdateProjection();
-	model_->SetWorldTransform(worldTransform_);
+	model_->SetWorldTransform(&worldTransform_);
+
 }
 
 void DebugCamera::Draw() {
