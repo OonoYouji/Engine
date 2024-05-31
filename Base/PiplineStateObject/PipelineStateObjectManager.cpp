@@ -50,8 +50,7 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	/// ↓ Terrain Shader
 	/// ----------------------------------------------
 
-	shaderBlob.reset();
-	shaderBlob = std::make_unique<ShaderBlob>();
+	shaderBlob.reset(new ShaderBlob());
 	shaderBlob->Initialize(
 		shaderCompile_.get(),
 		L"./Shader/Terrain/Terrain.VS.hlsl", L"vs_6_0",
@@ -81,6 +80,29 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 	pipelineStateObjects_.back()->Initialize(device, shaderBlob.get());
 
+
+	/// ----------------------------------------------
+	/// ↓ Polygon Shader
+	/// ----------------------------------------------
+
+
+	/*shaderBlob.reset(new ShaderBlob());
+	shaderBlob->Initialize(
+		shaderCompile_.get(),
+		L"./Shader/Polygon3d/SolidColor.VS.hlsl", L"vs_6_0",
+		L"./Shader/Polygon3d/SolidColor.PS.hlsl", L"ps_6_0"
+	);
+
+	pipelineStateObjects_.push_back(std::make_unique<PipelineStateObject>());
+
+	pipelineStateObjects_.back()->SetInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	pipelineStateObjects_.back()->SetInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT);
+
+	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0); ///- Material
+	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1); ///- DirectionalLight
+	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0); ///- TransformationMatrix
+
+	pipelineStateObjects_.back()->Initialize(device, shaderBlob.get());*/
 
 	shaderBlob.reset();
 }

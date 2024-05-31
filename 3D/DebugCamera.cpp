@@ -48,7 +48,7 @@ void DebugCamera::Update() {
 }
 
 void DebugCamera::Draw() {
-	model_->Draw();
+	//model_->Draw();
 }
 
 

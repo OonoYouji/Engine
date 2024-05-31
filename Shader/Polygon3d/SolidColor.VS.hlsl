@@ -1,4 +1,4 @@
-#include "Polygon3d.hlsli"
+#include <SolidColor.hlsli>
 
 #include "../CBuffer/TransformationMatrix.hlsli"
 

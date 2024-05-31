@@ -3,12 +3,12 @@
 #include <cmath>
 #include <iostream>
 
-const Vector3 Vector3::up =    Vec3f{ 0.0f,  1.0f,  0.0f };
-const Vector3 Vector3::down =  Vec3f{ 0.0f, -1.0f,  0.0f};
-const Vector3 Vector3::left =  Vec3f{-1.0f,  0.0f,  0.0f};
-const Vector3 Vector3::right = Vec3f{ 1.0f,  0.0f,  0.0f};
-const Vector3 Vector3::back =  Vec3f{ 0.0f,  0.0f,  1.0f};
-const Vector3 Vector3::front = Vec3f{ 0.0f,  0.0f, -1.0f};
+const Vector3 Vector3::up = Vec3f{ 0.0f,  1.0f,  0.0f };
+const Vector3 Vector3::down = Vec3f{ 0.0f, -1.0f,  0.0f };
+const Vector3 Vector3::left = Vec3f{ -1.0f,  0.0f,  0.0f };
+const Vector3 Vector3::right = Vec3f{ 1.0f,  0.0f,  0.0f };
+const Vector3 Vector3::back = Vec3f{ 0.0f,  0.0f,  1.0f };
+const Vector3 Vector3::front = Vec3f{ 0.0f,  0.0f, -1.0f };
 
 
 Vector3::Vector3(float x, float y, float z) {
@@ -64,8 +64,8 @@ Vector3 Vector3::Lerp(const Vector3& v1, const Vector3& v2, float t) {
 
 Vector3 Vector3::Convert4To3(const Vec4f& v) {
 	return Vector3(
-		v.x,
-		v.y,
-		v.z
+		v.x / v.w,
+		v.y / v.w,
+		v.z / v.w
 	);
 }

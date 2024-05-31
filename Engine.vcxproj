@@ -75,6 +75,11 @@
     <ExternalIncludePath>$(ProjectDir)Externals\opencv\build\include;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(ProjectDir)Externals\opencv\build\x64\vc16\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ExternalIncludePath>$(ProjectDir)Externals\opencv\build\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(ProjectDir)Externals\opencv\build\x64\vc16\lib;$(LibraryPath)</LibraryPath>
+    <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -126,7 +131,7 @@
 copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dxil.dll"</Command>
     </PostBuildEvent>
     <FxCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Shader/Object3d;$(ProjectDir)Shader/Terrain;$(ProjectDir)/Shader/CBuffer;Shader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Shader\Polygon3d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,7 +145,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Input;$(ProjectDir)3D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Math;$(ProjectDir)Base;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Input;$(ProjectDir)3D/Polygon3d;$(ProjectDir)3D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Shader;$(ProjectDir)Math;$(ProjectDir)Base/CBuffer;$(ProjectDir)Base/ShaderCompile;$(ProjectDir)Base/PiplineStateObject;$(ProjectDir)Base;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -149,6 +154,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TreatLinkerWarningAsErrors>true</TreatLinkerWarningAsErrors>
+      <AdditionalDependencies>opencv_world490d.lib;opencv_world490.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxcompiler.dll" "$(TargetDir)dxcompiler.dll"
@@ -166,6 +172,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="3D\Sphere.cpp" />
     <ClCompile Include="3D\Terrain.cpp" />
     <ClCompile Include="3D\TerrainOperator.cpp" />
+    <ClCompile Include="3D\TriangleEffect.cpp" />
     <ClCompile Include="Base\CBuffer\CBuffer.cpp" />
     <ClCompile Include="Base\DirectXCommon.cpp" />
     <ClCompile Include="Base\DxCommand.cpp" />
@@ -211,6 +218,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="3D\Sphere.h" />
     <ClInclude Include="3D\Terrain.h" />
     <ClInclude Include="3D\TerrainOperator.h" />
+    <ClInclude Include="3D\TriangleEffect.h" />
     <ClInclude Include="Base\CBuffer\CBuffer.h" />
     <ClInclude Include="Base\DxCommand.h" />
     <ClInclude Include="Base\DxDescriptors.h" />
@@ -263,33 +271,42 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Shader\Object3D\Object3d.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Shader\Polygon3d\Polygon3d.hlsli">
+    <None Include="Shader\Polygon3d\SolidColor.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Shader\Terrain\Terrain.hlsli" />
+    <None Include="Shader\Terrain\Terrain.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Object3D\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\Object3D\Object3d.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Polygon3d\Polygon3d.PS.hlsl">
+    <FxCompile Include="Shader\Polygon3d\SolidColor.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Polygon3d\Polygon3d.VS.hlsl">
+    <FxCompile Include="Shader\Polygon3d\SolidColor.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\Terrain\Terrain.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\Terrain\Terrain.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -62,5 +62,9 @@ public:
 	void SetWorldTransform(const WorldTransform& worldTransform) {
 		worldTransform_ = worldTransform;
 	}
+	
+	void SetColor(const Vec4f& color) {
+		materialData_->color = color;
+	}
 
 };

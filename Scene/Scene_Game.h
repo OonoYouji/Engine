@@ -13,6 +13,7 @@
 #include "PerlinNoise.h"
 #include "InputImage.h"
 #include <Model.h>
+#include <TriangleEffect.h>
 
 
 class Scene_Game final
@@ -34,5 +35,6 @@ private:
 	std::unique_ptr<Model> model_;
 	std::unique_ptr<Terrain> terrain_;
 	std::unique_ptr<Brush> brush_;
+	std::unique_ptr<TriangleEffect> triangleEffect_;
 
 };

@@ -153,7 +153,8 @@ float PerlinNoise::Noise(const Vec2f& vector) {
 
 
 float PerlinNoise::GetNoise(const Vec3f& v) {
-	return Noise(v) * 0.5f + 0.5f;
+	//return Noise(v) * 0.5f + 0.5f;
+	return Noise(v);
 }
 
 

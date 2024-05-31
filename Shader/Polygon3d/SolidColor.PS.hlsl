@@ -1,4 +1,4 @@
-#include "Polygon3d.hlsli"
+#include "SolidColor.hlsli"
 
 #include "../CBuffer/Material.hlsli"
 #include "../CBuffer/DirectionalLight.hlsli"
