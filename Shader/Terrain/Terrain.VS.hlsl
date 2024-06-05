@@ -35,15 +35,18 @@ VSOutput main(VSInput input) {
 		float3 mousePos = gMousePoint.worldPos + (gMousePoint.rayDir * len);
 		len = length(worldPos.xyz - mousePos);
 		if (len < gMousePoint.brushSize) {
+
+			float power = ((1.0f - len / gMousePoint.brushSize) * 0.25f) * gMousePoint.power;
 			if (gMousePoint.isUp == true) {
-				gOutputTexture[input.texcoord * dimension].r += ((1.0f - len / gMousePoint.brushSize) * 0.25f) * gMousePoint.power;
+				gOutputTexture[input.texcoord * dimension].rgb += float3(power, power, power);
 			}
 
 			if (gMousePoint.isDown == true) {
-				gOutputTexture[input.texcoord * dimension].r -= ((1.0f - len / gMousePoint.brushSize) * 0.25f) * gMousePoint.power;
+				gOutputTexture[input.texcoord * dimension].rgb -= float3(power, power, power);
 			}
 		}
 	}
+
 
 	if (gMousePoint.calcState == 0) {
 		clr += gOutputTexture[input.texcoord * dimension];

@@ -45,6 +45,7 @@ void TextureManager::Initialize() {
 	LoadUav("clear1", baseFilePath + "clear1.png");
 	LoadUav("tileMap", baseFilePath + "tileMap.png");
 	LoadUav("GrayTexture", baseFilePath + "GrayTexture.png");
+	LoadUav("128x128Texture", baseFilePath + "128x128Texture.png");
 
 
 

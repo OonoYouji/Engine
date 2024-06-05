@@ -112,6 +112,7 @@ void Terrain::Init() {
 
 	worldTransform_.Initialize();
 	worldTransform_.scale = { 0.5f,12.0f,0.5f };
+	worldTransform_.translate.y = -100.0f;
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 
@@ -272,7 +273,7 @@ void Terrain::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(1, matrixResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "dragon");	 ///- terrain
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");	 ///- heightMap
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "monsterBall");  ///- operation
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "128x128Texture");  ///- operation
 	Light::GetInstance()->SetConstantBuffer(5, commandList);
 
 
@@ -527,7 +528,7 @@ void Terrain::CreateReadBackResource() {
 	readBackResource_.Reset();
 
 	///- リソースの取得; 読み戻しバッファの作成
-	pTexture_ = TextureManager::GetInstance()->GetUavTextureResource("monsterBall");
+	pTexture_ = TextureManager::GetInstance()->GetUavTextureResource("128x128Texture");
 
 	///- テクスチャの情報を取得
 	D3D12_RESOURCE_DESC textureDesc = pTexture_->GetDesc();
@@ -627,8 +628,8 @@ void Terrain::OutputImage() {
 	cv::Mat image(height, width, CV_8UC4, readBackData_, rowPitch_);
 
 	// 輝度画像をファイルに保存
-	cv::imwrite("./Resources/Images/output.png", image);
-	cv::imshow("output.png", image);
+	cv::imwrite("./Resources/Images/128x128Texture.png", image);
+	cv::imshow("128x128Texture.png", image);
 
 	readBackResource_->Unmap(0, nullptr);
 }
