@@ -100,6 +100,13 @@ void InputManager::Begin() {
 	///- マウスの情報を取得開始
 	mouse_->Acquire();
 	mouse_->GetDeviceState(sizeof(mouseState_), &mouseState_);
+	POINT mousePos{};
+	GetCursorPos(&mousePos);
+	ScreenToClient(WinApp::GetInstance()->GetHWND(), &mousePos);
+	mousePosition_ = {
+		static_cast<float>(mousePos.x),
+		static_cast<float>(mousePos.y)
+	};
 
 	DebugDraw(true);
 }
@@ -129,6 +136,8 @@ void InputManager::DebugDraw([[maybe_unused]] bool isDraw) {
 	/// ↓ Mouse
 	/// --------------------------------
 	if(ImGui::TreeNodeEx("Mouse", true)) {
+
+		ImGui::DragFloat2("Position", &mousePosition_.x, 0.0f);
 
 		float position[] = {
 			static_cast<float>(mouseState_.lX),

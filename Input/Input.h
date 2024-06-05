@@ -58,7 +58,8 @@ private:
 	BYTE preKeys_[256];
 
 	DIMOUSESTATE2 mouseState_;
-
+	Vec2f mousePosition_;
+	
 private:
 
 	InputManager() = default;
@@ -81,6 +82,7 @@ public:
 	static bool ReleaseKey(uint8_t keyCode) { return !manager_->keys_[keyCode] && manager_->preKeys_[keyCode]; }
 
 	static bool PressMouse(uint8_t mouseCode) { return manager_->mouseState_.rgbButtons[mouseCode]; }
+	static Vec2f GetMousePosition() { return manager_->mousePosition_; }
 	static Vec2f MouseVelocity() {
 		return Vec2f(static_cast<float>(manager_->mouseState_.lX), static_cast<float>(manager_->mouseState_.lY));
 	}

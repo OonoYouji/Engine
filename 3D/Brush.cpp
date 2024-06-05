@@ -118,7 +118,7 @@ void Brush::Init() {
 
 
 void Brush::Update() {
-	mousePointData_->position += Input::MouseVelocity();
+	mousePointData_->position = Input::GetMousePosition();
 	mousePos_ = { mousePointData_->position.x, mousePointData_->position.y, 0.0f };
 	mousePointData_->isUp = Input::PressMouse(0);
 	mousePointData_->isDown = Input::PressMouse(1);
