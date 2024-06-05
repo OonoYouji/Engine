@@ -17,6 +17,7 @@ public:
 public:
 
 	static void BeginFrame();
+	static void PreDraw();
 	static void EndFrame();
 
 

@@ -144,11 +144,19 @@ void TextureManager::LoadUav(const std::string& textureName, const std::string& 
 /// </summary>
 /// <param name="index"></param>
 void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, const std::string& textureName) {
+	//// デスクリプタヒープの設定
+	ID3D12DescriptorHeap* descriptorHeaps[] = { DxDescriptors::GetInstance()->GetSRVHeap() }; // yourDescriptorHeap は作成した CBV_SRV_UAV デスクリプタヒープ
+	DxCommand::GetInstance()->GetList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
 	/// texturesの範囲外参照しないように注意
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].handleGPU);
 }
 
 void TextureManager::SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, const std::string& textureName) {
+	//// デスクリプタヒープの設定
+	ID3D12DescriptorHeap* descriptorHeaps[] = { DxDescriptors::GetInstance()->GetSRVHeap() }; // yourDescriptorHeap は作成した CBV_SRV_UAV デスクリプタヒープ
+	DxCommand::GetInstance()->GetList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
 	/// texturesの範囲外参照しないように注意
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, uavTextures_[textureName].handleGPU);
 }

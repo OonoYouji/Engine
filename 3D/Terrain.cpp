@@ -104,9 +104,6 @@ void Terrain::Init() {
 
 
 
-	CreateReadBackResource();
-
-
 
 	/// ------------------------------------------------- 
 	/// ↓ その他メンバ変数の初期化
@@ -275,7 +272,7 @@ void Terrain::Draw() {
 	commandList->SetGraphicsRootConstantBufferView(1, matrixResource_->GetGPUVirtualAddress());
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "dragon");	 ///- terrain
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");	 ///- heightMap
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "GrayTexture");  ///- operation
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "monsterBall");  ///- operation
 	Light::GetInstance()->SetConstantBuffer(5, commandList);
 
 
@@ -522,38 +519,67 @@ void Terrain::CreateIndexResource(size_t indexDataSize) {
 
 
 void Terrain::CreateReadBackResource() {
-	ID3D12Resource* pTexture = TextureManager::GetInstance()->GetUavTextureResource("GrayTexture");
-	D3D12_RESOURCE_DESC readBackDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pTexture, 0, 1));
 
-	D3D12_HEAP_PROPERTIES heapProps = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK);
+	///- CommandListとDeviceのポインタを取得
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	ID3D12Device* device = DirectXCommon::GetInstance()->GetDevice();
+
+	readBackResource_.Reset();
+
+	///- リソースの取得; 読み戻しバッファの作成
+	pTexture_ = TextureManager::GetInstance()->GetUavTextureResource("monsterBall");
+
+	///- テクスチャの情報を取得
+	D3D12_RESOURCE_DESC textureDesc = pTexture_->GetDesc();
+
+	///- 中間バッファの作成
+	D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint{};
+	UINT numRows;
+	UINT64 rowSizeInBytes;
+	UINT64 totalBytes;
+	device->GetCopyableFootprints(&textureDesc, 0, 1, 0, &footprint, &numRows, &rowSizeInBytes, &totalBytes);
+	rowPitch_ = footprint.Footprint.RowPitch;
+
+	///- 読み戻し用バッファの作成
+	D3D12_HEAP_PROPERTIES heapProps = {};
+	heapProps.Type = D3D12_HEAP_TYPE_READBACK;
+
+	D3D12_RESOURCE_DESC bufferDesc = {};
+	bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	bufferDesc.Width = totalBytes;
+	bufferDesc.Height = 1;
+	bufferDesc.DepthOrArraySize = 1;
+	bufferDesc.MipLevels = 1;
+	bufferDesc.SampleDesc.Count = 1;
+	bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+
 	HRESULT hr = device->CreateCommittedResource(
 		&heapProps,
 		D3D12_HEAP_FLAG_NONE,
-		&readBackDesc,
+		&bufferDesc,
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(&readBackResource_)
 	);
 	assert(SUCCEEDED(hr));
 
-	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
-	CD3DX12_RESOURCE_BARRIER transition = CD3DX12_RESOURCE_BARRIER::Transition(
-		pTexture,
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
-		D3D12_RESOURCE_STATE_COPY_SOURCE
-	);
-	commandList->ResourceBarrier(1, &transition);
 
-	D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint{};
-	UINT numRows;
-	UINT64 rowSizeInBytes;
-	UINT64 totalBytes;
-	D3D12_RESOURCE_DESC textureDesc = pTexture->GetDesc();
-	device->GetCopyableFootprints(&textureDesc, 0, 1, 0, &footprint, &numRows, &rowSizeInBytes, &totalBytes);
+	///- テクスチャの状態をD3D12_RESOURCE_STATE_COPY_SOURCEに変換
+	D3D12_RESOURCE_BARRIER barrier = {};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = pTexture_;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 
+	commandList->ResourceBarrier(1, &barrier);
+
+	
+	///- テクスチャからリードバックバッファへコピー
 	D3D12_TEXTURE_COPY_LOCATION srcLocation = {};
-	srcLocation.pResource = pTexture;
+	srcLocation.pResource = pTexture_;
 	srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 	srcLocation.SubresourceIndex = 0;
 
@@ -564,53 +590,44 @@ void Terrain::CreateReadBackResource() {
 
 	commandList->CopyTextureRegion(&dstLocation, 0, 0, 0, &srcLocation, nullptr);
 
-	///- copy後のbarrier設定
-	CD3DX12_RESOURCE_BARRIER transitionAfterCopy = CD3DX12_RESOURCE_BARRIER::Transition(
-		pTexture,
-		D3D12_RESOURCE_STATE_COPY_SOURCE,
-		D3D12_RESOURCE_STATE_UNORDERED_ACCESS
-	);
-	commandList->ResourceBarrier(1, &transitionAfterCopy);
+	///- stateを元の状態に戻す
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+	commandList->ResourceBarrier(1, &barrier);
+
+	///- コマンドの実行を待つ
+	DxCommand* command = DxCommand::GetInstance();
+	command->Close();
+	DirectXCommon::GetInstance()->WaitExecution();
+	command->ResetCommandList();
 
 }
 
 
 void Terrain::ReadBack() {
-	D3D12_RANGE readRange = { 0, 0 };
+	/*D3D12_RANGE readRange = { 0, 0 };
 	readBackResource_->Map(0, &readRange, &readBackData_);
 
 
 
 
 
-	readBackResource_->Unmap(0, nullptr);
+	readBackResource_->Unmap(0, nullptr);*/
 
 }
 
 void Terrain::OutputImage() {
-	//CreateReadBackResource();
+	CreateReadBackResource();
 
 	readBackResource_->Map(0, nullptr, &readBackData_);
 
-	ID3D12Resource* pTexture = TextureManager::GetInstance()->GetUavTextureResource("GrayTexture");
-	UINT height = pTexture->GetDesc().Height;
-	UINT width = static_cast<UINT>(pTexture->GetDesc().Width);
+	UINT height = pTexture_->GetDesc().Height;
+	UINT width = static_cast<UINT>(pTexture_->GetDesc().Width);
 
-	cv::Mat image(height, width, CV_8UC4);
+	cv::Mat image(height, width, CV_8UC4, readBackData_, rowPitch_);
 
-	for(UINT y = 0; y < height; ++y) {
-		for(UINT x = 0; x < width; ++x) {
-			size_t pixelIndex = (y * width + x);
-			Vec3f color = CalculateLuminance(static_cast<unsigned char*>(readBackData_) + pixelIndex);
-			image.at<cv::Vec3b>(y, x) = cv::Vec3b(
-				static_cast<uchar>(std::clamp(color.x, 0.0f, 255.0f)),
-				static_cast<uchar>(std::clamp(color.y, 0.0f, 255.0f)),
-				static_cast<uchar>(std::clamp(color.z, 0.0f, 255.0f))
-			);
-		}
-	}
-
-	cv::imwrite("output.png", image);
+	// 輝度画像をファイルに保存
+	cv::imwrite("./Resources/Images/output.png", image);
 	cv::imshow("output.png", image);
 
 	readBackResource_->Unmap(0, nullptr);

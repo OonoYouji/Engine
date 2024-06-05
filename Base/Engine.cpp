@@ -62,6 +62,7 @@ namespace {
 		void Initialize();
 
 		void BeginFrame();
+		void PreDraw();
 		void EndFrame();
 		int ProcessMessage();
 
@@ -74,8 +75,7 @@ namespace {
 	};
 
 
-	EngineSystem::~EngineSystem() {
-	}
+	EngineSystem::~EngineSystem() {}
 
 	void EngineSystem::Initialize() {
 		camera_ = std::make_unique<Camera>();
@@ -89,7 +89,6 @@ namespace {
 
 	void EngineSystem::BeginFrame() {
 
-		directXCommon_->PreDraw();
 		imGuiManager_->BeginFrame();
 		input_->Begin();
 
@@ -97,6 +96,10 @@ namespace {
 
 		camera_->Update();
 
+	}
+
+	void EngineSystem::PreDraw() {
+		directXCommon_->PreDraw();
 	}
 
 	void EngineSystem::EndFrame() {
@@ -211,6 +214,10 @@ void Engine::Finalize() {
 
 void Engine::BeginFrame() {
 	sEngineSystem->BeginFrame();
+}
+
+void Engine::PreDraw() {
+	sEngineSystem->PreDraw();
 }
 
 void Engine::EndFrame() {

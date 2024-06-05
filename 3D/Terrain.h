@@ -86,8 +86,9 @@ private:
 
 	///- GPUで操作した地形をCPUに戻す
 	ComPtr<ID3D12Resource> readBackResource_;
+	ID3D12Resource* pTexture_ = nullptr;
 	void* readBackData_ = nullptr;
-
+	UINT rowPitch_;
 
 	/// <summary>
 	/// 法線ベクトルの計算

@@ -123,6 +123,8 @@ namespace {
 			/// ↓更新処理ここから
 			this->Update();
 
+			Engine::PreDraw();
+
 			/// ↓描画処理ここから
 			this->Draw();
 
