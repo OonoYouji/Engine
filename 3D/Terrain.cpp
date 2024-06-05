@@ -16,17 +16,6 @@
 
 
 
-Vec3f CalculateLuminance(const unsigned char* pixel) {
-	float r = pixel[0];
-	float g = pixel[1];
-	float b = pixel[2];
-	return Vec3f(r, g, b);
-}
-
-
-
-
-
 Terrain::Terrain() {}
 Terrain::~Terrain() {
 	///- 解放処理

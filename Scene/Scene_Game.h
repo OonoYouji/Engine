@@ -9,7 +9,6 @@
 
 #include "Brush.h"
 #include "Sphere.h"
-#include "TerrainOperator.h"
 #include "PerlinNoise.h"
 #include "InputImage.h"
 #include <Model.h>

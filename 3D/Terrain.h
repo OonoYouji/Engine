@@ -33,11 +33,79 @@ public:
 
 	void Draw();
 
-	///- 縦横の分割数
-	static const int kSubdivision = 10;
+public: ///- METHODS AND ACCESSOR
+
+	const Vec3f& GetNormalVector() const { return normalVector_; }
+
+	float GetDistance() const { return distance_; }
+
+	const Vec3f& GetWorldPos() const { return worldTransform_.translate; }
+
+	/// <summary>
+	/// 頂点データをフラット化する
+	/// </summary>
+	void TransferVertexData();
+
+	void TransferFlattenedVertexData();
+
+	void SetVertexHeight(int row, int col, float height);
+
+	void AddVertexHeight(int row, int col, float height);
+	void SubVertexHeight(int row, int col, float height);
+
+	/// <summary>
+	/// 配列の範囲内か確認する
+	/// 範囲内: True,  範囲外: False
+	/// </summary>
+	bool CheckRange(int row, int col);
 
 
-private:
+
+private: ///- METHODS
+
+	/// <summary>
+	/// 法線ベクトルの計算
+	/// </summary>
+	void NormalVector();
+
+	/// <summary>
+	/// 縦横の最大頂点数からIndexDataを計算する
+	/// </summary>
+	void IndexDataCulc(uint32_t maxRow, uint32_t maxCol);
+
+	/// <summary>
+	/// 縦横の最大頂点数からVertexDataを計算する
+	/// </summary>
+	void VertexDataCulc(uint32_t maxRow, uint32_t maxCol);
+
+	/// <summary>
+	/// VertexResourceを生成する
+	/// </summary>
+	void CreateVertexResource(size_t flattendVertexDataSize);
+
+	/// <summary>
+	/// IndexResourceを生成する
+	/// </summary>
+	void CreateIndexResource(size_t indexDataSize);
+
+	/// <summary>
+	/// ReadBackResourcecを作成する
+	/// </summary>
+	void CreateReadBackResource();
+
+	/// <summary>
+	/// GPUから読み込む
+	/// </summary>
+	void ReadBack();
+
+	/// <summary>
+	/// 編集した地形を画像として出力する
+	/// </summary>
+	void OutputImage();
+
+
+private: ///- OBJECTS
+
 
 
 	///- 縦横分割比
@@ -90,74 +158,6 @@ private:
 	void* readBackData_ = nullptr;
 	UINT rowPitch_;
 
-	/// <summary>
-	/// 法線ベクトルの計算
-	/// </summary>
-	void NormalVector();
-
-	/// <summary>
-	/// 縦横の最大頂点数からIndexDataを計算する
-	/// </summary>
-	/// <param name="maxRow"></param>
-	/// <param name="maxCol"></param>
-	void IndexDataCulc(uint32_t maxRow, uint32_t maxCol);
-
-	void VertexDataCulc(uint32_t maxRow, uint32_t maxCol);
-
-	void CreateVertexResource(size_t flattendVertexDataSize);
-
-	void CreateIndexResource(size_t indexDataSize);
-
-	/// <summary>
-	/// ReadBackResourcecを作成する
-	/// </summary>
-	void CreateReadBackResource();
-
-	/// <summary>
-	/// GPUから読み込む
-	/// </summary>
-	void ReadBack();
-
-	void OutputImage();
-
-public:
-
-	const Vec3f& GetNormalVector() const { return normalVector_; }
-
-	float GetDistance() const { return distance_; }
-
-	const Vec3f& GetWorldPos() const { return worldTransform_.translate; }
-
-	Vec3f GetLTPos() const {
-		return worldTransform_.translate + Vec3f{
-			-kSubdivision / 2.0f, 0.0f, kSubdivision / 2.0f
-		};
-	}
-
-
-	Vec3f GetRBPos() const {
-		return worldTransform_.translate + Vec3f{
-			kSubdivision / 2.0f, 0.0f, -kSubdivision / 2.0f
-		};
-	}
-
-
-	/// <summary>
-	/// 頂点データをフラット化する
-	/// </summary>
-	void TransferVertexData();
-
-	void TransferFlattenedVertexData();
-
-	void SetVertexHeight(int row, int col, float height);
-
-	void AddVertexHeight(int row, int col, float height);
-	void SubVertexHeight(int row, int col, float height);
-
-	/// <summary>
-	/// 配列の範囲内か確認する
-	/// 範囲内: True,  範囲外: False
-	/// </summary>
-	bool CheckRange(int row, int col);
+	
 
 };

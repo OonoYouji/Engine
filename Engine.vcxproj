@@ -171,7 +171,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="3D\Polygon3d\Polygon3d.cpp" />
     <ClCompile Include="3D\Sphere.cpp" />
     <ClCompile Include="3D\Terrain.cpp" />
-    <ClCompile Include="3D\TerrainOperator.cpp" />
     <ClCompile Include="3D\TriangleEffect.cpp" />
     <ClCompile Include="Base\CBuffer\CBuffer.cpp" />
     <ClCompile Include="Base\DirectXCommon.cpp" />
@@ -217,7 +216,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="3D\Polygon3d\Polygon3d.h" />
     <ClInclude Include="3D\Sphere.h" />
     <ClInclude Include="3D\Terrain.h" />
-    <ClInclude Include="3D\TerrainOperator.h" />
     <ClInclude Include="3D\TriangleEffect.h" />
     <ClInclude Include="Base\CBuffer\CBuffer.h" />
     <ClInclude Include="Base\DxCommand.h" />
