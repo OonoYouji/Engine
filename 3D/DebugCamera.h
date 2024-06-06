@@ -41,7 +41,6 @@ private:
 
 	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
-	std::unique_ptr<Model> model_;
 
 	Vec3f velocity_;
 	const float kSpeed_ = 0.025f;

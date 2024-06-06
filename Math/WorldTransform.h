@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <Vector3.h>
 #include <Matrix4x4.h>
 
@@ -8,15 +10,22 @@
 /// World
 /// </summary>
 struct WorldTransform {
-public:
 
-
-	/// -------------------------
-	/// 初期化関数
-	/// -------------------------
-
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize();
 
+	
+	/// -------------------------
+	/// メンバ関数
+	/// -------------------------
+
+	void UpdateWorldMatrix();
+
+	void ImGuiTreeNodeDebug();
+
+	void ImGuiDebug(const std::string& windowName);
 
 	/// -------------------------
 	/// メンバ変数
@@ -29,12 +38,5 @@ public:
 	Mat4 worldMatrix;
 
 
-	/// -------------------------
-	/// メンバ関数
-	/// -------------------------
-
-	void UpdateWorldMatrix();
-
-	void ImGuiTreeNodeDebug();
 
 };

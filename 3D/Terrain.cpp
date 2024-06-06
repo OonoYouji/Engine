@@ -241,8 +241,8 @@ void Terrain::Draw() {
 	PipelineStateObjectManager::GetInstance()->SetCommandList(1, commandList);
 
 	///- 頂点情報
-	memcpy(pVertexMappedData_, pVertexData_, flattenedVertexData_.size() * sizeof(VertexData));
-	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexData_.size());
+	memcpy(pVertexData_, flattenedVertexData_.data(), flattenedVertexData_.size() * sizeof(VertexData));
+	memcpy(pIndexData_, indexData_.data(),  indexData_.size() * sizeof(uint32_t));
 
 	///- 色情報
 	materialData_->color = color_;
@@ -480,9 +480,8 @@ void Terrain::CreateVertexResource(size_t flattendVertexSize) {
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	///- 頂点データの書き込み
-	vertexResource_->Map(0, nullptr, &pVertexMappedData_);
-	memcpy(pVertexMappedData_, pVertexData_, sizeof(VertexData) * flattendVertexSize);
-	vertexResource_->Unmap(0, nullptr);
+	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&pVertexData_));
+	memcpy(pVertexData_, flattenedVertexData_.data(), sizeof(VertexData) * flattendVertexSize);
 
 }
 
@@ -502,9 +501,9 @@ void Terrain::CreateIndexResource(size_t indexDataSize) {
 	indexBuffer_.Format = DXGI_FORMAT_R32_UINT;
 
 	///- Resourceに対し情報を書き込む
-	indexResource_->Map(0, nullptr, &pIndexMappedData_);
-	memcpy(pIndexMappedData_, pIndexData_, sizeof(uint32_t) * indexDataSize);
-	indexResource_->Unmap(0, nullptr);
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&pIndexData_));
+	memcpy(pIndexData_, indexData_.data(), sizeof(uint32_t) * indexDataSize);
+
 }
 
 

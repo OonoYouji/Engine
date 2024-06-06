@@ -18,12 +18,37 @@ public:
 
 	float x, y, z;
 
+#pragma region 各方向への単位ベクトル
+	/// <summary>
+	/// (0, 1, 0)
+	/// </summary>
 	static const Vector3 up;
+
+	/// <summary>
+	/// (0, -1, 0)
+	/// </summary>
 	static const Vector3 down;
+
+	/// <summary>
+	/// (-1, 0, 0)
+	/// </summary>
 	static const Vector3 left;
+
+	/// <summary>
+	/// (1, 0, 0)
+	/// </summary>
 	static const Vector3 right;
+
+	/// <summary>
+	/// (0, 0, -1)
+	/// </summary>
 	static const Vector3 back;
+
+	/// <summary>
+	/// (0, 0, 1)
+	/// </summary>
 	static const Vector3 front;
+#pragma endregion
 
 public:
 
@@ -71,6 +96,8 @@ public:
 	inline Vector3& operator*=(const Vector3& other);
 	inline Vector3& operator/=(const Vector3& other);
 
+	inline Vector3 operator-() const;
+	
 };
 
 
@@ -135,6 +162,9 @@ inline Vector3& Vector3::operator/=(const Vector3& other) {
 }
 
 
+inline Vector3 Vector3::operator-() const {
+	return (*this) * -1.0f;
+}
 
 
 using Vec3f = Vector3;

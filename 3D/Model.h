@@ -10,6 +10,9 @@
 #include <WorldTransform.h>
 #include <CBuffer.h>
 
+#include <Vector3.h>
+
+
 using namespace Microsoft::WRL;
 
 /// <summary>
@@ -29,16 +32,19 @@ public:
 
 	void Initialize(const std::string& directoryPath, const std::string& fileName);
 
-	void Draw();
+	void Draw(const WorldTransform& worldTransform);
 
 	void DebugDraw(const std::string& windowName);
+
+	const std::vector<VertexData>& GetVertexDatas() const {
+		return vertexDatas_;
+	}
 
 private:
 
 
-	std::vector<VertexData> vertices_;
+	std::vector<VertexData> vertexDatas_;
 	MaterialData material_;
-	WorldTransform* worldTransform_;
 
 	///- Vertex
 	ComPtr<ID3D12Resource> vertexResource_;
@@ -58,10 +64,6 @@ public:
 	Model LoadObjFile(const std::string& directoryPath, const std::string& fileName);
 
 	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& fileName);
-
-	void SetWorldTransform(WorldTransform* worldTransform) {
-		worldTransform_ = worldTransform;
-	}
 
 	void SetColor(const Vec4f& color) {
 		materialData_->color = color;

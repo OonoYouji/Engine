@@ -7,8 +7,8 @@ const Vector3 Vector3::up = Vec3f{ 0.0f,  1.0f,  0.0f };
 const Vector3 Vector3::down = Vec3f{ 0.0f, -1.0f,  0.0f };
 const Vector3 Vector3::left = Vec3f{ -1.0f,  0.0f,  0.0f };
 const Vector3 Vector3::right = Vec3f{ 1.0f,  0.0f,  0.0f };
-const Vector3 Vector3::back = Vec3f{ 0.0f,  0.0f,  1.0f };
-const Vector3 Vector3::front = Vec3f{ 0.0f,  0.0f, -1.0f };
+const Vector3 Vector3::back = Vec3f{ 0.0f,  0.0f,  -1.0f };
+const Vector3 Vector3::front = Vec3f{ 0.0f,  0.0f, 1.0f };
 
 
 Vector3::Vector3(float x, float y, float z) {

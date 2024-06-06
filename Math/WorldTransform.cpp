@@ -35,3 +35,15 @@ void WorldTransform::ImGuiTreeNodeDebug() {
 	}
 }
 
+void WorldTransform::ImGuiDebug(const std::string& windowName) {
+#ifdef _DEBUG
+
+	ImGui::Begin(windowName.c_str());
+
+	ImGuiTreeNodeDebug();
+
+	ImGui::End();
+
+#endif // _DEBUG
+}
+

@@ -125,11 +125,9 @@ private: ///- OBJECTS
 	std::vector<std::vector<VertexData>> vertexData_;
 	std::vector<VertexData> flattenedVertexData_;
 	VertexData* pVertexData_ = nullptr;
-	void* pVertexMappedData_ = nullptr;
 
 	std::vector<uint32_t> indexData_;
 	uint32_t* pIndexData_;
-	void* pIndexMappedData_;
 
 	Material* materialData_ = nullptr;
 	TransformMatrix* matrixData_ = nullptr;

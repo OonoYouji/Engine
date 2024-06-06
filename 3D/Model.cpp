@@ -40,16 +40,16 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 
 	///- 頂点リソース
-	vertexResource_ = dxCommon->CreateBufferResource(sizeof(VertexData) * vertices_.size());
+	vertexResource_ = dxCommon->CreateBufferResource(sizeof(VertexData) * vertexDatas_.size());
 
 	///- 頂点バッファビュー
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertices_.size());
+	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertexDatas_.size());
 	vertexBufferView_.StrideInBytes = sizeof(VertexData);
 
 	///- 頂点リソースにデータを書き込む
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	std::memcpy(vertexData_, vertices_.data(), sizeof(VertexData) * vertices_.size());
+	std::memcpy(vertexData_, vertexDatas_.data(), sizeof(VertexData) * vertexDatas_.size());
 
 
 
@@ -83,16 +83,15 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 
 
-void Model::Draw() {
+void Model::Draw(const WorldTransform& worldTransform) {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	///- 頂点情報のコピー
-	std::memcpy(vertexData_, vertices_.data(), sizeof(VertexData) * vertices_.size());
+	std::memcpy(vertexData_, vertexDatas_.data(), sizeof(VertexData) * vertexDatas_.size());
 
 	///- Data
-	worldTransform_->UpdateWorldMatrix(); 
-	transformMatrixData_->World = worldTransform_->worldMatrix;
-	transformMatrixData_->WVP = worldTransform_->worldMatrix * Engine::GetCamera()->GetVpMatrix();
+	transformMatrixData_->World = worldTransform.worldMatrix;
+	transformMatrixData_->WVP = worldTransform.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
 	///- 使用するpsoの設定
 	PipelineStateObjectManager::GetInstance()->SetCommandList(0, commandList);
@@ -105,7 +104,7 @@ void Model::Draw() {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, material_.textureName);
 	Light::GetInstance()->SetConstantBuffer(3, commandList);
 
-	commandList->DrawInstanced(UINT(vertices_.size()), 1, 0, 0);
+	commandList->DrawInstanced(UINT(vertexDatas_.size()), 1, 0, 0);
 }
 
 
@@ -113,7 +112,7 @@ void Model::DebugDraw(const std::string& windowName) {
 #ifdef _DEBUG
 	ImGui::Begin(windowName.c_str());
 
-	worldTransform_->ImGuiTreeNodeDebug();
+	//worldTransform_->ImGuiTreeNodeDebug();
 
 	ImGui::Separator();
 
@@ -220,9 +219,9 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 			}
 
 			///- 頂点を逆順で保存する (モデルが右手座標系のため)
-			model.vertices_.push_back(triangle[0]);
-			model.vertices_.push_back(triangle[1]);
-			model.vertices_.push_back(triangle[2]);
+			model.vertexDatas_.push_back(triangle[0]);
+			model.vertexDatas_.push_back(triangle[1]);
+			model.vertexDatas_.push_back(triangle[2]);
 
 		} else if(identifier == "mtllib") {
 

@@ -16,7 +16,7 @@ void Camera::Init() {
 	worldTransform_.Initialize();
 	//worldTransform_.rotate = { 0.5f, 0.0f, 0.0f };
 	//worldTransform_.translate = { 0.0f,3.25f, -5.5f };
-	worldTransform_.rotate = { 1.5f, 0.0f, 0.0f };
+	worldTransform_.rotate = { 0.0f, 0.0f, 0.0f };
 	worldTransform_.translate = { 0.0f,0.0f, -5.5f };
 
 	viewProjection_.fovY = 0.45f;
