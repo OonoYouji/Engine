@@ -1,6 +1,6 @@
 #include <Player.h>
 
-
+#include <Input.h>
 
 Player::Player() {}
 Player::~Player() {}
@@ -22,5 +22,9 @@ void Player::Update() {
 void Player::Draw() {
 
 	model_->Draw(worldTransform_);
+
+}
+
+void Player::Move() {
 
 }

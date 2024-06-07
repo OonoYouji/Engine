@@ -1,5 +1,6 @@
 #include <MeshCollider.h>
 
+#include <ImGuiManager.h>
 
 
 namespace {
@@ -75,13 +76,12 @@ namespace {
 	}
 
 	bool ContainsOrigin(std::vector<Vec3f>& vertices, Vec3f& direction) {
-		if(vertices.size() == 2) {
-			return HandleLineCase(vertices, direction);
-		} else if(vertices.size() == 3) {
-			return HandleTriangleCase(vertices, direction);
-		} else if(vertices.size() == 4) {
-			return HandleTetrahedronCase(vertices, direction);
+		switch(vertices.size()) {
+		case 2: return HandleLineCase(vertices, direction);
+		case 3: return HandleTriangleCase(vertices, direction);
+		case 4: return HandleTetrahedronCase(vertices, direction);
 		}
+
 		return false;
 	}
 
@@ -215,6 +215,18 @@ void MeshCollider::Draw() {
 #endif // _DEBUG
 }
 
+
+void MeshCollider::DebugDraw(const std::string& windowName) {
+#ifdef _DEBUG
+	ImGui::Begin(windowName.c_str());
+
+	ImGui::Text("RepeatNum : %d", repeatNum_);
+
+	ImGui::End();
+#endif // _DEBUG
+}
+
+
 bool MeshCollider::IsCollision(const std::vector<Vec3f>& vertices, const WorldTransform& worldTransform) {
 
 	std::vector<Vec3f> worldVertices;
@@ -223,65 +235,53 @@ bool MeshCollider::IsCollision(const std::vector<Vec3f>& vertices, const WorldTr
 	}
 
 
-	Vec3f direction = { 1, 0, 0 };
-	std::vector<Vec3f> simplex = { MinkowskiDifferenceSupport(vertices_, worldVertices, direction) };
+	//Vec3f direction = { 1, 0, 0 };
+	//std::vector<Vec3f> simplex = { MinkowskiDifferenceSupport(vertices_, worldVertices, direction) };
 
-	direction = -simplex[0];
+	//direction = -simplex[0];
 
-	while(true) {
-		Vec3f newPoint = MinkowskiDifferenceSupport(vertices_, worldVertices, direction);
-		if(Vec3f::Dot(newPoint, direction) <= 0) {
-			return false; // No collision
-		}
-		simplex.push_back(newPoint);
-		if(ContainsOrigin(simplex, direction)) {
-			return true; // Collision
-		}
+	//repeatNum_ = 0;
+	//while(repeatNum_ < 50) {
+	//	Vec3f newPoint = MinkowskiDifferenceSupport(vertices_, worldVertices, direction);
+	//	if(Vec3f::Dot(newPoint, direction) <= 0) {
+	//		return false; // No collision
+	//	}
+	//	simplex.push_back(newPoint);
+	//	if(ContainsOrigin(simplex, direction)) {
+	//		return true; // Collision
+	//	}
+
+	//	repeatNum_++;
+	//}
+
+	//return false;
+
+	minkowskiDiff_ = MinkowskiDifference(vertices_, worldVertices);
+	Vec3f p0 = minkowskiDiff_[0];
+
+	Vec3f p1 = Support(minkowskiDiff_, Vec3f::Normalize(-p0));
+	if(Vec3f::Dot(p1, -p0) < 0.0f) { return false; }
+
+	Vec3f normal;
+	while(Vec3f::Dot(normal, Vec3f(1.0f, 1.0f, 1.0f)) >= 0.0f) {
+		Vec3f diff = p1 - p0;
+		normal = Vec3f::Cross(diff, -p0);
 	}
 
+	Vec3f p2 = Support(minkowskiDiff_, Vec3f::Normalize(normal));
+	if(Vec3f::Dot(p2, normal) <= 0.0f) { return false; }
+
+	//- 7
+	Vec3f p1p0 = p1 - p0;
+	Vec3f p2p0 = p2 - p0;
+	normal = Vec3f::Cross(p1p0, p2p0);
+	if(Vec3f::Dot(normal, p0) >= 0.0f) {
+		normal *= -1.0f;
+	}
+
+	Vec3f p3 = Support(minkowskiDiff_, normal);
+	if(Vec3f::Dot(p3, normal) > 0.0f) { return false; }
 
 
-
-	/////- 二つの頂点配列のミンコフスキー差
-	//minkowskiDiff_ = MinkowskiDifference(vertices_, worldVertices);
-
-	/////- ミンコフスキー差内の適当な点から原点方向へのサポート写像
-	//Vec3f pointA = Support(minkowskiDiff_, -minkowskiDiff_[0]);
-
-	/////- pointAから原点方向へのサポート写像
-	//Vec3f pointB = Support(minkowskiDiff_, -pointA);
-
-	/////- pointABから原点方向へのサポート写像
-	//Vec3f diff = pointB - pointA;
-	//Vec3f normal = Vec3f::Cross(-pointA, diff);
-	//normal = Vec3f::Normalize(normal); //- もちろん正規化
-	//Vec3f pointC = Support(minkowskiDiff_, normal);
-
-	/////- 奥行き方向へのサポート写像
-	//Vec3f pointD = Support(minkowskiDiff_, Vec3f::front);
-
-	/////- 計算したpointからなる三角錐
-	//std::array<Vec3f, 4> pyramid{
-	//	pointA,
-	//	pointB,
-	//	pointC,
-	//	pointD
-	//};
-
-	/////- 三角錐のすべての面の法線を求める
-	//std::array<Vec3f, 4> normals{
-	//	Vec3f::Cross(pyramid[1] - pyramid[0], pyramid[2] - pyramid[0]),
-	//	Vec3f::Cross(pyramid[1] - pyramid[0], pyramid[3] - pyramid[0]),
-	//	Vec3f::Cross(pyramid[2] - pyramid[0], pyramid[3] - pyramid[0]),
-	//	Vec3f::Cross(pyramid[2] - pyramid[1], pyramid[3] - pyramid[1])
-	//};
-
-
-	//if(Vec3f::Dot(normals[0], -pyramid[0]) <= 0.0f) { return false; }
-	//if(Vec3f::Dot(normals[1], -pyramid[0]) <= 0.0f) { return false; }
-	//if(Vec3f::Dot(normals[2], -pyramid[0]) <= 0.0f) { return false; }
-	//if(Vec3f::Dot(normals[3], -pyramid[1]) <= 0.0f) { return false; }
-
-	//return true;
 }
 

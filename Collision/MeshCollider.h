@@ -36,12 +36,16 @@ public:
 public:
 
 	/// <summary>
+	/// ImGuiを使用してデバッグ表示する
+	/// </summary>
+	void DebugDraw(const std::string& windowName);
+
+	/// <summary>
 	/// 当たり判定を取る
 	/// </summary>
 	/// <param name="vertices"></param>
 	/// <returns></returns>
 	bool IsCollision(const std::vector<Vec3f>& vertices, const WorldTransform& worldTransform);
-
 
 	/// <summary>
 	/// モデルへのポインタのSetter
@@ -74,5 +78,7 @@ private:
 
 	std::vector<Vec3f> vertices_; //- world座標系
 	std::vector<Vec3f> minkowskiDiff_;
+
+	uint32_t repeatNum_;
 
 };

@@ -95,6 +95,8 @@ public:
 	inline Vector3& operator-=(const Vector3& other);
 	inline Vector3& operator*=(const Vector3& other);
 	inline Vector3& operator/=(const Vector3& other);
+	inline Vector3& operator/=(float value);
+	inline Vector3& operator*=(float value);
 
 	inline Vector3 operator-() const;
 	
@@ -158,6 +160,14 @@ inline Vector3& Vector3::operator*=(const Vector3& other) {
 }
 inline Vector3& Vector3::operator/=(const Vector3& other) {
 	(*this) = (*this) / other;
+	return *this;
+}
+inline Vector3& Vector3::operator/=(float value) {
+	(*this) = (*this) / value;
+	return *this;
+}
+inline Vector3& Vector3::operator*=(float value) {
+	(*this) = (*this) * value;
 	return *this;
 }
 

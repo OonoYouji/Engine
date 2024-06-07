@@ -29,7 +29,7 @@ public:
 
 private: ///- METHODS
 
-
+	void Move();
 
 private: ///- OBJECTS
 

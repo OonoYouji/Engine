@@ -186,6 +186,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Base\TextureManager.cpp" />
     <ClCompile Include="Base\WinApp.cpp" />
     <ClCompile Include="Collision\MeshCollider.cpp" />
+    <ClCompile Include="Collision\TerrainCollider.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
     <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="Externals\imgui\imgui_draw.cpp" />
@@ -229,6 +230,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Base\ShaderCompile\ShaderCompile.h" />
     <ClInclude Include="Base\TextureManager.h" />
     <ClInclude Include="Collision\MeshCollider.h" />
+    <ClInclude Include="Collision\TerrainCollider.h" />
     <ClInclude Include="Config\Environment.h" />
     <ClInclude Include="3D\Camera.h" />
     <ClInclude Include="Base\DirectXCommon.h" />

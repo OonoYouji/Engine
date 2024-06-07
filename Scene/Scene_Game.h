@@ -41,15 +41,5 @@ private:
 
 	std::unique_ptr<Player> player_;
 
-	std::vector<std::unique_ptr<Model>> models_;
-	std::vector<std::string> tags_;
-
-	std::vector<WorldTransform> wtfs_;
-
-	std::unique_ptr<MeshCollider> meshCollider_;
-	bool isCollision_ = false;
-
-	std::vector<Vec3f> vertices_;
-
 
 };

@@ -139,6 +139,9 @@
     <ClCompile Include="Collision\MeshCollider.cpp">
       <Filter>Source\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Collision\TerrainCollider.cpp">
+      <Filter>Source\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -396,6 +399,9 @@
       <Filter>Include\3D\Entity</Filter>
     </ClInclude>
     <ClInclude Include="Collision\MeshCollider.h">
+      <Filter>Include\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\TerrainCollider.h">
       <Filter>Include\Collision</Filter>
     </ClInclude>
   </ItemGroup>
