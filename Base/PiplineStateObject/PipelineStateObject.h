@@ -29,6 +29,10 @@ public:
 	/// <param name="shaderBlob"></param>
 	void Initialize(ID3D12Device* device, ShaderBlob* shaderBlob);
 
+
+	void InitializeComputeShaderVer(ID3D12Device* device, ShaderBlob* shaderBlob);
+
+
 	/// <summary>
 	/// 新しいInputElementの設定
 	/// </summary>
@@ -99,6 +103,14 @@ private:
 	/// <param name="device"></param>
 	/// <param name="shaderBlob"></param>
 	void CreatePipelineState(ID3D12Device* device, ShaderBlob* shaderBlob);
+
+
+	/// <summary>
+	/// ID3D12PipelineStateの生成 ComputeShader ver
+	/// </summary>
+	/// <param name="device"></param>
+	/// <param name="shaderBlob"></param>
+	void CreatePipelineStateComputeVer(ID3D12Device* device, ShaderBlob* shaderBlob);
 
 };
 

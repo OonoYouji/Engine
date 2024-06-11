@@ -17,6 +17,13 @@ void PipelineStateObject::Initialize(ID3D12Device* device, ShaderBlob* shaderBlo
 	CreatePipelineState(device, shaderBlob);
 }
 
+
+void PipelineStateObject::InitializeComputeShaderVer(ID3D12Device* device, ShaderBlob* shaderBlob) {
+	CreateRootSignature(device);
+	CreatePipelineStateComputeVer(device, shaderBlob);
+}
+
+
 void PipelineStateObject::SetInputElement(const std::string& semanticName, uint32_t semanticIndex, DXGI_FORMAT format) {
 	semanticNames_.push_back(semanticName);
 
@@ -193,6 +200,27 @@ void PipelineStateObject::CreatePipelineState(ID3D12Device* device, ShaderBlob* 
 
 	///- 生成
 	HRESULT result = device->CreateGraphicsPipelineState(
+		&desc, IID_PPV_ARGS(&pipelineState_)
+	);
+	assert(SUCCEEDED(result));
+
+}
+
+void PipelineStateObject::CreatePipelineStateComputeVer(ID3D12Device* device, ShaderBlob* shaderBlob) {
+	/// --------------------------------
+	/// ↓ PSOの設定
+	/// --------------------------------
+	D3D12_COMPUTE_PIPELINE_STATE_DESC desc{};
+	desc.pRootSignature = rootSignature_.Get();	//- RootSignature
+
+	///- Shaderの設定
+	desc.CS = {
+		shaderBlob->GetCS()->GetBufferPointer(),
+		shaderBlob->GetCS()->GetBufferSize()
+	};
+
+	///- 生成
+	HRESULT result = device->CreateComputePipelineState(
 		&desc, IID_PPV_ARGS(&pipelineState_)
 	);
 	assert(SUCCEEDED(result));

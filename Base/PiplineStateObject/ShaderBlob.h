@@ -27,12 +27,24 @@ public:
 		const wchar_t* psProfile
 	);
 
+	/// <summary>
+	/// CSの初期化
+	/// </summary>
+	void Initialize(
+		ShaderCompile* shaderCompile,
+		const std::wstring& csFilePath,
+		const std::wstring& csEntryPoint,
+		const std::wstring& csProfile
+	);
+
 	IDxcBlob* GetVS() const { return vertexShader_.Get(); }
 	IDxcBlob* GetPS() const { return pixelShader_.Get(); }
+	IDxcBlob* GetCS() const { return computeShader_.Get(); }
 
 private:
 
 	ComPtr<IDxcBlob> vertexShader_;
 	ComPtr<IDxcBlob> pixelShader_;
+	ComPtr<IDxcBlob> computeShader_;
 
 };

@@ -59,7 +59,17 @@ public: ///- METHODS AND ACCESSOR
 	/// </summary>
 	bool CheckRange(int row, int col);
 
+	/// <summary>
+	/// 頂点データを得る
+	/// </summary>
+	/// <returns></returns>
+	const std::vector<VertexData>& GetVertexDatas() const { return flattenedVertexData_; }
 
+	/// <summary>
+	/// WorldTransformを取得する
+	/// </summary>
+	/// <returns></returns>
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 private: ///- METHODS
 
@@ -103,7 +113,6 @@ private: ///- METHODS
 	/// </summary>
 	void OutputImage();
 
-
 private: ///- OBJECTS
 
 
@@ -138,16 +147,11 @@ private: ///- OBJECTS
 
 	///- 法線ベクトル
 	Vec3f normalVector_;
-
 	float distance_;
-
-	float noisePower_;
 
 	///- noise取得用
 	std::unique_ptr<PerlinNoise> noise_;
-
-	float verticalIntensity_;
-	float saveVerticalIntensity_;
+	float noisePower_;
 
 
 	///- GPUで操作した地形をCPUに戻す
@@ -155,7 +159,5 @@ private: ///- OBJECTS
 	ID3D12Resource* pTexture_ = nullptr;
 	void* readBackData_ = nullptr;
 	UINT rowPitch_;
-
-	
 
 };

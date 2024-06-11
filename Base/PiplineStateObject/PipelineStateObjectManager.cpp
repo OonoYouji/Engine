@@ -104,6 +104,31 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 	pipelineStateObjects_.back()->Initialize(device, shaderBlob.get());
 
+
+	/// ----------------------------------------------
+	/// ↓ Terrain Collision Shader
+	/// ----------------------------------------------
+
+
+	shaderBlob.reset(new ShaderBlob());
+	shaderBlob->Initialize(
+		shaderCompile_.get(),
+		L"./Shader/Terrain/TerrainCollision.CS.hlsl", L"csMain", L"cs_6_0"
+	);
+
+	pipelineStateObjects_.push_back(std::make_unique<PipelineStateObject>());
+
+	pipelineStateObjects_.back()->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
+
+	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_ALL, 0); ///- texcoord
+	pipelineStateObjects_.back()->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_ALL, 0); ///- texture
+
+	pipelineStateObjects_.back()->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_ALL);
+
+	pipelineStateObjects_.back()->InitializeComputeShaderVer(device, shaderBlob.get());
+
+
+
 	shaderBlob.reset();
 }
 

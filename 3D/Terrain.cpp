@@ -113,9 +113,6 @@ void Terrain::Init() {
 	///- 法線ベクトルを計算
 	//NormalVector();
 
-	verticalIntensity_ = 1.0f;
-	saveVerticalIntensity_ = verticalIntensity_;
-
 }
 
 
@@ -260,9 +257,11 @@ void Terrain::Draw() {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootConstantBufferView(1, matrixResource_->GetGPUVirtualAddress());
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "dragon");	 ///- terrain
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "dragon");	 ///- heightMap
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTableUAV(4, "128x128Texture");  ///- operation
+
+	TextureManager* textureManager = TextureManager::GetInstance();
+	textureManager->SetGraphicsRootDescriptorTable(2, "dragon");	 ///- terrain
+	textureManager->SetGraphicsRootDescriptorTable(3, "dragon");	 ///- heightMap
+	textureManager->SetGraphicsRootDescriptorTableUAV(4, "128x128Texture");  ///- operation
 	Light::GetInstance()->SetConstantBuffer(5, commandList);
 
 
@@ -270,7 +269,6 @@ void Terrain::Draw() {
 	commandList->DrawIndexedInstanced(UINT(indexData_.size()), 1, 0, 0, 0);
 
 }
-
 
 
 

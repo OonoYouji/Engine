@@ -27,6 +27,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// WorldTransformの取得
+	/// </summary>
+	/// <returns></returns>
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
 private: ///- METHODS
 
 	void Move();

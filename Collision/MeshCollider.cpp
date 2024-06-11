@@ -228,59 +228,31 @@ void MeshCollider::DebugDraw(const std::string& windowName) {
 
 
 bool MeshCollider::IsCollision(const std::vector<Vec3f>& vertices, const WorldTransform& worldTransform) {
-
 	std::vector<Vec3f> worldVertices;
 	for(const auto& vertex : vertices) {
 		worldVertices.push_back(Mat4::Transform(vertex, worldTransform.worldMatrix));
 	}
+	
+	Vec3f direction = { 1, 0, 0 };
+	std::vector<Vec3f> simplex = { MinkowskiDifferenceSupport(vertices_, worldVertices, direction) };
 
+	direction = -simplex[0];
 
-	//Vec3f direction = { 1, 0, 0 };
-	//std::vector<Vec3f> simplex = { MinkowskiDifferenceSupport(vertices_, worldVertices, direction) };
+	repeatNum_ = 0;
+	while(repeatNum_ < 50) {
+		Vec3f newPoint = MinkowskiDifferenceSupport(vertices_, worldVertices, direction);
+		if(Vec3f::Dot(newPoint, direction) <= 0) {
+			return false; // No collision
+		}
+		simplex.push_back(newPoint);
+		if(ContainsOrigin(simplex, direction)) {
+			return true; // Collision
+		}
 
-	//direction = -simplex[0];
-
-	//repeatNum_ = 0;
-	//while(repeatNum_ < 50) {
-	//	Vec3f newPoint = MinkowskiDifferenceSupport(vertices_, worldVertices, direction);
-	//	if(Vec3f::Dot(newPoint, direction) <= 0) {
-	//		return false; // No collision
-	//	}
-	//	simplex.push_back(newPoint);
-	//	if(ContainsOrigin(simplex, direction)) {
-	//		return true; // Collision
-	//	}
-
-	//	repeatNum_++;
-	//}
-
-	//return false;
-
-	minkowskiDiff_ = MinkowskiDifference(vertices_, worldVertices);
-	Vec3f p0 = minkowskiDiff_[0];
-
-	Vec3f p1 = Support(minkowskiDiff_, Vec3f::Normalize(-p0));
-	if(Vec3f::Dot(p1, -p0) < 0.0f) { return false; }
-
-	Vec3f normal;
-	while(Vec3f::Dot(normal, Vec3f(1.0f, 1.0f, 1.0f)) >= 0.0f) {
-		Vec3f diff = p1 - p0;
-		normal = Vec3f::Cross(diff, -p0);
+		repeatNum_++;
 	}
 
-	Vec3f p2 = Support(minkowskiDiff_, Vec3f::Normalize(normal));
-	if(Vec3f::Dot(p2, normal) <= 0.0f) { return false; }
-
-	//- 7
-	Vec3f p1p0 = p1 - p0;
-	Vec3f p2p0 = p2 - p0;
-	normal = Vec3f::Cross(p1p0, p2p0);
-	if(Vec3f::Dot(normal, p0) >= 0.0f) {
-		normal *= -1.0f;
-	}
-
-	Vec3f p3 = Support(minkowskiDiff_, normal);
-	if(Vec3f::Dot(p3, normal) > 0.0f) { return false; }
+	return false;
 
 
 }

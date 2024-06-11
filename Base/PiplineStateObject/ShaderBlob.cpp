@@ -13,4 +13,10 @@ void ShaderBlob::Initialize(ShaderCompile* shaderCompile, const std::wstring& vs
 
 }
 
+void ShaderBlob::Initialize(ShaderCompile* shaderCompile, const std::wstring& csFilePath, const std::wstring& csEntryPoint, const std::wstring& csProfile) {
+
+	computeShader_ = shaderCompile->CompileShader(csFilePath, csEntryPoint, csFilePath);
+
+}
+
 

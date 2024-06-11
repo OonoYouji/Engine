@@ -449,5 +449,8 @@
     <FxCompile Include="Shader\Polygon3d\Polygon3d.VS.hlsl">
       <Filter>Shader\Polygon3d</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\Terrain\TerrainCollision.CS.hlsl">
+      <Filter>Shader\Terrain</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
