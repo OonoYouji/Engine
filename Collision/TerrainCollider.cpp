@@ -71,9 +71,9 @@ void TerrainCollider::Update() {
 	inverseTerrainWorldMatrix_ = Mat4::MakeInverse(terrainWorldMatrix_);
 
 	texcoord_ = ConvertTexcoord(pPlayer_->GetWorldTransform().translate);
-	if(IsWithinRange()) {
+	//if(IsWithinRange()) {
 		height_ = GetHeight(texcoord_);
-	}
+	//}
 
 }
 
@@ -102,7 +102,7 @@ Vec2f TerrainCollider::ConvertTexcoord(const Vec3f& position) {
 	Vec3f texcoord = playerTerrainLocalPosition_ / terrainSize_;
 
 	///- Terrainは横、奥に伸びているのでy座標は使わない
-	return Vec2f(texcoord.x, texcoord.z);
+	return Vec2f(texcoord.x, 1.0f - texcoord.z);
 }
 
 
@@ -163,6 +163,10 @@ void TerrainCollider::ImGuiDebug() {
 	ImGui::Text("terrain min: %f, %f, %f", terrainMinPosition_.x, terrainMinPosition_.y, terrainMinPosition_.z);
 	ImGui::Text("terrain max: %f, %f, %f", terrainMaxPosition_.x, terrainMaxPosition_.y, terrainMaxPosition_.z);
 
+	ImGui::Separator();
+
+	ImGui::ColorEdit4("OutputColor", &outputColor_.x);
+
 	ImGui::End();
 #endif // _DEBUG
 }
@@ -177,34 +181,34 @@ float TerrainCollider::GetHeight(const Vec2f& texcoord) {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	///- Textureの取得
-	TextureManager::Texture texture = TextureManager::GetInstance()->GetSrvTextureResource("dragon");
+	TextureManager::Texture srvTex= TextureManager::GetInstance()->GetSrvTexture("dragon");
+	TextureManager::Texture uavTex= TextureManager::GetInstance()->GetUavTexture("128x128Texture");
 
 	*texcoordData_ = texcoord; ///- Texcoordの変更
 
 	commandList->SetComputeRootConstantBufferView(0, texcoordResource_->GetGPUVirtualAddress());
-
-	//// デスクリプタヒープの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { DxDescriptors::GetInstance()->GetSRVHeap() }; // yourDescriptorHeap は作成した CBV_SRV_UAV デスクリプタヒープ
-	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-	commandList->SetComputeRootDescriptorTable(1, texture.handleGPU);
-
 	commandList->SetComputeRootUnorderedAccessView(2, outputBuffer_->GetGPUVirtualAddress());
+
+	///- Descriptorの設定
+	ID3D12DescriptorHeap* descriptorHeaps[] = { DxDescriptors::GetInstance()->GetSRVHeap() };
+	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+	///- Textureの設定
+	commandList->SetComputeRootDescriptorTable(1, srvTex.handleGPU);
+	commandList->SetComputeRootDescriptorTable(3, uavTex.handleGPU);
 
 	commandList->Dispatch(1, 1, 1);
 
+	///- コマンドに実行と終了まで待機
 	dxCommon->CommnadExecuteAndWait();
 
 	outputBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&outputData_));
 	Vec4f result = *outputData_;
-	result.y += result.x;
-	result.y += result.z;
+	outputColor_ = result;
 
-	Vec3f vertex = Mat4::Transform(
-		{ result.x, result.y, result.z },
-		Mat4::MakeScale(pTerrain_->GetWorldTransform().scale)
-	);
-
-	return vertex.y;
+	// 輝度の計算
+	float luminance = 0.2126f * result.x + 0.7152f * result.y + 0.0722f * result.z;
+	return luminance * pTerrain_->GetWorldTransform().scale.y;
 }
 
 float TerrainCollider::GetHeight() {

@@ -50,6 +50,6 @@ private: ///- OBJECTS
 	WorldTransform worldTransform_;
 
 	Vec3f velocity_;
-	const float kSpeed_ = 0.25f;
+	const float kSpeed_ = 0.125f;
 
 };

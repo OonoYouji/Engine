@@ -103,7 +103,7 @@ private: ///- OBJECTS
 
 	Vec2f texcoord_;
 	float height_;
-	
+	Vec4f outputColor_{};
 
 };
 

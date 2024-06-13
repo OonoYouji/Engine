@@ -47,14 +47,16 @@ VSOutput main(VSInput input) {
 		}
 	}
 
-
 	if (gMousePoint.calcState == 0) {
 		clr += gOutputTexture[input.texcoord * dimension];
 	} else {
 		clr *= gOutputTexture[input.texcoord * dimension];
 	}
 
-	float4 pos = input.position + float4(0.0f, clr.r, 0.0f, 0.0f);
+	// 輝度の計算
+	float luminance = 0.2126f * clr.r + 0.7152f * clr.g + 0.0722f * clr.b;
+    
+	float4 pos = input.position + float4(0.0f, luminance, 0.0f, 0.0f);
 	output.position = mul(pos, gTransformationMatrix.WVP);
 	output.texcoord = input.texcoord;
 	output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.World));
