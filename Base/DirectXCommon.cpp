@@ -368,13 +368,13 @@ void DirectXCommon::InitializeViewport() {
 /// ---------------------------
 /// ↓ BufferResourceの生成
 /// ---------------------------
-ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_t sizeInBytes) {
+ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_t sizeInBytes, D3D12_HEAP_TYPE heapType) {
 	HRESULT result = S_FALSE;
 	ComPtr<ID3D12Resource> resource = nullptr;
 
 	///- 頂点リソース用のヒープ設定
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	uploadHeapProperties.Type = heapType;
 
 	///- 頂点リソースの設定
 	D3D12_RESOURCE_DESC desc{};
@@ -413,6 +413,13 @@ void DirectXCommon::ClearDepthBuffer() {
 		CD3DX12_CPU_DESCRIPTOR_HANDLE(descriptors_->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart());
 	// 深度バッファのクリア
 	command_->GetList()->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+}
+
+
+void DirectXCommon::CommnadExecuteAndWait() {
+	command_->Close(); //- commandのcloseと実行
+	WaitExecution();
+	command_->ResetCommandList();
 }
 
 

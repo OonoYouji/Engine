@@ -38,6 +38,13 @@ public:
 	/// <param name="index"></param>
 	/// <param name="commandList"></param>
 	void SetCommandList(uint32_t index, ID3D12GraphicsCommandList* commandList);
+	
+	/// <summary>
+	/// コマンドリストへpsoをセットする
+	/// </summary>
+	/// <param name="index"></param>
+	/// <param name="commandList"></param>
+	void SetComputeCommandList(uint32_t index, ID3D12GraphicsCommandList* commandList);
 
 private:
 

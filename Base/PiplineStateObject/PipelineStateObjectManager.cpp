@@ -111,17 +111,19 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 
 	shaderBlob.reset(new ShaderBlob());
-	shaderBlob->Initialize(
+	shaderBlob->InitializeCS(
 		shaderCompile_.get(),
-		L"./Shader/Terrain/TerrainCollision.CS.hlsl", L"csMain", L"cs_6_0"
+		L"./Shader/Terrain/TerrainCollision.CS.hlsl",
+		L"cs_6_6"
 	);
 
 	pipelineStateObjects_.push_back(std::make_unique<PipelineStateObject>());
 
-	pipelineStateObjects_.back()->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
+	pipelineStateObjects_.back()->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV); ///- texture
 
 	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_ALL, 0); ///- texcoord
 	pipelineStateObjects_.back()->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_ALL, 0); ///- texture
+	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_UAV, D3D12_SHADER_VISIBILITY_ALL, 0); ///- 
 
 	pipelineStateObjects_.back()->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_ALL);
 
@@ -141,4 +143,8 @@ void PipelineStateObjectManager::Finalize() {
 
 void PipelineStateObjectManager::SetCommandList(uint32_t index, ID3D12GraphicsCommandList* commandList) {
 	pipelineStateObjects_[index]->SetCommandList(commandList);
+}
+
+void PipelineStateObjectManager::SetComputeCommandList(uint32_t index, ID3D12GraphicsCommandList* commandList) {
+	pipelineStateObjects_[index]->SetComputeCommandList(commandList);
 }

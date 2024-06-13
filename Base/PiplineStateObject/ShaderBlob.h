@@ -30,11 +30,10 @@ public:
 	/// <summary>
 	/// CSの初期化
 	/// </summary>
-	void Initialize(
+	void InitializeCS(
 		ShaderCompile* shaderCompile,
 		const std::wstring& csFilePath,
-		const std::wstring& csEntryPoint,
-		const std::wstring& csProfile
+		const wchar_t* csProfile
 	);
 
 	IDxcBlob* GetVS() const { return vertexShader_.Get(); }

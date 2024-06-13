@@ -34,7 +34,6 @@ PSOutput main(VSOutput input) {
 			textureColor = gMaterial.color * clamp((len / gMousePoint.brushSize), 0.2f, 1.0f);
 		}
 	}
-	
 
 	///- Lightingする場合
 	if (gMaterial.enableLighting != 0) {
@@ -45,5 +44,7 @@ PSOutput main(VSOutput input) {
 		///- Lightingしない場合
 		output.color = gMaterial.color * textureColor;
 	}
+
+
 	return output;
 }

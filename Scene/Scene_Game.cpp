@@ -24,26 +24,32 @@ void Scene_Game::Init() {
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
 
+	terrainCollider_ = std::make_unique<TerrainCollider>();
+	terrainCollider_->SetPlayer(player_.get());
+	terrainCollider_->SetTerrain(terrain_.get());
+	terrainCollider_->Initialize();
+
 }
 
 void Scene_Game::Update() {
 
-	/*brush_->Update();
+	brush_->Update();
 	terrain_->Update();
 
-	player_->Update();*/
+	player_->Update();
 
-	//wtfs_[0].rotate.x += 1.0f / 64.0f;
-	//wtfs_[1].rotate.y += 1.0f / 64.0f;
+	terrainCollider_->Update();
+
+	player_->SetHeight(terrainCollider_->GetHeight());
 
 }
 
 void Scene_Game::Draw() {
 
-	/*brush_->Draw();
+	brush_->Draw();
 	terrain_->Draw();
 
-	player_->Draw();*/
+	player_->Draw();
 
 
 }
@@ -54,5 +60,5 @@ void Scene_Game::Finalize() {
 	brush_.reset();
 
 	player_.reset();
-
+	terrainCollider_.reset();
 }

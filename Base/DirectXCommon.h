@@ -137,13 +137,18 @@ public:
 
 	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
 
-	ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+	ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes, D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_UPLOAD);
 	
 	const Matrix4x4& GetViewportMatrix() const { return viewportMatrix_; }
 
 	std::vector<ComPtr<ID3D12Resource>> GetSwapChainResource() { return swapChainResource_; }
 
 	void ClearDepthBuffer();
+
+	/// <summary>
+	/// CommandListの実行と待機
+	/// </summary>
+	void CommnadExecuteAndWait();
 
 private:
 

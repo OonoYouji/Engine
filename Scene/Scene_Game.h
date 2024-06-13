@@ -14,10 +14,7 @@
 #include <Brush.h>
 #include <Player.h>
 
-#include <PerlinNoise.h>
-#include <TriangleEffect.h>
-#include <MeshCollider.h>
-
+#include <TerrainCollider.h>
 
 /// <summary>
 /// ゲームシーン
@@ -40,6 +37,8 @@ private:
 	std::unique_ptr<Brush> brush_;
 
 	std::unique_ptr<Player> player_;
+
+	std::unique_ptr<TerrainCollider> terrainCollider_;
 
 
 };

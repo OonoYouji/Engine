@@ -29,15 +29,6 @@ public:
 	/// <returns>コンパイルしたShaderBlob</returns>
 	ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
-	/// <summary>
-	/// ComputeShaderをコンパイルする	
-	/// </summary>
-	/// <param name="filePath"></param>
-	/// <param name="entryPoint"></param>
-	/// <param name="profile"></param>
-	/// <returns></returns>
-	ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const std::wstring& entryPoint, const std::wstring& profile);
-
 private:
 
 	ComPtr<IDxcUtils> dxcUtils_;

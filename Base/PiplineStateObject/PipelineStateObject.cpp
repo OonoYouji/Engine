@@ -99,6 +99,11 @@ void PipelineStateObject::SetCommandList(ID3D12GraphicsCommandList* commandList)
 	commandList->SetPipelineState(pipelineState_.Get());
 }
 
+void PipelineStateObject::SetComputeCommandList(ID3D12GraphicsCommandList* commandList) {
+	commandList->SetComputeRootSignature(rootSignature_.Get());
+	commandList->SetPipelineState(pipelineState_.Get());
+}
+
 
 void PipelineStateObject::CreateRootSignature(ID3D12Device* device) {
 	HRESULT result = S_FALSE;

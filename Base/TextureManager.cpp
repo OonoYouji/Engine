@@ -162,6 +162,10 @@ void TextureManager::SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, 
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, uavTextures_[textureName].handleGPU);
 }
 
+const TextureManager::Texture& TextureManager::GetSrvTextureResource(const std::string& name) {
+	return textures_.at(name);
+}
+
 ID3D12Resource* TextureManager::GetUavTextureResource(const std::string& name) {
 	return uavTextures_.at(name).resource.Get();
 }
@@ -202,7 +206,7 @@ DirectX::ScratchImage TextureManager::LoadTexture(const std::string& filePath) {
 
 
 /// <summary>
-/// TextureResourceAの作成
+/// TextureResourceの作成
 /// </summary>
 ComPtr<ID3D12Resource> TextureManager::CreataTextureResouece(ID3D12Device* device, const DirectX::TexMetadata& metadata) {
 

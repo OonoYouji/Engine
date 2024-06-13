@@ -28,6 +28,11 @@ public:
 	/// </summary>
 	void Initialize();
 
+	/// <summary>
+	/// 
+	/// </summary>
+	void Update();
+
 	void SetPlayer(const Player* player);
 
 	void SetTerrain(const Terrain* terrain);
@@ -38,6 +43,8 @@ public:
 	/// <param name="texcoord"></param>
 	/// <returns></returns>
 	float GetHeight(const Vec2f& texcoord);
+
+	float GetHeight();
 
 private:
 
@@ -62,6 +69,11 @@ private:
 	/// </summary>
 	void CreateOutputBuffer();
 
+	/// <summary>
+	/// ImGuiでデバッグ表示
+	/// </summary>
+	void ImGuiDebug();
+
 private: ///- OBJECTS
 
 	const Player* pPlayer_ = nullptr;
@@ -74,12 +86,24 @@ private: ///- OBJECTS
 
 	///- TerrainのWorldMatrixの逆行列
 	Matrix4x4 inverseTerrainWorldMatrix_;
+	Matrix4x4 terrainWorldMatrix_;
 
 	///- TerrainのLocal空間でのPlayerの座標
 	Vec3f playerTerrainLocalPosition_;
 
 	///- CSの計算結果の格納場所
 	ComPtr<ID3D12Resource> outputBuffer_;
+	ComPtr<ID3D12Resource> readBackBuffer_;
+	Vec4f* outputData_ = nullptr;
+
+
+	///- Texcoord用 定数バッファ
+	ComPtr<ID3D12Resource> texcoordResource_;
+	Vec2f* texcoordData_ = nullptr;
+
+	Vec2f texcoord_;
+	float height_;
+	
 
 };
 

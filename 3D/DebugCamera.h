@@ -48,4 +48,5 @@ private:
 
 public:
 	const ViewProjection& GetViewProjection() const { return viewProjection_; }
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 };

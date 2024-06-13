@@ -33,13 +33,23 @@ public:
 	/// <returns></returns>
 	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
+	void SetHeight(float height);
+
 private: ///- METHODS
 
 	void Move();
+
+	/// <summary>
+	/// ImGuiDebug
+	/// </summary>
+	void ImGuiDebug();
 
 private: ///- OBJECTS
 
 	std::unique_ptr<Model> model_;
 	WorldTransform worldTransform_;
+
+	Vec3f velocity_;
+	const float kSpeed_ = 0.25f;
 
 };

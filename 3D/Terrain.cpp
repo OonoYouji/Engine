@@ -101,7 +101,7 @@ void Terrain::Init() {
 
 	worldTransform_.Initialize();
 	worldTransform_.scale = { 0.5f,12.0f,0.5f };
-	worldTransform_.translate.y = -100.0f;
+	//worldTransform_.translate.y = -100.0f;
 	color_ = { 1.0f,1.0f,1.0f,1.0f };
 
 
@@ -444,12 +444,12 @@ void Terrain::VertexDataCulc(uint32_t maxRow, uint32_t maxCol) {
 
 
 			///- 地形の中心が原点になるように移動
-			vertexData_[row][col].position -= Vec4f{
+			/*vertexData_[row][col].position -= Vec4f{
 				static_cast<float>(maxCol + 1) / 2.0f,
 				0.0f,
 				static_cast<float>(maxRow + 1) / 2.0f,
 				0.0f
-			};
+			};*/
 
 		}
 	}
@@ -583,10 +583,8 @@ void Terrain::CreateReadBackResource() {
 	commandList->ResourceBarrier(1, &barrier);
 
 	///- コマンドの実行を待つ
-	DxCommand* command = DxCommand::GetInstance();
-	command->Close();
-	DirectXCommon::GetInstance()->WaitExecution();
-	command->ResetCommandList();
+	DirectXCommon::GetInstance()->CommnadExecuteAndWait();
+
 
 }
 

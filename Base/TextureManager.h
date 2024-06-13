@@ -75,6 +75,7 @@ public:
 	void SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, const std::string& textureName);
 
 
+	const Texture& GetSrvTextureResource(const std::string& name);
 	ID3D12Resource* GetUavTextureResource(const std::string& name);
 
 private: ///- メンバ変数

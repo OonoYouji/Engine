@@ -80,6 +80,12 @@ public:
 	/// <param name="commandList"></param>
 	void SetCommandList(ID3D12GraphicsCommandList* commandList);
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="commandList"></param>
+	void SetComputeCommandList(ID3D12GraphicsCommandList* commandList);
+
 private:
 
 	ComPtr<ID3D12RootSignature> rootSignature_;
