@@ -223,7 +223,7 @@ void Terrain::Update() {
 	/// -----------------------------------
 
 	ReadBack();
-
+	worldTransform_.UpdateWorldMatrix();
 
 
 }
@@ -245,7 +245,6 @@ void Terrain::Draw() {
 	materialData_->color = color_;
 
 	///- 行列情報
-	worldTransform_.UpdateWorldMatrix();
 	matrixData_->World = worldTransform_.worldMatrix;
 	matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
