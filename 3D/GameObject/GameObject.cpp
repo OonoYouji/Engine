@@ -3,6 +3,13 @@
 #include <ImGuiManager.h>
 
 
+///- クラスの名前をstringに変換するsample code
+//#include <iostream>
+//#include <typeinfo>
+//#include <string>
+//std::string className = typeid(this).name();
+
+
 void GameObject::SetTag(const std::string& tag) {
 	tag_ = tag;
 }
@@ -28,7 +35,7 @@ void GameObject::ImGuiDebug() {
 
 
 GameObjectManager* GameObjectManager::GetInstance() {
-	GameObjectManager instance;
+	static GameObjectManager instance;
 	return &instance;
 }
 

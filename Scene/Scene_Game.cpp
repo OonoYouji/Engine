@@ -7,6 +7,7 @@
 #include "DirectionalLight.h"
 
 
+
 Scene_Game::Scene_Game() { Init(); }
 Scene_Game::~Scene_Game() { Finalize(); }
 
