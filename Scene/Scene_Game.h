@@ -7,6 +7,7 @@
 
 #include <Vector3.h>
 
+#include <Audio.h>
 #include <Sprite.h>
 #include <Model.h>
 
@@ -39,6 +40,8 @@ private:
 	std::unique_ptr<Player> player_;
 
 	std::unique_ptr<TerrainCollider> terrainCollider_;
+
+	Audio* audio_ = nullptr;
 
 
 };

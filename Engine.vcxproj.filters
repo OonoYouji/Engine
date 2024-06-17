@@ -100,9 +100,6 @@
     <ClCompile Include="3D\DirectionalLight.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
-    <ClCompile Include="IO\InputImage.cpp">
-      <Filter>Source\IO</Filter>
-    </ClCompile>
     <ClCompile Include="3D\Model.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
@@ -144,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="3D\GameObject\GameObject.cpp">
       <Filter>Source\3D\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\Audio.cpp">
+      <Filter>Source\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -207,12 +207,6 @@
     <Filter Include="Source\Input">
       <UniqueIdentifier>{b494380c-2de8-4f81-9b84-52bd69d896c6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include\IO">
-      <UniqueIdentifier>{4848357a-707c-4675-afa6-9bcbc5e45837}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\IO">
-      <UniqueIdentifier>{ff655c82-c9d0-4c65-a22a-e6cf800067dd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shader\Object3D">
       <UniqueIdentifier>{33c7da47-58ad-4987-a1c9-262f7f3d3985}</UniqueIdentifier>
     </Filter>
@@ -266,6 +260,12 @@
     </Filter>
     <Filter Include="Source\3D\GameObject">
       <UniqueIdentifier>{3fb1efe3-c818-4d3d-a2fc-10a9e8c7f40a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Audio">
+      <UniqueIdentifier>{b430d2a2-b927-4fd4-8a12-12c80d89d9da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Audio">
+      <UniqueIdentifier>{2858ac59-dd10-4d70-90f7-18938c92244d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -371,9 +371,6 @@
     <ClInclude Include="3D\DirectionalLight.h">
       <Filter>Include\3D</Filter>
     </ClInclude>
-    <ClInclude Include="IO\InputImage.h">
-      <Filter>Include\IO</Filter>
-    </ClInclude>
     <ClInclude Include="3D\Model.h">
       <Filter>Include\3D</Filter>
     </ClInclude>
@@ -415,6 +412,9 @@
     </ClInclude>
     <ClInclude Include="3D\GameObject\GameObject.h">
       <Filter>Include\3D\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\Audio.h">
+      <Filter>Include\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

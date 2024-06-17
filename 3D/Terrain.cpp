@@ -2,16 +2,15 @@
 
 #include <array>
 
+#include <Engine.h>
+#include <PipelineStateObjectManager.h>
 #include <DxCommand.h>
 #include <DxDescriptors.h>
 #include <TextureManager.h>
 #include <ImGuiManager.h>
-#include <Engine.h>
 #include <Input.h>
-#include <PerlinNoise.h>
 #include <DirectionalLight.h>
-#include <InputImage.h>
-#include <PipelineStateObjectManager.h>
+#include <PerlinNoise.h>
 
 
 

@@ -117,7 +117,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Input;$(ProjectDir)Collision;$(ProjectDir)3D/GameObject;$(ProjectDir)3D/Entity;$(ProjectDir)3D/Polygon3d;$(ProjectDir)3D;$(ProjectDir)2D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Shader;$(ProjectDir)Math;$(ProjectDir)Base/CBuffer;$(ProjectDir)Base/ShaderCompile;$(ProjectDir)Base/PiplineStateObject;$(ProjectDir)Base;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Audio;$(ProjectDir)Input;$(ProjectDir)Collision;$(ProjectDir)3D/GameObject;$(ProjectDir)3D/Entity;$(ProjectDir)3D/Polygon3d;$(ProjectDir)3D;$(ProjectDir)2D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Shader;$(ProjectDir)Math;$(ProjectDir)Base/CBuffer;$(ProjectDir)Base/ShaderCompile;$(ProjectDir)Base/PiplineStateObject;$(ProjectDir)Base;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -174,6 +174,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="3D\Sphere.cpp" />
     <ClCompile Include="3D\Terrain.cpp" />
     <ClCompile Include="3D\TriangleEffect.cpp" />
+    <ClCompile Include="Audio\Audio.cpp" />
     <ClCompile Include="Base\CBuffer\CBuffer.cpp" />
     <ClCompile Include="Base\DirectXCommon.cpp" />
     <ClCompile Include="Base\DxCommand.cpp" />
@@ -197,7 +198,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Base\GameManager.cpp" />
     <ClCompile Include="Input\Input.cpp" />
-    <ClCompile Include="IO\InputImage.cpp" />
     <ClCompile Include="Math\Matrix3x3.cpp" />
     <ClCompile Include="Math\Matrix4x4.cpp" />
     <ClCompile Include="Math\PerlinNoise.cpp" />
@@ -223,6 +223,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="3D\Sphere.h" />
     <ClInclude Include="3D\Terrain.h" />
     <ClInclude Include="3D\TriangleEffect.h" />
+    <ClInclude Include="Audio\Audio.h" />
     <ClInclude Include="Base\CBuffer\CBuffer.h" />
     <ClInclude Include="Base\DxCommand.h" />
     <ClInclude Include="Base\DxDescriptors.h" />
@@ -249,7 +250,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Externals\imgui\imstb_truetype.h" />
     <ClInclude Include="Base\GameManager.h" />
     <ClInclude Include="Input\Input.h" />
-    <ClInclude Include="IO\InputImage.h" />
     <ClInclude Include="Math\Matrix3x3.h" />
     <ClInclude Include="Math\Matrix4x4.h" />
     <ClInclude Include="Math\PerlinNoise.h" />
