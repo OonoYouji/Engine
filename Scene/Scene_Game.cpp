@@ -30,13 +30,13 @@ void Scene_Game::Init() {
 	terrainCollider_->SetTerrain(terrain_.get());
 	terrainCollider_->Initialize();
 
-	audio_ = Audio::GetInstance();
-	audio_->Initialize();
-	audio_->Load("fanfare.wav", "fanfare");
+	gameObjectManager_ = GameObjectManager::GetInstance();
+	gameObjectManager_->AddGameObject(player_.get());
 
 }
 
 void Scene_Game::Update() {
+	gameObjectManager_->Update();
 
 	brush_->Update();
 	terrain_->Update();
@@ -46,10 +46,6 @@ void Scene_Game::Update() {
 	terrainCollider_->Update();
 
 	player_->SetHeight(terrainCollider_->GetHeight());
-
-	if(Input::TriggerKey(DIK_SPACE)) {
-		audio_->PlayAudio("fanfare");
-	}
 
 }
 
@@ -70,7 +66,5 @@ void Scene_Game::Finalize() {
 
 	player_.reset();
 	terrainCollider_.reset();
-
-	audio_->Finalize();
 
 }

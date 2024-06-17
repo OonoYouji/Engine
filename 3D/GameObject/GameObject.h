@@ -28,6 +28,12 @@ public:
 	void SetTag(const std::string& tag);
 
 	/// <summary>
+	/// タグのGetter
+	/// </summary>
+	/// <returns></returns>
+	const std::string& GetTag() const;
+
+	/// <summary>
 	/// ImGuiでのデバッグ表示
 	/// </summary>
 	void ImGuiDebug();
@@ -52,7 +58,7 @@ public:
 	/// インスタンスの取得
 	/// </summary>
 	/// <returns></returns>
-	GameObjectManager* GetInstance();
+	static GameObjectManager* GetInstance();
 
 	/// <summary>
 	/// 更新処理
@@ -80,7 +86,7 @@ private:
 private:
 
 	std::list<GameObject*> pGameObjects_;
-
+	GameObject* selectObject_ = nullptr;
 
 
 private:

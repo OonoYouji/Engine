@@ -2,11 +2,13 @@
 
 #include <Model.h>
 #include <WorldTransform.h>
+#include <GameObject.h>
 
 /// <summary>
 /// プレイヤー
 /// </summary>
-class Player final {
+class Player final
+	: public GameObject {
 public:
 
 	Player();
@@ -25,7 +27,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>
 	/// WorldTransformの取得
@@ -39,15 +41,9 @@ private: ///- METHODS
 
 	void Move();
 
-	/// <summary>
-	/// ImGuiDebug
-	/// </summary>
-	void ImGuiDebug();
-
 private: ///- OBJECTS
 
 	std::unique_ptr<Model> model_;
-	WorldTransform worldTransform_;
 
 	Vec3f velocity_;
 	const float kSpeed_ = 0.125f;

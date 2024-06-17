@@ -16,14 +16,19 @@ void GameObject::SetTag(const std::string& tag) {
 
 
 
+const std::string& GameObject::GetTag() const {
+	return tag_;
+}
+
 void GameObject::ImGuiDebug() {
-#ifdef _DEBUG
-	ImGui::Begin(tag_.c_str());
+	if(!ImGui::TreeNodeEx(tag_.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+		return;
+	}
+
+	worldTransform_.ImGuiTreeNodeDebug();
 
 
-
-	ImGui::End();
-#endif // _DEBUG
+	ImGui::TreePop();
 }
 
 
@@ -52,7 +57,19 @@ void GameObjectManager::ClearList() {
 }
 
 void GameObjectManager::ImGuiDebug() {
+	ImGui::Begin("Hierarchy");
 	for(auto& gameObject : pGameObjects_) {
-		gameObject->ImGuiDebug();
+		if(ImGui::Selectable(gameObject->GetTag().c_str(), selectObject_ == gameObject)) {
+			selectObject_ = gameObject;
+		}
 	}
+	ImGui::End();
+	
+	ImGui::Begin("Inspector");
+
+	if(selectObject_) {
+		selectObject_->ImGuiDebug();
+	}
+
+	ImGui::End();
 }

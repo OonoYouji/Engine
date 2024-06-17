@@ -10,6 +10,7 @@
 #include <Audio.h>
 #include <Sprite.h>
 #include <Model.h>
+#include <GameObject.h>
 
 #include <Terrain.h>
 #include <Brush.h>
@@ -33,6 +34,7 @@ public:
 	void Finalize() override;
 
 private:
+	GameObjectManager* gameObjectManager_ = nullptr;
 
 	std::unique_ptr<Terrain> terrain_;
 	std::unique_ptr<Brush> brush_;
@@ -40,8 +42,4 @@ private:
 	std::unique_ptr<Player> player_;
 
 	std::unique_ptr<TerrainCollider> terrainCollider_;
-
-	Audio* audio_ = nullptr;
-
-
 };

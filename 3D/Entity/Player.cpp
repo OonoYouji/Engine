@@ -3,7 +3,13 @@
 #include <Input.h>
 #include <ImGuiManager.h>
 
-Player::Player() {}
+#include <iostream>
+#include <typeinfo>
+#include <string>
+
+Player::Player() {
+	SetTag(typeid(this).name());
+}
 Player::~Player() {}
 
 
@@ -45,14 +51,3 @@ void Player::Move() {
 
 }
 
-void Player::ImGuiDebug() {
-#ifdef _DEBUG
-	ImGui::Begin("Player");
-
-	worldTransform_.ImGuiDebug("worldTransform");
-
-
-
-	ImGui::End();
-#endif // _DEBUG
-}
