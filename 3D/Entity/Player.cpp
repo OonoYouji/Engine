@@ -8,7 +8,9 @@
 #include <string>
 
 Player::Player() {
-	SetTag(typeid(this).name());
+	std::string name = typeid(*this).name();
+	name = name.substr(std::string("class ").length());
+	SetTag(name);
 }
 Player::~Player() {}
 

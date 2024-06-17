@@ -6,6 +6,8 @@
 #include <Matrix4x4.h>
 #include <WorldTransform.h>
 
+#include <GameObject.h>
+
 class DebugCamera;
 
 /// <summary>
@@ -20,7 +22,8 @@ struct ViewProjection {
 	ViewProjection& operator=(const ViewProjection& other);
 };
 
-class Camera final {
+class Camera final
+	: public GameObject {
 public:
 
 	Camera();
@@ -33,7 +36,6 @@ public:
 
 private:
 
-	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
 
 	Vec3f localFront_;

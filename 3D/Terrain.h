@@ -14,6 +14,8 @@
 #include "DirectionalLight.h"
 #include "CBuffer.h"
 
+#include <GameObject.h>
+
 using namespace Microsoft::WRL;
 
 class PerlinNoise;
@@ -21,7 +23,8 @@ class PerlinNoise;
 /// <summary>
 /// 地形
 /// </summary>
-class Terrain {
+class Terrain
+	: public GameObject {
 public:
 
 	Terrain();
@@ -64,12 +67,6 @@ public: ///- METHODS AND ACCESSOR
 	/// </summary>
 	/// <returns></returns>
 	const std::vector<VertexData>& GetVertexDatas() const { return flattenedVertexData_; }
-
-	/// <summary>
-	/// WorldTransformを取得する
-	/// </summary>
-	/// <returns></returns>
-	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 private: ///- METHODS
 
@@ -141,7 +138,6 @@ private: ///- OBJECTS
 	Material* materialData_ = nullptr;
 	TransformMatrix* matrixData_ = nullptr;
 
-	WorldTransform worldTransform_;
 	Vector4 color_;
 
 

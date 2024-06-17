@@ -4,7 +4,11 @@
 #include <Input.h>
 
 
-DebugCamera::DebugCamera() {}
+DebugCamera::DebugCamera() {
+	std::string name = typeid(*this).name();
+	name = name.substr(std::string("class ").length());
+	SetTag(name);
+}
 DebugCamera::~DebugCamera() {}
 
 

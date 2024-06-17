@@ -12,12 +12,8 @@
 class GameObject {
 public:
 
+	GameObject();
 	virtual ~GameObject() = default;
-
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	virtual void Draw() = 0;
 
 public:
 
@@ -38,10 +34,15 @@ public:
 	/// </summary>
 	void ImGuiDebug();
 
+	/// <summary>
+	/// worldTransformのGetter
+	/// </summary>
+	/// <returns>worldTransformのconst参照</returns>
+	const WorldTransform& GetWorldTransform() const;
+
 protected:
 
 	std::string tag_;
-
 	WorldTransform worldTransform_;
 
 };

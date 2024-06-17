@@ -15,7 +15,12 @@
 
 
 
-Terrain::Terrain() {}
+Terrain::Terrain() {
+	std::string name = typeid(*this).name();
+	name = name.substr(std::string("class ").length());
+	SetTag(name);
+}
+
 Terrain::~Terrain() {
 	///- 解放処理
 	matrixResource_.Reset();

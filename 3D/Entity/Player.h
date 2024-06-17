@@ -27,7 +27,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw() override;
+	void Draw();
 
 	/// <summary>
 	/// WorldTransformの取得

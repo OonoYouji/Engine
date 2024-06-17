@@ -3,10 +3,11 @@
 #include <cmath>
 #include <numbers>
 
+#include <Engine.h>
+#include <DirectXCommon.h>
 #include <DxCommand.h>
 #include <TextureManager.h>
 #include "Environment.h"
-#include "Engine.h"
 #include "ImGuiManager.h"
 #include "Camera.h"
 #include "Input.h"
@@ -16,7 +17,13 @@
 using namespace std::numbers;
 
 
-Brush::Brush() {}
+Brush::Brush() {
+	std::string name = typeid(*this).name();
+	name = name.substr(std::string("class ").length());
+	SetTag(name);
+	Init();
+}
+
 Brush::~Brush() {
 	wvpResource_.Reset();
 	materialResource_.Reset();
@@ -69,7 +76,7 @@ void Brush::Init() {
 	mousePointData_->isDown = false;
 	mousePointData_->rayDir = Vec3f{ 0.0f,0.0f,0.0f };
 	mousePointData_->isActive = false;
-	mousePointData_->calcState = static_cast<int>(CalcState::Add);
+	mousePointData_->calcState = static_cast<int>(CalcState::Mul);
 	mousePointData_->power = 0.5f;
 
 	///- 頂点データの計算
@@ -195,39 +202,8 @@ void Brush::Update() {
 
 void Brush::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
-	/////- 深度値のリセット; 必ず上側に表示されるようになる
-	//DirectXCommon::GetInstance()->ClearDepthBuffer();
-
-	//commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
-	/////- データの書き込み
-
-	/////- 頂点情報
-	//memcpy(pMappedData_, pData_, vertexData_.size() * sizeof(VertexData));
-
-	/////- 色情報
-	////materialData_->color = { 0.0f,0.0f,0.0f,1.0f };
-	/////- 行列情報
-	//worldTransform_.MakeWorldMatrix();
-	//matrixData_->World = worldTransform_.worldMatrix;
-	//matrixData_->WVP = worldTransform_.worldMatrix * Engine::GetCamera()->GetVpMatrix();
-
-
-
-	/////- 各種設定
-	//commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	//commandList->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	PipelineStateObjectManager::GetInstance()->SetCommandList(1, commandList);
 	commandList->SetGraphicsRootConstantBufferView(6, mousePointResource_->GetGPUVirtualAddress());
-	////commandList->SetGraphicsRootDescriptorTable(2, DirectXCommon::GetInstance()->GetTextureSrvHandleGPU());
-	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
-	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(3, "yama");
-	//Light::GetInstance()->SetConstantBuffer(commandList);
-
-	/////- 描画 (DrawCall)
-	//commandList->DrawInstanced(UINT(vertexData_.size()), 1, 0, 0);
-
 }
 
 

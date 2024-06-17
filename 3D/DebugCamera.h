@@ -7,10 +7,13 @@
 #include <WorldTransform.h>
 #include <Model.h>
 
+#include <GameObject.h>
+
 /// <summary>
 /// デバッグカメラ
 /// </summary>
-class DebugCamera {
+class DebugCamera
+	: public GameObject {
 public:
 
 	DebugCamera();
@@ -39,7 +42,6 @@ public:
 
 private:
 
-	WorldTransform worldTransform_;
 	ViewProjection viewProjection_;
 
 	Vec3f velocity_;
@@ -48,5 +50,4 @@ private:
 
 public:
 	const ViewProjection& GetViewProjection() const { return viewProjection_; }
-	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 };

@@ -4,11 +4,19 @@
 
 
 ///- クラスの名前をstringに変換するsample code
-//#include <iostream>
-//#include <typeinfo>
-//#include <string>
-//std::string className = typeid(this).name();
+#include <iostream>
+#include <typeinfo>
+#include <string>
 
+
+GameObject::GameObject() {
+	GameObjectManager::GetInstance()->AddGameObject(this);
+
+	std::string name = typeid(*this).name();
+	name = name.substr(std::string("class ").length());
+	SetTag(name);
+
+}
 
 void GameObject::SetTag(const std::string& tag) {
 	tag_ = tag;
@@ -21,6 +29,7 @@ const std::string& GameObject::GetTag() const {
 }
 
 void GameObject::ImGuiDebug() {
+	ImGui::SetNextItemOpen(true, ImGuiCond_Always);
 	if(!ImGui::TreeNodeEx(tag_.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		return;
 	}
@@ -29,6 +38,10 @@ void GameObject::ImGuiDebug() {
 
 
 	ImGui::TreePop();
+}
+
+const WorldTransform& GameObject::GetWorldTransform() const {
+	return worldTransform_;
 }
 
 
@@ -57,6 +70,9 @@ void GameObjectManager::ClearList() {
 }
 
 void GameObjectManager::ImGuiDebug() {
+#ifdef _DEBUG
+
+
 	ImGui::Begin("Hierarchy");
 	for(auto& gameObject : pGameObjects_) {
 		if(ImGui::Selectable(gameObject->GetTag().c_str(), selectObject_ == gameObject)) {
@@ -64,7 +80,9 @@ void GameObjectManager::ImGuiDebug() {
 		}
 	}
 	ImGui::End();
-	
+
+
+
 	ImGui::Begin("Inspector");
 
 	if(selectObject_) {
@@ -72,4 +90,7 @@ void GameObjectManager::ImGuiDebug() {
 	}
 
 	ImGui::End();
+
+
+#endif // _DEBUG
 }

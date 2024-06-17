@@ -8,7 +8,12 @@
 #include <DebugCamera.h>
 
 
-Camera::Camera() { Init(); }
+Camera::Camera() {
+	std::string name = typeid(*this).name();
+	name = name.substr(std::string("class ").length());
+	SetTag(name);
+	Init();
+}
 Camera::~Camera() { Finalize(); }
 
 void Camera::Init() {
@@ -94,7 +99,7 @@ void Camera::DebugDraw() {
 			debugCamera_->Draw();
 		}
 
-		if(ImGui::Button("Copy DebugCamera -> Main Camera")){
+		if(ImGui::Button("Copy DebugCamera -> Main Camera")) {
 			worldTransform_ = debugCamera_->GetWorldTransform();
 		}
 

@@ -31,7 +31,6 @@ void Scene_Game::Init() {
 	terrainCollider_->Initialize();
 
 	gameObjectManager_ = GameObjectManager::GetInstance();
-	gameObjectManager_->AddGameObject(player_.get());
 
 }
 

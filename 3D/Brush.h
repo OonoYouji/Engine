@@ -5,12 +5,11 @@
 
 #include <vector>
 
-#include "Vector2.h"
-#include "Vector4.h"
-#include "Matrix4x4.h"
-#include "WorldTransform.h"
-#include "DirectXCommon.h"
+#include <Vector2.h>
+#include <Vector4.h>
+#include <Matrix4x4.h>
 #include <CBuffer.h>
+#include <GameObject.h>
 
 enum class CalcState {
 	Add,
@@ -39,7 +38,8 @@ struct MousePoint {
 /// <summary>
 /// 地形を弄るためのブラシ
 /// </summary>
-class Brush {
+class Brush
+	: public GameObject {
 public:
 
 	Brush();
@@ -72,7 +72,6 @@ private: ///- メンバ変数
 
 	MousePoint* mousePointData_;
 	Vec3f mousePos_;
-	WorldTransform worldTransform_;
 
 	Vec3f mouseRayDirection_;
 
