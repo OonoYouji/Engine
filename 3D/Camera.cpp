@@ -41,8 +41,6 @@ void Camera::Init() {
 
 void Camera::Update() {
 
-	DebugDraw();
-
 	worldTransform_.UpdateWorldMatrix();
 	viewProjection_.matView = Matrix4x4::MakeInverse(worldTransform_.worldMatrix);
 	viewProjection_.UpdateProjection();
@@ -58,11 +56,7 @@ void Camera::Update() {
 #endif // _DEBUG
 }
 
-void Camera::DebugDraw() {
-#ifdef _DEBUG
-
-	ImGui::Begin("Camera");
-
+void Camera::ImGuiDebug() {
 	/// -------------------------------------------
 	/// ↓ 拡縮・回転・平行移動
 	/// -------------------------------------------
@@ -94,7 +88,7 @@ void Camera::DebugDraw() {
 	if(ImGui::TreeNodeEx("DebugCamera", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 		ImGui::Checkbox("IsActive", &isDebugCameraActive_);
-		debugCamera_->DebugDraw();
+		debugCamera_->ImGuiDebug();
 		if(!isDebugCameraActive_) {
 			debugCamera_->Draw();
 		}
@@ -106,9 +100,6 @@ void Camera::DebugDraw() {
 		ImGui::TreePop();
 	}
 
-	ImGui::End();
-
-#endif // _DEBUG
 }
 
 void Camera::Finalize() {

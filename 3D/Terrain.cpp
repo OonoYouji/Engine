@@ -127,101 +127,6 @@ void Terrain::Update() {
 	TransferFlattenedVertexData();
 
 
-	///- ImGuiでデバッグ
-#ifdef _DEBUG
-	ImGui::Begin("Terrain");
-
-
-	/// ------------------------------------------------
-	///- 地形のトランスフォーム
-	/// ------------------------------------------------
-	if(ImGui::TreeNodeEx("Transform", true)) {
-
-		ImGui::DragFloat3("scale", &worldTransform_.scale.x, 0.25f);
-		ImGui::DragFloat3("rotate", &worldTransform_.rotate.x, 1.0f / 64.0f);
-		ImGui::DragFloat3("translate", &worldTransform_.translate.x, 0.25f);
-		ImGui::ColorEdit4("color", &color_.x);
-
-		ImGui::TreePop();
-	}
-
-	ImGui::Separator();
-
-	/// ------------------------------------------------
-	///- 頂点の情報
-	/// ------------------------------------------------
-	if(ImGui::TreeNodeEx("VertexData", true)) {
-
-		ImGui::Text("vertexData dataSize: %d", sizeof(VertexData) * flattenedVertexData_.size());
-
-		ImGui::Spacing();
-
-		static int rowIndex = 0;
-		static int colIndex = 0;
-		ImGui::SliderInt("vertexRowIndex", &rowIndex, 0, static_cast<int>(vertexData_.size() - 1));
-		ImGui::SliderInt("vertexColIndex", &colIndex, 0, static_cast<int>(vertexData_[0].size() - 1));
-		ImGui::DragFloat4("vertex", &vertexData_[rowIndex][colIndex].position.x, 0.25f);
-		ImGui::DragFloat3("normal", &vertexData_[rowIndex][colIndex].normal.x, 0.0f);
-
-		ImGui::TreePop();
-	}
-
-
-	ImGui::Separator();
-	ImGui::Spacing();
-
-
-	ImGui::DragFloat3("normalVector", &normalVector_.x, 0.0f);
-
-	if(ImGui::Button("normalVector Reset")) {
-		NormalVector();
-	}
-
-
-	ImGui::Spacing();
-
-
-	ImGui::SliderFloat("noisePower", &noisePower_, 0.0f, 1.0f);
-
-	static int seed = 0;
-	ImGui::SliderInt("seed", &seed, 0, static_cast<int>(std::pow(2, 32)));
-	if(ImGui::IsItemEdited()) {
-		noise_->ResetSheed(seed);
-		for(uint32_t row = 0; row < vertexData_.size(); ++row) {
-			for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
-
-				vertexData_[row][col].position.y =
-					noise_->GetNoise(
-						Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(rowSubdivision_) * 0.2f)
-					) * (noisePower_);
-
-			}
-		}
-	}
-
-
-
-	ImGui::Spacing();
-
-	if(ImGui::Button("Terrain Flatten")) {
-		for(uint32_t row = 0; row < vertexData_.size(); ++row) {
-			for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
-				vertexData_[row][col].position.y = 0.0f;
-			}
-		}
-	}
-
-
-
-	if(ImGui::Button("Output")) {
-		OutputImage();
-	}
-
-
-	ImGui::End();
-#endif // _DEBUG
-
-
 	/// -----------------------------------
 	/// ↓ 更新処理ここから
 	/// -----------------------------------
@@ -274,6 +179,59 @@ void Terrain::Draw() {
 }
 
 
+
+void Terrain::ImGuiDebug() {
+
+	worldTransform_.ImGuiTreeNodeDebug();
+
+	ImGui::Separator();
+
+	if(ImGui::TreeNodeEx("Material", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+		ImGui::ColorEdit4("color", &color_.x);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+
+	ImGui::SliderFloat("noisePower", &noisePower_, 0.0f, 1.0f);
+
+	static int seed = 0;
+	ImGui::SliderInt("seed", &seed, 0, static_cast<int>(std::pow(2, 32)));
+	if(ImGui::IsItemEdited()) {
+		noise_->ResetSheed(seed);
+		for(uint32_t row = 0; row < vertexData_.size(); ++row) {
+			for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
+
+				vertexData_[row][col].position.y =
+					noise_->GetNoise(
+						Vec2f{ vertexData_[row][col].position.x, vertexData_[row][col].position.z } / (float(rowSubdivision_) * 0.2f)
+					) * (noisePower_);
+
+			}
+		}
+	}
+
+
+
+	ImGui::Spacing();
+
+	if(ImGui::Button("Terrain Flatten")) {
+		for(uint32_t row = 0; row < vertexData_.size(); ++row) {
+			for(uint32_t col = 0; col < vertexData_[0].size(); col++) {
+				vertexData_[row][col].position.y = 0.0f;
+			}
+		}
+	}
+
+
+
+	if(ImGui::Button("Output")) {
+		OutputImage();
+	}
+
+}
 
 /// ------------------------------------------
 /// ↓ 法線ベクトルの計算

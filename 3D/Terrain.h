@@ -68,6 +68,11 @@ public: ///- METHODS AND ACCESSOR
 	/// <returns></returns>
 	const std::vector<VertexData>& GetVertexDatas() const { return flattenedVertexData_; }
 
+	/// <summary>
+	/// 
+	/// </summary>
+	void ImGuiDebug() override;
+
 private: ///- METHODS
 
 	/// <summary>

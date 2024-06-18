@@ -88,6 +88,10 @@ private: ///- メンバ変数
 
 public: ///- 
 
+
+	void ImGuiDebug()  override;
+
+
 	const Vec3f& GetLayDir() const { return mouseRayDirection_; }
 
 	const Vec3f& GetNearPos() const { return posNear_; }

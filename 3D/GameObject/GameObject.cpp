@@ -29,15 +29,9 @@ const std::string& GameObject::GetTag() const {
 }
 
 void GameObject::ImGuiDebug() {
-	ImGui::SetNextItemOpen(true, ImGuiCond_Always);
-	if(!ImGui::TreeNodeEx(tag_.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-		return;
-	}
 
 	worldTransform_.ImGuiTreeNodeDebug();
 
-
-	ImGui::TreePop();
 }
 
 const WorldTransform& GameObject::GetWorldTransform() const {
@@ -86,7 +80,13 @@ void GameObjectManager::ImGuiDebug() {
 	ImGui::Begin("Inspector");
 
 	if(selectObject_) {
-		selectObject_->ImGuiDebug();
+		ImGui::SetNextItemOpen(true, ImGuiCond_Always);
+		if(ImGui::TreeNodeEx(selectObject_->GetTag().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+
+
+			selectObject_->ImGuiDebug();
+			ImGui::TreePop();
+		}
 	}
 
 	ImGui::End();

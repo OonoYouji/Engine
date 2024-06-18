@@ -31,7 +31,7 @@ public:
 
 	void Init();
 	void Update();
-	void DebugDraw();
+	void ImGuiDebug() override;
 	void Finalize();
 
 private:

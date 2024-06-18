@@ -64,6 +64,8 @@ void TerrainCollider::Initialize() {
 
 void TerrainCollider::Update() {
 
+	preHeight_ = height_;
+
 	///- debug表示
 	ImGuiDebug();
 
@@ -72,18 +74,20 @@ void TerrainCollider::Update() {
 
 	texcoord_ = ConvertTexcoord(pPlayer_->GetWorldTransform().translate);
 	//if(IsWithinRange()) {
-		height_ = GetHeight(texcoord_);
+	height_ = GetHeight(texcoord_);
+	pPlayer_->SetHeight(height_);
+
 	//}
 
 }
 
 
 
-void TerrainCollider::SetPlayer(const Player* player) {
+void TerrainCollider::SetPlayer(Player* player) {
 	pPlayer_ = player;
 }
 
-void TerrainCollider::SetTerrain(const Terrain* terrain) {
+void TerrainCollider::SetTerrain(Terrain* terrain) {
 	pTerrain_ = terrain;
 }
 
@@ -156,6 +160,7 @@ void TerrainCollider::ImGuiDebug() {
 	ImGui::Separator();
 
 	ImGui::Text("Height : %f", height_);
+	ImGui::Text("PreHeight : %f", preHeight_);
 	ImGui::Text("Texooord : %f,%f", texcoord_.x, texcoord_.y);
 
 	ImGui::Separator();
@@ -181,8 +186,8 @@ float TerrainCollider::GetHeight(const Vec2f& texcoord) {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	///- Textureの取得
-	TextureManager::Texture srvTex= TextureManager::GetInstance()->GetSrvTexture("dragon");
-	TextureManager::Texture uavTex= TextureManager::GetInstance()->GetUavTexture("128x128Texture");
+	TextureManager::Texture srvTex = TextureManager::GetInstance()->GetSrvTexture("dragon");
+	TextureManager::Texture uavTex = TextureManager::GetInstance()->GetUavTexture("128x128Texture");
 
 	*texcoordData_ = texcoord; ///- Texcoordの変更
 
@@ -211,8 +216,5 @@ float TerrainCollider::GetHeight(const Vec2f& texcoord) {
 	return luminance * pTerrain_->GetWorldTransform().scale.y;
 }
 
-float TerrainCollider::GetHeight() {
-	return height_;
-}
 
 

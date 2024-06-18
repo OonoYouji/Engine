@@ -33,9 +33,9 @@ public:
 	/// </summary>
 	void Update();
 
-	void SetPlayer(const Player* player);
+	void SetPlayer(Player* player);
 
-	void SetTerrain(const Terrain* terrain);
+	void SetTerrain(Terrain* terrain);
 
 	/// <summary>
 	/// texcoordから高さを得る
@@ -43,8 +43,6 @@ public:
 	/// <param name="texcoord"></param>
 	/// <returns></returns>
 	float GetHeight(const Vec2f& texcoord);
-
-	float GetHeight();
 
 private:
 
@@ -76,8 +74,8 @@ private:
 
 private: ///- OBJECTS
 
-	const Player* pPlayer_ = nullptr;
-	const Terrain* pTerrain_ = nullptr;
+	Player* pPlayer_ = nullptr;
+	Terrain* pTerrain_ = nullptr;
 
 	std::vector<Vec3f> terrainVertices_;
 	Vec3f terrainMinPosition_;
@@ -102,8 +100,12 @@ private: ///- OBJECTS
 	Vec2f* texcoordData_ = nullptr;
 
 	Vec2f texcoord_;
+	float preHeight_;
 	float height_;
 	Vec4f outputColor_{};
+
+	const float kWallHeight_ = 0.25f;
+
 
 };
 

@@ -32,7 +32,7 @@ public:
 	/// <summary>
 	/// ImGuiでのデバッグ表示
 	/// </summary>
-	void ImGuiDebug();
+	virtual void ImGuiDebug();
 
 	/// <summary>
 	/// worldTransformのGetter

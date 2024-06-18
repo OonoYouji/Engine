@@ -26,15 +26,21 @@ void Player::Initialize() {
 
 void Player::Update() {
 
-	ImGuiDebug();
-	
-	velocity_.x = static_cast<float>(Input::PressKey(DIK_D) - Input::PressKey(DIK_A));
-	velocity_.z = static_cast<float>(Input::PressKey(DIK_W) - Input::PressKey(DIK_S));
+	Move();
 
-	velocity_ = Vec3f::Normalize(velocity_);
-	velocity_ *= kSpeed_;
 
-	worldTransform_.translate += velocity_;
+	if(isKinematic_) {
+		worldTransform_.translate.y += kGravity_;
+	}
+
+	//if(GetDiffHeight() < kWallHeight_) {
+		if(worldTransform_.GetWorldPosition().y < terrainHeight_) {
+			worldTransform_.translate.y = terrainHeight_;
+		}
+	//} else {
+		///- 壁と判定された : 押し戻し処理を行う
+		
+	//}
 
 	worldTransform_.UpdateWorldMatrix();
 }
@@ -46,10 +52,30 @@ void Player::Draw() {
 }
 
 void Player::SetHeight(float height) {
-	worldTransform_.translate.y = height;
+	preTerrainHeight_ = terrainHeight_;
+	terrainHeight_ = height;
+}
+
+float Player::GetDiffHeight() {
+	return terrainHeight_ - preTerrainHeight_;
 }
 
 void Player::Move() {
+	velocity_.x = static_cast<float>(Input::PressKey(DIK_D) - Input::PressKey(DIK_A));
+	velocity_.z = static_cast<float>(Input::PressKey(DIK_W) - Input::PressKey(DIK_S));
+
+	velocity_ = Vec3f::Normalize(velocity_);
+	velocity_ *= kSpeed_;
+
+	worldTransform_.translate += velocity_;
+}
+
+void Player::ImGuiDebug() {
+
+	worldTransform_.ImGuiTreeNodeDebug();
+
+	ImGui::Checkbox("IsKinematic", &isKinematic_);
+
 
 }
 

@@ -55,8 +55,7 @@ void DebugCamera::Draw() {
 
 
 
-void DebugCamera::DebugDraw() {
-#ifdef _DEBUG
+void DebugCamera::ImGuiDebug() {
 	worldTransform_.ImGuiTreeNodeDebug();
 	ImGui::Separator();
 
@@ -72,6 +71,4 @@ void DebugCamera::DebugDraw() {
 
 		ImGui::TreePop();
 	}
-
-#endif // _DEBUG
 }

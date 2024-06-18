@@ -44,7 +44,6 @@ void Scene_Game::Update() {
 
 	terrainCollider_->Update();
 
-	player_->SetHeight(terrainCollider_->GetHeight());
 
 }
 

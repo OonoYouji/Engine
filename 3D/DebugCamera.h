@@ -38,7 +38,7 @@ public:
 	/// ImGuiでデバッグ表示
 	/// </summary>
 	/// <param name="imguiName"></param>
-	void DebugDraw();
+	void ImGuiDebug() override;
 
 private:
 

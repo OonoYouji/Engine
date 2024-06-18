@@ -133,59 +133,7 @@ void Brush::Update() {
 	///- マウスのスクリーン座標をワールド座標に変換
 	ConvertMousePosition();
 
-	///- ImGuiデバッグ
-#ifdef _DEBUG
-	ImGui::Begin("Brush");
 
-
-	ImGui::DragFloat3("WorldPosition", &mousePointData_->worldPos.x, 0.0f);
-	ImGui::DragFloat2("ScreenPosition", &mousePointData_->position.x, 0.0f);
-
-	ImGui::Separator();
-
-	if(ImGui::TreeNodeEx("Parameter", true)) {
-
-		ImGui::DragFloat("circleRadius", &mousePointData_->size, 0.01f);
-
-		ImGui::Spacing();
-
-		static bool isActive = false;
-		ImGui::Checkbox("IsActive", &isActive);
-		if(ImGui::IsItemEdited()) {
-			mousePointData_->isActive = isActive;
-		}
-
-		ImGui::Spacing();
-
-		///- 上下量の決定
-		ImGui::DragFloat("Power", &mousePointData_->power, 0.005f, 0.0f, 1.0f);
-
-		ImGui::Spacing();
-
-		///- 編集のタイプ
-		ImGui::DragInt("CalcState", &mousePointData_->calcState, 0);
-		if(ImGui::Button("Add", ImVec2(64.0f, 24.0f))) {
-			mousePointData_->calcState = static_cast<int>(CalcState::Add);
-		}
-
-		ImGui::SameLine();
-
-		if(ImGui::Button("Mul", ImVec2(64.0f, 24.0f))) {
-			mousePointData_->calcState = static_cast<int>(CalcState::Mul);
-		}
-
-
-
-
-		ImGui::TreePop();
-	}
-
-	ImGui::Separator();
-
-
-
-	ImGui::End();
-#endif // _DEBUG
 
 
 	///- 拡縮行列は円の半径
@@ -229,6 +177,58 @@ void Brush::ConvertMousePosition() {
 	///- カメラから設定オブジェクトの距離
 	worldTransform_.translate = posNear_ + (mouseRayDirection_ * distanceTestObject_);
 	mousePointData_->worldPos = posNear_;
+
+}
+
+void Brush::ImGuiDebug() {
+
+
+	worldTransform_.ImGuiTreeNodeDebug();
+
+	ImGui::DragFloat3("WorldPosition", &mousePointData_->worldPos.x, 0.0f);
+	ImGui::DragFloat2("ScreenPosition", &mousePointData_->position.x, 0.0f);
+
+	ImGui::Separator();
+
+	if(ImGui::TreeNodeEx("Parameter")) {
+
+		ImGui::DragFloat("circleRadius", &mousePointData_->size, 0.01f);
+
+		ImGui::Spacing();
+
+		static bool isActive = false;
+		ImGui::Checkbox("IsActive", &isActive);
+		if(ImGui::IsItemEdited()) {
+			mousePointData_->isActive = isActive;
+		}
+
+		ImGui::Spacing();
+
+		///- 上下量の決定
+		ImGui::DragFloat("Power", &mousePointData_->power, 0.005f, 0.0f, 1.0f);
+
+		ImGui::Spacing();
+
+		///- 編集のタイプ
+		ImGui::DragInt("CalcState", &mousePointData_->calcState, 0);
+		if(ImGui::Button("Add", ImVec2(64.0f, 24.0f))) {
+			mousePointData_->calcState = static_cast<int>(CalcState::Add);
+		}
+
+		ImGui::SameLine();
+
+		if(ImGui::Button("Mul", ImVec2(64.0f, 24.0f))) {
+			mousePointData_->calcState = static_cast<int>(CalcState::Mul);
+		}
+
+
+
+
+		ImGui::TreePop();
+	}
+
+	ImGui::Separator();
+
 
 }
 

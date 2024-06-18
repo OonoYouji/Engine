@@ -16,20 +16,21 @@ struct WorldTransform {
 	/// </summary>
 	void Initialize();
 
-	
-	/// -------------------------
-	/// メンバ関数
-	/// -------------------------
-
+	/// <summary>
+	/// 
+	/// </summary>
 	void UpdateWorldMatrix();
 
+	/// <summary>
+	/// 
+	/// </summary>
 	void ImGuiTreeNodeDebug();
 
-	void ImGuiDebug(const std::string& windowName);
-
-	/// -------------------------
-	/// メンバ変数
-	/// -------------------------
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	Vec3f GetWorldPosition();
 
 	Vec3f scale;
 	Vec3f rotate;

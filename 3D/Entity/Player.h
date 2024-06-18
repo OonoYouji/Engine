@@ -37,9 +37,17 @@ public:
 
 	void SetHeight(float height);
 
+	/// <summary>
+	/// 今のheightと前のheightの差分
+	/// </summary>
+	/// <returns></returns>
+	float GetDiffHeight();
+
 private: ///- METHODS
 
 	void Move();
+
+	void ImGuiDebug() override;
 
 private: ///- OBJECTS
 
@@ -47,5 +55,10 @@ private: ///- OBJECTS
 
 	Vec3f velocity_;
 	const float kSpeed_ = 0.125f;
+	const float kGravity_ = -0.025f;
 
+	float preTerrainHeight_ = 0;
+	float terrainHeight_ = 0;
+	
+	bool isKinematic_ = false;
 };
