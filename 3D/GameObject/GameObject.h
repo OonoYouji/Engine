@@ -40,6 +40,16 @@ public:
 	/// <returns>worldTransformのconst参照</returns>
 	const WorldTransform& GetWorldTransform() const;
 
+	void SetPosition(const Vec3f& position);
+	void SetPositionX(float x);
+	void SetPositionY(float y);
+	void SetPositionZ(float z);
+
+	/// <summary>
+	/// worldTransformの行列更新
+	/// </summary>
+	void UpdateMatrix();
+
 protected:
 
 	std::string tag_;

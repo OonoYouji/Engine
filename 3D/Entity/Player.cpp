@@ -34,15 +34,16 @@ void Player::Update() {
 	}
 
 	//if(GetDiffHeight() < kWallHeight_) {
-		if(worldTransform_.GetWorldPosition().y < terrainHeight_) {
-			worldTransform_.translate.y = terrainHeight_;
-		}
+	if(worldTransform_.GetWorldPosition().y < terrainHeight_) {
+		worldTransform_.translate.y = terrainHeight_;
+	}
 	//} else {
 		///- 壁と判定された : 押し戻し処理を行う
-		
+
 	//}
 
-	worldTransform_.UpdateWorldMatrix();
+	UpdateMatrix();
+
 }
 
 void Player::Draw() {
@@ -52,8 +53,7 @@ void Player::Draw() {
 }
 
 void Player::SetHeight(float height) {
-	preTerrainHeight_ = terrainHeight_;
-	terrainHeight_ = height;
+	worldTransform_.translate.y = height;
 }
 
 float Player::GetDiffHeight() {

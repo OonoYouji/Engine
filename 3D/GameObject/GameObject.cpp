@@ -39,6 +39,16 @@ const WorldTransform& GameObject::GetWorldTransform() const {
 }
 
 
+void GameObject::SetPosition(const Vec3f& position) { worldTransform_.translate = position; }
+void GameObject::SetPositionX(float x) { worldTransform_.translate.x = x; }
+void GameObject::SetPositionY(float y) { worldTransform_.translate.y = y; }
+void GameObject::SetPositionZ(float z) { worldTransform_.translate.z = z; }
+
+void GameObject::UpdateMatrix() {
+	worldTransform_.UpdateWorldMatrix();
+}
+
+
 
 
 ///// --------------------------------------------------------------------------

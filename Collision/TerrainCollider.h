@@ -57,6 +57,13 @@ private:
 	Vec2f ConvertTexcoord(const Vec3f& position);
 
 	/// <summary>
+	/// texcoordからworld座標でのpositionを得る
+	/// </summary>
+	/// <param name="texcoord"></param>
+	/// <returns></returns>
+	Vec3f ConvertPosition(const Vec2f& texcoord);
+
+	/// <summary>
 	/// Playerが範囲内にいるか確認する
 	/// </summary>
 	/// <returns></returns>
@@ -99,13 +106,13 @@ private: ///- OBJECTS
 	ComPtr<ID3D12Resource> texcoordResource_;
 	Vec2f* texcoordData_ = nullptr;
 
+	Vec2f preTexcoord_;
 	Vec2f texcoord_;
 	float preHeight_;
 	float height_;
 	Vec4f outputColor_{};
 
-	const float kWallHeight_ = 0.25f;
-
+	const float kWallHeight_ = 1.0f;
 
 };
 

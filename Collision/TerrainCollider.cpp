@@ -63,22 +63,26 @@ void TerrainCollider::Initialize() {
 
 
 void TerrainCollider::Update() {
-
-	preHeight_ = height_;
-
 	///- debug表示
 	ImGuiDebug();
+
+	preTexcoord_ = texcoord_;
+	preHeight_ = height_;
 
 	terrainWorldMatrix_ = pTerrain_->GetWorldTransform().worldMatrix;
 	inverseTerrainWorldMatrix_ = Mat4::MakeInverse(terrainWorldMatrix_);
 
 	texcoord_ = ConvertTexcoord(pPlayer_->GetWorldTransform().translate);
-	//if(IsWithinRange()) {
 	height_ = GetHeight(texcoord_);
-	pPlayer_->SetHeight(height_);
 
-	//}
+	if(height_ - preHeight_ < kWallHeight_) {
+		pPlayer_->SetHeight(height_);
+	} else {
+		Vec3f position = ConvertPosition(preTexcoord_);
+		pPlayer_->SetPosition(position);
+	}
 
+	pPlayer_->UpdateMatrix();
 }
 
 
@@ -110,6 +114,17 @@ Vec2f TerrainCollider::ConvertTexcoord(const Vec3f& position) {
 }
 
 
+
+Vec3f TerrainCollider::ConvertPosition(const Vec2f& texcoord) {
+
+	///- terrain上のローカル座標にする
+	Vec3f localPosition = Vec3f(texcoord.x, 0.0f, 1.0f - texcoord.y) *  terrainSize_;
+
+	///- world座標に変換
+	Vec3f position = Mat4::Transform(localPosition, terrainWorldMatrix_);
+
+	return position;
+}
 
 bool TerrainCollider::IsWithinRange() {
 
@@ -159,9 +174,17 @@ void TerrainCollider::ImGuiDebug() {
 
 	ImGui::Separator();
 
+	ImGui::Text("Wall Height : %f", kWallHeight_);
+
+	ImGui::Separator();
+
 	ImGui::Text("Height : %f", height_);
 	ImGui::Text("PreHeight : %f", preHeight_);
+
+	ImGui::Separator();
+
 	ImGui::Text("Texooord : %f,%f", texcoord_.x, texcoord_.y);
+	ImGui::Text("PreTexooord : %f,%f", preTexcoord_.x, preTexcoord_.y);
 
 	ImGui::Separator();
 
