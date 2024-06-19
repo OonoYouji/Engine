@@ -3,14 +3,11 @@
 #include <Input.h>
 #include <ImGuiManager.h>
 
-#include <iostream>
-#include <typeinfo>
-#include <string>
+#include <CreateName.h>
 
 Player::Player() {
-	std::string name = typeid(*this).name();
-	name = name.substr(std::string("class ").length());
-	SetTag(name);
+	SetTag(CreateName(this));
+
 }
 Player::~Player() {}
 

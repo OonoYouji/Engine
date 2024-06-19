@@ -8,11 +8,14 @@
 #include <WorldTransform.h>
 #include <Model.h>
 
+#include <BaseCollider.h>
+
 
 /// <summary>
 /// 当たり判定用メッシュ
 /// </summary>
-class MeshCollider {
+class MeshCollider
+	: public BaseCollider {
 public:
 
 	MeshCollider();

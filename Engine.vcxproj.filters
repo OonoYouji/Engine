@@ -145,6 +145,9 @@
     <ClCompile Include="Audio\Audio.cpp">
       <Filter>Source\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Collision\BaseCollider.cpp">
+      <Filter>Source\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -415,6 +418,12 @@
     </ClInclude>
     <ClInclude Include="Audio\Audio.h">
       <Filter>Include\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\BaseCollider.h">
+      <Filter>Include\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\CreateName.h">
+      <Filter>Include\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -187,6 +187,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Base\ShaderCompile\ShaderCompile.cpp" />
     <ClCompile Include="Base\TextureManager.cpp" />
     <ClCompile Include="Base\WinApp.cpp" />
+    <ClCompile Include="Collision\BaseCollider.cpp" />
     <ClCompile Include="Collision\MeshCollider.cpp" />
     <ClCompile Include="Collision\TerrainCollider.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
@@ -225,6 +226,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="3D\TriangleEffect.h" />
     <ClInclude Include="Audio\Audio.h" />
     <ClInclude Include="Base\CBuffer\CBuffer.h" />
+    <ClInclude Include="Base\CreateName.h" />
     <ClInclude Include="Base\DxCommand.h" />
     <ClInclude Include="Base\DxDescriptors.h" />
     <ClInclude Include="Base\PiplineStateObject\PipelineStateObject.h" />
@@ -232,6 +234,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Base\PiplineStateObject\ShaderBlob.h" />
     <ClInclude Include="Base\ShaderCompile\ShaderCompile.h" />
     <ClInclude Include="Base\TextureManager.h" />
+    <ClInclude Include="Collision\BaseCollider.h" />
     <ClInclude Include="Collision\MeshCollider.h" />
     <ClInclude Include="Collision\TerrainCollider.h" />
     <ClInclude Include="Config\Environment.h" />

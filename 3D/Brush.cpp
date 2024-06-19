@@ -14,13 +14,14 @@
 #include "DirectionalLight.h"
 #include <PipelineStateObjectManager.h>
 
+#include <CreateName.h>
+
 using namespace std::numbers;
 
 
 Brush::Brush() {
-	std::string name = typeid(*this).name();
-	name = name.substr(std::string("class ").length());
-	SetTag(name);
+	SetTag(CreateName(this));
+
 	Init();
 }
 

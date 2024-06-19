@@ -2,19 +2,14 @@
 
 #include <ImGuiManager.h>
 
-
-///- クラスの名前をstringに変換するsample code
-#include <iostream>
-#include <typeinfo>
 #include <string>
+
+#include <CreateName.h>
 
 
 GameObject::GameObject() {
 	GameObjectManager::GetInstance()->AddGameObject(this);
-
-	std::string name = typeid(*this).name();
-	name = name.substr(std::string("class ").length());
-	SetTag(name);
+	SetTag(CreateName(this));
 
 }
 

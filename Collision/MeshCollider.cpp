@@ -2,6 +2,7 @@
 
 #include <ImGuiManager.h>
 
+#include <CreateName.h>
 
 namespace {
 
@@ -172,7 +173,9 @@ namespace {
 
 
 
-MeshCollider::MeshCollider() {}
+MeshCollider::MeshCollider() {
+	SetName(CreateName(this));
+}
 MeshCollider::~MeshCollider() {}
 
 
@@ -242,7 +245,7 @@ bool MeshCollider::IsCollision(const std::vector<Vec3f>& vertices, const WorldTr
 	while(repeatNum_ < 50) {
 		Vec3f newPoint = MinkowskiDifferenceSupport(vertices_, worldVertices, direction);
 		if(Vec3f::Dot(newPoint, direction) <= 0) {
-			return false; // No collision
+			return false; // No Collision
 		}
 		simplex.push_back(newPoint);
 		if(ContainsOrigin(simplex, direction)) {
