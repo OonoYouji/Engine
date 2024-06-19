@@ -47,11 +47,7 @@ VSOutput main(VSInput input) {
 		}
 	}
 
-	if (gMousePoint.calcState == 0) {
-		clr += gOutputTexture[input.texcoord * dimension];
-	} else {
-		clr *= gOutputTexture[input.texcoord * dimension];
-	}
+	clr *= gOutputTexture[input.texcoord * dimension];
 
 	// 輝度の計算
 	float luminance = 0.2126f * clr.r + 0.7152f * clr.g + 0.0722f * clr.b;

@@ -28,6 +28,14 @@ const std::string& GameObject::GetTag() const {
 	return tag_;
 }
 
+void GameObject::SetName(const std::string& name) {
+	name_ = name;
+}
+
+const std::string& GameObject::GetName() const {
+	return name_;
+}
+
 void GameObject::ImGuiDebug() {
 
 	worldTransform_.ImGuiTreeNodeDebug();

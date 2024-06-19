@@ -30,6 +30,18 @@ public:
 	const std::string& GetTag() const;
 
 	/// <summary>
+	/// 名前のSetter
+	/// </summary>
+	/// <param name="name"></param>
+	void SetName(const std::string& name);
+
+	/// <summary>
+	/// 名前のGetter
+	/// </summary>
+	/// <returns></returns>
+	const std::string& GetName() const;
+
+	/// <summary>
 	/// ImGuiでのデバッグ表示
 	/// </summary>
 	virtual void ImGuiDebug();
@@ -53,6 +65,9 @@ public:
 protected:
 
 	std::string tag_;
+	std::string name_;
+
+
 	WorldTransform worldTransform_;
 
 };

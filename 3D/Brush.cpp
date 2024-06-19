@@ -76,7 +76,6 @@ void Brush::Init() {
 	mousePointData_->isDown = false;
 	mousePointData_->rayDir = Vec3f{ 0.0f,0.0f,0.0f };
 	mousePointData_->isActive = false;
-	mousePointData_->calcState = static_cast<int>(CalcState::Mul);
 	mousePointData_->power = 0.5f;
 
 	///- 頂点データの計算
@@ -206,22 +205,6 @@ void Brush::ImGuiDebug() {
 
 		///- 上下量の決定
 		ImGui::DragFloat("Power", &mousePointData_->power, 0.005f, 0.0f, 1.0f);
-
-		ImGui::Spacing();
-
-		///- 編集のタイプ
-		ImGui::DragInt("CalcState", &mousePointData_->calcState, 0);
-		if(ImGui::Button("Add", ImVec2(64.0f, 24.0f))) {
-			mousePointData_->calcState = static_cast<int>(CalcState::Add);
-		}
-
-		ImGui::SameLine();
-
-		if(ImGui::Button("Mul", ImVec2(64.0f, 24.0f))) {
-			mousePointData_->calcState = static_cast<int>(CalcState::Mul);
-		}
-
-
 
 
 		ImGui::TreePop();
