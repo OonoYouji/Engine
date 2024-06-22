@@ -78,6 +78,7 @@ void Brush::Init() {
 	mousePointData_->rayDir = Vec3f{ 0.0f,0.0f,0.0f };
 	mousePointData_->isActive = false;
 	mousePointData_->power = 0.5f;
+	mousePointData_->drawMode = static_cast<int>(DrawMode::kGrayscale);
 
 	///- 頂点データの計算
 	int index = 0;
@@ -206,6 +207,21 @@ void Brush::ImGuiDebug() {
 
 		///- 上下量の決定
 		ImGui::DragFloat("Power", &mousePointData_->power, 0.005f, 0.0f, 1.0f);
+
+		ImGui::Spacing();
+
+		if(ImGui::TreeNodeEx("DrawMode", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+			if(ImGui::Button("Normal")) {
+				mousePointData_->drawMode = static_cast<int>(DrawMode::kNormal);
+			}
+			
+			if(ImGui::Button("GrayScale")) {
+				mousePointData_->drawMode = static_cast<int>(DrawMode::kGrayscale);
+			}
+
+			ImGui::TreePop();
+		}
 
 
 		ImGui::TreePop();

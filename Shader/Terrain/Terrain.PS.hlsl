@@ -22,6 +22,7 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 PSOutput main(VSOutput input) {
 	PSOutput output;
 	float4 textureColor = gTexture.Sample(gSampler, input.texcoord);
+	bool isMouseRange = false;
 
 	///- マウスの座標に円を表示する
 	if (gMousePoint.isActive) {
@@ -32,6 +33,7 @@ PSOutput main(VSOutput input) {
 
 		if (len < gMousePoint.brushSize) {
 			textureColor = gMaterial.color * clamp((len / gMousePoint.brushSize), 0.2f, 1.0f);
+			isMouseRange = true;
 		}
 	}
 
@@ -44,7 +46,10 @@ PSOutput main(VSOutput input) {
 		///- Lightingしない場合
 		output.color = gMaterial.color * textureColor;
 	}
-
+	
+	if (!isMouseRange && gMousePoint.drawMode == 0) {
+		output.color = input.color;
+	}
 
 	return output;
 }

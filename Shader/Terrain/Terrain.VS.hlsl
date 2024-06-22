@@ -57,7 +57,7 @@ VSOutput main(VSInput input) {
 	output.texcoord = input.texcoord;
 	output.normal = normalize(mul(input.normal, (float3x3) gTransformationMatrix.World));
 	output.worldPos = mul(pos, gTransformationMatrix.World).xyz;
-	
+	output.color = float4(luminance, luminance, luminance, luminance);
 
 	return output;
 }

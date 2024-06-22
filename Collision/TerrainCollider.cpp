@@ -76,7 +76,9 @@ void TerrainCollider::Update() {
 	height_ = GetHeight(texcoord_);
 
 	if(height_ - preHeight_ < kWallHeight_) {
-		pPlayer_->SetHeight(height_);
+		if(pPlayer_->GetWorldTransform().translate.y < height_) {
+			pPlayer_->SetHeight(height_);
+		}
 	} else {
 		Vec3f position = ConvertPosition(preTexcoord_);
 		pPlayer_->SetPosition(position);
@@ -118,7 +120,7 @@ Vec2f TerrainCollider::ConvertTexcoord(const Vec3f& position) {
 Vec3f TerrainCollider::ConvertPosition(const Vec2f& texcoord) {
 
 	///- terrain上のローカル座標にする
-	Vec3f localPosition = Vec3f(texcoord.x, 0.0f, 1.0f - texcoord.y) *  terrainSize_;
+	Vec3f localPosition = Vec3f(texcoord.x, 0.0f, 1.0f - texcoord.y) * terrainSize_;
 
 	///- world座標に変換
 	Vec3f position = Mat4::Transform(localPosition, terrainWorldMatrix_);

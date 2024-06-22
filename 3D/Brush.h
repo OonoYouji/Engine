@@ -11,9 +11,9 @@
 #include <CBuffer.h>
 #include <GameObject.h>
 
-enum class CalcState {
-	Add,
-	Mul
+enum class DrawMode {
+	kGrayscale,
+	kNormal,
 };
 
 struct MousePoint {
@@ -28,7 +28,7 @@ struct MousePoint {
 	int isDown;
 	int isActive;
 	float power;
-
+	int drawMode;
 };
 
 

@@ -4,6 +4,7 @@ struct VSOutput {
 	float2 texcoord : TEXCOORD0;
 	float3 normal : NORMAL0;
 	float3 worldPos : WORLDPOS0;
+	float4 color : COLOR0;
 };
 
 struct MousePoint {
@@ -15,6 +16,7 @@ struct MousePoint {
 	int isDown;
 	int isActive;
 	float power;
+	int drawMode;
 };
 
 struct DirectionalLight {
