@@ -94,8 +94,9 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 
 	///- srvHandleの取得
 	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
-	newTexture.handleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() + uavTextures_.size()) + 1));
-	newTexture.handleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() + uavTextures_.size()) + 1));
+	newTexture.handleCPU = descriptiors->GetCPUDescriptorHandle();
+	newTexture.handleGPU = descriptiors->GetGPUDescriptorHandle();
+	descriptiors->AddSrvUsedCount();
 
 	///- srvの生成
 	DirectXCommon::GetInstance()->GetDevice()->CreateShaderResourceView(newTexture.resource.Get(), &srvDesc, newTexture.handleCPU);
@@ -131,8 +132,9 @@ void TextureManager::LoadUav(const std::string& textureName, const std::string& 
 
 	///- uavhandleの取得
 	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
-	newTexture.handleCPU = descriptiors->GetCPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() + uavTextures_.size()) + 1));
-	newTexture.handleGPU = descriptiors->GetGPUDescriptorHandle(descriptiors->GetSRVHeap(), descriptiors->GetSRVSize(), static_cast<uint32_t>((textures_.size() + uavTextures_.size()) + 1));
+	newTexture.handleCPU = descriptiors->GetCPUDescriptorHandle();
+	newTexture.handleGPU = descriptiors->GetGPUDescriptorHandle();
+	descriptiors->AddSrvUsedCount();
 
 	DirectXCommon::GetInstance()->GetDevice()->CreateUnorderedAccessView(newTexture.resource.Get(), nullptr, &uavDesc, newTexture.handleCPU);
 

@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <array>
 
 #include <DirectXCommon.h>
 #include <WorldTransform.h>
@@ -44,7 +45,12 @@ public:
 		return vertexDatas_;
 	}
 
+	void Reset();
+
 private:
+	///- モデルの描画上限
+	static const int kMaxInstanceCount_ = 10;
+	int instanceCount_;
 
 	std::string name_;
 
@@ -62,7 +68,8 @@ private:
 
 	///- TransformMatrix
 	ComPtr<ID3D12Resource> transformMatrixResource_;
-	TransformMatrix* transformMatrixData_ = nullptr;
+	TransformMatrix* transformMatrixDatas_;
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
 
 public:
 
@@ -91,6 +98,16 @@ public:
 	static ModelManager* GetInstance();
 
 	void Finalize();
+
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
+	void PreDraw();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void PostDraw();
 
 	void Update();
 

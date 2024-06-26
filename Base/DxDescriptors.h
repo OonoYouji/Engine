@@ -60,6 +60,20 @@ public:
 	/// </summary>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
+	
+	/// <summary>
+	/// DescriptorHandleを取得する [ CPU ver ]
+	/// </summary>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle();
+
+	/// <summary>
+	/// DescriptorHandleを取得する [ GPU ver ]
+	/// </summary>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle();
+
+
+	void AddSrvUsedCount();
+
 
 	uint32_t GetSRVSize() const { return descriptorSRV_; }
 	uint32_t GetRTVSize() const { return descriptorRTV_; }
@@ -75,6 +89,10 @@ private: ///- member obejct
 	uint32_t descriptorSRV_;
 	uint32_t descriptorRTV_;
 	uint32_t descriptorDSV_;
+
+	uint32_t srvUsedCount_ = 0;
+	uint32_t rtvUsedCount_ = 0;
+	uint32_t uavUsedCount_ = 0;
 
 private: ///- member method
 

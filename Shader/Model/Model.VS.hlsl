@@ -5,7 +5,7 @@
 
 StructuredBuffer<TransformationMatrix> gTransformationMatrix : register(t0);
 
-VSOutput main(VSInput input, int instanceId : SV_InstanceID) {
+VSOutput main(VSInput input, uint instanceId : SV_InstanceID) {
 	VSOutput output;
 
 	output.position = mul(input.position, gTransformationMatrix[instanceId].WVP);

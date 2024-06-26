@@ -137,6 +137,39 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 
 
+	/// ----------------------------------------------
+	/// ↓ Model
+	/// ----------------------------------------------
+
+
+	shaderBlob.reset(new ShaderBlob());
+	shaderBlob->Initialize(
+		shaderCompile_.get(),
+		L"./Shader/Model/Model.VS.hlsl", L"vs_6_0",
+		L"./Shader/Model/Model.PS.hlsl", L"ps_6_0"
+	);
+
+	pipelineStateObjects_["Model"] = std::make_unique<PipelineStateObject>();
+	pso = pipelineStateObjects_.at("Model").get();
+
+	pso->SetInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	pso->SetInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT);
+	pso->SetInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT);
+
+	pso->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
+	pso->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
+
+	pso->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 0);	//- material
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_VERTEX, 0);	//- transformation
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_PIXEL, 0);	//- texture
+	pso->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 1);	//- directinalLight
+
+	pso->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_PIXEL);
+
+	pso->Initialize(device, shaderBlob.get());
+
+
+
 	shaderBlob.reset();
 }
 

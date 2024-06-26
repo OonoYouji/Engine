@@ -95,3 +95,15 @@ D3D12_GPU_DESCRIPTOR_HANDLE DxDescriptors::GetGPUDescriptorHandle(ID3D12Descript
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;
 }
+
+D3D12_CPU_DESCRIPTOR_HANDLE DxDescriptors::GetCPUDescriptorHandle() {
+	return GetCPUDescriptorHandle(srvDescriptorHeap_.Get(), descriptorSRV_, srvUsedCount_);
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE DxDescriptors::GetGPUDescriptorHandle() {
+	return GetGPUDescriptorHandle(srvDescriptorHeap_.Get(), descriptorSRV_, srvUsedCount_);
+}
+
+void DxDescriptors::AddSrvUsedCount() {
+	srvUsedCount_++;
+}

@@ -13,6 +13,7 @@
 
 #include <Engine.h>
 #include <DxCommand.h>
+#include <DxDescriptors.h>
 #include <TextureManager.h>
 #include <ImGuiManager.h>
 #include <DirectionalLight.h>
@@ -75,12 +76,32 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 
 	///- トランスフォームマトリクス
-	transformMatrixResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix));
+	transformMatrixResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix) * kMaxInstanceCount_);
 
 	///- マッピング
-	transformMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformMatrixData_));
-	transformMatrixData_->WVP = Mat4::MakeIdentity();
-	transformMatrixData_->World = Mat4::MakeIdentity();
+	transformMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformMatrixDatas_));
+	for(uint32_t index = 0; index < kMaxInstanceCount_; ++index) {
+		transformMatrixDatas_[index].WVP = Mat4::MakeIdentity();
+		transformMatrixDatas_[index].World = Mat4::MakeIdentity();
+	}
+
+	///- srvの作成
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC transformMatrixDesc{};
+	transformMatrixDesc.Format = DXGI_FORMAT_UNKNOWN;
+	transformMatrixDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	transformMatrixDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	transformMatrixDesc.Buffer.FirstElement = 0;
+	transformMatrixDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	transformMatrixDesc.Buffer.NumElements = kMaxInstanceCount_;
+	transformMatrixDesc.Buffer.StructureByteStride = sizeof(TransformMatrix);
+
+	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = descriptiors->GetCPUDescriptorHandle();
+	gpuHandle_ = descriptiors->GetGPUDescriptorHandle();
+	descriptiors->AddSrvUsedCount();
+
+	dxCommon->GetDevice()->CreateShaderResourceView(transformMatrixResource_.Get(), &transformMatrixDesc, cpuHandle);
 
 }
 
@@ -88,25 +109,31 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 void Model::Draw(const WorldTransform& worldTransform) {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
-	PipelineStateObjectManager::GetInstance()->SetCommandList("Object3d", commandList);
+	PipelineStateObjectManager::GetInstance()->SetCommandList("Model", commandList);
 
 	///- 頂点情報のコピー
 	std::memcpy(vertexData_, vertexDatas_.data(), sizeof(VertexData) * vertexDatas_.size());
 
+	if(instanceCount_ >= kMaxInstanceCount_) {
+		///- 描画数が上限を超えた
+		assert(false);
+	}
+
 	///- Data
-	transformMatrixData_->World = worldTransform.worldMatrix;
-	transformMatrixData_->WVP = worldTransform.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+	transformMatrixDatas_[instanceCount_].World = worldTransform.worldMatrix;
+	transformMatrixDatas_[instanceCount_].WVP = worldTransform.worldMatrix * Engine::GetCamera()->GetVpMatrix();
+	instanceCount_++;
 
 	///- IASet
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	commandList->SetGraphicsRootConstantBufferView(1, transformMatrixResource_->GetGPUVirtualAddress());
+	commandList->SetGraphicsRootDescriptorTable(1, gpuHandle_);
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, material_.textureName);
 	Light::GetInstance()->SetConstantBuffer(3, commandList);
 
-	commandList->DrawInstanced(UINT(vertexDatas_.size()), 1, 0, 0);
+	commandList->DrawInstanced(UINT(vertexDatas_.size()), instanceCount_, 0, 0);
 }
 
 
@@ -132,6 +159,10 @@ void Model::DebugDraw(const std::string& windowName) {
 
 	ImGui::End();
 #endif // _DEBUG
+}
+
+void Model::Reset() {
+	instanceCount_ = 0;
 }
 
 
@@ -286,6 +317,12 @@ ModelManager* ModelManager::GetInstance() {
 
 void ModelManager::Finalize() {
 	models_.clear();
+}
+
+void ModelManager::PreDraw() {
+	for(auto& model : models_) {
+		model.second->Reset();
+	}
 }
 
 void ModelManager::Update() {

@@ -107,6 +107,7 @@ namespace {
 
 	void EngineSystem::PreDraw() {
 		directXCommon_->PreDraw();
+		ModelManager::GetInstance()->PreDraw();
 	}
 
 	void EngineSystem::EndFrame() {
