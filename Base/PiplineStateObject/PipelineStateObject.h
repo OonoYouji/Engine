@@ -49,7 +49,19 @@ public:
 	/// <param name="shaderRegister"></param>
 	void SetRootParameter(D3D12_ROOT_PARAMETER_TYPE parameterType, D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t shaderRegister);
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="shaderVisibilty"></param>
+	/// <param name="shaderRegister"></param>
 	void SetCBV(D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t shaderRegister);
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="shaderVisibilty"></param>
+	/// <param name="shaderRegister"></param>
+	void SetUAV(D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t shaderRegister);
 
 	/// <summary>
 	/// 新しいRootParameterの設定 (DescriptorRangeを設定するver)
@@ -58,6 +70,13 @@ public:
 	/// <param name="shaderVisibilty"></param>
 	/// <param name="descriptorIndex"></param>
 	void SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE parameterType, D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t descriptorIndex);
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="shaderVisibilty"></param>
+	/// <param name="descriptorIndex"></param>
+	void SetDescriptorTable(D3D12_SHADER_VISIBILITY shaderVisibilty, uint32_t descriptorIndex);
 
 	/// <summary>
 	/// 新しいDescriptorRangeの設定

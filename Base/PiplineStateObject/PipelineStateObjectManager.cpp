@@ -35,10 +35,10 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 	pipelineStateObjects_.back()->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
-	pipelineStateObjects_.back()->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_VERTEX, 0);
+	pipelineStateObjects_.back()->SetDescriptorTable(D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 1);
 
 	pipelineStateObjects_.back()->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_PIXEL);
 
@@ -67,13 +67,13 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	pipelineStateObjects_.back()->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 	pipelineStateObjects_.back()->SetDescriptorRange(3, 1, D3D12_DESCRIPTOR_RANGE_TYPE_UAV);
 
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0);
-	pipelineStateObjects_.back()->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_PIXEL, 0);
-	pipelineStateObjects_.back()->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_VERTEX, 1);
-	pipelineStateObjects_.back()->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_ALL, 2);
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1);
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_ALL, 3);
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_VERTEX, 0);
+	pipelineStateObjects_.back()->SetDescriptorTable(D3D12_SHADER_VISIBILITY_PIXEL, 0);
+	pipelineStateObjects_.back()->SetDescriptorTable(D3D12_SHADER_VISIBILITY_VERTEX, 1);
+	pipelineStateObjects_.back()->SetDescriptorTable(D3D12_SHADER_VISIBILITY_ALL, 2);
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 1);
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_ALL, 3);
 
 	pipelineStateObjects_.back()->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_PIXEL);
 	pipelineStateObjects_.back()->SetStaticSampler(1, D3D12_SHADER_VISIBILITY_VERTEX);
@@ -98,9 +98,9 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	pipelineStateObjects_.back()->SetInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
 	pipelineStateObjects_.back()->SetInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT);
 
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 0); ///- Material
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_PIXEL, 1); ///- DirectionalLight
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_VERTEX, 0); ///- TransformationMatrix
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 0); ///- Material
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 1); ///- DirectionalLight
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_VERTEX, 0); ///- TransformationMatrix
 
 	pipelineStateObjects_.back()->Initialize(device, shaderBlob.get());
 
@@ -122,10 +122,10 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	pipelineStateObjects_.back()->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV); ///- texture
 	pipelineStateObjects_.back()->SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_UAV); ///- texture
 
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, D3D12_SHADER_VISIBILITY_ALL, 0); ///- texcoord
-	pipelineStateObjects_.back()->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_ALL, 0); ///- texture
-	pipelineStateObjects_.back()->SetRootParameter(D3D12_ROOT_PARAMETER_TYPE_UAV, D3D12_SHADER_VISIBILITY_ALL, 0); ///- 
-	pipelineStateObjects_.back()->SetRootParameterDescriptorTable(D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE, D3D12_SHADER_VISIBILITY_ALL, 1); ///- uavTexture
+	pipelineStateObjects_.back()->SetCBV(D3D12_SHADER_VISIBILITY_ALL, 0); ///- texcoord
+	pipelineStateObjects_.back()->SetDescriptorTable(D3D12_SHADER_VISIBILITY_ALL, 0); ///- texture
+	pipelineStateObjects_.back()->SetUAV(D3D12_SHADER_VISIBILITY_ALL, 0); ///- 
+	pipelineStateObjects_.back()->SetDescriptorTable(D3D12_SHADER_VISIBILITY_ALL, 1); ///- uavTexture
 
 	pipelineStateObjects_.back()->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_ALL);
 
