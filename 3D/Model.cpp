@@ -3,7 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
-#include <string>
+#include <iostream>
+#include <filesystem>
 
 #include <Vector4.h>
 #include <Vector3.h>
@@ -32,6 +33,8 @@ Model::~Model() {
 void Model::Initialize(const std::string& directoryPath, const std::string& fileName) {
 
 	*this = LoadObjFile(directoryPath, fileName);
+	size_t pos = fileName.find(".obj");
+	name_ = fileName.substr(0, pos);
 
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
@@ -267,4 +270,98 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 	}
 
 	return materialData;
+}
+
+
+
+/// ================================================================================================== ///
+/// ↓ ModelManager Methods
+/// ================================================================================================== ///
+
+
+ModelManager* ModelManager::GetInstance() {
+	static ModelManager instance;
+	return &instance;
+}
+
+void ModelManager::Update() {
+	std::list<std::string> filePaths;
+	for(const auto& entry : std::filesystem::directory_iterator("./Resources/Objects")) {
+		if(entry.is_directory()) {
+			std::string path = entry.path().string();
+			filePaths.push_back(path);
+		}
+	}
+
+	///- アルファベット順にソートする
+	filePaths.sort();
+
+	///- ペアの更新
+	pairs_.clear();
+	int index = 0;
+	for(auto& filePath : filePaths) {
+		pairs_.push_back(std::pair(filePath, index));
+		index++;
+	}
+
+
+
+}
+
+Model* ModelManager::Create(const std::string& directoryPath, const std::string& fileName) {
+	size_t pos = fileName.find(".obj");
+	std::string key = fileName.substr(0, pos);
+
+	///- すでに読み込み済みであればそのモデルのポインタを返す
+	if(models_.find(key) != models_.end()) {
+		return models_.at(key).get();
+	}
+
+	///- 読み込んでからそのモデルへのポインタを返す
+	CreateModel(directoryPath, fileName, key);
+	return models_.at(key).get();
+}
+
+void ModelManager::ImGuiDebug() {
+	///- ./Resources/Obejcts/ にあるモデルのファイルパスを読み込む
+
+	ImGui::Begin("File Names");
+
+	static int currentNumber = 0;
+
+	std::vector<const char*> itemNames;
+	for(const auto& pair : pairs_) {
+		itemNames.push_back(pair.first.c_str());
+	}
+
+	ImGui::Combo("Path", &currentNumber, itemNames.data(), static_cast<int>(itemNames.size()));
+
+	///- 選択されたModelの探索
+	for(auto it = pairs_.begin(); it != pairs_.end(); ++it) {
+
+		///- 見つかったときの処理
+		if(it->second == currentNumber) {
+			if(ImGui::TreeNodeEx("SelectModel", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+				for(const auto& entry : std::filesystem::directory_iterator(it->first)) {
+					if(entry.is_regular_file()) {
+						std::string tag = entry.path().filename().string();
+						ImGui::Text("%s", tag.c_str());
+
+					}
+				}
+
+				ImGui::TreePop();
+			}
+		}
+	}
+
+	ImGui::End();
+
+}
+
+void ModelManager::CreateModel(const std::string& directoryPath, const std::string& fileName, const std::string& key) {
+
+	models_[key] = std::unique_ptr<Model>();
+
 }

@@ -2,6 +2,8 @@
 
 #include <wrl/client.h>
 
+#include <utility>
+#include <map>
 #include <vector>
 #include <string>
 #include <memory>
@@ -14,6 +16,7 @@
 
 
 using namespace Microsoft::WRL;
+
 
 /// <summary>
 /// 3Dモデル
@@ -42,6 +45,7 @@ public:
 
 private:
 
+	std::string name_;
 
 	std::vector<VertexData> vertexDatas_;
 	MaterialData material_;
@@ -69,4 +73,38 @@ public:
 		materialData_->color = color;
 	}
 
+};
+
+
+
+/// <summary>
+/// Modelの管理クラス
+/// </summary>
+class ModelManager {
+public:
+
+	/// <summary>
+	/// インスタンス確保
+	/// </summary>
+	/// <returns></returns>
+	static ModelManager* GetInstance();
+
+	void Update();
+
+	Model* Create(const std::string& directoryPath, const std::string& fileName);
+
+	void ImGuiDebug();
+
+private:
+
+	void CreateModel(const std::string& directoryPath, const std::string& fileName, const std::string& key);
+
+	std::map<std::string, std::unique_ptr<Model>> models_;
+	std::vector<std::pair<std::string, int>> pairs_;
+
+	ModelManager() = default;
+	~ModelManager() = default;
+	ModelManager& operator=(const ModelManager&) = delete;
+	ModelManager(const ModelManager&) = delete;
+	ModelManager(ModelManager&&) = delete;
 };

@@ -28,7 +28,9 @@ void Scene_Game::Init() {
 void Scene_Game::Update() {
 	gameObjectManager_->Update();
 
-	
+
+	ModelManager::GetInstance()->Update();
+	ModelManager::GetInstance()->ImGuiDebug();
 
 
 }
@@ -41,6 +43,6 @@ void Scene_Game::Draw() {
 
 void Scene_Game::Finalize() {
 
-	
+	model_.reset();
 
 }
