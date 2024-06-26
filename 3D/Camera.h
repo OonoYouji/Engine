@@ -30,7 +30,8 @@ public:
 	~Camera();
 
 	void Init();
-	void Update();
+	void Update() override;
+	void Draw() override;
 	void ImGuiDebug() override;
 	void Finalize();
 
@@ -43,7 +44,7 @@ private:
 	Mat4 vpMatrix_;
 
 #ifdef _DEBUG
-	std::unique_ptr<DebugCamera> debugCamera_;
+	DebugCamera* debugCamera_;
 	bool isDebugCameraActive_;
 #endif // _DEBUG
 public:

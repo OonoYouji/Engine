@@ -52,7 +52,7 @@ namespace {
 		TextureManager* textureManager_ = nullptr;
 
 		InputManager* input_ = nullptr;
-		std::unique_ptr<Camera> camera_ = nullptr;
+		Camera* camera_ = nullptr;
 
 		uint32_t indexTriangle_ = 0;
 
@@ -82,7 +82,7 @@ namespace {
 	EngineSystem::~EngineSystem() {}
 
 	void EngineSystem::Initialize() {
-		camera_ = std::make_unique<Camera>();
+		camera_ = new Camera();
 		winApp_ = WinApp::GetInstance();
 		directXCommon_ = DirectXCommon::GetInstance();
 		imGuiManager_ = ImGuiManager::GetInstance();
@@ -100,7 +100,7 @@ namespace {
 
 		Light::GetInstance()->Update();
 
-		camera_->Update();
+		//camera_->Update();
 
 	}
 
@@ -137,7 +137,7 @@ namespace {
 	}
 
 	inline Camera* EngineSystem::GetCamera() {
-		return camera_.get();
+		return camera_;
 	}
 
 	void EngineSystem::Reset() {
@@ -202,6 +202,7 @@ void Engine::Finalize() {
 	sEngineSystem.reset();
 
 	ModelManager::GetInstance()->Finalize();
+	GameObjectManager::GetInstance()->Finalize();
 
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();

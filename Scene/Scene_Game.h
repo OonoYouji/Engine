@@ -39,4 +39,6 @@ private:
 	std::unique_ptr<Model> model_;
 	WorldTransform wtf_;
 
+	Player* player_;
+
 };

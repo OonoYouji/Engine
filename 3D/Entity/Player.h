@@ -51,7 +51,7 @@ private: ///- METHODS
 
 private: ///- OBJECTS
 
-	std::unique_ptr<Model> model_;
+	Model* model_;
 
 	Vec3f velocity_;
 	const float kSpeed_ = 0.125f;

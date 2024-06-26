@@ -94,12 +94,13 @@ public:
 
 	void Update();
 
-	Model* Create(const std::string& fileName);
 
-	void ImGuiDebug();
+	Model* GetModelPtr(const std::string& key);
 
 private:
 
+	Model* Create(const std::string& fileName);
+	void ImGuiDebug();
 	void CreateModel(const std::string& directoryPath, const std::string & fileName, const std::string& key);
 
 	const std::string directoryPath_ = "./Resources/Objects";

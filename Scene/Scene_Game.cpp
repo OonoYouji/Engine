@@ -23,6 +23,9 @@ void Scene_Game::Init() {
 
 	wtf_.Initialize();
 
+	player_ = new Player();
+	player_->Initialize();
+
 }
 
 void Scene_Game::Update() {
@@ -34,6 +37,7 @@ void Scene_Game::Update() {
 }
 
 void Scene_Game::Draw() {
+	gameObjectManager_->Draw();
 
 
 	model_->Draw(wtf_);

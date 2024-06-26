@@ -33,7 +33,7 @@ void Camera::Init() {
 	vpMatrix_ = viewProjection_.matView * viewProjection_.matProjection;
 
 #ifdef _DEBUG
-	debugCamera_ = std::make_unique<DebugCamera>();
+	debugCamera_ = new DebugCamera();
 	debugCamera_->Initalize();
 	isDebugCameraActive_ = false;
 #endif // _DEBUG
@@ -55,6 +55,8 @@ void Camera::Update() {
 	}
 #endif // _DEBUG
 }
+
+void Camera::Draw() {}
 
 void Camera::ImGuiDebug() {
 	/// -------------------------------------------

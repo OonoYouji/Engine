@@ -14,8 +14,7 @@ Player::~Player() {}
 
 void Player::Initialize() {
 
-	model_ = std::make_unique<Model>();
-	model_->Initialize("./Resources/Objects/SampleObject", "sampleObject.obj");
+	model_ = ModelManager::GetInstance()->GetModelPtr("SampleObject");
 
 	worldTransform_.Initialize();
 

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <list>
+#include <memory>
 
 #include <WorldTransform.h>
 
@@ -14,6 +15,16 @@ public:
 
 	GameObject();
 	virtual ~GameObject() = default;
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	virtual void Update() = 0;
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	virtual void Draw() = 0;
 
 public:
 
@@ -62,6 +73,10 @@ public:
 	/// </summary>
 	void UpdateMatrix();
 
+public:
+
+	bool isActive_;
+
 protected:
 
 	std::string tag_;
@@ -86,10 +101,17 @@ public:
 	/// <returns></returns>
 	static GameObjectManager* GetInstance();
 
+	void Finalize();
+
 	/// <summary>
 	/// 更新処理
 	/// </summary>
 	void Update();
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	void Draw();
 
 	/// <summary>
 	/// GameObjectクラスへのポインタを追加する
@@ -111,7 +133,7 @@ private:
 
 private:
 
-	std::list<GameObject*> pGameObjects_;
+	std::list<std::unique_ptr<GameObject>> gameObjects_;
 	GameObject* selectObject_ = nullptr;
 
 

@@ -64,16 +64,43 @@ GameObjectManager* GameObjectManager::GetInstance() {
 	return &instance;
 }
 
+void GameObjectManager::Finalize() {
+	ClearList();
+}
+
 void GameObjectManager::Update() {
 	ImGuiDebug();
+
+	for(auto& gameObject : gameObjects_) {
+		if(gameObject->isActive_) {
+			gameObject->Update();
+		}
+	}
+
+}
+
+void GameObjectManager::Draw() {
+
+	for(auto& gameObject : gameObjects_) {
+		if(gameObject->isActive_) {
+			gameObject->Draw();
+		}
+	}
+
 }
 
 void GameObjectManager::AddGameObject(GameObject* gameObject) {
-	pGameObjects_.push_back(gameObject);
+	///- 引数のポインタをuniqe_ptrにする
+	std::unique_ptr<GameObject> other;
+	other.reset(gameObject);
+
+	///- objectの配列に所有権を渡す
+	gameObjects_.push_back(std::move(other));
 }
 
 void GameObjectManager::ClearList() {
-	pGameObjects_.clear();
+	//pGameObjects_.clear();
+	gameObjects_.clear();
 }
 
 void GameObjectManager::ImGuiDebug() {
@@ -81,9 +108,9 @@ void GameObjectManager::ImGuiDebug() {
 
 
 	ImGui::Begin("Hierarchy");
-	for(auto& gameObject : pGameObjects_) {
-		if(ImGui::Selectable(gameObject->GetTag().c_str(), selectObject_ == gameObject)) {
-			selectObject_ = gameObject;
+	for(auto& gameObject : gameObjects_) {
+		if(ImGui::Selectable(gameObject->GetTag().c_str(), selectObject_ == gameObject.get())) {
+			selectObject_ = gameObject.get();
 		}
 	}
 	ImGui::End();
@@ -96,6 +123,7 @@ void GameObjectManager::ImGuiDebug() {
 		ImGui::SetNextItemOpen(true, ImGuiCond_Always);
 		if(ImGui::TreeNodeEx(selectObject_->GetTag().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 
+			ImGui::Checkbox("IsActive", &selectObject_->isActive_);
 
 			selectObject_->ImGuiDebug();
 			ImGui::TreePop();

@@ -312,6 +312,14 @@ void ModelManager::Update() {
 
 }
 
+Model* ModelManager::GetModelPtr(const std::string& key) {
+	if(models_.find(key) == models_.end()) {
+		Create(key + ".obj");
+	}
+
+	return models_.at(key).get();
+}
+
 Model* ModelManager::Create(const std::string& fileName) {
 	size_t pos = fileName.find(".obj");
 	std::string key = fileName.substr(0, pos);
