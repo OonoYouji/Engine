@@ -5,18 +5,16 @@
 #include <vector>
 #include <list>
 
-#include <Vector3.h>
-
 #include <Audio.h>
 #include <Sprite.h>
 #include <Model.h>
-#include <GameObject.h>
+#include <GameObjectManager.h>
+
 
 #include <Terrain.h>
 #include <Brush.h>
 #include <Player.h>
 
-#include <TerrainCollider.h>
 
 /// <summary>
 /// ゲームシーン
@@ -35,9 +33,6 @@ public:
 
 private:
 	GameObjectManager* gameObjectManager_ = nullptr;
-
-	std::unique_ptr<Model> model_;
-	WorldTransform wtf_;
 
 	Player* player_;
 

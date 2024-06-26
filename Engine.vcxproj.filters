@@ -148,6 +148,12 @@
     <ClCompile Include="Collision\BaseCollider.cpp">
       <Filter>Source\Collision</Filter>
     </ClCompile>
+    <ClCompile Include="3D\GameObject\GameObjectManager.cpp">
+      <Filter>Source\3D\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="3D\Object3d\Object3d.cpp">
+      <Filter>Source\3D\Object3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -269,6 +275,15 @@
     </Filter>
     <Filter Include="Include\Audio">
       <UniqueIdentifier>{2858ac59-dd10-4d70-90f7-18938c92244d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\3D\Object3d">
+      <UniqueIdentifier>{4e131336-9aeb-49e7-a1fe-00dc47773050}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\3D\Object3d">
+      <UniqueIdentifier>{6b5cfa0c-b03b-4417-a39f-7e2c4b017adb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Model">
+      <UniqueIdentifier>{7e35ff60-973b-4f12-8424-172f0a0dee83}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -425,6 +440,12 @@
     <ClInclude Include="Base\CreateName.h">
       <Filter>Include\Base</Filter>
     </ClInclude>
+    <ClInclude Include="3D\GameObject\GameObjectManager.h">
+      <Filter>Include\3D\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="3D\Object3d\Object3d.h">
+      <Filter>Include\3D\Object3d</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt">
@@ -450,6 +471,9 @@
     <None Include="Shader\Polygon3d\Polygon3d.hlsli">
       <Filter>Shader\Polygon3d</Filter>
     </None>
+    <None Include="Shader\Model\Model.hlsli">
+      <Filter>Shader\Model</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Object3D\Object3d.PS.hlsl">
@@ -472,6 +496,12 @@
     </FxCompile>
     <FxCompile Include="Shader\Terrain\TerrainCollision.CS.hlsl">
       <Filter>Shader\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Model\Model.PS.hlsl">
+      <Filter>Shader\Model</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\Model\Model.VS.hlsl">
+      <Filter>Shader\Model</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

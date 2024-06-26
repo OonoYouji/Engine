@@ -18,11 +18,6 @@ void Scene_Game::Init() {
 
 	gameObjectManager_ = GameObjectManager::GetInstance();
 
-	model_.reset(new Model());
-	model_->Initialize("./Resources/Objects/Axis", "axis.obj");
-
-	wtf_.Initialize();
-
 	player_ = new Player();
 	player_->Initialize();
 
@@ -40,11 +35,9 @@ void Scene_Game::Draw() {
 	gameObjectManager_->Draw();
 
 
-	model_->Draw(wtf_);
 }
 
 void Scene_Game::Finalize() {
 
-	model_.reset();
 
 }

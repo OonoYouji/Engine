@@ -117,7 +117,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Audio;$(ProjectDir)Input;$(ProjectDir)Collision;$(ProjectDir)3D/GameObject;$(ProjectDir)3D/Entity;$(ProjectDir)3D/Polygon3d;$(ProjectDir)3D;$(ProjectDir)2D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Shader;$(ProjectDir)Math;$(ProjectDir)Base/CBuffer;$(ProjectDir)Base/ShaderCompile;$(ProjectDir)Base/PiplineStateObject;$(ProjectDir)Base;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Audio;$(ProjectDir)Input;$(ProjectDir)Collision;$(ProjectDir)3D/GameObject;$(ProjectDir)3D/Entity;$(ProjectDir)3D/Object3d;$(ProjectDir)3D/Polygon3d;$(ProjectDir)3D;$(ProjectDir)2D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Shader;$(ProjectDir)Math;$(ProjectDir)Base/CBuffer;$(ProjectDir)Base/ShaderCompile;$(ProjectDir)Base/PiplineStateObject;$(ProjectDir)Base;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -169,7 +169,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="3D\DirectionalLight.cpp" />
     <ClCompile Include="3D\Entity\Player.cpp" />
     <ClCompile Include="3D\GameObject\GameObject.cpp" />
+    <ClCompile Include="3D\GameObject\GameObjectManager.cpp" />
     <ClCompile Include="3D\Model.cpp" />
+    <ClCompile Include="3D\Object3d\Object3d.cpp" />
     <ClCompile Include="3D\Polygon3d\Polygon3d.cpp" />
     <ClCompile Include="3D\Sphere.cpp" />
     <ClCompile Include="3D\Terrain.cpp" />
@@ -219,7 +221,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="3D\DirectionalLight.h" />
     <ClInclude Include="3D\Entity\Player.h" />
     <ClInclude Include="3D\GameObject\GameObject.h" />
+    <ClInclude Include="3D\GameObject\GameObjectManager.h" />
     <ClInclude Include="3D\Model.h" />
+    <ClInclude Include="3D\Object3d\Object3d.h" />
     <ClInclude Include="3D\Polygon3d\Polygon3d.h" />
     <ClInclude Include="3D\Sphere.h" />
     <ClInclude Include="3D\Terrain.h" />
@@ -277,6 +281,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Shader\CBuffer\DirectionalLight.hlsli" />
     <None Include="Shader\CBuffer\Material.hlsli" />
     <None Include="Shader\CBuffer\TransformationMatrix.hlsli" />
+    <None Include="Shader\Model\Model.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="Shader\Object3D\Object3d.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
@@ -289,6 +296,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </None>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Shader\Model\Model.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shader\Model\Model.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Shader\Object3D\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

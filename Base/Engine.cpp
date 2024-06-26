@@ -17,6 +17,7 @@
 
 #include <Camera.h>
 #include <Model.h>
+#include <GameObjectManager.h>
 
 
 template<class T>
