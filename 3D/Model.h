@@ -91,14 +91,15 @@ public:
 
 	void Update();
 
-	Model* Create(const std::string& directoryPath, const std::string& fileName);
+	Model* Create(const std::string& fileName);
 
 	void ImGuiDebug();
 
 private:
 
-	void CreateModel(const std::string& directoryPath, const std::string& fileName, const std::string& key);
+	void CreateModel(const std::string& directoryPath, const std::string & fileName, const std::string& key);
 
+	const std::string directoryPath_ = "./Resources/Objects";
 	std::map<std::string, std::unique_ptr<Model>> models_;
 	std::vector<std::pair<std::string, int>> pairs_;
 

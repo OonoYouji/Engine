@@ -1,6 +1,6 @@
 # Blender 4.1.1
 # www.blender.org
-mtllib monkey.mtl
+mtllib Monkey.mtl
 o モンキー
 v 0.437500 0.164062 0.765625
 v -0.437500 0.164062 0.765625
