@@ -17,7 +17,7 @@ void Polygon3d::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	///- psoの設定
-	PipelineStateObjectManager::GetInstance()->SetCommandList(2, commandList);
+	PipelineStateObjectManager::GetInstance()->SetCommandList("Polygon3d", commandList);
 
 
 

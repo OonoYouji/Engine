@@ -2,7 +2,8 @@
 
 #include <d3d12.h>
 
-#include <vector>
+#include <map>
+#include <string>
 #include <memory>
 #include <cmath>
 
@@ -37,19 +38,19 @@ public:
 	/// </summary>
 	/// <param name="index"></param>
 	/// <param name="commandList"></param>
-	void SetCommandList(uint32_t index, ID3D12GraphicsCommandList* commandList);
+	void SetCommandList(const std::string& key, ID3D12GraphicsCommandList* commandList);
 	
 	/// <summary>
 	/// コマンドリストへpsoをセットする
 	/// </summary>
 	/// <param name="index"></param>
 	/// <param name="commandList"></param>
-	void SetComputeCommandList(uint32_t index, ID3D12GraphicsCommandList* commandList);
+	void SetComputeCommandList(const std::string& key, ID3D12GraphicsCommandList* commandList);
 
 private:
 
 	std::unique_ptr<ShaderCompile> shaderCompile_;
-	std::vector<std::unique_ptr<PipelineStateObject>> pipelineStateObjects_;
+	std::map<std::string, std::unique_ptr<PipelineStateObject>> pipelineStateObjects_;
 
 private:
 

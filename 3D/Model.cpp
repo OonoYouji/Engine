@@ -94,7 +94,7 @@ void Model::Draw(const WorldTransform& worldTransform) {
 	transformMatrixData_->WVP = worldTransform.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
 	///- 使用するpsoの設定
-	PipelineStateObjectManager::GetInstance()->SetCommandList(0, commandList);
+	PipelineStateObjectManager::GetInstance()->SetCommandList("Object3d", commandList);
 	///- IASet
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 

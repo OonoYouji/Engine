@@ -144,7 +144,7 @@ void Terrain::Update() {
 /// ------------------------------------------
 void Terrain::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
-	PipelineStateObjectManager::GetInstance()->SetCommandList(1, commandList);
+	PipelineStateObjectManager::GetInstance()->SetCommandList("Terrain", commandList);
 
 	///- 頂点情報
 	memcpy(pVertexData_, flattenedVertexData_.data(), flattenedVertexData_.size() * sizeof(VertexData));

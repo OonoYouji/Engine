@@ -207,7 +207,7 @@ float TerrainCollider::GetHeight(const Vec2f& texcoord) {
 
 	///- インスタンス確保
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
-	PipelineStateObjectManager::GetInstance()->SetComputeCommandList(3, commandList);
+	PipelineStateObjectManager::GetInstance()->SetComputeCommandList("TerrainCS", commandList);
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	///- Textureの取得

@@ -151,7 +151,7 @@ void Brush::Update() {
 
 void Brush::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
-	PipelineStateObjectManager::GetInstance()->SetCommandList(1, commandList);
+	PipelineStateObjectManager::GetInstance()->SetCommandList("Terrain", commandList);
 	commandList->SetGraphicsRootConstantBufferView(6, mousePointResource_->GetGPUVirtualAddress());
 }
 
