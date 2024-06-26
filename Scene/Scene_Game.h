@@ -36,10 +36,7 @@ public:
 private:
 	GameObjectManager* gameObjectManager_ = nullptr;
 
-	std::unique_ptr<Terrain> terrain_;
-	std::unique_ptr<Brush> brush_;
+	std::unique_ptr<Model> model_;
+	WorldTransform wtf_;
 
-	std::unique_ptr<Player> player_;
-
-	std::unique_ptr<TerrainCollider> terrainCollider_;
 };

@@ -128,7 +128,7 @@ void Sprite::Initialize() {
 /// </summary>
 void Sprite::Draw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
-	PipelineStateObjectManager::GetInstance()->SetCommandList(0, commandList);
+	PipelineStateObjectManager::GetInstance()->SetCommandList("Object3d", commandList);
 
 	///- マテリアルにデータをRGBAデータを書き込む
 	materialData_->color = color;

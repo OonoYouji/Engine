@@ -64,7 +64,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	materialData_->color = Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData_->enableLighting = true;
-
+	materialData_->uvTransform = Mat4::MakeIdentity();
 
 
 	/// ------------------------------------------
@@ -85,6 +85,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 void Model::Draw(const WorldTransform& worldTransform) {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+	PipelineStateObjectManager::GetInstance()->SetCommandList("Object3d", commandList);
 
 	///- 頂点情報のコピー
 	std::memcpy(vertexData_, vertexDatas_.data(), sizeof(VertexData) * vertexDatas_.size());
@@ -93,8 +94,6 @@ void Model::Draw(const WorldTransform& worldTransform) {
 	transformMatrixData_->World = worldTransform.worldMatrix;
 	transformMatrixData_->WVP = worldTransform.worldMatrix * Engine::GetCamera()->GetVpMatrix();
 
-	///- 使用するpsoの設定
-	PipelineStateObjectManager::GetInstance()->SetCommandList("Object3d", commandList);
 	///- IASet
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
