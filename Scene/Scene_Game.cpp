@@ -29,8 +29,6 @@ void Scene_Game::Update() {
 	gameObjectManager_->Update();
 
 
-	ModelManager::GetInstance()->Update();
-	ModelManager::GetInstance()->ImGuiDebug();
 
 
 }

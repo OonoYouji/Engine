@@ -5,15 +5,19 @@
 #include <memory>
 #include <array>
 
-#include <Environment.h>
-#include <WinApp.h>
 #include <DirectXCommon.h>
-#include <ImGuiManager.h>
-#include <TextureManager.h>
-#include <DirectionalLight.h>
-#include <Input.h>
-#include <Camera.h>
+#include <WinApp.h>
 #include <PipelineStateObjectManager.h>
+#include <TextureManager.h>
+#include <ImGuiManager.h>
+#include <Input.h>
+#include <DirectionalLight.h>
+
+#include <Environment.h>
+
+#include <Camera.h>
+#include <Model.h>
+
 
 template<class T>
 void SafeDelete(T* t) {
@@ -91,6 +95,8 @@ namespace {
 
 		imGuiManager_->BeginFrame();
 		input_->Begin();
+
+		ModelManager::GetInstance()->Update();
 
 		Light::GetInstance()->Update();
 
@@ -194,6 +200,8 @@ void Engine::Initialize(const std::string& title) {
 
 void Engine::Finalize() {
 	sEngineSystem.reset();
+
+	ModelManager::GetInstance()->Finalize();
 
 	// ゲームウィンドウの破棄
 	sWinApp->TerminateGameWindow();

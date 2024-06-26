@@ -4,6 +4,7 @@
 
 #include <utility>
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <memory>
@@ -89,6 +90,8 @@ public:
 	/// <returns></returns>
 	static ModelManager* GetInstance();
 
+	void Finalize();
+
 	void Update();
 
 	Model* Create(const std::string& fileName);
@@ -101,7 +104,7 @@ private:
 
 	const std::string directoryPath_ = "./Resources/Objects";
 	std::map<std::string, std::unique_ptr<Model>> models_;
-	std::vector<std::pair<std::string, int>> pairs_;
+	std::unordered_map<int, std::string> pairs_;
 
 	ModelManager() = default;
 	~ModelManager() = default;

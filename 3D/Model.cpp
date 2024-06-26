@@ -284,6 +284,10 @@ ModelManager* ModelManager::GetInstance() {
 	return &instance;
 }
 
+void ModelManager::Finalize() {
+	models_.clear();
+}
+
 void ModelManager::Update() {
 	std::list<std::string> filePaths;
 	for(const auto& entry : std::filesystem::directory_iterator(directoryPath_)) {
@@ -300,11 +304,11 @@ void ModelManager::Update() {
 	pairs_.clear();
 	int index = 0;
 	for(auto& filePath : filePaths) {
-		pairs_.push_back(std::pair(filePath, index));
+		pairs_[index] = filePath;
 		index++;
 	}
 
-
+	ImGuiDebug();
 
 }
 
@@ -318,73 +322,64 @@ Model* ModelManager::Create(const std::string& fileName) {
 	}
 
 	///- 読み込んでからそのモデルへのポインタを返す
-	CreateModel(directoryPath_ + "/" +  key, fileName, key);
+	CreateModel(directoryPath_ + "/" + key, fileName, key);
 	return models_.at(key).get();
 }
 
 void ModelManager::ImGuiDebug() {
-	///- ./Resources/Obejcts/ にあるモデルのファイルパスを読み込む
+#ifdef _DEBUG
 
-	ImGui::Begin("File Names");
+	ImGui::Begin("Model Loaded Checker");
 
 	static int currentNumber = 0;
 
 	std::vector<const char*> itemNames;
 	for(const auto& pair : pairs_) {
-		itemNames.push_back(pair.first.c_str());
+		itemNames.push_back(pair.second.c_str());
 	}
 
 	ImGui::Combo("Path", &currentNumber, itemNames.data(), static_cast<int>(itemNames.size()));
 
 	///- 選択されたModelの探索
-	for(auto it = pairs_.begin(); it != pairs_.end(); ++it) {
+	auto it = pairs_.find(currentNumber);
+	if(it != pairs_.end()) {
 
-		///- 見つかったときの処理
-		if(it->second == currentNumber) {
-			if(ImGui::TreeNodeEx("SelectModel", ImGuiTreeNodeFlags_DefaultOpen)) {
+		ImGui::Separator();
 
-				for(const auto& entry : std::filesystem::directory_iterator(it->first)) {
-					if(entry.is_regular_file()) {
-						std::string tag = entry.path().filename().string();
-						ImGui::Text("%s", tag.c_str());
+		///- map<>用のkeyを計算
+		std::string key = it->second.substr((directoryPath_ + "\\").length());
 
-					}
-				}
 
-				ImGui::TreePop();
+
+		///- 読み込み済みかどうか出力
+		if(models_.find(key) != models_.end()) {
+			ImGui::Text("Loaded");
+			ImGui::Separator();
+
+			///- 読み込まれた情報を色々出す
+			///////////////////////////////////////////////////////////////////
+
+			///- Unload
+			if(ImGui::Button("UNLOAD")) {
+				models_.erase(key);
 			}
 
-			///- map<>用のkeyを計算
-			std::string key = it->first.substr((directoryPath_ + "\\").length());
+		} else {
+			ImGui::Text("Not Loaded");
+			ImGui::Separator();
 
-			///- 読み込み済みかどうか出力
-			if(models_.find(key) != models_.end()) {
-				ImGui::Text("Loaded");
-
-				///- Unload
-				if(ImGui::Button("UNLOAD")) {
-					models_.erase(key);
-				}
-
-			} else {
-				ImGui::Text("Not Loaded");
-
-				///- Load
-				if(ImGui::Button("LOAD")) {
-					Create(key + ".obj");
-				}
-
+			///- Load
+			if(ImGui::Button("LOAD")) {
+				Create(key + ".obj");
 			}
-
-
 
 		}
-
 
 	}
 
 	ImGui::End();
 
+#endif // _DEBUG
 }
 
 void ModelManager::CreateModel(const std::string& directoryPath, const std::string& fileName, const std::string& key) {
