@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <unordered_map>
 #include <map>
 
 
@@ -36,18 +37,25 @@ public:
 	/// </summary>
 	static TextureManager* GetInstance();
 
-
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize();
-
 
 	/// <summary>
 	/// 終了処理
 	/// </summary>
 	void Finalize();
 
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update();
+
+	/// <summary>
+	/// ImGuiでデバッグ表示
+	/// </summary>
+	void ImGuiDebug();
 
 	/// <summary>
 	/// 
@@ -80,11 +88,7 @@ public:
 
 	ID3D12Resource* GetUavTextureResource(const std::string& name);
 
-private: ///- メンバ変数
-
-	std::map<std::string, Texture> textures_;
-	std::map<std::string, Texture> uavTextures_;
-
+private:
 
 	/// <summary>
 	/// Textureデータを読む
@@ -107,6 +111,15 @@ private: ///- メンバ変数
 	ComPtr<ID3D12Resource> UploadTextureDataUav(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
 
 	void CreateBarrier(ID3D12GraphicsCommandList* commandList, ID3D12Resource* pTexture, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
+
+private: ///- メンバ変数
+
+	const std::string kDirectoryPath_ = "./Resources/Images/";
+
+	std::map<std::string, Texture> textures_;
+	std::map<std::string, Texture> uavTextures_;
+
+	std::unordered_map<int, std::string> comboList_;
 
 private:
 

@@ -107,3 +107,10 @@ D3D12_GPU_DESCRIPTOR_HANDLE DxDescriptors::GetGPUDescriptorHandle() {
 void DxDescriptors::AddSrvUsedCount() {
 	srvUsedCount_++;
 }
+
+void DxDescriptors::SetCommandListSrvHeap(ID3D12GraphicsCommandList* commandList) {
+	//// デスクリプタヒープの設定
+	ID3D12DescriptorHeap* descriptorHeaps[] = { GetSRVHeap() };
+	commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+}

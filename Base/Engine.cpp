@@ -98,6 +98,7 @@ namespace {
 		input_->Begin();
 
 		ModelManager::GetInstance()->Update();
+		textureManager_->Update();
 
 		Light::GetInstance()->Update();
 

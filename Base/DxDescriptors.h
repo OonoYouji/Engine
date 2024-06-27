@@ -74,6 +74,8 @@ public:
 
 	void AddSrvUsedCount();
 
+	void SetCommandListSrvHeap(ID3D12GraphicsCommandList* commandList);
+
 
 	uint32_t GetSRVSize() const { return descriptorSRV_; }
 	uint32_t GetRTVSize() const { return descriptorRTV_; }

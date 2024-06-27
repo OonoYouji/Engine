@@ -1,10 +1,16 @@
 #include "TextureManager.h"
 
 #include <d3dx12.h>
-#include "DirectXCommon.h"
+
+#include <iostream>
+#include <filesystem>
+
+#include <DirectXCommon.h>
 #include <DxDescriptors.h>
 #include <DxCommand.h>
-#include "Engine.h"
+#include <Engine.h>
+
+#include <ImGuiManager.h>
 
 #pragma comment(lib, "DirectXTex.lib")
 
@@ -23,7 +29,7 @@ TextureManager* TextureManager::GetInstance() {
 /// </summary>
 void TextureManager::Initialize() {
 
-	const std::string baseFilePath = "./Resources/Images/";
+	const std::string baseFilePath = kDirectoryPath_;
 
 	Load("white1x1", baseFilePath + "white1x1.png");
 	Load("uvChecker", baseFilePath + "uvChecker.png");
@@ -60,6 +66,94 @@ void TextureManager::Finalize() {
 
 	textures_.clear();
 	uavTextures_.clear();
+}
+
+void TextureManager::Update() {
+
+	ImGuiDebug();
+
+}
+
+void TextureManager::ImGuiDebug() {
+#ifdef _DEBUG
+
+	ImGui::Begin("Texture Loaded Checker");
+
+	///- ディレクトリパスないのファイルをすべて文字列に書き込む
+	std::list<std::string> filePaths;
+	for(const auto& entry : std::filesystem::directory_iterator(kDirectoryPath_)) {
+		if(entry.is_regular_file()) {
+			std::string path = entry.path().string();
+			filePaths.push_back(path);
+		}
+	}
+	///- アルファベット順にソートする
+	filePaths.sort();
+
+	///- combo用のlistの更新
+	comboList_.clear();
+	int index = 0;
+	for(auto& filePath : filePaths) {
+		comboList_[index] = filePath;
+		index++;
+	}
+
+	///- listの文字列をconbo用に変換
+	std::vector<const char*> paths;
+	for(const auto& pair : comboList_) {
+		paths.push_back(pair.second.c_str());
+	}
+
+
+	///- ImGui::Comboにすべてのファイルを表示する
+	static int currentNumber = 0;
+	ImGui::Combo("Path", &currentNumber, paths.data(), static_cast<int>(paths.size()));
+	ImGui::Separator();
+
+
+	///- 選択されたFileの情報を表示する
+	auto it = comboList_.find(currentNumber);
+	if(it != comboList_.end()) {
+
+		///- map<>用のkeyを計算
+		std::string key = it->second.substr((kDirectoryPath_).length());
+		size_t strPos = key.find(".png");
+		key = key.substr(0, strPos);
+
+		///- 読み込み済みかどうか出力
+		if(textures_.find(key) != textures_.end()) {
+			ImGui::Text("Loaded");
+			ImGui::Separator();
+
+			///- 読み込まれた情報を色々出す
+			///////////////////////////////////////////////////////////////////
+
+			///- Unload
+			if(ImGui::Button("UNLOAD")) {
+
+
+			}
+
+		} else {
+			ImGui::Text("Not Loaded");
+			ImGui::Separator();
+
+			///- Load
+			if(ImGui::Button("LOAD")) {
+
+
+			}
+
+		}
+
+	}
+
+
+
+
+	ImGui::End();
+
+#endif // _DEBUG
 }
 
 
@@ -148,19 +242,13 @@ void TextureManager::LoadUav(const std::string& textureName, const std::string& 
 /// </summary>
 /// <param name="index"></param>
 void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, const std::string& textureName) {
-	//// デスクリプタヒープの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { DxDescriptors::GetInstance()->GetSRVHeap() };
-	DxCommand::GetInstance()->GetList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
+	DxDescriptors::GetInstance()->SetCommandListSrvHeap(DxCommand::GetInstance()->GetList());
 	/// texturesの範囲外参照しないように注意
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_.at(textureName).handleGPU);
 }
 
 void TextureManager::SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, const std::string& textureName) {
-	//// デスクリプタヒープの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { DxDescriptors::GetInstance()->GetSRVHeap() };
-	DxCommand::GetInstance()->GetList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
+	DxDescriptors::GetInstance()->SetCommandListSrvHeap(DxCommand::GetInstance()->GetList());
 	/// texturesの範囲外参照しないように注意
 	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, uavTextures_[textureName].handleGPU);
 }

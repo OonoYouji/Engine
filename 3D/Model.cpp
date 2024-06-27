@@ -130,10 +130,7 @@ void Model::Draw(const WorldTransform& worldTransform) {
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 
-	//// デスクリプタヒープの設定
-	ID3D12DescriptorHeap* descriptorHeaps[] = { DxDescriptors::GetInstance()->GetSRVHeap() };
-	DxCommand::GetInstance()->GetList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
-
+	DxDescriptors::GetInstance()->SetCommandListSrvHeap(commandList);
 	commandList->SetGraphicsRootDescriptorTable(1, gpuHandle_);
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, material_.textureName);
 	Light::GetInstance()->SetConstantBuffer(3, commandList);
@@ -401,17 +398,14 @@ void ModelManager::ImGuiDebug() {
 	}
 
 	ImGui::Combo("Path", &currentNumber, itemNames.data(), static_cast<int>(itemNames.size()));
+	ImGui::Separator();
 
 	///- 選択されたModelの探索
 	auto it = pairs_.find(currentNumber);
 	if(it != pairs_.end()) {
 
-		ImGui::Separator();
-
 		///- map<>用のkeyを計算
 		std::string key = it->second.substr((directoryPath_ + "\\").length());
-
-
 
 		///- 読み込み済みかどうか出力
 		if(models_.find(key) != models_.end()) {
