@@ -35,6 +35,7 @@ void TextureManager::Initialize() {
 	Load("clear1", baseFilePath + "clear1.png");
 	Load("tileMap", baseFilePath + "tileMap.png");
 	Load("GrayTexture", baseFilePath + "GrayTexture.png");
+	Load("CheckerBoard", baseFilePath + "checkerBoard.png");
 
 	LoadUav("uvChecker", baseFilePath + "uvChecker.png");
 	LoadUav("monsterBall", baseFilePath + "monsterBall.png");
@@ -152,7 +153,7 @@ void TextureManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, con
 	DxCommand::GetInstance()->GetList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
 
 	/// texturesの範囲外参照しないように注意
-	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_[textureName].handleGPU);
+	DxCommand::GetInstance()->GetList()->SetGraphicsRootDescriptorTable(rootParameterIndex, textures_.at(textureName).handleGPU);
 }
 
 void TextureManager::SetGraphicsRootDescriptorTableUAV(UINT rootParameterIndex, const std::string& textureName) {

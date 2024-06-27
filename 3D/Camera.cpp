@@ -34,6 +34,7 @@ void Camera::Init() {
 #ifdef _DEBUG
 	debugCamera_ = new DebugCamera();
 	debugCamera_->Initalize();
+	debugCamera_->isActive_ = false;
 #endif // _DEBUG
 }
 

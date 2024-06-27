@@ -129,6 +129,11 @@ void Model::Draw(const WorldTransform& worldTransform) {
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+
+	//// デスクリプタヒープの設定
+	ID3D12DescriptorHeap* descriptorHeaps[] = { DxDescriptors::GetInstance()->GetSRVHeap() };
+	DxCommand::GetInstance()->GetList()->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
 	commandList->SetGraphicsRootDescriptorTable(1, gpuHandle_);
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, material_.textureName);
 	Light::GetInstance()->SetConstantBuffer(3, commandList);
@@ -295,7 +300,19 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 			for(uint32_t i = 0; i < 4; i++) {
 				textureFileName.pop_back();
 			}
-			materialData.textureName = textureFileName;
+
+			std::string name;
+			for(size_t i = textureFileName.size() - 1; i >= 0; --i) {
+				if(textureFileName[i] != '/') {
+					name.push_back(textureFileName[i]);
+				} else {
+					break;
+				}
+			}
+
+			std::reverse(name.begin(), name.end());
+
+			materialData.textureName = name;
 		}
 
 	}
