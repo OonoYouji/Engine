@@ -7,11 +7,10 @@
 #include <Input.h>
 #include <DebugCamera.h>
 
+#include <CreateName.h>
 
 Camera::Camera() {
-	std::string name = typeid(*this).name();
-	name = name.substr(std::string("class ").length());
-	SetTag(name);
+	SetTag(CreateName(this));
 	Init();
 }
 Camera::~Camera() { Finalize(); }
@@ -19,7 +18,7 @@ Camera::~Camera() { Finalize(); }
 void Camera::Init() {
 
 	worldTransform_.Initialize();
-	worldTransform_.rotate = { 0.5f, 0.0f, 0.0f };
+	worldTransform_.rotate = { 0.0f, 0.0f, 0.0f };
 	worldTransform_.translate = { 0.0f,1.5f, -15.0f };
 	//worldTransform_.rotate = { 1.5f, 0.0f, 0.0f };
 	//worldTransform_.translate = { 20.0f,165.0f, 15.0f };
@@ -35,7 +34,6 @@ void Camera::Init() {
 #ifdef _DEBUG
 	debugCamera_ = new DebugCamera();
 	debugCamera_->Initalize();
-	isDebugCameraActive_ = false;
 #endif // _DEBUG
 }
 
@@ -47,7 +45,7 @@ void Camera::Update() {
 	vpMatrix_ = viewProjection_.matView * viewProjection_.matProjection;
 
 #ifdef _DEBUG
-	if(isDebugCameraActive_) {
+	if(debugCamera_->isActive_) {
 		debugCamera_->Update();
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
@@ -56,7 +54,11 @@ void Camera::Update() {
 #endif // _DEBUG
 }
 
-void Camera::Draw() {}
+void Camera::Draw() {
+	if(!debugCamera_->isActive_) {
+		debugCamera_->Draw();
+	}
+}
 
 void Camera::ImGuiDebug() {
 	/// -------------------------------------------
@@ -89,11 +91,8 @@ void Camera::ImGuiDebug() {
 	/// -------------------------------------------
 	if(ImGui::TreeNodeEx("DebugCamera", ImGuiTreeNodeFlags_DefaultOpen)) {
 
-		ImGui::Checkbox("IsActive", &isDebugCameraActive_);
+		ImGui::Checkbox("IsActive", &debugCamera_->isActive_);
 		debugCamera_->ImGuiDebug();
-		if(!isDebugCameraActive_) {
-			debugCamera_->Draw();
-		}
 
 		if(ImGui::Button("Copy DebugCamera -> Main Camera")) {
 			worldTransform_ = debugCamera_->GetWorldTransform();

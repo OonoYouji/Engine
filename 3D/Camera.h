@@ -45,7 +45,6 @@ private:
 
 #ifdef _DEBUG
 	DebugCamera* debugCamera_;
-	bool isDebugCameraActive_;
 #endif // _DEBUG
 public:
 

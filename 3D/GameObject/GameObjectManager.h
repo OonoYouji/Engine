@@ -56,7 +56,6 @@ private:
 	std::list<std::unique_ptr<GameObject>> gameObjects_;
 	GameObject* selectObject_ = nullptr;
 
-
 private:
 	GameObjectManager() = default;
 	~GameObjectManager() = default;

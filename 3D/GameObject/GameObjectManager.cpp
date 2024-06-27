@@ -85,7 +85,29 @@ void GameObjectManager::ImGuiDebug() {
 
 			ImGui::Checkbox("IsActive", &selectObject_->isActive_);
 
+			///- 選択されている要素のデバッグ表示
 			selectObject_->ImGuiDebug();
+
+			ImGui::Separator();
+
+			///- 選択されている要素を消す
+			if(ImGui::Button("Delete")) {
+
+				///- 要素探索
+				auto it = std::find_if(gameObjects_.begin(), gameObjects_.end(),
+									   [this](const std::unique_ptr<GameObject>& obj) {
+					return obj.get() == selectObject_;
+				});
+
+				///- 見つかれば要素を消す
+				if(it != gameObjects_.end()) {
+					gameObjects_.erase(it);
+					selectObject_ = nullptr;
+				}
+
+
+			}
+
 			ImGui::TreePop();
 		}
 	}
