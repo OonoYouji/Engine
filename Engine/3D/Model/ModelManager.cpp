@@ -1,33 +1,101 @@
 #include <ModelManager.h>
 
+#pragma region Include
 #include <filesystem>
 #include <iostream>
 
 #include <ImGuiManager.h>
 
 #include <Model.h>
-
-/// ================================================================================================== ///
-/// ↓ ModelManager Methods
-/// ================================================================================================== ///
+#pragma endregion
 
 
+
+/// ===================================================
+/// インスタンス確保
+/// ===================================================
 ModelManager* ModelManager::GetInstance() {
 	static ModelManager instance;
 	return &instance;
 }
 
+
+
+/// ===================================================
+/// 終了処理
+/// ===================================================
 void ModelManager::Finalize() {
 	models_.clear();
 }
 
+
+
+/// ===================================================
+/// 描画前処理
+/// ===================================================
 void ModelManager::PreDraw() {
+	///- モデルのインスタンス数をリセット
 	for(auto& model : models_) {
 		model.second->Reset();
 	}
 }
 
+
+
+/// ===================================================
+/// 更新処理
+/// ===================================================
 void ModelManager::Update() {
+
+	ImGuiDebug();
+
+}
+
+
+
+/// ===================================================
+/// モデルへのポインタを返す
+/// ===================================================
+Model* ModelManager::GetModelPtr(const std::string& key) {
+	///- 読み込み済みじゃなければ生成する
+	if(models_.find(key) == models_.end()) {
+		Create(key + ".obj");
+	}
+
+	///- ポインタを返す
+	return models_.at(key).get();
+}
+
+
+
+/// ===================================================
+/// モデルを作成してポインタを返す
+/// ===================================================
+Model* ModelManager::Create(const std::string& fileName) {
+	size_t pos = fileName.find(".obj");
+	std::string key = fileName.substr(0, pos);
+
+	///- すでに読み込み済みであればそのモデルのポインタを返す
+	if(models_.find(key) != models_.end()) {
+		return models_.at(key).get();
+	}
+
+	///- 読み込んでからそのモデルへのポインタを返す
+	CreateModel(directoryPath_ + key, fileName, key);
+	return models_.at(key).get();
+}
+
+
+
+/// ===================================================
+/// ImGuiでデバッグ表示
+/// ===================================================
+void ModelManager::ImGuiDebug() {
+#ifdef _DEBUG
+
+	/// ---------------------------------------------------
+	/// ファイル探索をしてファイルの文字列をlistに格納する
+	/// ---------------------------------------------------
 	std::list<std::string> filePaths;
 	for(const auto& entry : std::filesystem::directory_iterator(directoryPath_)) {
 		if(entry.is_directory()) {
@@ -47,55 +115,35 @@ void ModelManager::Update() {
 		index++;
 	}
 
-	ImGuiDebug();
 
-}
 
-Model* ModelManager::GetModelPtr(const std::string& key) {
-	if(models_.find(key) == models_.end()) {
-		Create(key + ".obj");
-	}
-
-	return models_.at(key).get();
-}
-
-Model* ModelManager::Create(const std::string& fileName) {
-	size_t pos = fileName.find(".obj");
-	std::string key = fileName.substr(0, pos);
-
-	///- すでに読み込み済みであればそのモデルのポインタを返す
-	if(models_.find(key) != models_.end()) {
-		return models_.at(key).get();
-	}
-
-	///- 読み込んでからそのモデルへのポインタを返す
-	CreateModel(directoryPath_ + key, fileName, key);
-	return models_.at(key).get();
-}
-
-void ModelManager::ImGuiDebug() {
-#ifdef _DEBUG
-
+	/// ---------------------------------------------------
+	/// ImGuiに色々表示
+	/// ---------------------------------------------------
 	ImGui::Begin("Model Loaded Checker");
 
-	static int currentNumber = 0;
-
+	///- pairのstringを格納してComboに使用する
 	std::vector<const char*> itemNames;
 	for(const auto& pair : pairs_) {
 		itemNames.push_back(pair.second.c_str());
 	}
 
+	///- Comboでプルダウンメニューの表示
+	static int currentNumber = 0;
 	ImGui::Combo("Path", &currentNumber, itemNames.data(), static_cast<int>(itemNames.size()));
 	ImGui::Separator();
 
 	///- 選択されたModelの探索
 	auto it = pairs_.find(currentNumber);
 	if(it != pairs_.end()) {
-
+		
 		///- map<>用のkeyを計算
 		std::string key = it->second.substr((directoryPath_).length());
 
-		///- 読み込み済みかどうか出力
+
+		/// ---------------------------------------------------
+		/// 読み込み済みかどうか表示 : 読み込まれたモデルの情報を表示
+		/// ---------------------------------------------------
 		if(models_.find(key) != models_.end()) {
 			ImGui::Text("Loaded");
 			ImGui::Separator();
@@ -126,6 +174,11 @@ void ModelManager::ImGuiDebug() {
 #endif // _DEBUG
 }
 
+
+
+/// ===================================================
+/// モデルの作成
+/// ===================================================
 void ModelManager::CreateModel(const std::string& directoryPath, const std::string& fileName, const std::string& key) {
 
 	models_[key] = std::make_unique<Model>();

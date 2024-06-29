@@ -28,7 +28,7 @@ public:
 		ComPtr<ID3D12Resource> resource;
 		D3D12_CPU_DESCRIPTOR_HANDLE handleCPU;
 		D3D12_GPU_DESCRIPTOR_HANDLE handleGPU;
-		ComPtr<ID3D12Resource> intermediateResource;
+		//ComPtr<ID3D12Resource> intermediateResource;
 	};
 
 

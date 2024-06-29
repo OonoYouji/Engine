@@ -1,22 +1,38 @@
 #include <GameObjectManager.h>
 
+#pragma region Include
 #include <iostream>
 #include <filesystem>
 
 #include <ImGuiManager.h>
 
 #include <Object3d.h>
+#pragma endregion
 
 
+
+/// ===================================================
+/// インスタンス確保
+/// ===================================================
 GameObjectManager* GameObjectManager::GetInstance() {
 	static GameObjectManager instance;
 	return &instance;
 }
 
+
+
+/// ===================================================
+/// 終了処理
+/// ===================================================
 void GameObjectManager::Finalize() {
 	ClearList();
 }
 
+
+
+/// ===================================================
+/// 更新処理
+/// ===================================================
 void GameObjectManager::Update() {
 	ImGuiDebug();
 
@@ -28,6 +44,11 @@ void GameObjectManager::Update() {
 
 }
 
+
+
+/// ===================================================
+/// GameObejctを描画する
+/// ===================================================
 void GameObjectManager::Draw() {
 
 	for(auto& gameObject : gameObjects_) {
@@ -38,6 +59,11 @@ void GameObjectManager::Draw() {
 
 }
 
+
+
+/// ===================================================
+/// GameObejctクラスの追加
+/// ===================================================
 void GameObjectManager::AddGameObject(GameObject* gameObject) {
 	///- 引数のポインタをuniqe_ptrにする
 	std::unique_ptr<GameObject> other(gameObject);
@@ -46,10 +72,20 @@ void GameObjectManager::AddGameObject(GameObject* gameObject) {
 	gameObjects_.push_back(std::move(other));
 }
 
+
+
+/// ===================================================
+/// リストのクリア
+/// ===================================================
 void GameObjectManager::ClearList() {
 	gameObjects_.clear();
 }
 
+
+
+/// ===================================================
+/// ImGuiでデバッグ表示
+/// ===================================================
 void GameObjectManager::ImGuiDebug() {
 #ifdef _DEBUG
 
@@ -124,6 +160,11 @@ void GameObjectManager::ImGuiDebug() {
 #endif // _DEBUG
 }
 
+
+
+/// ===================================================
+/// ImGuiで新しいオブジェクトの追加をする
+/// ===================================================
 void GameObjectManager::ImGuiMenu() {
 
 	///- Menuが開かなければreturn
@@ -157,12 +198,22 @@ void GameObjectManager::ImGuiMenu() {
 
 }
 
+
+
+/// ===================================================
+/// Objcet3dクラスを追加する
+/// ===================================================
 void GameObjectManager::AddObject3d(const std::string& modelKey) {
 	///- 新しいObjectの生成
 	Object3d* newGameObject = new Object3d();
 	newGameObject->Initialize(modelKey);
 }
 
+
+
+/// ===================================================
+/// ImGuiで親子関係の設定をする
+/// ===================================================
 void GameObjectManager::ImGuiParentSetting() {
 	static int currentNumber = 0;
 	std::vector<const char*> objectNames;

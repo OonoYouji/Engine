@@ -180,14 +180,14 @@ void TextureManager::Load(const std::string& textureName, const std::string& fil
 	DirectX::ScratchImage mipImages = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	newTexture.resource = CreataTextureResouece(DirectXCommon::GetInstance()->GetDevice(), metadata);
-	newTexture.intermediateResource = UploadTextureData(newTexture.resource.Get(), mipImages);
+	ComPtr<ID3D12Resource> intermediateResource = UploadTextureData(newTexture.resource.Get(), mipImages);
 
 
 	DxCommand* command = DxCommand::GetInstance();
 	command->Close();
 	DirectXCommon::GetInstance()->WaitExecution();
 	command->ResetCommandList();
-	newTexture.intermediateResource.Reset();
+	intermediateResource.Reset();
 
 	///- metadataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -220,13 +220,13 @@ void TextureManager::LoadUav(const std::string& textureName, const std::string& 
 	DirectX::ScratchImage mipImages = LoadTexture(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	newTexture.resource = CreataTextureResoueceUAV(DirectXCommon::GetInstance()->GetDevice(), metadata);
-	newTexture.intermediateResource = UploadTextureDataUav(newTexture.resource.Get(), mipImages);
+	ComPtr<ID3D12Resource> intermediateResource = UploadTextureData(newTexture.resource.Get(), mipImages);
 
 	DxCommand* command = DxCommand::GetInstance();
 	command->Close();
 	DirectXCommon::GetInstance()->WaitExecution();
 	command->ResetCommandList();
-	newTexture.intermediateResource.Reset();
+	intermediateResource.Reset();
 
 	///- metadataを基にSRVの設定
 	D3D12_UNORDERED_ACCESS_VIEW_DESC uavDesc{};

@@ -1,5 +1,6 @@
 #include <Model.h>
 
+#pragma region Include
 #include <fstream>
 #include <sstream>
 #include <cassert>
@@ -18,6 +19,7 @@
 #include <ImGuiManager.h>
 #include <DirectionalLight.h>
 #include <PipelineStateObjectManager.h>
+#pragma endregion
 
 
 Model::Model() {}
@@ -31,6 +33,9 @@ Model::~Model() {
 
 
 
+/// ===================================================
+/// 初期化
+/// ===================================================
 void Model::Initialize(const std::string& directoryPath, const std::string& fileName) {
 
 	*this = LoadObjFile(directoryPath, fileName);
@@ -107,6 +112,9 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 
 
 
+/// ===================================================
+/// 描画処理
+/// ===================================================
 void Model::Draw(const WorldTransform& worldTransform) {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	PipelineStateObjectManager::GetInstance()->SetCommandList("Model", commandList);
@@ -139,6 +147,10 @@ void Model::Draw(const WorldTransform& worldTransform) {
 }
 
 
+
+/// ===================================================
+/// ImGuiでデバッグ表示
+/// ===================================================
 void Model::DebugDraw(const std::string& windowName) {
 #ifdef _DEBUG
 	ImGui::Begin(windowName.c_str());
@@ -163,12 +175,20 @@ void Model::DebugDraw(const std::string& windowName) {
 #endif // _DEBUG
 }
 
+
+
+/// ===================================================
+/// インスタンス数のリセット
+/// ===================================================
 void Model::Reset() {
 	instanceCount_ = 0;
 }
 
 
 
+/// ===================================================
+/// .objファイルの読み込み
+/// ===================================================
 Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fileName) {
 	Model model = Model();
 	std::vector<Vector4> positions;	//- 位置
@@ -274,6 +294,9 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 
 
 
+/// ===================================================
+/// .mtlファイルの読み込み
+/// ===================================================
 Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& fileName) {
 	MaterialData materialData;
 	std::string line;
