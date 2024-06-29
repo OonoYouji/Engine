@@ -241,7 +241,9 @@ void GameObjectManager::ImGuiParentSetting() {
 	std::vector<const char*> objectNames;
 	objectNames.push_back("null");
 	for(const auto& object : gameObjects_) {
-		objectNames.push_back(object->GetTag().c_str());
+		if(object.get() != selectObject_) {
+			objectNames.push_back(object->GetTag().c_str());
+		}
 	}
 
 	ImGui::Combo("Parent", &currentNumber, objectNames.data(), static_cast<int>(objectNames.size()));
