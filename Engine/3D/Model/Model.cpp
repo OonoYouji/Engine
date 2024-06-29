@@ -226,7 +226,6 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 			Vec4f position;
 			s >> position.x >> position.y >> position.z;
 			position.x *= -1.0f;
-			position.z *= -1.0f;
 			position.w = 1.0f;
 			positions.push_back(position);
 
@@ -242,7 +241,6 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 			Vec3f normal;
 			s >> normal.x >> normal.y >> normal.z;
 			normal.x *= -1.0f;
-			normal.z *= -1.0f;
 			normals.push_back(normal);
 
 		} else if(identifier == "f") {		///- triangle
@@ -274,9 +272,9 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 			}
 
 			///- 頂点を逆順で保存する (モデルが右手座標系のため)
-			model.vertexDatas_.push_back(triangle[0]);
-			model.vertexDatas_.push_back(triangle[1]);
 			model.vertexDatas_.push_back(triangle[2]);
+			model.vertexDatas_.push_back(triangle[1]);
+			model.vertexDatas_.push_back(triangle[0]);
 
 		} else if(identifier == "mtllib") {
 
