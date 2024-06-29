@@ -54,11 +54,42 @@ public:
 	const std::string& GetName() const;
 #pragma endregion
 
+#pragma region 親子関係
+
+
 	/// <summary>
 	/// 親の設定
 	/// </summary>
 	/// <param name="parent"></param>
-	void SetParent(const GameObject* parent);
+	void SetParent(GameObject* parent);
+
+	/// <summary>
+	/// 親のポインタを取得する
+	/// </summary>
+	/// <returns></returns>
+	GameObject* GetParent() const;
+
+	/// <summary>
+	/// 子供の追加
+	/// </summary>
+	/// <param name="child">追加するポインタ</param>
+	/// <returns>成功 true : 失敗 false</returns>
+	bool AddChild(GameObject* child);
+
+	/// <summary>
+	/// 子供の削除
+	/// </summary>
+	/// <param name="child">childsリストの要素</param>
+	/// <returns>成功 true : 失敗 false</returns>
+	bool SubChild(GameObject* child);
+
+	/// <summary>
+	/// Childのポインタを返す
+	/// </summary>
+	/// <returns></returns>
+	std::list<GameObject*> GetChilds() const;
+
+#pragma endregion
 
 	/// <summary>
 	/// ImGuiでのデバッグ表示
@@ -90,9 +121,11 @@ protected:
 	std::string tag_;
 	std::string name_;
 
-
 	WorldTransform worldTransform_;
-	const GameObject* parent_;
+
+	///- 親子関係
+	GameObject* parent_;
+	std::list<GameObject*> childs_;
 
 };
 

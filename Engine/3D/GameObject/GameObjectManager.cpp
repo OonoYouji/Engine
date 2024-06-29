@@ -104,9 +104,19 @@ void GameObjectManager::ImGuiDebug() {
 	/// GameObject SelecTable
 	/// ------------------------------------------------
 	for(auto& gameObject : gameObjects_) {
+
+		if(gameObject->GetParent()) { continue; }
 		if(ImGui::Selectable(gameObject->GetTag().c_str(), selectObject_ == gameObject.get())) {
 			selectObject_ = gameObject.get();
 		}
+
+		ImGui::Indent();
+		for(auto& child : gameObject->GetChilds()) {
+			if(ImGui::Selectable(child->GetTag().c_str(), selectObject_ == child)) {
+				selectObject_ = child;
+			}
+		}
+		ImGui::Unindent();
 	}
 	ImGui::End();
 
@@ -115,6 +125,7 @@ void GameObjectManager::ImGuiDebug() {
 	ImGui::Begin("Inspector");
 
 	if(selectObject_) {
+
 		ImGui::SetNextItemOpen(true, ImGuiCond_Always);
 		if(ImGui::TreeNodeEx(selectObject_->GetTag().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 
@@ -128,7 +139,7 @@ void GameObjectManager::ImGuiDebug() {
 
 			///- 親の設定を行う
 			ImGuiParentSetting();
-			
+
 			ImGui::Separator();
 			ImGui::NewLine();
 
@@ -226,12 +237,25 @@ void GameObjectManager::ImGuiParentSetting() {
 
 	if(ImGui::Button("Apply")) {
 		for(const auto& object : gameObjects_) {
-			if(!currentNumber){
+
+			///- 親を取り消す
+			if(!currentNumber) {
+				GameObject* parent = selectObject_->GetParent();
+				parent->SubChild(selectObject_);
 				selectObject_->SetParent(nullptr);
 				break;
 			}
+
+			///- 親を設定する
 			if(object->GetTag() == objectNames[currentNumber]) {
+				///- すでに親がいた場合
+				if(selectObject_->GetParent()) {
+					GameObject* parent = selectObject_->GetParent();
+					parent->SubChild(selectObject_);
+				}
+
 				selectObject_->SetParent(object.get());
+				object->AddChild(selectObject_);
 				break;
 			}
 		}

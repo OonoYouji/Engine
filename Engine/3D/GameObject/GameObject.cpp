@@ -32,8 +32,34 @@ const std::string& GameObject::GetName() const {
 	return name_;
 }
 
-void GameObject::SetParent(const GameObject* parent) {
+void GameObject::SetParent(GameObject* parent) {
 	parent_ = parent;
+}
+
+GameObject* GameObject::GetParent() const {
+	return parent_;
+}
+
+bool GameObject::AddChild(GameObject* child) {
+	auto it = std::find(childs_.begin(), childs_.end(), child);
+	if(it != childs_.end()) {
+		return false; //- 失敗
+	}
+	childs_.push_back(child);
+	return true; //- 成功
+}
+
+bool GameObject::SubChild(GameObject* child) {
+	auto it = std::find(childs_.begin(), childs_.end(), child);
+	if(it != childs_.end()) {
+		childs_.erase(it);
+		return true; //- 成功
+	}
+	return false; //- 失敗
+}
+
+std::list<GameObject*> GameObject::GetChilds() const {
+	return childs_;
 }
 
 void GameObject::ImGuiDebug() {
