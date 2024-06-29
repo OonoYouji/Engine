@@ -117,7 +117,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Audio;$(ProjectDir)Input;$(ProjectDir)Collision;$(ProjectDir)3D/GameObject;$(ProjectDir)3D/Entity;$(ProjectDir)3D/Object3d;$(ProjectDir)3D/Polygon3d;$(ProjectDir)3D;$(ProjectDir)2D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Shader;$(ProjectDir)Math;$(ProjectDir)Base/CBuffer;$(ProjectDir)Base/ShaderCompile;$(ProjectDir)Base/PiplineStateObject;$(ProjectDir)Base;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine/Audio;$(ProjectDir)Engine/Input;$(ProjectDir)Engine/Collision;$(ProjectDir)Engine/3D/GameObject;$(ProjectDir)Engine/3D/Entity;$(ProjectDir)Engine/3D/Object3d;$(ProjectDir)Engine/3D/Polygon3d;$(ProjectDir)Engine/3D/Model;$(ProjectDir)Engine/3D;$(ProjectDir)Engine/2D;$(ProjectDir)Engine/SceneTransition;$(ProjectDir)Engine/Scene;$(ProjectDir)Engine/Shader;$(ProjectDir)Engine/Math;$(ProjectDir)Engine/Base/CBuffer;$(ProjectDir)Engine/Base/ShaderCompile;$(ProjectDir)Engine/Base/PiplineStateObject;$(ProjectDir)Engine/Base;$(ProjectDir)Engine/Config;$(ProjectDir)Engine/IO;$(ProjectDir)Engine/Lib;$(ProjectDir)Engine;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -162,36 +162,50 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2D\Sprite.cpp" />
-    <ClCompile Include="3D\Brush.cpp" />
-    <ClCompile Include="3D\Camera.cpp" />
-    <ClCompile Include="3D\DebugCamera.cpp" />
-    <ClCompile Include="3D\DirectionalLight.cpp" />
-    <ClCompile Include="3D\Entity\Player.cpp" />
-    <ClCompile Include="3D\GameObject\GameObject.cpp" />
-    <ClCompile Include="3D\GameObject\GameObjectManager.cpp" />
-    <ClCompile Include="3D\Model.cpp" />
-    <ClCompile Include="3D\Object3d\Object3d.cpp" />
-    <ClCompile Include="3D\Polygon3d\Polygon3d.cpp" />
-    <ClCompile Include="3D\Sphere.cpp" />
-    <ClCompile Include="3D\Terrain.cpp" />
-    <ClCompile Include="3D\TriangleEffect.cpp" />
-    <ClCompile Include="Audio\Audio.cpp" />
-    <ClCompile Include="Base\CBuffer\CBuffer.cpp" />
-    <ClCompile Include="Base\DirectXCommon.cpp" />
-    <ClCompile Include="Base\DxCommand.cpp" />
-    <ClCompile Include="Base\DxDescriptors.cpp" />
-    <ClCompile Include="Base\Engine.cpp" />
-    <ClCompile Include="Base\ImGuiManager.cpp" />
-    <ClCompile Include="Base\PiplineStateObject\PipelineStateObject.cpp" />
-    <ClCompile Include="Base\PiplineStateObject\PipelineStateObjectManager.cpp" />
-    <ClCompile Include="Base\PiplineStateObject\ShaderBlob.cpp" />
-    <ClCompile Include="Base\ShaderCompile\ShaderCompile.cpp" />
-    <ClCompile Include="Base\TextureManager.cpp" />
-    <ClCompile Include="Base\WinApp.cpp" />
-    <ClCompile Include="Collision\BaseCollider.cpp" />
-    <ClCompile Include="Collision\MeshCollider.cpp" />
-    <ClCompile Include="Collision\TerrainCollider.cpp" />
+    <ClCompile Include="Engine\2D\Sprite.cpp" />
+    <ClCompile Include="Engine\3D\Brush.cpp" />
+    <ClCompile Include="Engine\3D\Camera.cpp" />
+    <ClCompile Include="Engine\3D\DebugCamera.cpp" />
+    <ClCompile Include="Engine\3D\DirectionalLight.cpp" />
+    <ClCompile Include="Engine\3D\Entity\Player.cpp" />
+    <ClCompile Include="Engine\3D\GameObject\GameObject.cpp" />
+    <ClCompile Include="Engine\3D\GameObject\GameObjectManager.cpp" />
+    <ClCompile Include="Engine\3D\Model\Model.cpp" />
+    <ClCompile Include="Engine\3D\Model\ModelManager.cpp" />
+    <ClCompile Include="Engine\3D\Object3d\Object3d.cpp" />
+    <ClCompile Include="Engine\3D\Polygon3d\Polygon3d.cpp" />
+    <ClCompile Include="Engine\3D\Sphere.cpp" />
+    <ClCompile Include="Engine\3D\Terrain.cpp" />
+    <ClCompile Include="Engine\3D\TriangleEffect.cpp" />
+    <ClCompile Include="Engine\Audio\Audio.cpp" />
+    <ClCompile Include="Engine\Base\CBuffer\CBuffer.cpp" />
+    <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
+    <ClCompile Include="Engine\Base\DxCommand.cpp" />
+    <ClCompile Include="Engine\Base\DxDescriptors.cpp" />
+    <ClCompile Include="Engine\Base\Engine.cpp" />
+    <ClCompile Include="Engine\Base\GameManager.cpp" />
+    <ClCompile Include="Engine\Base\ImGuiManager.cpp" />
+    <ClCompile Include="Engine\Base\PiplineStateObject\PipelineStateObject.cpp" />
+    <ClCompile Include="Engine\Base\PiplineStateObject\PipelineStateObjectManager.cpp" />
+    <ClCompile Include="Engine\Base\PiplineStateObject\ShaderBlob.cpp" />
+    <ClCompile Include="Engine\Base\ShaderCompile\ShaderCompile.cpp" />
+    <ClCompile Include="Engine\Base\TextureManager.cpp" />
+    <ClCompile Include="Engine\Base\WinApp.cpp" />
+    <ClCompile Include="Engine\Collision\BaseCollider.cpp" />
+    <ClCompile Include="Engine\Collision\MeshCollider.cpp" />
+    <ClCompile Include="Engine\Collision\TerrainCollider.cpp" />
+    <ClCompile Include="Engine\Input\Input.cpp" />
+    <ClCompile Include="Engine\Math\Matrix3x3.cpp" />
+    <ClCompile Include="Engine\Math\Matrix4x4.cpp" />
+    <ClCompile Include="Engine\Math\PerlinNoise.cpp" />
+    <ClCompile Include="Engine\Math\Vector2.cpp" />
+    <ClCompile Include="Engine\Math\Vector3.cpp" />
+    <ClCompile Include="Engine\Math\Vector4.cpp" />
+    <ClCompile Include="Engine\Math\WorldTransform.cpp" />
+    <ClCompile Include="Engine\SceneTransition\ITransition.cpp" />
+    <ClCompile Include="Engine\SceneTransition\NormalTransition.cpp" />
+    <ClCompile Include="Engine\Scene\IScene.cpp" />
+    <ClCompile Include="Engine\Scene\Scene_Game.cpp" />
     <ClCompile Include="Externals\imgui\imgui.cpp" />
     <ClCompile Include="Externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="Externals\imgui\imgui_draw.cpp" />
@@ -199,54 +213,56 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="Externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="Externals\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Base\GameManager.cpp" />
-    <ClCompile Include="Input\Input.cpp" />
-    <ClCompile Include="Math\Matrix3x3.cpp" />
-    <ClCompile Include="Math\Matrix4x4.cpp" />
-    <ClCompile Include="Math\PerlinNoise.cpp" />
-    <ClCompile Include="Math\Vector2.cpp" />
-    <ClCompile Include="Math\Vector3.cpp" />
-    <ClCompile Include="Math\Vector4.cpp" />
-    <ClCompile Include="Math\WorldTransform.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Scene\IScene.cpp" />
-    <ClCompile Include="SceneTransition\ITransition.cpp" />
-    <ClCompile Include="Scene\Scene_Game.cpp" />
-    <ClCompile Include="SceneTransition\NormalTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2D\Sprite.h" />
-    <ClInclude Include="3D\Brush.h" />
-    <ClInclude Include="3D\DebugCamera.h" />
-    <ClInclude Include="3D\DirectionalLight.h" />
-    <ClInclude Include="3D\Entity\Player.h" />
-    <ClInclude Include="3D\GameObject\GameObject.h" />
-    <ClInclude Include="3D\GameObject\GameObjectManager.h" />
-    <ClInclude Include="3D\Model.h" />
-    <ClInclude Include="3D\Object3d\Object3d.h" />
-    <ClInclude Include="3D\Polygon3d\Polygon3d.h" />
-    <ClInclude Include="3D\Sphere.h" />
-    <ClInclude Include="3D\Terrain.h" />
-    <ClInclude Include="3D\TriangleEffect.h" />
-    <ClInclude Include="Audio\Audio.h" />
-    <ClInclude Include="Base\CBuffer\CBuffer.h" />
-    <ClInclude Include="Base\CreateName.h" />
-    <ClInclude Include="Base\DxCommand.h" />
-    <ClInclude Include="Base\DxDescriptors.h" />
-    <ClInclude Include="Base\PiplineStateObject\PipelineStateObject.h" />
-    <ClInclude Include="Base\PiplineStateObject\PipelineStateObjectManager.h" />
-    <ClInclude Include="Base\PiplineStateObject\ShaderBlob.h" />
-    <ClInclude Include="Base\ShaderCompile\ShaderCompile.h" />
-    <ClInclude Include="Base\TextureManager.h" />
-    <ClInclude Include="Collision\BaseCollider.h" />
-    <ClInclude Include="Collision\MeshCollider.h" />
-    <ClInclude Include="Collision\TerrainCollider.h" />
-    <ClInclude Include="Config\Environment.h" />
-    <ClInclude Include="3D\Camera.h" />
-    <ClInclude Include="Base\DirectXCommon.h" />
-    <ClInclude Include="Base\Engine.h" />
-    <ClInclude Include="Base\ImGuiManager.h" />
-    <ClInclude Include="Base\WinApp.h" />
+    <ClInclude Include="Engine\2D\Sprite.h" />
+    <ClInclude Include="Engine\3D\BaseCamera.h" />
+    <ClInclude Include="Engine\3D\Brush.h" />
+    <ClInclude Include="Engine\3D\Camera.h" />
+    <ClInclude Include="Engine\3D\DebugCamera.h" />
+    <ClInclude Include="Engine\3D\DirectionalLight.h" />
+    <ClInclude Include="Engine\3D\Entity\Player.h" />
+    <ClInclude Include="Engine\3D\GameObject\GameObject.h" />
+    <ClInclude Include="Engine\3D\GameObject\GameObjectManager.h" />
+    <ClInclude Include="Engine\3D\Model\Model.h" />
+    <ClInclude Include="Engine\3D\Model\ModelManager.h" />
+    <ClInclude Include="Engine\3D\Object3d\Object3d.h" />
+    <ClInclude Include="Engine\3D\Polygon3d\Polygon3d.h" />
+    <ClInclude Include="Engine\3D\Sphere.h" />
+    <ClInclude Include="Engine\3D\Terrain.h" />
+    <ClInclude Include="Engine\3D\TriangleEffect.h" />
+    <ClInclude Include="Engine\Audio\Audio.h" />
+    <ClInclude Include="Engine\Base\CBuffer\CBuffer.h" />
+    <ClInclude Include="Engine\Base\CreateName.h" />
+    <ClInclude Include="Engine\Base\DirectXCommon.h" />
+    <ClInclude Include="Engine\Base\DxCommand.h" />
+    <ClInclude Include="Engine\Base\DxDescriptors.h" />
+    <ClInclude Include="Engine\Base\Engine.h" />
+    <ClInclude Include="Engine\Base\GameManager.h" />
+    <ClInclude Include="Engine\Base\ImGuiManager.h" />
+    <ClInclude Include="Engine\Base\PiplineStateObject\PipelineStateObject.h" />
+    <ClInclude Include="Engine\Base\PiplineStateObject\PipelineStateObjectManager.h" />
+    <ClInclude Include="Engine\Base\PiplineStateObject\ShaderBlob.h" />
+    <ClInclude Include="Engine\Base\ShaderCompile\ShaderCompile.h" />
+    <ClInclude Include="Engine\Base\TextureManager.h" />
+    <ClInclude Include="Engine\Base\WinApp.h" />
+    <ClInclude Include="Engine\Collision\BaseCollider.h" />
+    <ClInclude Include="Engine\Collision\MeshCollider.h" />
+    <ClInclude Include="Engine\Collision\TerrainCollider.h" />
+    <ClInclude Include="Engine\Config\Environment.h" />
+    <ClInclude Include="Engine\Input\Input.h" />
+    <ClInclude Include="Engine\Math\Matrix3x3.h" />
+    <ClInclude Include="Engine\Math\Matrix4x4.h" />
+    <ClInclude Include="Engine\Math\PerlinNoise.h" />
+    <ClInclude Include="Engine\Math\Vector2.h" />
+    <ClInclude Include="Engine\Math\Vector3.h" />
+    <ClInclude Include="Engine\Math\Vector4.h" />
+    <ClInclude Include="Engine\Math\WorldTransform.h" />
+    <ClInclude Include="Engine\SceneTransition\ITransition.h" />
+    <ClInclude Include="Engine\SceneTransition\NormalTransition.h" />
+    <ClInclude Include="Engine\Scene\IScene.h" />
+    <ClInclude Include="Engine\Scene\Scene_Game.h" />
     <ClInclude Include="Externals\imgui\imconfig.h" />
     <ClInclude Include="Externals\imgui\imgui.h" />
     <ClInclude Include="Externals\imgui\imgui_impl_dx12.h" />
@@ -255,19 +271,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="Externals\imgui\imstb_textedit.h" />
     <ClInclude Include="Externals\imgui\imstb_truetype.h" />
-    <ClInclude Include="Base\GameManager.h" />
-    <ClInclude Include="Input\Input.h" />
-    <ClInclude Include="Math\Matrix3x3.h" />
-    <ClInclude Include="Math\Matrix4x4.h" />
-    <ClInclude Include="Math\PerlinNoise.h" />
-    <ClInclude Include="Math\Vector2.h" />
-    <ClInclude Include="Math\Vector3.h" />
-    <ClInclude Include="Math\Vector4.h" />
-    <ClInclude Include="Math\WorldTransform.h" />
-    <ClInclude Include="Scene\IScene.h" />
-    <ClInclude Include="SceneTransition\ITransition.h" />
-    <ClInclude Include="Scene\Scene_Game.h" />
-    <ClInclude Include="SceneTransition\NormalTransition.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Externals\imgui\LICENSE.txt" />
@@ -278,61 +281,55 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\CBuffer\DirectionalLight.hlsli" />
-    <None Include="Shader\CBuffer\Material.hlsli" />
-    <None Include="Shader\CBuffer\TransformationMatrix.hlsli" />
-    <None Include="Shader\Model\Model.hlsli">
+    <None Include="Engine\Resources\Shader\CBuffer\DirectionalLight.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Shader\Object3D\Object3d.hlsli">
+    <None Include="Engine\Resources\Shader\CBuffer\Material.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Shader\Polygon3d\Polygon3d.hlsli">
+    <None Include="Engine\Resources\Shader\CBuffer\TransformationMatrix.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Shader\Terrain\Terrain.hlsli">
+    <None Include="Engine\Resources\Shader\Model\Model.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="Engine\Resources\Shader\Object3D\Object3d.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="Engine\Resources\Shader\Polygon3d\Polygon3d.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="Engine\Resources\Shader\Terrain\Terrain.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shader\Model\Model.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Model\Model.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Model\Model.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Model\Model.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Object3D\Object3d.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Object3D\Object3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Object3D\Object3d.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Object3D\Object3d.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Polygon3d\Polygon3d.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Polygon3d\Polygon3d.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Polygon3d\Polygon3d.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Polygon3d\Polygon3d.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Terrain\Terrain.PS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Terrain\Terrain.PS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Terrain\Terrain.VS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Terrain\Terrain.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Shader\Terrain\TerrainCollision.CS.hlsl">
+    <FxCompile Include="Engine\Resources\Shader\Terrain\TerrainCollision.CS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
