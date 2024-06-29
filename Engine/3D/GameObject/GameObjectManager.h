@@ -47,6 +47,8 @@ private:
 	/// </summary>
 	void ImGuiDebug();
 
+	void ImGuiSelectChilds(const std::list<GameObject*>& childs);
+
 	void ImGuiMenu();
 
 	/// <summary>

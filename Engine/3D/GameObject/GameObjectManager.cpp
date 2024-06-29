@@ -110,13 +110,8 @@ void GameObjectManager::ImGuiDebug() {
 			selectObject_ = gameObject.get();
 		}
 
-		ImGui::Indent();
-		for(auto& child : gameObject->GetChilds()) {
-			if(ImGui::Selectable(child->GetTag().c_str(), selectObject_ == child)) {
-				selectObject_ = child;
-			}
-		}
-		ImGui::Unindent();
+		ImGuiSelectChilds(gameObject->GetChilds());
+
 	}
 	ImGui::End();
 
@@ -169,6 +164,22 @@ void GameObjectManager::ImGuiDebug() {
 
 
 #endif // _DEBUG
+}
+
+
+
+/// ===================================================
+/// ImGuiのGameObjectの子供をselectableで設定
+/// ===================================================
+void GameObjectManager::ImGuiSelectChilds(const std::list<GameObject*>& childs) {
+	ImGui::Indent();
+	for(auto& child : childs) {
+		if(ImGui::Selectable(child->GetTag().c_str(), selectObject_ == child)) {
+			selectObject_ = child;
+		}
+		ImGuiSelectChilds(child->GetChilds());
+	}
+	ImGui::Unindent();
 }
 
 

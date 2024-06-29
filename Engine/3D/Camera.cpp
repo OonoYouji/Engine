@@ -64,7 +64,7 @@ void Camera::Draw() {
 }
 
 void Camera::ImGuiDebug() {
-#ifdef DEBUG
+#ifdef _DEBUG
 
 	/// -------------------------------------------
 	/// ↓ 拡縮・回転・平行移動
