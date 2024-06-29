@@ -283,6 +283,12 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 			std::string materialFilename;
 			s >> materialFilename;
 			model.material_ = LoadMaterialTemplateFile(directoryPath, materialFilename);
+
+			///- .mtlにテクスチャがなければwhite1x1を読み込む
+			if(model.material_.textureName.empty()) {
+				model.material_.textureName = "white1x1";
+				model.material_.textureFilePath = "./Engine/Resources/Images/white1x1";
+			}
 			TextureManager::GetInstance()->Load(model.material_.textureName, model.material_.textureFilePath);
 
 		}
@@ -322,11 +328,14 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 			}
 
 			std::string name;
-			for(size_t i = textureFileName.size() - 1; i >= 0; --i) {
-				if(textureFileName[i] != '/') {
-					name.push_back(textureFileName[i]);
-				} else {
-					break;
+
+			if(!textureFileName.empty()) {
+				for(int i = static_cast<int>(textureFileName.size() - 1); i >= 0; --i) {
+					if(textureFileName[i] != '/') {
+						name.push_back(textureFileName[i]);
+					} else {
+						break;
+					}
 				}
 			}
 
