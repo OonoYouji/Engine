@@ -87,7 +87,7 @@ public:
 	/// Childのポインタを返す
 	/// </summary>
 	/// <returns></returns>
-	std::list<GameObject*> GetChilds() const;
+	const std::list<GameObject*>& GetChilds() const;
 
 #pragma endregion
 

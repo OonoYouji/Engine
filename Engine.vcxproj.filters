@@ -474,54 +474,54 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Resources\Shader\CBuffer\DirectionalLight.hlsli">
+    <None Include="Resources\Shader\CBuffer\DirectionalLight.hlsli">
       <Filter>Shader\CBuffer</Filter>
     </None>
-    <None Include="Engine\Resources\Shader\CBuffer\Material.hlsli">
+    <None Include="Resources\Shader\CBuffer\Material.hlsli">
       <Filter>Shader\CBuffer</Filter>
     </None>
-    <None Include="Engine\Resources\Shader\CBuffer\TransformationMatrix.hlsli">
+    <None Include="Resources\Shader\CBuffer\TransformationMatrix.hlsli">
       <Filter>Shader\CBuffer</Filter>
     </None>
-    <None Include="Engine\Resources\Shader\Model\Model.hlsli">
+    <None Include="Resources\Shader\Model\Model.hlsli">
       <Filter>Shader\Model</Filter>
     </None>
-    <None Include="Engine\Resources\Shader\Object3D\Object3d.hlsli">
+    <None Include="Resources\Shader\Object3D\Object3d.hlsli">
       <Filter>Shader\Object3D</Filter>
     </None>
-    <None Include="Engine\Resources\Shader\Polygon3d\Polygon3d.hlsli">
+    <None Include="Resources\Shader\Polygon3d\Polygon3d.hlsli">
       <Filter>Shader\Polygon3d</Filter>
     </None>
-    <None Include="Engine\Resources\Shader\Terrain\Terrain.hlsli">
+    <None Include="Resources\Shader\Terrain\Terrain.hlsli">
       <Filter>Shader\Terrain</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\Resources\Shader\Model\Model.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Model\Model.PS.hlsl">
       <Filter>Shader\Model</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Model\Model.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Model\Model.VS.hlsl">
       <Filter>Shader\Model</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Object3D\Object3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Object3D\Object3d.PS.hlsl">
       <Filter>Shader\Object3D</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Object3D\Object3d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Object3D\Object3d.VS.hlsl">
       <Filter>Shader\Object3D</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Polygon3d\Polygon3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Polygon3d\Polygon3d.PS.hlsl">
       <Filter>Shader\Polygon3d</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Polygon3d\Polygon3d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Polygon3d\Polygon3d.VS.hlsl">
       <Filter>Shader\Polygon3d</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Terrain\Terrain.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Terrain\Terrain.PS.hlsl">
       <Filter>Shader\Terrain</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Terrain\Terrain.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Terrain\Terrain.VS.hlsl">
       <Filter>Shader\Terrain</Filter>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Terrain\TerrainCollision.CS.hlsl">
+    <FxCompile Include="Resources\Shader\Terrain\TerrainCollision.CS.hlsl">
       <Filter>Shader\Terrain</Filter>
     </FxCompile>
   </ItemGroup>

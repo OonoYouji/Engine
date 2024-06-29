@@ -58,7 +58,7 @@ bool GameObject::SubChild(GameObject* child) {
 	return false; //- 失敗
 }
 
-std::list<GameObject*> GameObject::GetChilds() const {
+const std::list<GameObject*>& GameObject::GetChilds() const {
 	return childs_;
 }
 

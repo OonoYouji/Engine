@@ -23,8 +23,8 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	std::unique_ptr<ShaderBlob> shaderBlob = std::make_unique<ShaderBlob>();
 	shaderBlob->Initialize(
 		shaderCompile_.get(),
-		L"./Engine/Resources/Shader/Object3D/Object3d.VS.hlsl", L"vs_6_0",
-		L"./Engine/Resources/Shader/Object3D/Object3d.PS.hlsl", L"ps_6_0"
+		L"./Resources/Shader/Object3D/Object3d.VS.hlsl", L"vs_6_0",
+		L"./Resources/Shader/Object3D/Object3d.PS.hlsl", L"ps_6_0"
 	);
 
 	pipelineStateObjects_["Object3d"] = std::make_unique<PipelineStateObject>();
@@ -54,8 +54,8 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	shaderBlob.reset(new ShaderBlob());
 	shaderBlob->Initialize(
 		shaderCompile_.get(),
-		L"./Engine/Resources/Shader/Terrain/Terrain.VS.hlsl", L"vs_6_0",
-		L"./Engine/Resources/Shader/Terrain/Terrain.PS.hlsl", L"ps_6_0"
+		L"./Resources/Shader/Terrain/Terrain.VS.hlsl", L"vs_6_0",
+		L"./Resources/Shader/Terrain/Terrain.PS.hlsl", L"ps_6_0"
 	);
 
 	pipelineStateObjects_["Terrain"] = std::make_unique<PipelineStateObject>();
@@ -91,8 +91,8 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	shaderBlob.reset(new ShaderBlob());
 	shaderBlob->Initialize(
 		shaderCompile_.get(),
-		L"./Engine/Resources/Shader/Polygon3d/Polygon3d.VS.hlsl", L"vs_6_0",
-		L"./Engine/Resources/Shader/Polygon3d/Polygon3d.PS.hlsl", L"ps_6_0"
+		L"./Resources/Shader/Polygon3d/Polygon3d.VS.hlsl", L"vs_6_0",
+		L"./Resources/Shader/Polygon3d/Polygon3d.PS.hlsl", L"ps_6_0"
 	);
 
 	pipelineStateObjects_["Polygon3d"] = std::make_unique<PipelineStateObject>();
@@ -116,7 +116,7 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	shaderBlob.reset(new ShaderBlob());
 	shaderBlob->InitializeCS(
 		shaderCompile_.get(),
-		L"./Engine/Resources/Shader/Terrain/TerrainCollision.CS.hlsl",
+		L"./Resources/Shader/Terrain/TerrainCollision.CS.hlsl",
 		L"cs_6_6"
 	);
 
@@ -145,8 +145,8 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	shaderBlob.reset(new ShaderBlob());
 	shaderBlob->Initialize(
 		shaderCompile_.get(),
-		L"./Engine/Resources/Shader/Model/Model.VS.hlsl", L"vs_6_0",
-		L"./Engine/Resources/Shader/Model/Model.PS.hlsl", L"ps_6_0"
+		L"./Resources/Shader/Model/Model.VS.hlsl", L"vs_6_0",
+		L"./Resources/Shader/Model/Model.PS.hlsl", L"ps_6_0"
 	);
 
 	pipelineStateObjects_["Model"] = std::make_unique<PipelineStateObject>();

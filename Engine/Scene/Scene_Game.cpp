@@ -26,6 +26,8 @@ void Scene_Game::Init() {
 void Scene_Game::Update() {
 	gameObjectManager_->Update();
 
+	//ImGui::ShowDemoWindow();
+
 }
 
 void Scene_Game::Draw() {

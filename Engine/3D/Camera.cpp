@@ -56,12 +56,16 @@ void Camera::Update() {
 }
 
 void Camera::Draw() {
+#ifdef _DEBUG
 	if(!debugCamera_->isActive_) {
 		debugCamera_->Draw();
 	}
+#endif // _DEBUG
 }
 
 void Camera::ImGuiDebug() {
+#ifdef DEBUG
+
 	/// -------------------------------------------
 	/// ↓ 拡縮・回転・平行移動
 	/// -------------------------------------------
@@ -90,6 +94,8 @@ void Camera::ImGuiDebug() {
 	/// -------------------------------------------
 	/// ↓ DebugCamera
 	/// -------------------------------------------
+
+
 	if(ImGui::TreeNodeEx("DebugCamera", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 		ImGui::Checkbox("IsActive", &debugCamera_->isActive_);
@@ -102,6 +108,7 @@ void Camera::ImGuiDebug() {
 		ImGui::TreePop();
 	}
 
+#endif // DEBUG
 }
 
 void Camera::Finalize() {

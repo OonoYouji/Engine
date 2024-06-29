@@ -74,6 +74,7 @@
     <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
     <ExternalIncludePath>$(ProjectDir)Externals\opencv\build\include;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(ProjectDir)Externals\opencv\build\x64\vc16\lib;$(LibraryPath)</LibraryPath>
+    <IntDir>$(SolutionDir)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExternalIncludePath>$(ProjectDir)Externals\opencv\build\include;$(ExternalIncludePath)</ExternalIncludePath>
@@ -145,7 +146,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Input;$(ProjectDir)Collision;$(ProjectDir)3D/Entity;$(ProjectDir)3D/Polygon3d;$(ProjectDir)3D;$(ProjectDir)2D;$(ProjectDir)SceneTransition;$(ProjectDir)Scene;$(ProjectDir)Shader;$(ProjectDir)Math;$(ProjectDir)Base/CBuffer;$(ProjectDir)Base/ShaderCompile;$(ProjectDir)Base/PiplineStateObject;$(ProjectDir)Base;$(ProjectDir)Engine;$(ProjectDir)Config;$(ProjectDir)IO;$(ProjectDir)Lib;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine/Audio;$(ProjectDir)Engine/Input;$(ProjectDir)Engine/Collision;$(ProjectDir)Engine/3D/GameObject;$(ProjectDir)Engine/3D/Entity;$(ProjectDir)Engine/3D/Object3d;$(ProjectDir)Engine/3D/Polygon3d;$(ProjectDir)Engine/3D/Model;$(ProjectDir)Engine/3D;$(ProjectDir)Engine/2D;$(ProjectDir)Engine/SceneTransition;$(ProjectDir)Engine/Scene;$(ProjectDir)Engine/Shader;$(ProjectDir)Engine/Math;$(ProjectDir)Engine/Base/CBuffer;$(ProjectDir)Engine/Base/ShaderCompile;$(ProjectDir)Engine/Base/PiplineStateObject;$(ProjectDir)Engine/Base;$(ProjectDir)Engine/Config;$(ProjectDir)Engine/IO;$(ProjectDir)Engine/Lib;$(ProjectDir)Engine;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -281,54 +282,70 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Engine\Resources\Shader\CBuffer\DirectionalLight.hlsli">
+    <None Include="Resources\Shader\CBuffer\DirectionalLight.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Engine\Resources\Shader\CBuffer\Material.hlsli">
+    <None Include="Resources\Shader\CBuffer\Material.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Engine\Resources\Shader\CBuffer\TransformationMatrix.hlsli">
+    <None Include="Resources\Shader\CBuffer\TransformationMatrix.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Engine\Resources\Shader\Model\Model.hlsli">
+    <None Include="Resources\Shader\Model\Model.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Engine\Resources\Shader\Object3D\Object3d.hlsli">
+    <None Include="Resources\Shader\Object3D\Object3d.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Engine\Resources\Shader\Polygon3d\Polygon3d.hlsli">
+    <None Include="Resources\Shader\Polygon3d\Polygon3d.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Engine\Resources\Shader\Terrain\Terrain.hlsli">
+    <None Include="Resources\Shader\Terrain\Terrain.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Engine\Resources\Shader\Model\Model.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Model\Model.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Model\Model.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Model\Model.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Object3D\Object3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Object3D\Object3d.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Object3D\Object3d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Object3D\Object3d.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Polygon3d\Polygon3d.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Polygon3d\Polygon3d.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Polygon3d\Polygon3d.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Polygon3d\Polygon3d.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Terrain\Terrain.PS.hlsl">
+    <FxCompile Include="Resources\Shader\Terrain\Terrain.PS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Terrain\Terrain.VS.hlsl">
+    <FxCompile Include="Resources\Shader\Terrain\Terrain.VS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Engine\Resources\Shader\Terrain\TerrainCollision.CS.hlsl">
+    <FxCompile Include="Resources\Shader\Terrain\TerrainCollision.CS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

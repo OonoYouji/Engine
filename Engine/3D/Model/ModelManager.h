@@ -42,7 +42,7 @@ private:
 	void ImGuiDebug();
 	void CreateModel(const std::string& directoryPath, const std::string& fileName, const std::string& key);
 
-	const std::string directoryPath_ = "./Engine/Resources/Objects/";
+	const std::string directoryPath_ = "./Resources/Objects/";
 	std::map<std::string, std::unique_ptr<Model>> models_;
 	std::unordered_map<int, std::string> pairs_;
 

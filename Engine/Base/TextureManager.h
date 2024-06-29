@@ -114,7 +114,7 @@ private:
 
 private: ///- メンバ変数
 
-	const std::string kDirectoryPath_ = "./Engine/Resources/Images/";
+	const std::string kDirectoryPath_ = "./Resources/Images/";
 
 	std::map<std::string, Texture> textures_;
 	std::map<std::string, Texture> uavTextures_;
