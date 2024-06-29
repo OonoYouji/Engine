@@ -4,6 +4,7 @@
 #include <ImGuiManager.h>
 
 #include <CreateName.h>
+#include <ModelManager.h>
 
 Player::Player() {
 	SetTag(CreateName(this));

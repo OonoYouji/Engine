@@ -134,9 +134,9 @@ void GameObjectManager::ImGuiMenu() {
 		if(ImGui::BeginMenu("Create		")) {
 
 			///- directotyPath内のファイルを探索する
-			for(const auto& entry : std::filesystem::directory_iterator("./Resources/Objects")) {
+			for(const auto& entry : std::filesystem::directory_iterator("./Engine/Resources/Objects/")) {
 				if(entry.is_directory()) {
-					std::string fileName = entry.path().string().substr(std::string("./Resources/Objects\\").length());
+					std::string fileName = entry.path().string().substr(std::string("./Engine/Resources/Objects/").length());
 
 					///- Objectの追加
 					if(ImGui::MenuItem(fileName.c_str())) {
