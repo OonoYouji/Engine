@@ -5,10 +5,13 @@
 #include <Model.h>
 #include <ModelManager.h>
 
+#include <ExternalParamManager.h>
+
+
 int Object3d::instanceCount_ = 0;
 
 Object3d::Object3d() {
-	SetTag(CreateName(this));
+	SetName(CreateName(this));
 }
 
 Object3d::~Object3d() {}
@@ -20,7 +23,7 @@ void Object3d::Initialize(const std::string& key) {
 	model_ = ModelManager::GetInstance()->GetModelPtr(key);
 	worldTransform_.Initialize();
 
-	SetTag(key + std::to_string(id_));
+	SetName(key + std::to_string(id_));
 
 }
 

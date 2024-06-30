@@ -10,7 +10,7 @@
 
 GameObject::GameObject() {
 	GameObjectManager::GetInstance()->AddGameObject(this);
-	SetTag(CreateName(this));
+	SetName(CreateName(this));
 
 }
 

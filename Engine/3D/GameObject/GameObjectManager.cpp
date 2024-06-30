@@ -106,7 +106,7 @@ void GameObjectManager::ImGuiDebug() {
 	for(auto& gameObject : gameObjects_) {
 
 		if(gameObject->GetParent()) { continue; }
-		if(ImGui::Selectable(gameObject->GetTag().c_str(), selectObject_ == gameObject.get())) {
+		if(ImGui::Selectable(gameObject->GetName().c_str(), selectObject_ == gameObject.get())) {
 			selectObject_ = gameObject.get();
 		}
 
@@ -122,7 +122,7 @@ void GameObjectManager::ImGuiDebug() {
 	if(selectObject_) {
 
 		ImGui::SetNextItemOpen(true, ImGuiCond_Always);
-		if(ImGui::TreeNodeEx(selectObject_->GetTag().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+		if(ImGui::TreeNodeEx(selectObject_->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 
 			ImGui::Checkbox("IsActive", &selectObject_->isActive_);
 
@@ -149,6 +149,35 @@ void GameObjectManager::ImGuiDebug() {
 
 				///- 見つかれば要素を消す
 				if(it != gameObjects_.end()) {
+
+					GameObject* parent = (*it)->GetParent();
+					std::list<GameObject*> childs = (*it)->GetChilds();
+
+					///- 親がいたら
+					if(parent) {
+						parent->SubChild((*it).get());
+					}
+
+					///- 子供がいたら
+					if(!childs.empty()) {
+
+						///- かつ、親がいたら
+						if(parent) {
+
+							for(auto& child : childs) {
+								child->SetParent(parent);
+								parent->AddChild(child);
+							}
+
+						} else {
+							
+							for(auto& child : childs) {
+								child->SetParent(nullptr);
+							}
+						}
+
+					}
+
 					gameObjects_.erase(it);
 					selectObject_ = nullptr;
 				}
@@ -174,7 +203,7 @@ void GameObjectManager::ImGuiDebug() {
 void GameObjectManager::ImGuiSelectChilds(const std::list<GameObject*>& childs) {
 	ImGui::Indent();
 	for(auto& child : childs) {
-		if(ImGui::Selectable(child->GetTag().c_str(), selectObject_ == child)) {
+		if(ImGui::Selectable(child->GetName().c_str(), selectObject_ == child)) {
 			selectObject_ = child;
 		}
 		ImGuiSelectChilds(child->GetChilds());
@@ -242,7 +271,7 @@ void GameObjectManager::ImGuiParentSetting() {
 	objectNames.push_back("null");
 	for(const auto& object : gameObjects_) {
 		if(object.get() != selectObject_) {
-			objectNames.push_back(object->GetTag().c_str());
+			objectNames.push_back(object->GetName().c_str());
 		}
 	}
 
@@ -252,7 +281,7 @@ void GameObjectManager::ImGuiParentSetting() {
 		for(const auto& object : gameObjects_) {
 
 			///- 親を取り消す
-			if(!currentNumber) {
+			if(!currentNumber && selectObject_->GetParent()) {
 				GameObject* parent = selectObject_->GetParent();
 				parent->SubChild(selectObject_);
 				selectObject_->SetParent(nullptr);
@@ -260,7 +289,7 @@ void GameObjectManager::ImGuiParentSetting() {
 			}
 
 			///- 親を設定する
-			if(object->GetTag() == objectNames[currentNumber]) {
+			if(object->GetName() == objectNames[currentNumber]) {
 				///- すでに親がいた場合
 				if(selectObject_->GetParent()) {
 					GameObject* parent = selectObject_->GetParent();

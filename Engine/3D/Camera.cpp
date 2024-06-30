@@ -10,7 +10,7 @@
 #include <CreateName.h>
 
 Camera::Camera() {
-	SetTag(CreateName(this));
+	SetName(CreateName(this));
 	Init();
 }
 Camera::~Camera() { Finalize(); }

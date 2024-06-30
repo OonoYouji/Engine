@@ -12,13 +12,11 @@
 #include <DirectionalLight.h>
 #include <PerlinNoise.h>
 
-
+#include <CreateName.h>
 
 
 Terrain::Terrain() {
-	std::string name = typeid(*this).name();
-	name = name.substr(std::string("class ").length());
-	SetTag(name);
+	SetName(CreateName(this));
 }
 
 Terrain::~Terrain() {

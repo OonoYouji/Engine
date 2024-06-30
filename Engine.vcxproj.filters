@@ -157,6 +157,9 @@
     <ClCompile Include="Engine\3D\Model\ModelManager.cpp">
       <Filter>Source\3D\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\External\ExternalParamManager.cpp">
+      <Filter>Source\External</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -466,6 +469,9 @@
     </ClInclude>
     <ClInclude Include="Engine\3D\Model\ModelManager.h">
       <Filter>Include\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\External\ExternalParamManager.h">
+      <Filter>Include\External</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

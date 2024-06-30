@@ -20,7 +20,7 @@ using namespace std::numbers;
 
 
 Brush::Brush() {
-	SetTag(CreateName(this));
+	SetName(CreateName(this));
 
 	Init();
 }

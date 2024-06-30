@@ -3,11 +3,10 @@
 #include <ImGuiManager.h>
 #include <Input.h>
 
+#include <CreateName.h>
 
 DebugCamera::DebugCamera() {
-	std::string name = typeid(*this).name();
-	name = name.substr(std::string("class ").length());
-	SetTag(name);
+	SetName(CreateName(this));
 }
 DebugCamera::~DebugCamera() {}
 

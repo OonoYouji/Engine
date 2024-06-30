@@ -7,7 +7,7 @@
 #include <ModelManager.h>
 
 Player::Player() {
-	SetTag(CreateName(this));
+	SetName(CreateName(this));
 
 }
 Player::~Player() {}
