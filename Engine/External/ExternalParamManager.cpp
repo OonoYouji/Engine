@@ -22,14 +22,14 @@ void ExternalParamManager::Group::ImGuiDebug() {
 			ImGui::DragInt(item.first.c_str(), *ptr, 1);
 			continue;
 		}
-		
+
 		///- float
 		if(std::holds_alternative<float*>(item.second)) {
 			float** ptr = std::get_if<float*>(&item.second);
 			ImGui::DragFloat(item.first.c_str(), *ptr, 0.05f);
 			continue;
 		}
-		
+
 		///- vector3
 		if(std::holds_alternative<Vector3*>(item.second)) {
 			Vector3** ptr = std::get_if<Vector3*>(&item.second);
@@ -53,8 +53,14 @@ void ExternalParamManager::Group::ImGuiDebug() {
 /// ===================================================
 /// グループのセット
 /// ===================================================
-void Epm::Category::SetGroup(const std::string& key) {
-	groups[key];
+Epm::Group& Epm::Category::CraeteGroup(const std::string& key) {
+	for(auto& group : groups) {
+		if(group.first == key) {
+			return group.second;
+		}
+	}
+	groups.push_back(pair(key, Group()));
+	return groups.back().second;
 }
 
 
@@ -62,7 +68,14 @@ void Epm::Category::SetGroup(const std::string& key) {
 /// グループのゲット
 /// ===================================================
 Epm::Group& Epm::Category::GetGroup(const std::string& key) {
-	return groups.at(key);
+	Group* result = nullptr;
+	for(auto& group : groups) {
+		if(group.first == key) {
+			result =  &group.second;
+		}
+	}
+	assert(result); //- nullptrチェック
+	return *result;
 }
 
 
@@ -71,13 +84,11 @@ Epm::Group& Epm::Category::GetGroup(const std::string& key) {
 /// ===================================================
 void Epm::Category::ImGuiDebug() {
 	for(auto& group : groups) {
-		if(!ImGui::TreeNodeEx(group.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-			continue;
+		if(ImGui::TreeNodeEx(group.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+			group.second.ImGuiDebug();
+			ImGui::TreePop();
 		}
-
-		group.second.ImGuiDebug();
-
-		ImGui::TreePop();
+		ImGui::Separator();
 	}
 }
 

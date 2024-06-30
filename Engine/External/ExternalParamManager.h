@@ -2,7 +2,7 @@
 
 #include <variant>
 #include <string>
-#include <map>
+#include <list>
 #include <unordered_map>
 
 #include <Vector3.h>
@@ -67,9 +67,9 @@ public:
 		/// Groupのセット
 		/// </summary>
 		/// <param name="key"></param>
-		void SetGroup(const std::string& key);
+		Group& CraeteGroup(const std::string& key);
 		/// <summary>
-		/// Groupのゲット
+		/// Groupのゲット            
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
@@ -84,7 +84,8 @@ public:
 		/// <summary>
 		/// Groupの集合
 		/// </summary>
-		std::unordered_map<std::string, Group> groups;
+		using pair = std::pair<std::string, Group>;
+		std::list<pair> groups;
 	};
 
 

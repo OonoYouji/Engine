@@ -129,7 +129,6 @@ void GameObjectManager::ImGuiDebug() {
 			///- 選択されている要素のデバッグ表示
 			selectObject_->ImGuiDebug();
 
-			ImGui::Separator();
 			ImGui::NewLine();
 
 			///- 親の設定を行う
@@ -173,7 +172,6 @@ void GameObjectManager::ImGuiDebug() {
 							
 							for(auto& child : childs) {
 								child->SetParent(nullptr);
-								parent->AddChild(child);
 							}
 						}
 

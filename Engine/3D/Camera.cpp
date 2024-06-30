@@ -37,8 +37,10 @@ void Camera::Init() {
 	debugCamera_->isActive_ = false;
 #endif // _DEBUG
 
-
 	GameObject::Initialize();
+	Epm::Group* group = &category_->CraeteGroup("Viewport");
+	group->SetValue("fovY", &viewProjection_.fovY);
+	group->SetValue("farZ", &viewProjection_.farZ);
 
 }
 

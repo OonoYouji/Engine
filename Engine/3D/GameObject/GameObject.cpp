@@ -16,8 +16,7 @@ GameObject::GameObject() {
 
 void GameObject::Initialize() {
 	CreatCategory();
-	category_->SetGroup("Transform");
-	Epm::Group* group = &category_->GetGroup("Transform");
+	Epm::Group* group = &category_->CraeteGroup("Transform");
 	group->SetValue("scale", &worldTransform_.scale);
 	group->SetValue("rotate", &worldTransform_.rotate);
 	group->SetValue("translate", &worldTransform_.translate);
