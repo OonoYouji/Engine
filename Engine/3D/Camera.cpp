@@ -36,6 +36,10 @@ void Camera::Init() {
 	debugCamera_->Initalize();
 	debugCamera_->isActive_ = false;
 #endif // _DEBUG
+
+
+	GameObject::Initialize();
+
 }
 
 void Camera::Update() {

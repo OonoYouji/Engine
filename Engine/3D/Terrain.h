@@ -71,7 +71,7 @@ public: ///- METHODS AND ACCESSOR
 	/// <summary>
 	/// 
 	/// </summary>
-	void ImGuiDebug() override;
+	void ImGuiDebug();
 
 private: ///- METHODS
 

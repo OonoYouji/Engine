@@ -86,7 +86,7 @@ private: ///- メンバ変数
 public: ///- 
 
 
-	void ImGuiDebug()  override;
+	void ImGuiDebug();
 
 
 	const Vec3f& GetLayDir() const { return mouseRayDirection_; }

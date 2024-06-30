@@ -16,6 +16,7 @@ void DebugCamera::Initalize() {
 	viewProjection_.UpdateProjection();
 	viewProjection_.fovY = 0.45f;
 	viewProjection_.farZ = 1000.0f;
+	GameObject::Initialize();
 }
 
 

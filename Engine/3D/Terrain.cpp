@@ -114,6 +114,7 @@ void Terrain::Init() {
 
 	///- 法線ベクトルを計算
 	//NormalVector();
+	GameObject::Initialize();
 
 }
 

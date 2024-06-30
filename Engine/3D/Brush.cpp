@@ -121,6 +121,7 @@ void Brush::Init() {
 	distanceTestObject_ = 1.0f;
 	circleRadius_ = 0.0f;
 
+	GameObject::Initialize();
 }
 
 

@@ -71,7 +71,7 @@ Epm::Group& Epm::Category::GetGroup(const std::string& key) {
 /// ===================================================
 void Epm::Category::ImGuiDebug() {
 	for(auto& group : groups) {
-		if(!ImGui::TreeNodeEx(group.first.c_str())) {
+		if(!ImGui::TreeNodeEx(group.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			continue;
 		}
 

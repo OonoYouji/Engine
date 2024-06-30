@@ -19,6 +19,7 @@ void Player::Initialize() {
 
 	worldTransform_.Initialize();
 
+	GameObject::Initialize();
 }
 
 void Player::Update() {

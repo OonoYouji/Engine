@@ -47,7 +47,7 @@ private: ///- METHODS
 
 	void Move();
 
-	void ImGuiDebug() override;
+	void ImGuiDebug();
 
 private: ///- OBJECTS
 

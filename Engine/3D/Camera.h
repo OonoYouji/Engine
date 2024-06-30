@@ -32,7 +32,7 @@ public:
 	void Init();
 	void Update() override;
 	void Draw() override;
-	void ImGuiDebug() override;
+	void ImGuiDebug();
 	void Finalize();
 
 private:

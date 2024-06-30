@@ -102,7 +102,7 @@ public:
 	/// <summary>
 	/// ImGuiでのデバッグ表示
 	/// </summary>
-	virtual void ImGuiDebug();
+	void ImGuiDebug();
 
 	/// <summary>
 	/// worldTransformのGetter

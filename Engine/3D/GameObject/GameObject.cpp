@@ -15,7 +15,7 @@ GameObject::GameObject() {
 }
 
 void GameObject::Initialize() {
-	category_ = &Epm::GetInstance()->CreateCategory(GetName());
+	CreatCategory();
 	category_->SetGroup("Transform");
 	Epm::Group* group = &category_->GetGroup("Transform");
 	group->SetValue("scale", &worldTransform_.scale);

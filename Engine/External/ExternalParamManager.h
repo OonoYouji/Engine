@@ -3,6 +3,7 @@
 #include <variant>
 #include <string>
 #include <map>
+#include <unordered_map>
 
 #include <Vector3.h>
 //#include <WorldTransform.h>
@@ -55,7 +56,7 @@ public:
 		/// <summary>
 		/// Itemの集合
 		/// </summary>
-		std::map<std::string, Item> items;
+		std::unordered_map<std::string, Item> items;
 	};
 
 	/// ---------------------------------------------------
@@ -83,7 +84,7 @@ public:
 		/// <summary>
 		/// Groupの集合
 		/// </summary>
-		std::map<std::string, Group> groups;
+		std::unordered_map<std::string, Group> groups;
 	};
 
 
@@ -118,7 +119,7 @@ private:
 	/// ===================================================
 
 	///- データの集まり
-	std::map<std::string, Category> datas_;
+	std::unordered_map<std::string, Category> datas_;
 
 
 private:
