@@ -16,23 +16,28 @@ private:
 	~ExternalParamManager() = default;
 public:
 
-	/// <summary>
-	/// 値一個当たり変数
-	/// </summary>
-	using Item = std::variant<int32_t, float, Vector3>;
 
-	/// <summary>
+	/// ===================================================
+	/// nested struct
+	/// ===================================================
+
+
+	/// ---------------------------------------------------
+	/// 変数一個当たりの情報
+	/// ---------------------------------------------------
+	using Item = std::variant<int*, float*, Vector3*>;
+
+	/// ---------------------------------------------------
 	/// Itemの集合
-	/// </summary>
+	/// ---------------------------------------------------
 	struct Group final {
-		std::map<std::string, Item> items;
 		/// <summary>
 		/// 値のsetter
 		/// </summary>
 		/// <param name="key">: itemsへのkey</param>
 		/// <param name="value">: itemsへセットする値</param>
 		template<typename T>
-		void SetValue(const std::string& key, const T& value);
+		void SetValue(const std::string& key, T* value);
 		/// <summary>
 		/// 値のGetter
 		/// </summary>
@@ -40,9 +45,52 @@ public:
 		/// <returns></returns>
 		template<typename T>
 		const T& GetItem(const std::string& key);
+
+		/// <summary>
+		/// デバッグ
+		/// </summary>
+		void ImGuiDebug();
+
+	private:
+		/// <summary>
+		/// Itemの集合
+		/// </summary>
+		std::map<std::string, Item> items;
+	};
+
+	/// ---------------------------------------------------
+	/// Groupの集合
+	/// ---------------------------------------------------
+	struct Category final {
+		/// <summary>
+		/// Groupのセット
+		/// </summary>
+		/// <param name="key"></param>
+		void SetGroup(const std::string& key);
+		/// <summary>
+		/// Groupのゲット
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		Group& GetGroup(const std::string& key);
+
+		/// <summary>
+		/// デバッグ
+		/// </summary>
+		void ImGuiDebug();
+
+	private:
+		/// <summary>
+		/// Groupの集合
+		/// </summary>
+		std::map<std::string, Group> groups;
 	};
 
 
+
+	/// ===================================================
+	/// member methos : public
+	/// ===================================================
 
 	/// <summary>
 	/// インスタンス確保
@@ -54,12 +102,23 @@ public:
 	/// グループの生成
 	/// </summary>
 	/// <param name="key"></param>
-	Group& CreateGroup(const std::string& key);
+	Category& CreateCategory(const std::string& key);
+
+	/// <summary>
+	/// カテゴリーのゲット
+	/// </summary>
+	/// <param name="key"></param>
+	/// <returns></returns>
+	Category& GetCategory(const std::string& key);
 
 private:
 
+	/// ===================================================
+	/// member objects : private
+	/// ===================================================
+
 	///- データの集まり
-	std::map<std::string, Group> datas_;
+	std::map<std::string, Category> datas_;
 
 
 private:
@@ -77,14 +136,20 @@ using Epm = ExternalParamManager;
 
 
 
+////////////////////////////////////////////////////////////////////////////
+///
+/// item   member methods
+///
+////////////////////////////////////////////////////////////////////////////
+
+
 /// ===================================================
 /// Epm::Group::値のsetter
 /// ===================================================
 template<typename T>
-inline void Epm::Group::SetValue(const std::string& key, const T& value) {
+inline void Epm::Group::SetValue(const std::string& key, T* value) {
 	items[key] = value;
 }
-
 
 
 /// ===================================================

@@ -14,6 +14,15 @@ GameObject::GameObject() {
 
 }
 
+void GameObject::Initialize() {
+	category_ = &Epm::GetInstance()->CreateCategory(GetName());
+	category_->SetGroup("Transform");
+	Epm::Group* group = &category_->GetGroup("Transform");
+	group->SetValue("scale", &worldTransform_.scale);
+	group->SetValue("rotate", &worldTransform_.rotate);
+	group->SetValue("translate", &worldTransform_.translate);
+}
+
 void GameObject::SetTag(const std::string& tag) {
 	tag_ = tag;
 }
@@ -64,8 +73,8 @@ const std::list<GameObject*>& GameObject::GetChilds() const {
 
 void GameObject::ImGuiDebug() {
 
-	worldTransform_.ImGuiTreeNodeDebug();
-
+	//worldTransform_.ImGuiTreeNodeDebug();
+	category_->ImGuiDebug();
 }
 
 const WorldTransform& GameObject::GetWorldTransform() const {
@@ -83,6 +92,10 @@ void GameObject::UpdateMatrix() {
 	if(parent_) {
 		worldTransform_.matTransform *= parent_->GetWorldTransform().matTransform;
 	}
+}
+
+void GameObject::CreatCategory() {
+	category_ = &Epm::GetInstance()->CreateCategory(GetName());
 }
 
 

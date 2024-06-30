@@ -173,6 +173,7 @@ void GameObjectManager::ImGuiDebug() {
 							
 							for(auto& child : childs) {
 								child->SetParent(nullptr);
+								parent->AddChild(child);
 							}
 						}
 

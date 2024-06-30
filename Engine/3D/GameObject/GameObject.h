@@ -5,6 +5,7 @@
 #include <memory>
 
 #include <WorldTransform.h>
+#include <ExternalParamManager.h>
 
 
 /// <summary>
@@ -15,6 +16,11 @@ public:
 
 	GameObject();
 	virtual ~GameObject() = default;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
 
 	/// <summary>
 	/// 更新処理
@@ -28,7 +34,7 @@ public:
 
 public:
 
-#pragma region name tag setter getter
+#pragma region 名前 タグ setter getter
 	/// <summary>
 	/// タグのSetter
 	/// </summary>
@@ -91,6 +97,8 @@ public:
 
 #pragma endregion
 
+
+
 	/// <summary>
 	/// ImGuiでのデバッグ表示
 	/// </summary>
@@ -112,6 +120,11 @@ public:
 	/// </summary>
 	void UpdateMatrix();
 
+	/// <summary>
+	/// 
+	/// </summary>
+	void CreatCategory();
+
 public:
 
 	bool isActive_ = true;
@@ -127,5 +140,6 @@ protected:
 	GameObject* parent_;
 	std::list<GameObject*> childs_;
 
+	Epm::Category* category_;
 };
 
