@@ -19,9 +19,6 @@
     <ClCompile Include="Engine\3D\Object3d\Object3d.cpp">
       <Filter>Source\3D\Object3d</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3D\Polygon3d\Polygon3d.cpp">
-      <Filter>Source\3D\Polygon3d</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3D\Brush.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
@@ -234,17 +231,8 @@
     <Filter Include="Shader\Terrain">
       <UniqueIdentifier>{0c8631fa-091c-4243-b6f7-cf695d9b4523}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shader\Polygon3d">
-      <UniqueIdentifier>{742cee29-d200-4fd5-ba55-334f810b9c32}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shader\CBuffer">
       <UniqueIdentifier>{00424be2-a60b-4120-8f44-324cda7ae227}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include\3D\Polygon3d">
-      <UniqueIdentifier>{9614a6c6-8bed-4d9e-95b0-6abd82185567}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\3D\Polygon3d">
-      <UniqueIdentifier>{5990eced-7ecd-469e-84e7-32aa8d228f93}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include\Base\CBuffer">
       <UniqueIdentifier>{9c554dfa-a09d-4d52-a532-e960ecd56812}</UniqueIdentifier>
@@ -343,9 +331,6 @@
     </ClInclude>
     <ClInclude Include="Engine\3D\Object3d\Object3d.h">
       <Filter>Include\3D\Object3d</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3D\Polygon3d\Polygon3d.h">
-      <Filter>Include\3D\Polygon3d</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3D\BaseCamera.h">
       <Filter>Include\3D</Filter>
@@ -495,9 +480,6 @@
     <None Include="Resources\Shader\Object3D\Object3d.hlsli">
       <Filter>Shader\Object3D</Filter>
     </None>
-    <None Include="Resources\Shader\Polygon3d\Polygon3d.hlsli">
-      <Filter>Shader\Polygon3d</Filter>
-    </None>
     <None Include="Resources\Shader\Terrain\Terrain.hlsli">
       <Filter>Shader\Terrain</Filter>
     </None>
@@ -514,12 +496,6 @@
     </FxCompile>
     <FxCompile Include="Resources\Shader\Object3D\Object3d.VS.hlsl">
       <Filter>Shader\Object3D</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shader\Polygon3d\Polygon3d.PS.hlsl">
-      <Filter>Shader\Polygon3d</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shader\Polygon3d\Polygon3d.VS.hlsl">
-      <Filter>Shader\Polygon3d</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shader\Terrain\Terrain.PS.hlsl">
       <Filter>Shader\Terrain</Filter>

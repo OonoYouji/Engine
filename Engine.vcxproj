@@ -75,12 +75,14 @@
     <ExternalIncludePath>$(ProjectDir)Externals\opencv\build\include;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(ProjectDir)Externals\opencv\build\x64\vc16\lib;$(LibraryPath)</LibraryPath>
     <IntDir>$(SolutionDir)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)Externals/nlohmann;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ExternalIncludePath>$(ProjectDir)Externals\opencv\build\include;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(ProjectDir)Externals\opencv\build\x64\vc16\lib;$(LibraryPath)</LibraryPath>
     <PublicIncludeDirectories>$(PublicIncludeDirectories)</PublicIncludeDirectories>
     <IntDir>$(SolutionDir)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)Externals/nlohmann;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -175,7 +177,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Model\Model.cpp" />
     <ClCompile Include="Engine\3D\Model\ModelManager.cpp" />
     <ClCompile Include="Engine\3D\Object3d\Object3d.cpp" />
-    <ClCompile Include="Engine\3D\Polygon3d\Polygon3d.cpp" />
     <ClCompile Include="Engine\3D\Sphere.cpp" />
     <ClCompile Include="Engine\3D\Terrain.cpp" />
     <ClCompile Include="Engine\3D\TriangleEffect.cpp" />
@@ -231,7 +232,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Model\Model.h" />
     <ClInclude Include="Engine\3D\Model\ModelManager.h" />
     <ClInclude Include="Engine\3D\Object3d\Object3d.h" />
-    <ClInclude Include="Engine\3D\Polygon3d\Polygon3d.h" />
     <ClInclude Include="Engine\3D\Sphere.h" />
     <ClInclude Include="Engine\3D\Terrain.h" />
     <ClInclude Include="Engine\3D\TriangleEffect.h" />
@@ -305,10 +305,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
-    <None Include="Resources\Shader\Polygon3d\Polygon3d.hlsli">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </None>
     <None Include="Resources\Shader\Terrain\Terrain.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -328,14 +324,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Resources\Shader\Object3D\Object3d.VS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Resources\Shader\Polygon3d\Polygon3d.PS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Resources\Shader\Polygon3d\Polygon3d.VS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>

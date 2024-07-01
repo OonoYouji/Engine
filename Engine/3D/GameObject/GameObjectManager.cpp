@@ -184,6 +184,11 @@ void GameObjectManager::ImGuiDebug() {
 
 			}
 
+			if(ImGui::Button("Save")) {
+				Epm::GetInstance()->SaveFile(selectObject_->GetName());
+			}
+
+
 			ImGui::TreePop();
 		}
 	}

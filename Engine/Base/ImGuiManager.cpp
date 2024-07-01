@@ -79,7 +79,7 @@ void ImGuiManager::BeginFrame() {
 
 
 #ifdef _DEBUG
-	ImGui::Begin("main window", NULL, ImGuiWindowFlags_NoResize);
+	ImGui::Begin("main window", NULL, ImGuiWindowFlags_NoTitleBar |  ImGuiWindowFlags_NoResize);
 	ImGui::SetWindowSize(ImVec2(1280.0f, 720.0f));
 	ImGui::End();
 
@@ -88,17 +88,18 @@ void ImGuiManager::BeginFrame() {
 	/// -------------------------------------------------------------
 	/// ↓ 固定Tabの表示
 	/// -------------------------------------------------------------
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove;
 
-	ImGui::Begin("Tab A", NULL, ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Tab A", nullptr, window_flags);
 	ImGui::End();
 
-	ImGui::Begin("Tab B", NULL, ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Tab B", nullptr, window_flags);
 	ImGui::End();
 
-	ImGui::Begin("Tab C", NULL, ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Tab C", nullptr, window_flags);
 	ImGui::End();
 
-	ImGui::Begin("Tab D", NULL, ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Tab D", nullptr, window_flags);
 	ImGui::End();
 #endif // _DEBUG
 

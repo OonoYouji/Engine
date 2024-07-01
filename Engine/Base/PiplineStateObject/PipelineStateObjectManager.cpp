@@ -84,31 +84,6 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 
 	/// ----------------------------------------------
-	/// ↓ Polygon Shader
-	/// ----------------------------------------------
-
-
-	shaderBlob.reset(new ShaderBlob());
-	shaderBlob->Initialize(
-		shaderCompile_.get(),
-		L"./Resources/Shader/Polygon3d/Polygon3d.VS.hlsl", L"vs_6_0",
-		L"./Resources/Shader/Polygon3d/Polygon3d.PS.hlsl", L"ps_6_0"
-	);
-
-	pipelineStateObjects_["Polygon3d"] = std::make_unique<PipelineStateObject>();
-	pso = pipelineStateObjects_.at("Polygon3d").get();
-
-	pso->SetInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
-	pso->SetInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT);
-
-	pso->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 0); ///- Material
-	pso->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 1); ///- DirectionalLight
-	pso->SetCBV(D3D12_SHADER_VISIBILITY_VERTEX, 0); ///- TransformationMatrix
-
-	pso->Initialize(device, shaderBlob.get());
-
-
-	/// ----------------------------------------------
 	/// ↓ Terrain Collision Shader
 	/// ----------------------------------------------
 

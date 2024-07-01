@@ -1,12 +1,16 @@
 #pragma once
 
+#include <json.hpp>
+
 #include <variant>
 #include <string>
 #include <list>
 #include <unordered_map>
 
 #include <Vector3.h>
-//#include <WorldTransform.h>
+
+using json = nlohmann::json;
+
 
 /// ===================================================
 /// 外部パラメータの管理クラス
@@ -52,7 +56,6 @@ public:
 		/// </summary>
 		void ImGuiDebug();
 
-	private:
 		/// <summary>
 		/// Itemの集合
 		/// </summary>
@@ -68,12 +71,18 @@ public:
 		/// </summary>
 		/// <param name="key"></param>
 		Group& CraeteGroup(const std::string& key);
+		
 		/// <summary>
-		/// Groupのゲット            
+		/// Groupのゲット
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
 		Group& GetGroup(const std::string& key);
+
+		/// <summary>
+		/// ファイルに書き出し
+		/// </summary>
+		void SaveFile(json& root, const std::string& categoryName);
 
 		/// <summary>
 		/// デバッグ
@@ -113,11 +122,20 @@ public:
 	/// <returns></returns>
 	Category& GetCategory(const std::string& key);
 
+	/// <summary>
+	/// ファイルに書き出す
+	/// </summary>
+	/// <param name="category"></param>
+	void SaveFile(const std::string& categoryName);
+
 private:
 
 	/// ===================================================
 	/// member objects : private
 	/// ===================================================
+
+	///- 
+	static const std::string kDirectoryPath_;
 
 	///- データの集まり
 	std::unordered_map<std::string, Category> datas_;
