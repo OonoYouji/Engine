@@ -66,6 +66,34 @@ void ExternalParamManager::Group::ImGuiDebug() {
 			continue;
 		}
 
+
+		///- bool
+		if(std::holds_alternative<bool>(second)) {
+			bool* ptr = std::get_if<bool>(&second);
+			ImGui::Checkbox(item.first.c_str(), ptr);
+			///- 値を変えたらptrにも適用する
+			if(ImGui::IsItemEdited()) {
+				bool* ptr = std::get<bool*>(first);
+				if(ptr) {
+					*ptr = std::get<bool>(second);
+				}
+			}
+			continue;
+		}
+
+		///- string
+		if(std::holds_alternative<std::string>(second)) {
+			std::string* ptr = std::get_if<std::string>(&second);
+			ImGui::InputText(item.first.c_str(), ptr->data(), ptr->size() + 2);
+			///- 値を変えたらptrにも適用する
+			if(ImGui::IsItemEdited()) {
+				std::string* ptr = std::get<std::string*>(first);
+				if(ptr) {
+					*ptr = std::get<std::string>(second);
+				}
+			}
+			continue;
+		}
 	}
 }
 
@@ -142,6 +170,17 @@ void ExternalParamManager::Category::SaveFile(json& root, const std::string& cat
 				continue;
 			}
 
+			///- bool
+			if(std::holds_alternative<bool>(item)) {
+				root[categoryName][group.first][name] = std::get<bool>(item);
+				continue;
+			}
+
+			///- string
+			if(std::holds_alternative<std::string>(item)) {
+				root[categoryName][group.first][name] = std::get<std::string>(item);
+				continue;
+			}
 		}
 
 	}
@@ -311,6 +350,19 @@ void ExternalParamManager::LoadFile(const std::string& categoryName) {
 				continue;
 			}
 
+			///- bool
+			if(itItem->is_boolean()) {
+				bool value = itItem->get<bool>();
+				group->SetValue(itemName, static_cast<float>(value));
+				continue;
+			}
+			///- string
+			if(itItem->is_string()) {
+				std::string value = itItem->get<std::string>();
+				group->SetValue(itemName, static_cast<std::string>(value));
+				continue;
+			}
+			
 		}
 
 	}

@@ -30,8 +30,8 @@ public:
 	/// ---------------------------------------------------
 	/// 変数一個当たりの情報
 	/// ---------------------------------------------------
-	using Item_first = std::variant<int*, float*, Vector3*>;	///- ポインタ
-	using Item_second = std::variant<int, float, Vector3>;		///- 実体
+	using Item_first = std::variant<int*, float*, Vector3*, bool*, std::string*>;	///- ポインタ
+	using Item_second = std::variant<int, float, Vector3, bool, std::string>;		///- 実体
 	using Item = std::pair<Item_first, Item_second>;
 
 	/// ---------------------------------------------------
@@ -200,7 +200,9 @@ inline void ExternalParamManager::Group::SetPtr(const std::string& key, T* ptr) 
 
 		if(std::is_same_v<T, int>
 		   || std::is_same_v<T, float>
-		   || std::is_same_v<T, Vector3>) {
+		   || std::is_same_v<T, Vector3>
+		   || std::is_same_v<T, bool>
+		   || std::is_same_v<T, std::string>) {
 
 			first = ptr; // ポインタをセット
 			*ptr = std::get<T>(second); // 値をポインタに代入
@@ -210,7 +212,9 @@ inline void ExternalParamManager::Group::SetPtr(const std::string& key, T* ptr) 
 
 		if(std::is_same_v<T, int>
 		   || std::is_same_v<T, float>
-		   || std::is_same_v<T, Vector3>) {
+		   || std::is_same_v<T, Vector3>
+		   || std::is_same_v<T, bool>
+		   || std::is_same_v<T, std::string>) {
 
 			items[key] = std::make_pair(ptr, *ptr);
 		}
@@ -245,7 +249,11 @@ inline void ExternalParamManager::Group::SetValue(const std::string& key, const 
 /// ===================================================
 template<typename T>
 inline const T& Epm::Group::GetItem(const std::string& key) {
-	if (std::is_same_v<T, int> || std::is_same_v<T, float> || std::is_same_v<T, Vector3>) {
+	if (std::is_same_v<T, int>
+		|| std::is_same_v<T, float>
+		|| std::is_same_v<T, Vector3>
+		|| std::is_same_v<T, bool>
+		|| std::is_same_v<T, std::string>) {
 		return std::get<T>(items.at(key).second);
 	}
 }

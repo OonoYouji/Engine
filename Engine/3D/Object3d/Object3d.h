@@ -25,9 +25,9 @@ public:
 	void Draw() override;
 
 private:
-	static int instanceCount_;
+	static int nextId_;
 
 	int id_;
 	Model* model_;
-
+	std::string modelKey_;
 };
