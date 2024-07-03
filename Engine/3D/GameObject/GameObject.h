@@ -123,7 +123,13 @@ public:
 	/// <summary>
 	/// 
 	/// </summary>
-	void CreatCategory();
+	void CreateObejct();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="object"></param>
+	void CreateObjectType(GameObject* object);
 
 public:
 
@@ -140,6 +146,7 @@ protected:
 	GameObject* parent_;
 	std::list<GameObject*> childs_;
 
-	Epm::Category* category_;
+	Epm::Object* object_;	//- instanceごと
+	Epm::ObjectType* objectType_; //- classごと
 };
 

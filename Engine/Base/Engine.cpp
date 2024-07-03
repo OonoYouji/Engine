@@ -191,7 +191,7 @@ void Engine::Initialize(const std::string& title) {
 	sImGuiManager = ImGuiManager::GetInstance();
 	sImGuiManager->Initialize(sWinApp, sDirectXCommon);
 
-	Epm::GetInstance()->Initialize();
+	//Epm::GetInstance()->Initialize();
 
 	sEngineSystem = std::make_unique<EngineSystem>();
 	sEngineSystem->Initialize();

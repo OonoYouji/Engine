@@ -20,6 +20,7 @@ Object3d::Object3d() {
 Object3d::~Object3d() {}
 
 void Object3d::Initialize(const std::string& key) {
+	CreateObjectType(this);
 
 	modelKey_ = key;
 	model_ = ModelManager::GetInstance()->GetModelPtr(modelKey_);
@@ -28,8 +29,8 @@ void Object3d::Initialize(const std::string& key) {
 	SetName(key + std::to_string(id_));
 	GameObject::Initialize();
 
-	Epm::Group& group = category_->CraeteGroup("model");
-	group.SetPtr("key", &modelKey_);
+	/*Epm::Group& group = category_->CraeteGroup("model");
+	group.SetPtr("key", &modelKey_);*/
 
 }
 

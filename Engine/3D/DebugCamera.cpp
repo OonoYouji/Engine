@@ -12,14 +12,16 @@ DebugCamera::~DebugCamera() {}
 
 
 void DebugCamera::Initalize() {
+	CreateObjectType(this);
+
 	worldTransform_.Initialize();
 	viewProjection_.UpdateProjection();
 	viewProjection_.fovY = 0.45f;
 	viewProjection_.farZ = 1000.0f;
 	GameObject::Initialize();
-	Epm::Group* group = &category_->CraeteGroup("Viewport");
-	group->SetPtr("fovY", &viewProjection_.fovY);
-	group->SetPtr("farZ", &viewProjection_.farZ);
+	//Epm::Group* group = &category_->CraeteGroup("Viewport");
+	//group->SetPtr("fovY", &viewProjection_.fovY);
+	//group->SetPtr("farZ", &viewProjection_.farZ);
 }
 
 

@@ -16,6 +16,7 @@ Camera::Camera() {
 Camera::~Camera() { Finalize(); }
 
 void Camera::Init() {
+	CreateObjectType(this);
 
 	worldTransform_.Initialize();
 	worldTransform_.rotate = { 0.0f, 0.0f, 0.0f };
@@ -30,6 +31,9 @@ void Camera::Init() {
 	viewProjection_.UpdateProjection();
 
 	vpMatrix_ = viewProjection_.matView * viewProjection_.matProjection;
+	
+	GameObject::Initialize();
+
 
 #ifdef _DEBUG
 	debugCamera_ = new DebugCamera();
@@ -37,10 +41,10 @@ void Camera::Init() {
 	debugCamera_->isActive_ = false;
 #endif // _DEBUG
 
-	GameObject::Initialize();
+	/*GameObject::Initialize();
 	Epm::Group* group = &category_->CraeteGroup("Viewport");
 	group->SetPtr("fovY", &viewProjection_.fovY);
-	group->SetPtr("farZ", &viewProjection_.farZ);
+	group->SetPtr("farZ", &viewProjection_.farZ);*/
 
 }
 

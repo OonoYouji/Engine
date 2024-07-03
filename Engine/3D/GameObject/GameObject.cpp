@@ -15,11 +15,11 @@ GameObject::GameObject() {
 }
 
 void GameObject::Initialize() {
-	CreatCategory();
-	Epm::Group* group = &category_->CraeteGroup("Transform");
-	group->SetPtr("scale", &worldTransform_.scale);
-	group->SetPtr("rotate", &worldTransform_.rotate);
-	group->SetPtr("translate", &worldTransform_.translate);
+	CreateObejct();
+	Epm::Group& group = object_->CreateGroup("Transform");
+	group.SetPtr("scale", &worldTransform_.scale);
+	group.SetPtr("rotate", &worldTransform_.rotate);
+	group.SetPtr("translate", &worldTransform_.translate);
 }
 
 void GameObject::SetTag(const std::string& tag) {
@@ -73,7 +73,7 @@ const std::list<GameObject*>& GameObject::GetChilds() const {
 void GameObject::ImGuiDebug() {
 
 	//worldTransform_.ImGuiTreeNodeDebug();
-	category_->ImGuiDebug();
+	object_->ImGuiDebug();
 }
 
 const WorldTransform& GameObject::GetWorldTransform() const {
@@ -93,8 +93,13 @@ void GameObject::UpdateMatrix() {
 	}
 }
 
-void GameObject::CreatCategory() {
-	category_ = &Epm::GetInstance()->CreateCategory(GetName());
+void GameObject::CreateObejct() {
+	//objectType_ = Epm::GetInstance()->CreateObjectType(GetName());
+	object_ = objectType_->CreateObject(GetName());
+}
+
+void GameObject::CreateObjectType(GameObject* object) {
+	objectType_ = Epm::GetInstance()->CreateObjectType(CreateName(object));
 }
 
 
