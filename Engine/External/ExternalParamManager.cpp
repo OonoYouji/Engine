@@ -180,6 +180,14 @@ ExternalParamManager* ExternalParamManager::GetInstance() {
 
 
 /// ===================================================
+/// インスタンス確保
+/// ===================================================
+void ExternalParamManager::Initialize() {
+	LoadFiles();
+}
+
+
+/// ===================================================
 /// カテゴリーの生成
 /// ===================================================
 Epm::Category& ExternalParamManager::CreateCategory(const std::string& key) {
@@ -210,6 +218,110 @@ void ExternalParamManager::SaveFile(const std::string& categoryName) {
 	///- カテゴリーの登録
 	root[categoryName] = json::object();
 	it->second.SaveFile(root, categoryName);
+
+
+}
+
+
+/// ===================================================
+/// ファイルの読み込み
+/// ===================================================
+void ExternalParamManager::LoadFile(const std::string& categoryName) {
+
+	///- ファイルを開く
+	std::string filePath = kDirectoryPath_ + categoryName + ".json";
+	std::ifstream ifs;
+	ifs.open(filePath);
+
+	///- ファイルが開けなければ
+	if(!ifs.is_open()) {
+		std::string message = "File could nor be opened";
+		MessageBoxA(nullptr, message.c_str(), "External Param Manager", 0);
+		assert(false);
+		return;
+	}
+
+	///- json文字列からjsonのデータ構造に展開
+	json root;
+	ifs >> root;
+	ifs.close();
+
+	///- カテゴリー探索
+	json::iterator itCategory = root.find(categoryName);
+	Category* category = &CreateCategory(categoryName);
+
+	///- 未登録チェック
+	assert(itCategory != root.end());
+
+	///- 各グループ
+	for(json::iterator itGroup = itCategory->begin(); itGroup != itCategory->end(); ++itGroup) {
+
+		///- グループ名の取得
+		const std::string& groupName = itGroup.key();
+		Group* group = &category->CraeteGroup(groupName);
+
+		///- 各アイテム
+		for(json::iterator itItem = itGroup->begin(); itItem != itGroup->end(); ++itItem) {
+
+			///- アイテム名の取得
+			const std::string& itemName = itItem.key();
+
+			///- int
+			if(itItem->is_number_integer()) {
+				int value = itItem->get<int>();
+				group->SetValue(itemName, value);
+				continue;
+			}
+
+			///- float
+			if(itItem->is_number_float()) {
+				double value = itItem->get<double>();
+				group->SetValue(itemName, static_cast<float>(value));
+				continue;
+			}
+
+			///- Vector3
+			if(itItem->is_array() && itItem->size() == 3) {
+				Vec3f value = { itItem->at(0), itItem->at(1), itItem->at(2) };
+				group->SetValue(itemName, value);
+				continue;
+			}
+
+		}
+
+	}
+
+
+}
+
+
+/// ===================================================
+/// ファイルの読み込み
+/// ===================================================
+void ExternalParamManager::LoadFiles() {
+
+	///- 読み込み先がなければ return
+	std::filesystem::path dir(kDirectoryPath_);
+	if(!std::filesystem::exists(dir)) {
+		return;
+	}
+
+	std::filesystem::directory_iterator dir_it(kDirectoryPath_);
+	for(const auto& entry : dir_it) {
+
+		///- ファイルパスを取得
+		const std::filesystem::path& filePath = entry.path();
+
+		///- ファイル拡張子を取得
+		std::string extersion = filePath.extension().string();
+		///- .json以外はスキップ
+		if(extersion.compare(".json") != 0) {
+			continue;
+		}
+
+		LoadFile(filePath.stem().string());
+
+	}
 
 
 }

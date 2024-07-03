@@ -17,9 +17,9 @@ GameObject::GameObject() {
 void GameObject::Initialize() {
 	CreatCategory();
 	Epm::Group* group = &category_->CraeteGroup("Transform");
-	group->SetValue("scale", &worldTransform_.scale);
-	group->SetValue("rotate", &worldTransform_.rotate);
-	group->SetValue("translate", &worldTransform_.translate);
+	group->SetPtr("scale", &worldTransform_.scale);
+	group->SetPtr("rotate", &worldTransform_.rotate);
+	group->SetPtr("translate", &worldTransform_.translate);
 }
 
 void GameObject::SetTag(const std::string& tag) {

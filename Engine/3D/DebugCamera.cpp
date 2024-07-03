@@ -18,8 +18,8 @@ void DebugCamera::Initalize() {
 	viewProjection_.farZ = 1000.0f;
 	GameObject::Initialize();
 	Epm::Group* group = &category_->CraeteGroup("Viewport");
-	group->SetValue("fovY", &viewProjection_.fovY);
-	group->SetValue("farZ", &viewProjection_.farZ);
+	group->SetPtr("fovY", &viewProjection_.fovY);
+	group->SetPtr("farZ", &viewProjection_.farZ);
 }
 
 

@@ -21,6 +21,9 @@ void Scene_Game::Init() {
 	(new Player())->Initialize();
 	(new Object3d())->Initialize("ICO");
 
+
+	Epm::GetInstance()->Initialize();
+
 }
 
 void Scene_Game::Update() {

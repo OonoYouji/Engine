@@ -39,8 +39,8 @@ void Camera::Init() {
 
 	GameObject::Initialize();
 	Epm::Group* group = &category_->CraeteGroup("Viewport");
-	group->SetValue("fovY", &viewProjection_.fovY);
-	group->SetValue("farZ", &viewProjection_.farZ);
+	group->SetPtr("fovY", &viewProjection_.fovY);
+	group->SetPtr("farZ", &viewProjection_.farZ);
 
 }
 
