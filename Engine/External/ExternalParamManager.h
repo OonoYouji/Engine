@@ -30,9 +30,9 @@ public:
 	/// ---------------------------------------------------
 	/// 変数一個当たりの情報
 	/// ---------------------------------------------------
-	/*using Item_first = std::variant<int*, float*, Vector3*>;
-	using Item_second = std::variant<int, float, Vector3>;*/
-	using Item = std::variant<int*, float*, Vector3*>;
+	using Item_first = std::variant<int*, float*, Vector3*>;	///- ポインタ
+	using Item_second = std::variant<int, float, Vector3>;		///- 実体
+	using Item = std::pair<Item_first, Item_second>;
 
 	/// ---------------------------------------------------
 	/// Itemの集合
@@ -44,7 +44,7 @@ public:
 		/// <param name="key">: itemsへのkey</param>
 		/// <param name="value">: itemsへセットする値</param>
 		template<typename T>
-		void SetPtr(const std::string& key, T* value);
+		void SetPtr(const std::string& key, T* ptr);
 
 		template<typename T>
 		void SetValue(const std::string& key, const T& value);
@@ -189,17 +189,32 @@ using Epm = ExternalParamManager;
 /// Epm::Group::pointerのsetter
 /// ===================================================
 template<typename T>
-inline void ExternalParamManager::Group::SetPtr(const std::string& key, T* value) {
+inline void ExternalParamManager::Group::SetPtr(const std::string& key, T* ptr) {
 
 	auto it = items.find(key);
 	if(it != items.end()) { //- あったら
 
-		T* ptr = std::get<T*>(items.at(key));
-		*value = *ptr ;
-		items.at(key) = value;
+		///- ptrを設定してptrに今はいっている値を代入する
+		Item_first& first = items.at(key).first;
+		Item_second& second = items.at(key).second;
+
+		if(std::is_same_v<T, int>
+		   || std::is_same_v<T, float>
+		   || std::is_same_v<T, Vector3>) {
+
+			first = ptr; // ポインタをセット
+			*ptr = std::get<T>(second); // 値をポインタに代入
+		}
+
 	} else { //- なかったら
 
-		items[key] = value;
+		if(std::is_same_v<T, int>
+		   || std::is_same_v<T, float>
+		   || std::is_same_v<T, Vector3>) {
+
+			items[key] = std::make_pair(ptr, *ptr);
+		}
+
 	}
 }
 
@@ -209,13 +224,18 @@ inline void ExternalParamManager::Group::SetPtr(const std::string& key, T* value
 /// ===================================================
 template<typename T>
 inline void ExternalParamManager::Group::SetValue(const std::string& key, const T& value) {
+	///- なかったら
 	if(items.find(key) == items.end()) {
-		items[key];
+		items[key] = std::make_pair(static_cast<T*>(nullptr), value);
 	}
 
-	if(std::holds_alternative<T*>(items.at(key))) {
-		T* ptr = std::get<T*>(items.at(key));
-		*ptr = value;
+	///- あったら
+	const Item_second& second = items.at(key).second;
+	if(std::holds_alternative<T>(second)) {
+		//static_cast<std::decay_t<decltype(&value)>>(nullptr)
+		//std::get<T>(second) = value;
+		Item& item = items.at(key);
+		item.second = static_cast<T>(value);
 	}
 }
 
@@ -225,5 +245,7 @@ inline void ExternalParamManager::Group::SetValue(const std::string& key, const 
 /// ===================================================
 template<typename T>
 inline const T& Epm::Group::GetItem(const std::string& key) {
-	return std::get<T*>(items.at(key));
+	if (std::is_same_v<T, int> || std::is_same_v<T, float> || std::is_same_v<T, Vector3>) {
+		return std::get<T>(items.at(key).second);
+	}
 }

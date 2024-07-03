@@ -21,24 +21,48 @@ const std::string ExternalParamManager::kDirectoryPath_ = "./Resources/External/
 void ExternalParamManager::Group::ImGuiDebug() {
 	for(auto& item : items) {
 
+		Item_first& first = item.second.first;
+		Item_second& second = item.second.second;
+
 		///- int
-		if(std::holds_alternative<int*>(item.second)) {
-			int** ptr = std::get_if<int*>(&item.second);
-			ImGui::DragInt(item.first.c_str(), *ptr, 1);
+		if(std::holds_alternative<int>(second)) {
+			int* ptr = std::get_if<int>(&second);
+			ImGui::DragInt(item.first.c_str(), ptr, 1);
+			///- 値を変えたらptrにも適用する
+			if(ImGui::IsItemEdited()) {
+				int* ptr = std::get<int*>(first);
+				if(ptr) {
+					*ptr = std::get<int>(second);
+				}
+			}
 			continue;
 		}
 
 		///- float
-		if(std::holds_alternative<float*>(item.second)) {
-			float** ptr = std::get_if<float*>(&item.second);
-			ImGui::DragFloat(item.first.c_str(), *ptr, 0.05f);
+		if(std::holds_alternative<float>(second)) {
+			float* ptr = std::get_if<float>(&second);
+			ImGui::DragFloat(item.first.c_str(), ptr, 0.05f);
+			///- 値を変えたらptrにも適用する
+			if(ImGui::IsItemEdited()) {
+				float* ptr = std::get<float*>(first);
+				if(ptr) {
+					*ptr = std::get<float>(second);
+				}
+			}
 			continue;
 		}
 
 		///- vector3
-		if(std::holds_alternative<Vector3*>(item.second)) {
-			Vector3** ptr = std::get_if<Vector3*>(&item.second);
-			ImGui::DragFloat3(item.first.c_str(), &(**ptr).x, 0.05f);
+		if(std::holds_alternative<Vector3>(second)) {
+			Vector3* ptr = std::get_if<Vector3>(&second);
+			ImGui::DragFloat3(item.first.c_str(), &ptr->x, 0.05f);
+			///- 値を変えたらptrにも適用する
+			if(ImGui::IsItemEdited()) {
+				Vector3* ptr = std::get<Vector3*>(first);
+				if(ptr) {
+					*ptr = std::get<Vector3>(second);
+				}
+			}
 			continue;
 		}
 
@@ -97,23 +121,23 @@ void ExternalParamManager::Category::SaveFile(json& root, const std::string& cat
 		for(auto& itemIt : group.second.items) {
 
 			const std::string& name = itemIt.first;
-			const Item& item = itemIt.second;
+			const Item_second& item = itemIt.second.second;
 
 			///- int
-			if(std::holds_alternative<int*>(item)) {
-				root[categoryName][group.first][name] = *std::get<int*>(item);
+			if(std::holds_alternative<int>(item)) {
+				root[categoryName][group.first][name] = std::get<int>(item);
 				continue;
 			}
 
 			///- float
-			if(std::holds_alternative<float*>(item)) {
-				root[categoryName][group.first][name] = *std::get<float*>(item);
+			if(std::holds_alternative<float>(item)) {
+				root[categoryName][group.first][name] = std::get<float>(item);
 				continue;
 			}
 
 			///- Vector3
-			if(std::holds_alternative<Vector3*>(item)) {
-				Vec3f value = *std::get<Vector3*>(item);
+			if(std::holds_alternative<Vector3>(item)) {
+				Vec3f value = std::get<Vector3>(item);
 				root[categoryName][group.first][name] = json::array({ value.x, value.y, value.z });
 				continue;
 			}

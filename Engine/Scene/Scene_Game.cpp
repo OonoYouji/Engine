@@ -22,7 +22,6 @@ void Scene_Game::Init() {
 	(new Object3d())->Initialize("ICO");
 
 
-	Epm::GetInstance()->Initialize();
 
 }
 
