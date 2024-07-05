@@ -61,6 +61,8 @@ namespace {
 
 		void PopScene(PopAround around, int index);
 
+		IScene* GetScene() const;
+
 	};
 
 	GameManagerSystem::~GameManagerSystem() { Finalize(); }
@@ -197,6 +199,10 @@ namespace {
 		}
 	}
 
+	IScene* GameManagerSystem::GetScene() const {
+		return scene_.front();
+	}
+
 	std::unique_ptr<GameManagerSystem> sGameManagerSystem_;
 
 } /// namespace
@@ -213,6 +219,7 @@ GameManager::~GameManager() { Finalize(); }
 void GameManager::Init() {
 	sGameManagerSystem_ = std::make_unique<GameManagerSystem>();
 	sGameManagerSystem_->Init(new Scene_Game());
+	Epm::GetInstance()->Initialize();
 }
 
 void GameManager::Finalize() {
@@ -233,6 +240,10 @@ void GameManager::PopScene(PopAround around, int index) {
 
 void GameManager::SetIsFinished(bool isFinished) {
 	sGameManagerSystem_->isFinished_ = isFinished;
+}
+
+IScene* GameManager::GetScene() {
+	return sGameManagerSystem_->GetScene();
 }
 
 

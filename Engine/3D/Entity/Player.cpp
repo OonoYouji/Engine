@@ -14,7 +14,6 @@ Player::~Player() {}
 
 
 void Player::Initialize() {
-	CreateObjectType(this);
 
 	model_ = ModelManager::GetInstance()->GetModelPtr("SampleObject");
 

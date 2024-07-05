@@ -157,6 +157,9 @@
     <ClCompile Include="Engine\External\ExternalParamManager.cpp">
       <Filter>Source\External</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3D\GameObject\GameObjectFactory.cpp">
+      <Filter>Source\3D\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -457,6 +460,9 @@
     </ClInclude>
     <ClInclude Include="Engine\External\ExternalParamManager.h">
       <Filter>Include\External</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\GameObject\GameObjectFactory.h">
+      <Filter>Include\3D\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

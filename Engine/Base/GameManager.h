@@ -48,5 +48,7 @@ public: // user method
 	/// </summary>
 	static void SetIsFinished(bool isFinished);
 
+	static IScene* GetScene();
+
 };
 

@@ -11,8 +11,7 @@ public:
 	virtual void Draw() = 0;
 	virtual void Finalize() = 0;
 
-protected:
-
 	void SaveFile();
+	void LoadFile();
 
 };

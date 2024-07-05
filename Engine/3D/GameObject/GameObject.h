@@ -125,12 +125,6 @@ public:
 	/// </summary>
 	void CreateObejct();
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="object"></param>
-	void CreateObjectType(GameObject* object);
-
 public:
 
 	bool isActive_ = true;
@@ -147,6 +141,5 @@ protected:
 	std::list<GameObject*> childs_;
 
 	Epm::Object* object_;	//- instanceごと
-	Epm::ObjectType* objectType_; //- classごと
 };
 

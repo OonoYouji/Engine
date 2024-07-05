@@ -20,7 +20,6 @@ Object3d::Object3d() {
 Object3d::~Object3d() {}
 
 void Object3d::Initialize(const std::string& key) {
-	CreateObjectType(this);
 
 	modelKey_ = key;
 	model_ = ModelManager::GetInstance()->GetModelPtr(modelKey_);

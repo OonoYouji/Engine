@@ -17,7 +17,6 @@ Camera::Camera() {
 Camera::~Camera() { Finalize(); }
 
 void Camera::Init() {
-	CreateObjectType(this);
 
 	worldTransform_.Initialize();
 	worldTransform_.rotate = { 0.0f, 0.0f, 0.0f };

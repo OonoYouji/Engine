@@ -95,11 +95,8 @@ void GameObject::UpdateMatrix() {
 
 void GameObject::CreateObejct() {
 	//objectType_ = Epm::GetInstance()->CreateObjectType(GetName());
-	object_ = objectType_->CreateObject(GetName());
+	object_ = Epm::GetInstance()->CreateObject(GetName());
 }
 
-void GameObject::CreateObjectType(GameObject* object) {
-	objectType_ = Epm::GetInstance()->CreateObjectType(GetTag());
-}
 
 

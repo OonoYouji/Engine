@@ -5,6 +5,7 @@
 #include <filesystem>
 
 #include <ImGuiManager.h>
+#include <GameManager.h>
 
 #include <Object3d.h>
 #pragma endregion
@@ -92,6 +93,38 @@ std::list<GameObject*> GameObjectManager::GetGameObjcetList() const {
 		result.push_back(object.get());
 	}
 	return result;
+}
+
+
+
+/// ===================================================
+/// GameObjectを探索する
+/// ===================================================
+GameObject* GameObjectManager::Find(GameObject* key) {
+	///- 要素探索
+	auto result = std::find_if(gameObjects_.begin(), gameObjects_.end(),
+							   [&key](const std::unique_ptr<GameObject>& obj) {
+		return obj.get() == key; }
+	);
+
+	if(result == gameObjects_.end()) {
+		return nullptr;
+	}
+	return result->get();
+}
+
+
+
+/// ===================================================
+/// GameObjectを探索する
+/// ===================================================
+GameObject* GameObjectManager::Find(const std::string& key) {
+	for(auto& object : gameObjects_) {
+		if(object->GetName() == key) {
+			return object.get();
+		}
+	}
+	return nullptr;
 }
 
 
@@ -279,6 +312,7 @@ void GameObjectManager::ImGuiSaveFileAll() {
 
 	if(ImGui::MenuItem("GameObjcet ALL")) {
 		Epm::GetInstance()->SaveFiles();
+		GameManager::GetScene()->SaveFile();
 	}
 
 	ImGui::EndMenu();

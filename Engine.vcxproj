@@ -173,6 +173,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\DirectionalLight.cpp" />
     <ClCompile Include="Engine\3D\Entity\Player.cpp" />
     <ClCompile Include="Engine\3D\GameObject\GameObject.cpp" />
+    <ClCompile Include="Engine\3D\GameObject\GameObjectFactory.cpp" />
     <ClCompile Include="Engine\3D\GameObject\GameObjectManager.cpp" />
     <ClCompile Include="Engine\3D\Model\Model.cpp" />
     <ClCompile Include="Engine\3D\Model\ModelManager.cpp" />
@@ -228,6 +229,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\DirectionalLight.h" />
     <ClInclude Include="Engine\3D\Entity\Player.h" />
     <ClInclude Include="Engine\3D\GameObject\GameObject.h" />
+    <ClInclude Include="Engine\3D\GameObject\GameObjectFactory.h" />
     <ClInclude Include="Engine\3D\GameObject\GameObjectManager.h" />
     <ClInclude Include="Engine\3D\Model\Model.h" />
     <ClInclude Include="Engine\3D\Model\ModelManager.h" />

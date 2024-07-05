@@ -13,77 +13,172 @@ using json = nlohmann::json;
 
 
 /// ===================================================
-/// External Parameter Manager
+/// 外部パラメータの管理クラス
 /// ===================================================
-class Epm final {
+class ExternalParamManager final {
+private:
+	ExternalParamManager() = default;
+	~ExternalParamManager() = default;
 public:
 
-	/// ---------------------------------------------------
-	/// 変数1個1個のこと
-	/// ---------------------------------------------------
-	struct Item final {
-		using Ptr = std::variant<int*, float*, Vec3f*, bool*, std::string*>;
-		using Value = std::variant<int, float, Vec3f, bool, std::string>;
-		std::pair<Ptr, Value> variable; //- 変数
-	};
+
+	/// ===================================================
+	/// nested struct
+	/// ===================================================
+
 
 	/// ---------------------------------------------------
-	/// Itemの集まり
+	/// 変数一個当たりの情報
+	/// ---------------------------------------------------
+	using Item_first = std::variant<int*, float*, Vector3*, bool*, std::string*>;	///- ポインタ
+	using Item_second = std::variant<int, float, Vector3, bool, std::string>;		///- 実体
+	using Item = std::pair<Item_first, Item_second>;
+
+	/// ---------------------------------------------------
+	/// Itemの集合
 	/// ---------------------------------------------------
 	struct Group final {
+		/// <summary>
+		/// 値のsetter
+		/// </summary>
+		/// <param name="key">: itemsへのkey</param>
+		/// <param name="value">: itemsへセットする値</param>
+		template<typename T>
+		void SetPtr(const std::string& key, T* ptr);
 
 		template<typename T>
 		void SetValue(const std::string& key, const T& value);
 
+		/// <summary>
+		/// 値のGetter
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		template<typename T>
-		void SetPtr(const std::string& key, T* ptr);
+		const T& GetItem(const std::string& key);
 
-		std::unordered_map<std::string, Item> items; //- 変数の集まり
-	};
-
-	/// ---------------------------------------------------
-	/// インスタンス
-	/// ---------------------------------------------------
-	struct Object final {
-
-		Group& CreateGroup(const std::string& groupName);
-
+		/// <summary>
+		/// デバッグ
+		/// </summary>
 		void ImGuiDebug();
 
-		using Pair = std::pair<std::string, Group>;
-		std::list<Pair> groups;
-		std::string name;
+		/// <summary>
+		/// Itemの集合
+		/// </summary>
+		std::unordered_map<std::string, Item> items;
 	};
 
 	/// ---------------------------------------------------
-	/// クラス
+	/// Groupの集合
 	/// ---------------------------------------------------
-	struct ObjectType final {
+	struct Object final {
+		/// <summary>
+		/// Groupのセット
+		/// </summary>
+		/// <param name="key"></param>
+		Group& CreateGroup(const std::string& key);
 
-		Object* CreateObject(const std::string& objectName);
+		/// <summary>
+		/// Groupのゲット
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		Group& GetGroup(const std::string& key);
 
-		std::unordered_map<std::string, Object> objects;
+		/// <summary>
+		/// ファイルに書き出し
+		/// </summary>
+		void SaveFile(json& root, const std::string& categoryName);
+
+		/// <summary>
+		/// デバッグ
+		/// </summary>
+		void ImGuiDebug();
+
+	private:
+		/// <summary>
+		/// Groupの集合
+		/// </summary>
+		using pair = std::pair<std::string, Group>;
+		std::list<pair> groups;
 	};
 
 
 
-
-	static Epm* GetInstance();
-
-	ObjectType* CreateObjectType(const std::string& key);
+	/// ===================================================
+	/// member methos : public
+	/// ===================================================
 
 	/// <summary>
-	/// すべてのファイルを保存する
+	/// インスタンス確保
+	/// </summary>
+	/// <returns></returns>
+	static ExternalParamManager* GetInstance();
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// グループの生成
+	/// </summary>
+	/// <param name="key"></param>
+	Object* CreateObject(const std::string& key);
+
+	/// <summary>
+	/// カテゴリーのゲット
+	/// </summary>
+	/// <param name="key"></param>
+	/// <returns></returns>
+	//Object* GetObject(const std::string& key);
+
+	/// <summary>
+	/// ファイルに書き出す
+	/// </summary>
+	/// <param name="category"></param>
+	void SaveFile(const std::string& categoryName);
+
+	/// <summary>
+	/// ファイルにすべて書き出す
 	/// </summary>
 	void SaveFiles();
 
-	void SaveFile(const std::string& objectTypeName);
+	/// <summary>
+	/// ファイルから読み込む
+	/// </summary>
+	/// <param name="filePath"></param>
+	void LoadFile(const std::string& categoryName);
 
+	/// <summary>
+	/// すべてのファイルを読み込む
+	/// </summary>
+	void LoadFiles();
 
 private:
 
-	const std::string kDirectoryPath_ = "./Resources/External/";
+	/// ===================================================
+	/// member objects : private
+	/// ===================================================
 
-	std::unordered_map<std::string, ObjectType> datas_;
+	///- 
+	static const std::string kDirectoryPath_;
 
+	///- データの集まり
+	std::unordered_map<std::string, Object> datas_;
+
+
+private:
+	ExternalParamManager& operator=(const ExternalParamManager&) = delete;
+	ExternalParamManager(const ExternalParamManager&) = delete;
+	ExternalParamManager(ExternalParamManager&&) = delete;
 };
+
+
+
+/// ---------------------------------------------------
+/// 別名を設定
+/// ---------------------------------------------------
+using Epm = ExternalParamManager;
+
+

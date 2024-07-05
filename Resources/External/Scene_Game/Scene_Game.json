@@ -11,6 +11,18 @@
         "ICO0": {
             "className": "Object3d",
             "file": "./Resources/External/Scene_Game/Objects/ICO0.json"
+        },
+        "ICO1": {
+            "className": "Object3d",
+            "file": "./Resources/External/Scene_Game/Objects/ICO1.json"
+        },
+        "ICO2": {
+            "className": "Object3d",
+            "file": "./Resources/External/Scene_Game/Objects/ICO2.json"
+        },
+        "Player": {
+            "className": "Player",
+            "file": "./Resources/External/Scene_Game/Objects/Player.json"
         }
     }
 }

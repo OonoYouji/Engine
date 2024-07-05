@@ -42,6 +42,14 @@ public:
 
 	std::list<GameObject*> GetGameObjcetList() const;
 
+	/// <summary>
+	/// 引数のポインタがListないにあるか探索する
+	/// </summary>
+	/// <param name="key"></param>
+	/// <returns>あったときはそのポインタ : ないときはnullptrを返す</returns>
+	GameObject* Find(GameObject* key);
+	GameObject* Find(const std::string& key);
+
 private:
 
 	/// <summary>

@@ -12,13 +12,20 @@
 #include <CreateName.h>
 #pragma endregion
 
-
+/// ===================================================
+/// 無記名名前空間
+/// ===================================================
 namespace {
 
 	const std::string kDirectoryPath = "./Resources/External/";
 
 } ///- namespace
 
+
+
+/// ===================================================
+/// ファイルの保存
+/// ===================================================
 void IScene::SaveFile() {
 
 	std::string thisName = CreateName(this);
@@ -60,5 +67,54 @@ void IScene::SaveFile() {
 	///- ファイルにjson文字列を書き込む
 	ofs << std::setw(4) << root << std::endl;
 	ofs.close();
+
+}
+
+
+
+/// ===================================================
+/// ファイル読み込み
+/// ===================================================
+void IScene::LoadFile() {
+
+	///- .jsonファイルを読み込んでインスタンスを生成する
+
+	GameObjectManager* gom = GameObjectManager::GetInstance();
+
+	///- ファイルを開く
+	std::string thisName = CreateName(this);
+	std::string filePath = kDirectoryPath + thisName + "/" + thisName + ".json";
+	std::ifstream ifs;
+	ifs.open(filePath);
+
+	///- ファイルが開くかチェック
+	if(!ifs.is_open()) {
+		return;
+	}
+
+	///- json文字列からjsonのデータ構造に展開
+	json root;
+	ifs >> root;
+	ifs.close();
+
+	///- "Scene"ないのオブジェクトを読む
+	if(root.contains(thisName)) {
+
+		for(auto& element : root[thisName].items()) {
+
+			std::string key = element.key();
+			std::string className = element.value()["className"];
+			std::string file = element.value()["file"];
+
+			///- インスタンスがなければ作る
+			if(!gom->Find(key)) {
+
+
+			}
+
+		}
+
+	}
+
 
 }

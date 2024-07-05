@@ -13,7 +13,6 @@ DebugCamera::~DebugCamera() {}
 
 
 void DebugCamera::Initalize() {
-	CreateObjectType(this);
 
 	worldTransform_.Initialize();
 	viewProjection_.UpdateProjection();

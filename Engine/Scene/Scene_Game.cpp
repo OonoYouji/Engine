@@ -21,7 +21,7 @@ void Scene_Game::Init() {
 	(new Player())->Initialize();
 	(new Object3d())->Initialize("ICO");
 
-
+	LoadFile();
 
 }
 
@@ -30,11 +30,6 @@ void Scene_Game::Update() {
 
 	ImGui::ShowDemoWindow();
 
-	ImGui::Begin("scene");
-	if(ImGui::Button("save")) {
-		SaveFile();
-	}
-	ImGui::End();
 
 }
 
