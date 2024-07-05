@@ -72,9 +72,17 @@ public:
 
 	ObjectType* CreateObjectType(const std::string& key);
 
+	/// <summary>
+	/// すべてのファイルを保存する
+	/// </summary>
+	void SaveFiles();
+
+	void SaveFile(const std::string& objectTypeName);
+
+
 private:
 
-
+	const std::string kDirectoryPath_ = "./Resources/External/";
 
 	std::unordered_map<std::string, ObjectType> datas_;
 

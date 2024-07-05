@@ -99,7 +99,7 @@ void GameObject::CreateObejct() {
 }
 
 void GameObject::CreateObjectType(GameObject* object) {
-	objectType_ = Epm::GetInstance()->CreateObjectType(CreateName(object));
+	objectType_ = Epm::GetInstance()->CreateObjectType(GetTag());
 }
 
 

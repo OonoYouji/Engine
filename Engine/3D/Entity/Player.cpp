@@ -8,7 +8,7 @@
 
 Player::Player() {
 	SetName(CreateName(this));
-
+	SetTag(CreateName(this));
 }
 Player::~Player() {}
 

@@ -30,6 +30,12 @@ void Scene_Game::Update() {
 
 	ImGui::ShowDemoWindow();
 
+	ImGui::Begin("scene");
+	if(ImGui::Button("save")) {
+		SaveFile();
+	}
+	ImGui::End();
+
 }
 
 void Scene_Game::Draw() {

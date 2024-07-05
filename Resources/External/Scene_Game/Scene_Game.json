@@ -1,0 +1,16 @@
+{
+    "Scene_Game": {
+        "Camera": {
+            "className": "Camera",
+            "file": "./Resources/External/Scene_Game/Objects/Camera.json"
+        },
+        "DebugCamera": {
+            "className": "DebugCamera",
+            "file": "./Resources/External/Scene_Game/Objects/DebugCamera.json"
+        },
+        "ICO0": {
+            "className": "Object3d",
+            "file": "./Resources/External/Scene_Game/Objects/ICO0.json"
+        }
+    }
+}

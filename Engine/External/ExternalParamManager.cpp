@@ -202,3 +202,116 @@ Epm* Epm::GetInstance() {
 Epm::ObjectType* Epm::CreateObjectType(const std::string& key) {
 	return &datas_[key];
 }
+
+void Epm::SaveFiles() {
+	///- すべてのファイルを保存
+
+	for(auto& objectType : datas_) {
+		SaveFile(objectType.first);
+	}
+
+}
+
+void Epm::SaveFile(const std::string& objectTypeName) {
+	///- .jsonファイル形式で保存
+
+	///- 探索
+	auto itr = datas_.find(objectTypeName);
+
+	///- ないとき
+	if(itr == datas_.end()) {
+		return;
+	}
+
+	json root;
+	root[objectTypeName] = json::object();
+
+	///- インスタンスごと
+	for(auto& object : datas_.at(objectTypeName).objects) {
+
+		root[objectTypeName][object.first] = json::object();
+
+		///- グループごと
+		for(auto& group : object.second.groups) {
+
+			root[objectTypeName][object.first][group.first] = json::object();
+
+			///- 変数ごと
+			for(auto& item : group.second.items) {
+
+				///- int
+				if(std::holds_alternative<int>(item.second.variable.second)) {
+
+					root[objectTypeName][object.first][group.first][item.first] = 
+						std::get<int>(item.second.variable.second);
+					continue;
+				}
+
+				///- float
+				if(std::holds_alternative<float>(item.second.variable.second)) {
+
+					root[objectTypeName][object.first][group.first][item.first] = 
+						std::get<float>(item.second.variable.second);
+					continue;
+				}
+
+				///- vector3
+				if(std::holds_alternative<Vec3f>(item.second.variable.second)) {
+
+					Vec3f value = std::get<Vector3>(item.second.variable.second);
+					root[objectTypeName][object.first][group.first][item.first] =
+						json::array({ value.x, value.y, value.z });
+					continue;
+				}
+
+				///- bool
+				if(std::holds_alternative<bool>(item.second.variable.second)) {
+
+					root[objectTypeName][object.first][group.first][item.first] =
+						std::get<bool>(item.second.variable.second);
+					continue;
+				}
+
+				///- string
+				if(std::holds_alternative<std::string>(item.second.variable.second)) {
+
+					root[objectTypeName][object.first][group.first][item.first] = 
+						std::get<std::string>(item.second.variable.second);
+					continue;
+				}
+
+
+			}
+
+		}
+
+	}
+
+
+	///- ディレクトリがなければ作成する
+	std::filesystem::path dir(Epm::kDirectoryPath_);
+	if(!std::filesystem::exists(dir)) {
+		std::filesystem::create_directory(dir);
+	}
+
+	///- File Open
+	std::string filePath = kDirectoryPath_ + objectTypeName + ".json";
+	std::ofstream ofs;
+	ofs.open(filePath);
+
+	if(ofs.fail()) {
+		std::string message = "Failed open data file for write";
+		MessageBoxA(nullptr, message.c_str(), "Externam Param Manager", 0);
+		assert(false);
+		return;
+	}
+
+	///- ファイルにjson文字列を書き込む
+	ofs << std::setw(4) << root << std::endl;
+	ofs.close();
+
+
+
+
+
+}

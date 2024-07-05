@@ -40,6 +40,8 @@ public:
 	/// </summary>
 	void ClearList();
 
+	std::list<GameObject*> GetGameObjcetList() const;
+
 private:
 
 	/// <summary>
@@ -49,7 +51,9 @@ private:
 
 	void ImGuiSelectChilds(const std::list<GameObject*>& childs);
 
-	void ImGuiMenu();
+	void ImGuiCreateObejct3d();
+
+	void ImGuiSaveFileAll();
 
 	/// <summary>
 	/// Object3d型のオブジェクトを追加

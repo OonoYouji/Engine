@@ -84,6 +84,19 @@ void GameObjectManager::ClearList() {
 
 
 /// ===================================================
+/// game objcetのlistを取得
+/// ===================================================
+std::list<GameObject*> GameObjectManager::GetGameObjcetList() const {
+	std::list<GameObject*> result;
+	for(auto& object : gameObjects_) {
+		result.push_back(object.get());
+	}
+	return result;
+}
+
+
+
+/// ===================================================
 /// ImGuiでデバッグ表示
 /// ===================================================
 void GameObjectManager::ImGuiDebug() {
@@ -93,9 +106,15 @@ void GameObjectManager::ImGuiDebug() {
 	ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_MenuBar);
 
 	if(ImGui::BeginMenuBar()) {
+		///- Menuが開かなければreturn
+		if(ImGui::BeginMenu("Menu")) {
 
-		ImGuiMenu();
+			ImGuiCreateObejct3d();
 
+			ImGuiSaveFileAll();
+
+			ImGui::EndMenu();
+		}
 		ImGui::EndMenuBar();
 	}
 
@@ -169,7 +188,7 @@ void GameObjectManager::ImGuiDebug() {
 							}
 
 						} else {
-							
+
 							for(auto& child : childs) {
 								child->SetParent(nullptr);
 							}
@@ -185,7 +204,7 @@ void GameObjectManager::ImGuiDebug() {
 			}
 
 			if(ImGui::Button("Save")) {
-				//Epm::GetInstance()->SaveFile(selectObject_->GetName());
+				Epm::GetInstance()->SaveFile(selectObject_->GetTag());
 			}
 
 
@@ -220,36 +239,50 @@ void GameObjectManager::ImGuiSelectChilds(const std::list<GameObject*>& childs) 
 /// ===================================================
 /// ImGuiで新しいオブジェクトの追加をする
 /// ===================================================
-void GameObjectManager::ImGuiMenu() {
+void GameObjectManager::ImGuiCreateObejct3d() {
 
-	///- Menuが開かなければreturn
-	if(!ImGui::BeginMenu("Menu")) { return; }
+	if(!ImGui::BeginMenu("3D Object		")) { return; }
 
-	if(ImGui::BeginMenu("3D Object		")) {
+	if(ImGui::BeginMenu("Create		")) {
 
-		if(ImGui::BeginMenu("Create		")) {
+		///- directotyPath内のファイルを探索する
+		for(const auto& entry : std::filesystem::directory_iterator("./Resources/Objects/")) {
+			if(entry.is_directory()) {
+				std::string fileName = entry.path().string().substr(std::string("./Resources/Objects/").length());
 
-			///- directotyPath内のファイルを探索する
-			for(const auto& entry : std::filesystem::directory_iterator("./Resources/Objects/")) {
-				if(entry.is_directory()) {
-					std::string fileName = entry.path().string().substr(std::string("./Resources/Objects/").length());
-
-					///- Objectの追加
-					if(ImGui::MenuItem(fileName.c_str())) {
-						AddObject3d(fileName);
-					}
-
+				///- Objectの追加
+				if(ImGui::MenuItem(fileName.c_str())) {
+					AddObject3d(fileName);
 				}
+
 			}
-
-
-			ImGui::EndMenu();
 		}
+
 
 		ImGui::EndMenu();
 	}
 
 	ImGui::EndMenu();
+
+}
+
+
+
+/// ===================================================
+/// .jsonファイルにすべてのオブジェクトを保存する
+/// ===================================================
+void GameObjectManager::ImGuiSaveFileAll() {
+
+	if(!ImGui::BeginMenu("Save")) {
+		return;
+	}
+
+	if(ImGui::MenuItem("GameObjcet ALL")) {
+		Epm::GetInstance()->SaveFiles();
+	}
+
+	ImGui::EndMenu();
+
 
 }
 

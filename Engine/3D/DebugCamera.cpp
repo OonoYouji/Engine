@@ -7,6 +7,7 @@
 
 DebugCamera::DebugCamera() {
 	SetName(CreateName(this));
+	SetTag(CreateName(this));
 }
 DebugCamera::~DebugCamera() {}
 
