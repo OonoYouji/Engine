@@ -22,17 +22,17 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initalize();
+	void Initialize() override;
 
 	/// <summary>
 	/// 更新処理
 	/// </summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>
 	/// ImGuiでデバッグ表示

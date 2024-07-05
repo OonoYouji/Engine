@@ -15,11 +15,16 @@ Player::~Player() {}
 
 void Player::Initialize() {
 
+	if(!object_) {
+		CreateObejct();
+	}
+
+
 	model_ = ModelManager::GetInstance()->GetModelPtr("SampleObject");
 
 	worldTransform_.Initialize();
 
-	GameObject::Initialize();
+	GameObject::CreateTransformGroup();
 }
 
 void Player::Update() {
@@ -32,9 +37,9 @@ void Player::Update() {
 	}
 
 	//if(GetDiffHeight() < kWallHeight_) {
-	if(worldTransform_.GetWorldPosition().y < terrainHeight_) {
+	/*if(worldTransform_.GetWorldPosition().y < terrainHeight_) {
 		worldTransform_.translate.y = terrainHeight_;
-	}
+	}*/
 	//} else {
 		///- 壁と判定された : 押し戻し処理を行う
 

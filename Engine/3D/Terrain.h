@@ -30,11 +30,11 @@ public:
 	Terrain();
 	~Terrain();
 
-	void Init();
+	void Initialize() override;
 
-	void Update();
+	void Update() override;
 
-	void Draw();
+	void Draw() override;
 
 public: ///- METHODS AND ACCESSOR
 

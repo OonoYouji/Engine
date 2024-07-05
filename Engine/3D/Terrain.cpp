@@ -30,7 +30,7 @@ Terrain::~Terrain() {
 
 
 
-void Terrain::Init() {
+void Terrain::Initialize() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	/// -------------------------------------------------
@@ -114,7 +114,7 @@ void Terrain::Init() {
 
 	///- 法線ベクトルを計算
 	//NormalVector();
-	GameObject::Initialize();
+	//GameObject::Initialize();
 
 }
 

@@ -21,6 +21,8 @@ public:
 	/// <param name="key"> : ModelManagerが持っているModelへのKey</param>
 	void Initialize(const std::string& key);
 
+	void Initialize() override;
+
 	void Update() override;
 	void Draw() override;
 

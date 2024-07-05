@@ -29,7 +29,7 @@ public:
 	Camera();
 	~Camera();
 
-	void Init();
+	void Initialize() override;
 	void Update() override;
 	void Draw() override;
 	void ImGuiDebug();

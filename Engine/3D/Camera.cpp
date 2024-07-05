@@ -12,11 +12,16 @@
 Camera::Camera() {
 	SetName(CreateName(this));
 	SetTag(CreateName(this));
-	Init();
+	Initialize();
 }
 Camera::~Camera() { Finalize(); }
 
-void Camera::Init() {
+void Camera::Initialize() {
+
+	if(!object_) {
+		CreateObejct();
+	}
+
 
 	worldTransform_.Initialize();
 	worldTransform_.rotate = { 0.0f, 0.0f, 0.0f };
@@ -34,11 +39,11 @@ void Camera::Init() {
 
 #ifdef _DEBUG
 	debugCamera_ = new DebugCamera();
-	debugCamera_->Initalize();
+	debugCamera_->Initialize();
 	debugCamera_->isActive_ = false;
 #endif // _DEBUG
 
-	GameObject::Initialize();
+	GameObject::CreateTransformGroup();
 	Epm::Group& group = object_->CreateGroup("Viewport");
 	group.SetPtr("fovY", &viewProjection_.fovY);
 	group.SetPtr("farZ", &viewProjection_.farZ);
@@ -53,7 +58,7 @@ void Camera::Update() {
 	vpMatrix_ = viewProjection_.matView * viewProjection_.matProjection;
 
 #ifdef _DEBUG
-	if(debugCamera_->isActive_) {
+	if(debugCamera_ && debugCamera_->isActive_) {
 		debugCamera_->Update();
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
@@ -64,7 +69,7 @@ void Camera::Update() {
 
 void Camera::Draw() {
 #ifdef _DEBUG
-	if(!debugCamera_->isActive_) {
+	if(debugCamera_ && !debugCamera_->isActive_) {
 		debugCamera_->Draw();
 	}
 #endif // _DEBUG

@@ -10,7 +10,7 @@
 #include <Vector3.h>
 
 using json = nlohmann::json;
-
+class IScene;
 
 /// ===================================================
 /// 外部パラメータの管理クラス
@@ -149,6 +149,7 @@ public:
 	/// </summary>
 	/// <param name="filePath"></param>
 	void LoadFile(const std::string& categoryName);
+	void LoadFile(const std::string& categoryName, IScene* scene);
 
 	/// <summary>
 	/// すべてのファイルを読み込む

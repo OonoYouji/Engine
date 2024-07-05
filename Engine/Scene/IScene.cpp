@@ -9,7 +9,9 @@
 #include <fstream>
 
 #include <GameObjectManager.h>
+#include <GameObjectFactory.h>
 #include <CreateName.h>
+#include <ExternalParamManager.h>
 #pragma endregion
 
 /// ===================================================
@@ -109,6 +111,12 @@ void IScene::LoadFile() {
 			///- インスタンスがなければ作る
 			if(!gom->Find(key)) {
 
+				GameObject* object = GameObjectFactory::GetInstance()->CreateGameObject(className);
+				
+				Epm::GetInstance()->LoadFile(key, this);
+				object->CreateObejct(key);
+				object->Initialize();
+				
 
 			}
 

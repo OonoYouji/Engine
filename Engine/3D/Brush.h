@@ -42,11 +42,11 @@ public:
 	Brush();
 	~Brush();
 
-	void Init();
+	void Initialize() override;
 
-	void Update();
+	void Update() override;
 
-	void Draw();
+	void Draw() override;
 
 private: ///- メンバ変数
 

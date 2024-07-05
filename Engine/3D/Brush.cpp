@@ -22,7 +22,7 @@ using namespace std::numbers;
 Brush::Brush() {
 	SetName(CreateName(this));
 
-	Init();
+	Initialize();
 }
 
 Brush::~Brush() {
@@ -34,7 +34,7 @@ Brush::~Brush() {
 
 
 
-void Brush::Init() {
+void Brush::Initialize() {
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	///- 頂点数の決定
@@ -121,7 +121,7 @@ void Brush::Init() {
 	distanceTestObject_ = 1.0f;
 	circleRadius_ = 0.0f;
 
-	GameObject::Initialize();
+	//GameObject::Initialize();
 }
 
 

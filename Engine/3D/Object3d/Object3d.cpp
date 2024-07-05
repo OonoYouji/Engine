@@ -20,16 +20,30 @@ Object3d::Object3d() {
 Object3d::~Object3d() {}
 
 void Object3d::Initialize(const std::string& key) {
+	Initialize();
 
 	modelKey_ = key;
+	SetName(modelKey_ + std::to_string(id_));
 	model_ = ModelManager::GetInstance()->GetModelPtr(modelKey_);
+
+}
+
+void Object3d::Initialize() {
+
+	if(!object_) {
+		CreateObejct();
+	}
+
+	GameObject::CreateTransformGroup();
+
+	Epm::Group& group = object_->CreateGroup("model");
+	group.SetPtr("key", &modelKey_);
+
+	if(!modelKey_.empty()) {
+		SetName(modelKey_ + std::to_string(id_));
+		model_ = ModelManager::GetInstance()->GetModelPtr(modelKey_);
+	}
 	worldTransform_.Initialize();
-
-	SetName(key + std::to_string(id_));
-	GameObject::Initialize();
-
-	/*Epm::Group& group = category_->CraeteGroup("model");
-	group.SetPtr("key", &modelKey_);*/
 
 }
 
@@ -38,5 +52,7 @@ void Object3d::Update() {
 }
 
 void Object3d::Draw() {
-	model_->Draw(worldTransform_);
+	if(model_) {
+		model_->Draw(worldTransform_);
+	}
 }

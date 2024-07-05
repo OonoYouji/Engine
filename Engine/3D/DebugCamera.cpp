@@ -8,17 +8,23 @@
 DebugCamera::DebugCamera() {
 	SetName(CreateName(this));
 	SetTag(CreateName(this));
+	Initialize();
 }
 DebugCamera::~DebugCamera() {}
 
 
-void DebugCamera::Initalize() {
+void DebugCamera::Initialize() {
+
+	if(!object_) {
+		CreateObejct();
+	}
+
 
 	worldTransform_.Initialize();
 	viewProjection_.UpdateProjection();
 	viewProjection_.fovY = 0.45f;
 	viewProjection_.farZ = 1000.0f;
-	GameObject::Initialize();
+	GameObject::CreateTransformGroup();
 	//Epm::Group* group = &category_->CraeteGroup("Viewport");
 	//group->SetPtr("fovY", &viewProjection_.fovY);
 	//group->SetPtr("farZ", &viewProjection_.farZ);

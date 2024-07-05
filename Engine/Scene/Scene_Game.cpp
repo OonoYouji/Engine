@@ -6,6 +6,7 @@
 #include "DirectionalLight.h"
 
 #include <Input.h>
+#include <GameObjectFactory.h>
 
 
 Scene_Game::Scene_Game() { Init(); }
@@ -17,9 +18,7 @@ void Scene_Game::Init() {
 	Light::GetInstance()->Init();
 
 	gameObjectManager_ = GameObjectManager::GetInstance();
-
-	(new Player())->Initialize();
-	(new Object3d())->Initialize("ICO");
+	GameObjectFactory::GetInstance()->Initialize();
 
 	LoadFile();
 

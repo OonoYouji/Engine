@@ -14,14 +14,6 @@ GameObject::GameObject() {
 
 }
 
-void GameObject::Initialize() {
-	CreateObejct();
-	Epm::Group& group = object_->CreateGroup("Transform");
-	group.SetPtr("scale", &worldTransform_.scale);
-	group.SetPtr("rotate", &worldTransform_.rotate);
-	group.SetPtr("translate", &worldTransform_.translate);
-}
-
 void GameObject::SetTag(const std::string& tag) {
 	tag_ = tag;
 }
@@ -94,8 +86,18 @@ void GameObject::UpdateMatrix() {
 }
 
 void GameObject::CreateObejct() {
-	//objectType_ = Epm::GetInstance()->CreateObjectType(GetName());
-	object_ = Epm::GetInstance()->CreateObject(GetName());
+	CreateObejct(GetName());
+}
+
+void GameObject::CreateObejct(const std::string& objectName) {
+	object_ = Epm::GetInstance()->CreateObject(objectName);
+}
+
+void GameObject::CreateTransformGroup() {
+	Epm::Group& group = object_->CreateGroup("Transform");
+	group.SetPtr("scale", &worldTransform_.scale);
+	group.SetPtr("rotate", &worldTransform_.rotate);
+	group.SetPtr("translate", &worldTransform_.translate);
 }
 
 

@@ -72,7 +72,9 @@ void ExternalParamManager::Group::SetValue(const std::string& key, const T& valu
 		//std::get<T>(second) = value;
 		Item& item = items.at(key);
 		item.second = static_cast<T>(value);
-		*std::get<T*>(item.first) = static_cast<T>(value);
+		if(std::get<T*>(item.first)) {
+			*std::get<T*>(item.first) = static_cast<T>(value);
+		}
 	}
 }
 
@@ -196,14 +198,16 @@ void ExternalParamManager::Group::ImGuiDebug() {
 		///- string
 		if(std::holds_alternative<std::string>(second)) {
 			std::string* ptr = std::get_if<std::string>(&second);
-			ImGui::InputText(item.first.c_str(), ptr->data(), ptr->size() + 2);
-			///- 値を変えたらptrにも適用する
-			if(ImGui::IsItemEdited()) {
-				std::string* ptr = std::get<std::string*>(first);
-				if(ptr) {
-					*ptr = std::get<std::string>(second);
-				}
+			// std::stringのバッファサイズを取得
+			static char buffer[256];
+			strcpy_s(buffer, sizeof(buffer), ptr->c_str());
+
+			// InputTextの呼び出し
+			if(ImGui::InputText("Input Text", buffer, sizeof(buffer))) {
+				// ユーザーがテキストを編集した場合にstd::stringに新しいテキストを格納
+				*ptr = std::string(buffer);
 			}
+
 			continue;
 		}
 	}
@@ -404,13 +408,21 @@ void ExternalParamManager::SaveFiles() {
 }
 
 
+
 /// ===================================================
 /// ファイルの読み込み
 /// ===================================================
 void ExternalParamManager::LoadFile(const std::string& categoryName) {
+	LoadFile(categoryName, GameManager::GetScene());
+}
+
+/// ===================================================
+/// ファイルの読み込み
+/// ===================================================
+void ExternalParamManager::LoadFile(const std::string& categoryName, IScene* scene) {
 
 	///- ファイルを開く
-	std::string filePath = kDirectoryPath_ + CreateName(GameManager::GetScene()) + "/Objects/" + categoryName + ".json";
+	std::string filePath = kDirectoryPath_ + CreateName(scene) + "/Objects/" + categoryName + ".json";
 	std::ifstream ifs;
 	ifs.open(filePath);
 

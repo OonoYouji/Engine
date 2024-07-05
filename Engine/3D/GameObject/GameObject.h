@@ -20,7 +20,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	virtual void Initialize() = 0;
 
 	/// <summary>
 	/// 更新処理
@@ -124,6 +124,9 @@ public:
 	/// 
 	/// </summary>
 	void CreateObejct();
+	void CreateObejct(const std::string& objectName);
+
+	void CreateTransformGroup();
 
 public:
 
