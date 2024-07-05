@@ -15,9 +15,9 @@ DebugCamera::~DebugCamera() {}
 
 void DebugCamera::Initialize() {
 
-	if(!object_) {
+	/*if(!object_) {
 		CreateObejct();
-	}
+	}*/
 
 
 	worldTransform_.Initialize();

@@ -18,9 +18,9 @@ Camera::~Camera() { Finalize(); }
 
 void Camera::Initialize() {
 
-	if(!object_) {
+	/*if(!object_) {
 		CreateObejct();
-	}
+	}*/
 
 
 	worldTransform_.Initialize();
@@ -44,9 +44,9 @@ void Camera::Initialize() {
 #endif // _DEBUG
 
 	GameObject::CreateTransformGroup();
-	Epm::Group& group = object_->CreateGroup("Viewport");
+	/*Epm::Group& group = object_->CreateGroup("Viewport");
 	group.SetPtr("fovY", &viewProjection_.fovY);
-	group.SetPtr("farZ", &viewProjection_.farZ);
+	group.SetPtr("farZ", &viewProjection_.farZ);*/
 
 }
 

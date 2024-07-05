@@ -20,6 +20,8 @@ void Scene_Game::Init() {
 	gameObjectManager_ = GameObjectManager::GetInstance();
 	GameObjectFactory::GetInstance()->Initialize();
 
+	(new Object3d())->Initialize("ICO");
+
 	LoadFile();
 
 }

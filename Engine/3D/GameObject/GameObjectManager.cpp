@@ -8,6 +8,8 @@
 #include <GameManager.h>
 
 #include <Object3d.h>
+#include <CreateName.h>
+//#include <ExternalParamManager.h>
 #pragma endregion
 
 
@@ -237,7 +239,7 @@ void GameObjectManager::ImGuiDebug() {
 			}
 
 			if(ImGui::Button("Save")) {
-				Epm::GetInstance()->SaveFile(selectObject_->GetTag());
+				selectObject_->SaveFile();
 			}
 
 
@@ -311,7 +313,11 @@ void GameObjectManager::ImGuiSaveFileAll() {
 	}
 
 	if(ImGui::MenuItem("GameObjcet ALL")) {
-		Epm::GetInstance()->SaveFiles();
+		///- 一度ファイルをすべて消去
+		std::filesystem::remove_all("./Resources/External/" + CreateName(GameManager::GetScene()) + "/Objects/");
+		for(auto& gameObject : gameObjects_) {
+			gameObject->SaveFile();
+		}
 		GameManager::GetScene()->SaveFile();
 	}
 

@@ -15,9 +15,9 @@ Player::~Player() {}
 
 void Player::Initialize() {
 
-	if(!object_) {
+	/*if(!object_) {
 		CreateObejct();
-	}
+	}*/
 
 
 	model_ = ModelManager::GetInstance()->GetModelPtr("SampleObject");

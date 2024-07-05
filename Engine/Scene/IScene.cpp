@@ -11,8 +11,10 @@
 #include <GameObjectManager.h>
 #include <GameObjectFactory.h>
 #include <CreateName.h>
-#include <ExternalParamManager.h>
+//#include <ExternalParamManager.h>
 #pragma endregion
+
+using json = nlohmann::json;
 
 /// ===================================================
 /// 無記名名前空間
@@ -113,7 +115,7 @@ void IScene::LoadFile() {
 
 				GameObject* object = GameObjectFactory::GetInstance()->CreateGameObject(className);
 				
-				Epm::GetInstance()->LoadFile(key, this);
+				//Epm::GetInstance()->LoadFile(key, this);
 				object->CreateObejct(key);
 				object->Initialize();
 				

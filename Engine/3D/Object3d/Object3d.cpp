@@ -5,7 +5,7 @@
 #include <Model.h>
 #include <ModelManager.h>
 
-#include <ExternalParamManager.h>
+//#include <ExternalParamManager.h>
 
 
 int Object3d::nextId_ = 0;
@@ -30,14 +30,14 @@ void Object3d::Initialize(const std::string& key) {
 
 void Object3d::Initialize() {
 
-	if(!object_) {
+	/*if(!object_) {
 		CreateObejct();
-	}
+	}*/
 
 	GameObject::CreateTransformGroup();
 
-	Epm::Group& group = object_->CreateGroup("model");
-	group.SetPtr("key", &modelKey_);
+	/*Epm::Group& group = object_->CreateGroup("model");
+	group.SetPtr("key", &modelKey_);*/
 
 	if(!modelKey_.empty()) {
 		SetName(modelKey_ + std::to_string(id_));

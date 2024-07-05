@@ -219,7 +219,7 @@ GameManager::~GameManager() { Finalize(); }
 void GameManager::Init() {
 	sGameManagerSystem_ = std::make_unique<GameManagerSystem>();
 	sGameManagerSystem_->Init(new Scene_Game());
-	Epm::GetInstance()->Initialize();
+	//Epm::GetInstance()->Initialize();
 }
 
 void GameManager::Finalize() {

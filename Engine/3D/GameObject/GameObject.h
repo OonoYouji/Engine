@@ -3,15 +3,63 @@
 #include <string>
 #include <list>
 #include <memory>
+#include <variant>
+#include <unordered_map>
 
 #include <WorldTransform.h>
-#include <ExternalParamManager.h>
 
 
 /// <summary>
 /// ゲームオブジェクトの基底クラス
 /// </summary>
 class GameObject {
+protected:
+#pragma region JSON保存,読み込み
+	/// ---------------------------------------------------
+	/// 変数一個当たりの情報
+	/// ---------------------------------------------------
+	struct Item final {
+		using Pointer = std::variant<int*, float*, Vector3*, bool*, std::string*>;	///- ポインタ
+		using Value = std::variant<int, float, Vector3, bool, std::string>;		///- 実体
+		std::pair<Pointer, Value> variable;
+	};
+
+	/// ---------------------------------------------------
+	/// Itemの集合
+	/// ---------------------------------------------------
+	struct Group final {
+		/// <summary>
+		/// 値のsetter
+		/// </summary>
+		/// <param name="key">: itemsへのkey</param>
+		/// <param name="value">: itemsへセットする値</param>
+		template<typename T>
+		void SetPtr(const std::string& key, T* ptr);
+
+		template<typename T>
+		void SetValue(const std::string& key, const T& value);
+
+		/// <summary>
+		/// 値のGetter
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		template<typename T>
+		const T& GetItem(const std::string& key);
+
+		/// <summary>
+		/// デバッグ
+		/// </summary>
+		void ImGuiDebug();
+
+		/// <summary>
+		/// Itemの集合
+		/// </summary>
+		std::unordered_map<std::string, Item> items;
+	};
+
+
+#pragma endregion
 public:
 
 	GameObject();
@@ -128,6 +176,15 @@ public:
 
 	void CreateTransformGroup();
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="groupName"></param>
+	Group& CreateGroup(const std::string& groupName);
+
+	void SaveFile();
+
+
 public:
 
 	bool isActive_ = true;
@@ -143,6 +200,8 @@ protected:
 	GameObject* parent_;
 	std::list<GameObject*> childs_;
 
-	Epm::Object* object_;	//- instanceごと
+	///- jsonに保存するデータの集まり
+	std::unordered_map<std::string, Group> groups_;
+
 };
 
