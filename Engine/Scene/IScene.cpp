@@ -115,8 +115,8 @@ void IScene::LoadFile() {
 
 				GameObject* object = GameObjectFactory::GetInstance()->CreateGameObject(className);
 				
-				//Epm::GetInstance()->LoadFile(key, this);
 				object->CreateObejct(key);
+				object->LoadFile(key, file);
 				object->Initialize();
 				
 

@@ -66,9 +66,13 @@ template<typename T>
 void GameObject::Group::SetValue(const std::string& key, const T& value) {
 	///- なかったら
 	if(items.find(key) == items.end()) {
-		items[key] = {};
-		std::get<T*>(items[key].variable.first) = static_cast<T*>(nullptr);
-		std::get<T>(items[key].variable.second) = value;
+
+		Item newItem;
+		newItem.variable.first.emplace<T*>(nullptr); // ポインタをセット
+		newItem.variable.second.emplace<T>(value); // 値をセット
+
+		items[key] = std::move(newItem); // 新しいアイテムを追加
+
 	}
 
 	///- あったら
@@ -278,6 +282,83 @@ void GameObject::SaveFile() {
 	///- ファイルにjson文字列を書き込む
 	ofs << std::setw(4) << root << std::endl;
 	ofs.close();
+
+}
+
+
+
+/// ===================================================
+/// jsonファイルの読み込み
+/// ===================================================
+void GameObject::LoadFile(const std::string& key, const std::string& filePath) {
+
+	///- File open
+	std::ifstream ifs;
+	ifs.open(filePath);
+
+	///- ファイルが開かなければ
+	if(!ifs.is_open()){
+		return;
+	}
+
+	///- json文字列からjsonのデータ構造に展開
+	json root;
+	ifs >> root;
+	ifs.close();
+
+	if(root.contains(key)) {
+		json group = root[key];
+
+		///- groupの探索
+		for(auto itGroup = group.begin(); itGroup != group.end(); ++itGroup) {
+			
+			///- 見つかったgroupの登録
+			Group& group = CreateGroup(itGroup.key());
+
+			///- itemの探索
+			for(auto itItem = itGroup.value().begin(); itItem != itGroup.value().end(); ++itItem) {
+
+				///- 見つかったitemの登録
+
+				///- int
+				if(itItem->is_number_integer()) {
+					int value = itItem->get<int>();
+					group.SetValue(itItem.key(), value);
+					continue;
+				}
+
+				///- float
+				if(itItem->is_number_float()) {
+					float value = itItem->get<float>();
+					group.SetValue(itItem.key(), value);
+					continue;
+				}
+				
+				///- Vector3
+				if(itItem->is_array() && itItem->size() == 3) {
+					Vec3f value = { itItem->at(0), itItem->at(1), itItem->at(2) };
+					group.SetValue(itItem.key(), value);
+					continue;
+				}
+			
+				///- bool
+				if(itItem->is_boolean()) {
+					bool value = itItem->get<bool>();
+					group.SetValue(itItem.key(), value);
+					continue;
+				}
+				
+				///- string
+				if(itItem->is_string()) {
+					std::string value = itItem->get<std::string>();
+					group.SetValue(itItem.key(), value);
+					continue;
+				}
+			}
+
+		}
+
+	}
 
 }
 

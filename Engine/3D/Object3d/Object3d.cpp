@@ -30,20 +30,18 @@ void Object3d::Initialize(const std::string& key) {
 
 void Object3d::Initialize() {
 
-	/*if(!object_) {
-		CreateObejct();
-	}*/
+	worldTransform_.Initialize();
 
 	GameObject::CreateTransformGroup();
 
-	/*Epm::Group& group = object_->CreateGroup("model");
-	group.SetPtr("key", &modelKey_);*/
+	Group& group = CreateGroup("Model");
+	group.SetPtr("key", &modelKey_);
 
 	if(!modelKey_.empty()) {
 		SetName(modelKey_ + std::to_string(id_));
 		model_ = ModelManager::GetInstance()->GetModelPtr(modelKey_);
 	}
-	worldTransform_.Initialize();
+
 
 }
 

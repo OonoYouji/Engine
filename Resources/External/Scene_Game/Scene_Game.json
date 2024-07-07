@@ -1,5 +1,9 @@
 {
     "Scene_Game": {
+        "Axis1": {
+            "className": "Object3d",
+            "file": "./Resources/External/Scene_Game/Objects/Axis1.json"
+        },
         "Camera": {
             "className": "Camera",
             "file": "./Resources/External/Scene_Game/Objects/Camera.json"

@@ -184,6 +184,7 @@ public:
 
 	void SaveFile();
 
+	void LoadFile(const std::string& key, const std::string& filePath);
 
 public:
 
