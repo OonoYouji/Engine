@@ -18,6 +18,7 @@
 #include <Camera.h>
 #include <ModelManager.h>
 #include <GameObjectManager.h>
+#include <FrameTimer.h>
 
 
 template<class T>

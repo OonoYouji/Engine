@@ -11,6 +11,8 @@ class Model;
 /// Modelの管理クラス
 /// </summary>
 class ModelManager {
+	ModelManager() = default;
+	~ModelManager() = default;
 public:
 
 	/// <summary>
@@ -27,12 +29,11 @@ public:
 	void PreDraw();
 
 	/// <summary>
-	/// 
+	/// 描画後処理
 	/// </summary>
 	void PostDraw();
 
 	void Update();
-
 
 	Model* GetModelPtr(const std::string& key);
 
@@ -46,8 +47,7 @@ private:
 	std::map<std::string, std::unique_ptr<Model>> models_;
 	std::unordered_map<int, std::string> pairs_;
 
-	ModelManager() = default;
-	~ModelManager() = default;
+private:
 	ModelManager& operator=(const ModelManager&) = delete;
 	ModelManager(const ModelManager&) = delete;
 	ModelManager(ModelManager&&) = delete;

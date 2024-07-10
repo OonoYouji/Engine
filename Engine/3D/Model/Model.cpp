@@ -118,7 +118,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	transformMatrixDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	transformMatrixDesc.Buffer.NumElements = kMaxInstanceCount_;
 	transformMatrixDesc.Buffer.StructureByteStride = sizeof(TransformMatrix);
-	
+
 	D3D12_CPU_DESCRIPTOR_HANDLE transformCpuHandle = descriptiors->GetCPUDescriptorHandle();
 	transformGpuHandle_ = descriptiors->GetGPUDescriptorHandle();
 	descriptiors->AddSrvUsedCount();
@@ -134,31 +134,44 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 /// 描画処理
 /// ===================================================
 void Model::Draw(const WorldTransform& worldTransform, const Mat4& uvTransform) {
+
+	///- 描画数が上限を超えた
+	if(instanceCount_ >= kMaxInstanceCount_) {
+		assert(false);
+	}
+
+	///- 構造体のデータを設定
+	transformMatrixDatas_[instanceCount_].World = worldTransform.matTransform;
+	transformMatrixDatas_[instanceCount_].WVP = worldTransform.matTransform * Engine::GetCamera()->GetVpMatrix();
+	materialData_[instanceCount_].uvTransform = uvTransform;
+
+	instanceCount_++;
+}
+
+
+/// ===================================================
+/// 描画前処理
+/// ===================================================
+void Model::PreDraw() {
+	Reset();
+}
+
+
+/// ===================================================
+/// 描画語処理
+/// ===================================================
+void Model::PostDraw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	PipelineStateObjectManager::GetInstance()->SetCommandList("Model", commandList);
 
 	///- 頂点情報のコピー
 	std::memcpy(vertexData_, vertexDatas_.data(), sizeof(VertexData) * vertexDatas_.size());
 
-	if(instanceCount_ >= kMaxInstanceCount_) {
-		///- 描画数が上限を超えた
-		assert(false);
-	}
-
-	///- Data
-	transformMatrixDatas_[instanceCount_].World = worldTransform.matTransform;
-	transformMatrixDatas_[instanceCount_].WVP = worldTransform.matTransform * Engine::GetCamera()->GetVpMatrix();
-
-	materialData_[instanceCount_].uvTransform = uvTransform;
-
-	instanceCount_++;
-
 	///- IASet
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
-
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	DxDescriptors::GetInstance()->SetCommandListSrvHeap(commandList);
 
+	DxDescriptors::GetInstance()->SetCommandListSrvHeap(commandList);
 	commandList->SetGraphicsRootDescriptorTable(2, materialGpuHandle_);
 	commandList->SetGraphicsRootDescriptorTable(0, transformGpuHandle_);
 
@@ -167,36 +180,6 @@ void Model::Draw(const WorldTransform& worldTransform, const Mat4& uvTransform) 
 
 	commandList->DrawInstanced(UINT(vertexDatas_.size()), instanceCount_, 0, 0);
 }
-
-
-
-/// ===================================================
-/// ImGuiでデバッグ表示
-/// ===================================================
-void Model::DebugDraw(const std::string& windowName) {
-#ifdef _DEBUG
-	ImGui::Begin(windowName.c_str());
-
-	//worldTransform_->ImGuiTreeNodeDebug();
-
-	ImGui::Separator();
-
-	if(ImGui::TreeNodeEx("Material", true)) {
-
-		ImGui::ColorEdit4("Color", &materialData_->color.x);
-		static bool enableLighting = materialData_->enableLighting;
-		ImGui::Checkbox("EnableLighting", &enableLighting);
-		if(ImGui::IsItemEdited()) {
-			materialData_->enableLighting = enableLighting;
-		}
-
-		ImGui::TreePop();
-	}
-
-	ImGui::End();
-#endif // _DEBUG
-}
-
 
 
 /// ===================================================

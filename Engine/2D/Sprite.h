@@ -15,12 +15,19 @@ using namespace Microsoft::WRL;
 
 struct VertexData;
 class DirectXCommon;
+class DxDescriptors;
 
 
 /// <summary>
 /// 2Dテクスチャ
 /// </summary>
 class Sprite {
+public:
+	/// ===================================================
+	/// public : struct
+	/// ===================================================
+
+
 public:
 
 	/// ===================================================
@@ -38,7 +45,20 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw(const WorldTransform& worldTransform, const Mat4& uvTransfrom = Mat4::MakeIdentity());
+
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
+	void PreDraw();
+
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
+	void PostDraw();
+
+
+	void SetScale(const Vec3f& scale);
 
 private:
 
@@ -52,7 +72,9 @@ private:
 
 	void CreateMaterialResource();
 
-	void CreateTransformaitonResource();
+	void CreateWorldMatrixResource();
+
+	void CreateViewProjectionResource();
 
 public: ///- 
 
@@ -67,7 +89,7 @@ private:
 	/// ===================================================
 
 	DirectXCommon* dxCommon_ = nullptr;
-
+	DxDescriptors* dxDescriptors_ = nullptr;
 
 
 	/// ===================================================
@@ -83,11 +105,18 @@ private:
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 
 	///- cbvデータ
-	ComPtr<ID3D12Resource> transformationMatrixResource_;
+	ComPtr<ID3D12Resource> worldMatrixResource_;
+	D3D12_GPU_DESCRIPTOR_HANDLE worldMatrixGpuHandle_;
+
+	ComPtr<ID3D12Resource> viewProjectionResource_;
+
 	ComPtr<ID3D12Resource> materialResource_;
+	D3D12_GPU_DESCRIPTOR_HANDLE materialGpuHandle_;
+
 
 	Material* materialData_;
-	TransformMatrix* transformationMatrixData_;
+	Matrix4x4* worldMatrixData_;
+	Matrix4x4* viewProjectionData_;
 
 	WorldTransform worldTransform_;
 
@@ -98,5 +127,8 @@ private:
 	Vec3f uvScale_;
 	Vec3f uvRotate_;
 	Vec3f uvTranslate_;
+
+	const int kMaxInstanceCount_ = 10;
+	int instanceCount_;
 
 };

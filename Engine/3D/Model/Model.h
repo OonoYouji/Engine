@@ -47,11 +47,17 @@ public:
 	/// <param name="worldTransform"></param>
 	void Draw(const WorldTransform& worldTransform, const Mat4& uvTransform = Mat4::MakeIdentity());
 
+
 	/// <summary>
-	/// デバッグ情報の表示
+	/// 描画前処理
 	/// </summary>
-	/// <param name="windowName"></param>
-	void DebugDraw(const std::string& windowName);
+	void PreDraw();
+
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
+	void PostDraw();
+
 
 	/// <summary>
 	/// 頂点データのGetter

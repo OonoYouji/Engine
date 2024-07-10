@@ -160,6 +160,15 @@
     <ClCompile Include="Engine\Math\UvTransform.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Base\FrameTimer.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\2D\SpriteManager.cpp">
+      <Filter>Source\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\2D\Object2d.cpp">
+      <Filter>Source\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -466,6 +475,15 @@
     </ClInclude>
     <ClInclude Include="Engine\Math\UvTransform.h">
       <Filter>Include\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Base\FrameTimer.h">
+      <Filter>Include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\2D\SpriteManager.h">
+      <Filter>Include\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\2D\Object2d.h">
+      <Filter>Include\2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

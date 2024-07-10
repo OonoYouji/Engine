@@ -3,6 +3,8 @@
 #include <Scene_Game.h>
 #include <memory>
 
+#include <FrameTimer.h>
+
 template<class T>
 void SafeDelete(T* t) {
 	delete t;
@@ -120,6 +122,7 @@ namespace {
 		// ウィンドウの×ボタンが押されるまでループ
 		while (!Engine::ProcessMessage()) {
 			// フレームの開始
+			FrameTimer::GetInstance()->Begin();
 			Engine::BeginFrame();
 
 			/// ↓更新処理ここから
@@ -131,6 +134,7 @@ namespace {
 			this->Draw();
 
 			// フレームの終了
+			FrameTimer::GetInstance()->End();
 			Engine::EndFrame();
 
 			if (isFinished_) {

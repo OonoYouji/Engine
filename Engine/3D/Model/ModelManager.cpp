@@ -34,13 +34,21 @@ void ModelManager::Finalize() {
 /// 描画前処理
 /// ===================================================
 void ModelManager::PreDraw() {
-	///- モデルのインスタンス数をリセット
 	for(auto& model : models_) {
-		model.second->Reset();
+		model.second->PreDraw();
 	}
 }
 
 
+
+/// ===================================================
+/// 描画後処理
+/// ===================================================
+void ModelManager::PostDraw() {
+	for(auto& model : models_) {
+		model.second->PostDraw();
+	}
+}
 
 /// ===================================================
 /// 更新処理
@@ -50,7 +58,6 @@ void ModelManager::Update() {
 	ImGuiDebug();
 
 }
-
 
 
 /// ===================================================
