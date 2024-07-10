@@ -1,5 +1,6 @@
 struct Material {
 	float4 color;
 	int enableLighting;
-	float3x3 uvTransform;
+	float3 p;
+	float4x4 uvTransform;
 };

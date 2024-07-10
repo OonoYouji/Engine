@@ -132,11 +132,12 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	pso->SetInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT);
 
 	pso->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
-	pso->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
+	pso->SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
+	pso->SetDescriptorRange(2, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV);
 
-	pso->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 0);	//- material
 	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_VERTEX, 0);	//- transformation
 	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_PIXEL, 0);	//- texture
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_PIXEL, 1);	//- material
 	pso->SetCBV(D3D12_SHADER_VISIBILITY_PIXEL, 1);	//- directinalLight
 
 	pso->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_PIXEL);

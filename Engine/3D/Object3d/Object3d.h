@@ -32,4 +32,7 @@ private:
 	int id_;
 	Model* model_;
 	std::string modelKey_;
+
+	UvTransform uvTransform_;
+
 };

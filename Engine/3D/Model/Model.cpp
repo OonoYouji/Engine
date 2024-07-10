@@ -67,14 +67,15 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	/// ------------------------------------------
 
 	///- マテリアルリソース
-	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material));
+	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material) * kMaxInstanceCount_);
 
 	///- マッピング
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	materialData_->color = Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData_->enableLighting = true;
-	materialData_->uvTransform = Mat4::MakeIdentity();
-
+	for(uint32_t index = 0; index < kMaxInstanceCount_; ++index) {
+		materialData_[index].color = Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
+		materialData_[index].enableLighting = true;
+		materialData_[index].uvTransform = Mat4::MakeIdentity();
+	}
 
 	/// ------------------------------------------
 	/// ↓ TransformMatrix Resourceの生成
@@ -91,6 +92,23 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	}
 
 	///- srvの作成
+	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC materialDesc{};
+	materialDesc.Format = DXGI_FORMAT_UNKNOWN;
+	materialDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	materialDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	materialDesc.Buffer.FirstElement = 0;
+	materialDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	materialDesc.Buffer.NumElements = kMaxInstanceCount_;
+	materialDesc.Buffer.StructureByteStride = sizeof(Material);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE materialCpuHandle = descriptiors->GetCPUDescriptorHandle();
+	materialGpuHandle_ = descriptiors->GetGPUDescriptorHandle();
+	descriptiors->AddSrvUsedCount();
+	dxCommon->GetDevice()->CreateShaderResourceView(materialResource_.Get(), &materialDesc, materialCpuHandle);
+
+
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC transformMatrixDesc{};
 	transformMatrixDesc.Format = DXGI_FORMAT_UNKNOWN;
@@ -100,13 +118,13 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	transformMatrixDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 	transformMatrixDesc.Buffer.NumElements = kMaxInstanceCount_;
 	transformMatrixDesc.Buffer.StructureByteStride = sizeof(TransformMatrix);
-
-	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
-	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = descriptiors->GetCPUDescriptorHandle();
-	gpuHandle_ = descriptiors->GetGPUDescriptorHandle();
+	
+	D3D12_CPU_DESCRIPTOR_HANDLE transformCpuHandle = descriptiors->GetCPUDescriptorHandle();
+	transformGpuHandle_ = descriptiors->GetGPUDescriptorHandle();
 	descriptiors->AddSrvUsedCount();
+	dxCommon->GetDevice()->CreateShaderResourceView(transformMatrixResource_.Get(), &transformMatrixDesc, transformCpuHandle);
 
-	dxCommon->GetDevice()->CreateShaderResourceView(transformMatrixResource_.Get(), &transformMatrixDesc, cpuHandle);
+
 
 }
 
@@ -115,7 +133,7 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 /// ===================================================
 /// 描画処理
 /// ===================================================
-void Model::Draw(const WorldTransform& worldTransform) {
+void Model::Draw(const WorldTransform& worldTransform, const Mat4& uvTransform) {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	PipelineStateObjectManager::GetInstance()->SetCommandList("Model", commandList);
 
@@ -130,17 +148,21 @@ void Model::Draw(const WorldTransform& worldTransform) {
 	///- Data
 	transformMatrixDatas_[instanceCount_].World = worldTransform.matTransform;
 	transformMatrixDatas_[instanceCount_].WVP = worldTransform.matTransform * Engine::GetCamera()->GetVpMatrix();
+
+	materialData_[instanceCount_].uvTransform = uvTransform;
+
 	instanceCount_++;
 
 	///- IASet
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	commandList->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-
 	DxDescriptors::GetInstance()->SetCommandListSrvHeap(commandList);
-	commandList->SetGraphicsRootDescriptorTable(1, gpuHandle_);
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, material_.textureName);
+
+	commandList->SetGraphicsRootDescriptorTable(2, materialGpuHandle_);
+	commandList->SetGraphicsRootDescriptorTable(0, transformGpuHandle_);
+
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(1, material_.textureName);
 	Light::GetInstance()->SetConstantBuffer(3, commandList);
 
 	commandList->DrawInstanced(UINT(vertexDatas_.size()), instanceCount_, 0, 0);
@@ -345,6 +367,15 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 	}
 
 	return materialData;
+}
+
+
+
+/// ===================================================
+/// 
+/// ===================================================
+void Model::SetUvTransform(const Mat4& uvTransform) {
+	materialData_->uvTransform = uvTransform;
 }
 
 

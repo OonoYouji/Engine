@@ -31,21 +31,66 @@ private:
 	};
 public:
 
-
 	Model();
 	~Model();
 
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="directoryPath"></param>
+	/// <param name="fileName"></param>
 	void Initialize(const std::string& directoryPath, const std::string& fileName);
 
-	void Draw(const WorldTransform& worldTransform);
+	/// <summary>
+	/// モデルの描画
+	/// </summary>
+	/// <param name="worldTransform"></param>
+	void Draw(const WorldTransform& worldTransform, const Mat4& uvTransform = Mat4::MakeIdentity());
 
+	/// <summary>
+	/// デバッグ情報の表示
+	/// </summary>
+	/// <param name="windowName"></param>
 	void DebugDraw(const std::string& windowName);
 
+	/// <summary>
+	/// 頂点データのGetter
+	/// </summary>
+	/// <returns></returns>
 	const std::vector<VertexData>& GetVertexDatas() const {
 		return vertexDatas_;
 	}
 
+	/// <summary>
+	/// インスタンスカウントのリセット
+	/// </summary>
 	void Reset();
+
+	/// <summary>
+	/// objファイルの読み込み
+	/// </summary>
+	/// <param name="directoryPath"></param>
+	/// <param name="fileName"></param>
+	/// <returns></returns>
+	Model LoadObjFile(const std::string& directoryPath, const std::string& fileName);
+
+	/// <summary>
+	/// mtlファイルの読み込み
+	/// </summary>
+	/// <param name="directoryPath"></param>
+	/// <param name="fileName"></param>
+	/// <returns></returns>
+	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& fileName);
+
+	/// <summary>
+	/// 色のSetter
+	/// </summary>
+	/// <param name="color"></param>
+	void SetColor(const Vec4f& color) {
+		materialData_->color = color;
+	}
+
+	void SetUvTransform(const Mat4& uvTransform);
 
 private:
 	///- モデルの描画上限
@@ -64,22 +109,14 @@ private:
 
 	///- Material
 	ComPtr<ID3D12Resource> materialResource_;
-	Material* materialData_ = nullptr;
+	Material* materialData_;
+	D3D12_GPU_DESCRIPTOR_HANDLE materialGpuHandle_;
 
 	///- TransformMatrix
 	ComPtr<ID3D12Resource> transformMatrixResource_;
 	TransformMatrix* transformMatrixDatas_;
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_;
+	D3D12_GPU_DESCRIPTOR_HANDLE transformGpuHandle_;
 
-public:
-
-	Model LoadObjFile(const std::string& directoryPath, const std::string& fileName);
-
-	MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& fileName);
-
-	void SetColor(const Vec4f& color) {
-		materialData_->color = color;
-	}
 
 };
 

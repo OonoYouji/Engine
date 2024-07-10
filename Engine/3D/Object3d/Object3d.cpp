@@ -31,11 +31,17 @@ void Object3d::Initialize(const std::string& key) {
 void Object3d::Initialize() {
 
 	worldTransform_.Initialize();
+	uvTransform_.Initilize();
 
 	GameObject::CreateTransformGroup();
 
-	Group& group = CreateGroup("Model");
-	group.SetPtr("key", &modelKey_);
+	Group& model = CreateGroup("Model");
+	model.SetPtr("key", &modelKey_);
+
+	Group& uvTransform = CreateGroup("UvTransform");
+	uvTransform.SetPtr("scale", &uvTransform_.scale);
+	uvTransform.SetPtr("rotate", &uvTransform_.rotate);
+	uvTransform.SetPtr("tranalate", &uvTransform_.tranalate);
 
 	if(!modelKey_.empty()) {
 		SetName(modelKey_ + std::to_string(id_));
@@ -47,10 +53,11 @@ void Object3d::Initialize() {
 
 void Object3d::Update() {
 	UpdateMatrix();
+	uvTransform_.UpdateMatrix();
 }
 
 void Object3d::Draw() {
 	if(model_) {
-		model_->Draw(worldTransform_);
+		model_->Draw(worldTransform_, uvTransform_.matTransform);
 	}
 }

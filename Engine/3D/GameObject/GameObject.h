@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include <WorldTransform.h>
+#include <UvTransform.h>
 
 
 /// <summary>
@@ -182,8 +183,16 @@ public:
 	/// <param name="groupName"></param>
 	Group& CreateGroup(const std::string& groupName);
 
+	/// <summary>
+	/// jsonに保存
+	/// </summary>
 	void SaveFile();
 
+	/// <summary>
+	/// jsonから読み込み
+	/// </summary>
+	/// <param name="key"></param>
+	/// <param name="filePath"></param>
 	void LoadFile(const std::string& key, const std::string& filePath);
 
 public:
