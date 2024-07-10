@@ -38,7 +38,7 @@ void GameObject::Group::SetPtr(const std::string& key, T* ptr) {
 		*ptr = std::get<T>(second); // 値をポインタに代入
 
 	} else { //- なかったら
-		
+
 		Item newItem;
 		newItem.variable.first.emplace<T*>(ptr); // ポインタをセット
 		newItem.variable.second.emplace<T>(*ptr); // 値をセット
@@ -54,6 +54,7 @@ void GameObject::Group::SetPtr(const std::string& key, T* ptr) {
 template void GameObject::Group::SetPtr<int>(const std::string& key, int* ptr);
 template void GameObject::Group::SetPtr<float>(const std::string& key, float* ptr);
 template void GameObject::Group::SetPtr<Vec3f>(const std::string& key, Vec3f* ptr);
+template void GameObject::Group::SetPtr<Vec2f>(const std::string& key, Vec2f* ptr);
 template void GameObject::Group::SetPtr<bool>(const std::string& key, bool* ptr);
 template void GameObject::Group::SetPtr<std::string>(const std::string& key, std::string* ptr);
 
@@ -92,6 +93,7 @@ void GameObject::Group::SetValue(const std::string& key, const T& value) {
 template void GameObject::Group::SetValue<int>(const std::string& key, const int& value);
 template void GameObject::Group::SetValue<float>(const std::string& key, const float& value);
 template void GameObject::Group::SetValue<Vector3>(const std::string& key, const Vector3& value);
+template void GameObject::Group::SetValue<Vec2f>(const std::string& key, const Vec2f& value);
 template void GameObject::Group::SetValue<bool>(const std::string& key, const bool& value);
 template void GameObject::Group::SetValue<std::string>(const std::string& key, const std::string& value);
 
@@ -101,13 +103,7 @@ template void GameObject::Group::SetValue<std::string>(const std::string& key, c
 /// ===================================================
 template<typename T>
 const T& GameObject::Group::GetItem(const std::string& key) {
-	if(std::is_same_v<T, int>
-	   || std::is_same_v<T, float>
-	   || std::is_same_v<T, Vector3>
-	   || std::is_same_v<T, bool>
-	   || std::is_same_v<T, std::string>) {
-		return std::get<T>(items.at(key).variable.second);
-	}
+	return std::get<T>(items.at(key).variable.second);
 }
 
 /// ---------------------------------------------------
@@ -116,6 +112,7 @@ const T& GameObject::Group::GetItem(const std::string& key) {
 template const int& GameObject::Group::GetItem<int>(const std::string& key);
 template const float& GameObject::Group::GetItem<float>(const std::string& key);
 template const Vector3& GameObject::Group::GetItem<Vector3>(const std::string& key);
+template const Vec2f& GameObject::Group::GetItem<Vec2f>(const std::string& key);
 template const bool& GameObject::Group::GetItem<bool>(const std::string& key);
 template const std::string& GameObject::Group::GetItem<std::string>(const std::string& key);
 
@@ -166,6 +163,20 @@ void GameObject::Group::ImGuiDebug() {
 				Vector3* ptr = std::get<Vector3*>(first);
 				if(ptr) {
 					*ptr = std::get<Vector3>(second);
+				}
+			}
+			continue;
+		}
+
+		///- vector2
+		if(std::holds_alternative<Vec2f>(second)) {
+			Vec2f* ptr = std::get_if<Vec2f>(&second);
+			ImGui::DragFloat2(item.first.c_str(), &ptr->x, 0.05f);
+			///- 値を変えたらptrにも適用する
+			if(ImGui::IsItemEdited()) {
+				Vec2f* ptr = std::get<Vec2f*>(first);
+				if(ptr) {
+					*ptr = std::get<Vec2f>(second);
 				}
 			}
 			continue;
@@ -227,7 +238,7 @@ void GameObject::SaveFile() {
 				root[GetName()][group.first][item.first] = std::get<int>(value);
 				continue;
 			}
-			
+
 			///- float
 			if(std::holds_alternative<float>(value)) {
 				root[GetName()][group.first][item.first] = std::get<float>(value);
@@ -238,6 +249,13 @@ void GameObject::SaveFile() {
 			if(std::holds_alternative<Vector3>(value)) {
 				Vec3f v = std::get<Vector3>(value);
 				root[GetName()][group.first][item.first] = json::array({ v.x, v.y, v.z });
+				continue;
+			}
+			
+			///- Vector3
+			if(std::holds_alternative<Vec2f>(value)) {
+				Vec2f v = std::get<Vec2f>(value);
+				root[GetName()][group.first][item.first] = json::array({ v.x, v.y });
 				continue;
 			}
 
@@ -278,7 +296,7 @@ void GameObject::SaveFile() {
 		assert(false);
 		return;
 	}
-	
+
 	///- ファイルにjson文字列を書き込む
 	ofs << std::setw(4) << root << std::endl;
 	ofs.close();
@@ -297,7 +315,7 @@ void GameObject::LoadFile(const std::string& key, const std::string& filePath) {
 	ifs.open(filePath);
 
 	///- ファイルが開かなければ
-	if(!ifs.is_open()){
+	if(!ifs.is_open()) {
 		return;
 	}
 
@@ -311,7 +329,7 @@ void GameObject::LoadFile(const std::string& key, const std::string& filePath) {
 
 		///- groupの探索
 		for(auto itGroup = group.begin(); itGroup != group.end(); ++itGroup) {
-			
+
 			///- 見つかったgroupの登録
 			Group& group = CreateGroup(itGroup.key());
 
@@ -333,21 +351,28 @@ void GameObject::LoadFile(const std::string& key, const std::string& filePath) {
 					group.SetValue(itItem.key(), value);
 					continue;
 				}
-				
+
 				///- Vector3
 				if(itItem->is_array() && itItem->size() == 3) {
 					Vec3f value = { itItem->at(0), itItem->at(1), itItem->at(2) };
 					group.SetValue(itItem.key(), value);
 					continue;
 				}
-			
+				
+				///- Vector2
+				if(itItem->is_array() && itItem->size() == 2) {
+					Vec2f value = { itItem->at(0), itItem->at(1) };
+					group.SetValue(itItem.key(), value);
+					continue;
+				}
+
 				///- bool
 				if(itItem->is_boolean()) {
 					bool value = itItem->get<bool>();
 					group.SetValue(itItem.key(), value);
 					continue;
 				}
-				
+
 				///- string
 				if(itItem->is_string()) {
 					std::string value = itItem->get<std::string>();
