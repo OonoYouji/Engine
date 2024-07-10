@@ -18,6 +18,7 @@
 #include <Camera.h>
 #include <ModelManager.h>
 #include <GameObjectManager.h>
+#include <SpriteManager.h>
 #include <FrameTimer.h>
 
 
@@ -217,6 +218,7 @@ void Engine::Finalize() {
 
 	sImGuiManager->Finalize();
 
+	SpriteManager::GetInstance()->Finalize();
 	sTextureManager_->Finalize();
 
 	PipelineStateObjectManager::GetInstance()->Finalize();

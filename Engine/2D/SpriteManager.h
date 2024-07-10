@@ -24,6 +24,11 @@ public:
 	static SpriteManager* GetInstance();
 
 	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void Finalize();
+
+	/// <summary>
 	/// スプライトのポインタを取得
 	/// </summary>
 	Sprite* GetSpritePtr(const std::string& textureName);
