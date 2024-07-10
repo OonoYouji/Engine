@@ -8,17 +8,13 @@
             "className": "DebugCamera",
             "file": "./Resources/External/Scene_Game/Objects/DebugCamera.json"
         },
-        "ICO0": {
+        "Floor0": {
             "className": "Object3d",
-            "file": "./Resources/External/Scene_Game/Objects/ICO0.json"
+            "file": "./Resources/External/Scene_Game/Objects/Floor0.json"
         },
-        "monsterBall0": {
-            "className": "Object2d",
-            "file": "./Resources/External/Scene_Game/Objects/monsterBall0.json"
-        },
-        "uvChecker1": {
-            "className": "Object2d",
-            "file": "./Resources/External/Scene_Game/Objects/uvChecker1.json"
+        "ICO1": {
+            "className": "Object3d",
+            "file": "./Resources/External/Scene_Game/Objects/ICO1.json"
         }
     }
 }

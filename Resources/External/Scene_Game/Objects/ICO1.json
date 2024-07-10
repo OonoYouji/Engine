@@ -1,5 +1,8 @@
 {
-    "uvChecker1": {
+    "ICO1": {
+        "Model": {
+            "key": "ICO"
+        },
         "Transform": {
             "rotate": [
                 0.0,
@@ -7,27 +10,23 @@
                 0.0
             ],
             "scale": [
-                640.0,
-                360.0,
-                0.0
+                1.0,
+                1.0,
+                1.0
             ],
             "translate": [
-                586.3499755859375,
-                218.5,
+                0.0,
+                0.0,
                 0.0
             ]
         },
-        "tex": {
-            "Type": 2,
-            "key": "uvChecker"
-        },
-        "uvTransform": {
+        "UvTransform": {
             "rotate": 0.0,
             "scale": [
                 1.0,
                 1.0
             ],
-            "translate": [
+            "tranalate": [
                 0.0,
                 0.0
             ]

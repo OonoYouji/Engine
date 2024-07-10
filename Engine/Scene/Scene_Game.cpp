@@ -20,15 +20,6 @@ void Scene_Game::Init() {
 
 	gameObjectManager_ = GameObjectManager::GetInstance();
 	GameObjectFactory::GetInstance()->Initialize();
-
-	/*Object2d* front = new Object2d();
-	front->Initialize();
-	front->SetType(GameObject::Type::FrontSprite);
-
-	Object2d* back = new Object2d();
-	back->Initialize();
-	back->SetType(GameObject::Type::BackSprite);*/
-
 	
 
 	LoadFile();
