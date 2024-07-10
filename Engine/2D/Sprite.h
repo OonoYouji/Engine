@@ -1,12 +1,15 @@
 #pragma once
 
 #include <d3d12.h>
-#include "WorldTransform.h"
 #include <wrl/client.h>
+
+#include <vector>
+#include <list>
+#include <string>
+
+#include "WorldTransform.h"
 #include "Vector4.h"
 #include "Vector2.h"
-#include <vector>
-#include <string>
 
 #include <CBuffer.h>
 
@@ -40,7 +43,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(const std::string& textureName = "white1x1");
 
 	/// <summary>
 	/// 描画
@@ -56,9 +59,6 @@ public:
 	/// 描画後処理
 	/// </summary>
 	void PostDraw();
-
-
-	void SetScale(const Vec3f& scale);
 
 private:
 
@@ -99,7 +99,7 @@ private:
 	///- 頂点データ
 	ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
-	
+
 	///- インデックスデータ
 	ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
@@ -118,11 +118,11 @@ private:
 	Matrix4x4* worldMatrixData_;
 	Matrix4x4* viewProjectionData_;
 
-	WorldTransform worldTransform_;
-
 	VertexData* vertexData_;
 	uint32_t* indexData_ = nullptr;
 	std::vector<Vector4> localVertex_;
+	
+	std::string textureName_;
 
 	Vec3f uvScale_;
 	Vec3f uvRotate_;

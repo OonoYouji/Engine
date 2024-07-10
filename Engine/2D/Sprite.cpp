@@ -9,6 +9,8 @@
 #include <PipelineStateObjectManager.h>
 #include <DxDescriptors.h>
 
+
+
 Sprite::Sprite() {}
 Sprite::~Sprite() {
 	materialResource_.Reset();
@@ -20,10 +22,11 @@ Sprite::~Sprite() {
 /// ===================================================
 /// 初期化
 /// ===================================================
-void Sprite::Initialize() {
+void Sprite::Initialize(const std::string& textureName) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	dxDescriptors_ = DxDescriptors::GetInstance();
 
+	textureName_ = textureName;
 
 	position = { 0.0f,0.0f };
 	color = { 1.0f,1.0f,1.0f,1.0f };
@@ -60,7 +63,7 @@ void Sprite::Draw(const WorldTransform& worldTransform, const Mat4& uvTransfrom)
 	materialData_[instanceCount_].color = color;
 	materialData_[instanceCount_].uvTransform = uvTransfrom;
 	///- transformation
-	*worldMatrixData_ = worldTransform.matTransform;
+	worldMatrixData_[instanceCount_] = worldTransform.matTransform;
 
 	///- 頂点データに中心点のプラスして書き込む
 	for(uint32_t index = 0; index < 4; index++) {
@@ -95,23 +98,19 @@ void Sprite::PostDraw() {
 	///- commandListに設定
 	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	commandList->IASetIndexBuffer(&indexBufferView_);
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	commandList->SetGraphicsRootDescriptorTable(0, worldMatrixGpuHandle_);
 	commandList->SetGraphicsRootConstantBufferView(1, viewProjectionResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(3, materialGpuHandle_);
 
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, "uvChecker");
+	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, textureName_);
 
 	///- DrawCall
 	commandList->DrawIndexedInstanced(6, instanceCount_, 0, 0, 0);
 
 
 
-}
-
-void Sprite::SetScale(const Vec3f& scale) {
-	worldTransform_.scale = scale;
-	worldTransform_.UpdateMatTransform();
 }
 
 
@@ -233,12 +232,6 @@ void Sprite::CreateWorldMatrixResource() {
 	for(int index = 0u; index < kMaxInstanceCount_; ++index) {
 		worldMatrixData_[index] = Matrix4x4::MakeIdentity();
 	}
-
-	worldTransform_.Initialize();
-
-	Matrix4x4 viewMatrixSprite = Matrix4x4::MakeIdentity();
-	Matrix4x4 projectionMatrixSprite = Matrix4x4::MakeOrthographicMatrix(0.0f, 0.0f, float(kWindowSize.x), float(kWindowSize.y), 0.0f, 100.0f);
-	Matrix4x4 wvpMatrixSprite = worldTransform_.matTransform * (viewMatrixSprite * projectionMatrixSprite);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC worldMatrixDesc{};
 	worldMatrixDesc.Format = DXGI_FORMAT_UNKNOWN;

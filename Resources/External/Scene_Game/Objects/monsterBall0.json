@@ -1,0 +1,36 @@
+{
+    "monsterBall0": {
+        "Transform": {
+            "rotate": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                640.0,
+                360.0,
+                0.0
+            ],
+            "translate": [
+                39.099998474121094,
+                121.55000305175781,
+                0.0
+            ]
+        },
+        "tex": {
+            "Type": 0,
+            "key": "monsterBall"
+        },
+        "uvTransform": {
+            "rotate": 0.0,
+            "scale": [
+                1.0,
+                1.0
+            ],
+            "translate": [
+                0.0,
+                0.0
+            ]
+        }
+    }
+}

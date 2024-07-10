@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <map>
 #include <string>
 #include <memory>
 
@@ -14,17 +14,32 @@ class SpriteManager final {
 	~SpriteManager() = default;
 public:
 
+	/// ===================================================
+	/// public : methods
+	/// ===================================================
+
+	/// <summary>
+	/// インスタンス確保
+	/// </summary>
 	static SpriteManager* GetInstance();
 
+	/// <summary>
+	/// スプライトのポインタを取得
+	/// </summary>
+	Sprite* GetSpritePtr(const std::string& textureName);
 
-	Sprite* GetSpritePtr(const std::string& texturekey);
-
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
 	void PreDraw();
 
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
 	void PostDraw();
 
 private:
 
-	std::list<std::unique_ptr<Sprite>> sprites_;
+	std::map<std::string, std::unique_ptr<Sprite>> sprites_;
 
 };

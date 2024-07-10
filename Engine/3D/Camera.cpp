@@ -12,6 +12,7 @@
 Camera::Camera() {
 	SetName(CreateName(this));
 	SetTag(CreateName(this));
+	SetType(Type::Object3d);
 	Initialize();
 }
 Camera::~Camera() { Finalize(); }

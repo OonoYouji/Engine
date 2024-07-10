@@ -14,6 +14,7 @@ Object3d::Object3d() {
 	std::string name = CreateName(this);
 	SetName(name);
 	SetTag(name);
+	SetType(Type::Object3d);
 	id_ = nextId_++;
 }
 

@@ -6,6 +6,7 @@
 #include <DebugCamera.h>
 #include <Player.h>
 #include <Object3d.h>
+#include <Object2d.h>
 #pragma endregion
 
 #pragma region CreateFunc
@@ -13,9 +14,8 @@ namespace {
 	GameObject* CreateCamera() { return new Camera(); }
 	GameObject* CrateDebugCamera() { return new DebugCamera(); }
 	GameObject* CreatePlayer() { return new Player(); }
-	GameObject* CreateObject3d() { 
-		return new Object3d(); 
-	}
+	GameObject* CreateObject3d() { return new Object3d(); }
+	GameObject* CreateObject2d() { return new Object2d(); }
 }
 #pragma endregion
 
@@ -37,6 +37,7 @@ void GameObjectFactory::Initialize() {
 	RegistryClass("Camera", CreateCamera);
 	RegistryClass("DebugCamera", CrateDebugCamera);
 	RegistryClass("Object3d", CreateObject3d);
+	RegistryClass("Object2d", CreateObject2d);
 }
 
 

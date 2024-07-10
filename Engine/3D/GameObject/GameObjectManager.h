@@ -30,6 +30,21 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// 
+	/// </summary>
+	void FrontSpriteDraw();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void Object3dDraw();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void BackSpriteDraw();
+
+	/// <summary>
 	/// GameObjectクラスへのポインタを追加する
 	/// </summary>
 	/// <param name="gameObject">GameObjectへのポインタ</param>
@@ -73,7 +88,12 @@ private:
 
 private:
 
-	std::list<std::unique_ptr<GameObject>> gameObjects_;
+	std::list<std::unique_ptr<GameObject>> gameObjects_; ///- objectの本体
+
+	std::list<GameObject*> frontSprites_;	//- 背景
+	std::list<GameObject*> objects_;		//- 3dオブジェクト
+	std::list<GameObject*> backSprites_;	//- 前景
+
 	GameObject* selectObject_ = nullptr;
 
 private:

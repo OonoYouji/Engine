@@ -526,6 +526,23 @@ void GameObject::SetPositionZ(float z) { worldTransform_.translate.z = z; }
 
 
 /// ===================================================
+/// typeのセット
+/// ===================================================
+void GameObject::SetType(Type type) {
+	type_ = type;
+}
+
+
+/// ===================================================
+/// typeのゲット
+/// ===================================================
+GameObject::Type GameObject::GetType() const {
+	return type_;
+}
+
+
+
+/// ===================================================
 /// matTransformの更新
 /// ===================================================
 void GameObject::UpdateMatrix() {

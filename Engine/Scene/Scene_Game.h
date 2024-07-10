@@ -35,6 +35,4 @@ public:
 private:
 	GameObjectManager* gameObjectManager_ = nullptr;
 
-	std::unique_ptr<Sprite> sprite_;
-
 };

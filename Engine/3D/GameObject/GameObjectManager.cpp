@@ -39,9 +39,26 @@ void GameObjectManager::Finalize() {
 void GameObjectManager::Update() {
 	ImGuiDebug();
 
+
+	frontSprites_.clear();
+	objects_.clear();
+	backSprites_.clear();
+
 	for(auto& gameObject : gameObjects_) {
 		if(gameObject->isActive_) {
 			gameObject->Update();
+		}
+
+		switch(gameObject->GetType()) {
+		case GameObject::Type::FrontSprite:
+			frontSprites_.push_back(gameObject.get());
+			break;
+		case GameObject::Type::Object3d:
+			objects_.push_back(gameObject.get());
+			break;
+		case GameObject::Type::BackSprite:
+			backSprites_.push_back(gameObject.get());
+			break;
 		}
 	}
 
@@ -57,6 +74,38 @@ void GameObjectManager::Draw() {
 	for(auto& gameObject : gameObjects_) {
 		if(gameObject->isActive_) {
 			gameObject->Draw();
+		}
+	}
+
+}
+
+
+void GameObjectManager::FrontSpriteDraw() {
+
+	for(auto& frontSprite : frontSprites_) {
+		if(frontSprite->isActive_) {
+			frontSprite->Draw();
+		}
+	}
+
+}
+
+
+void GameObjectManager::Object3dDraw() {
+
+	for(auto& object : objects_) {
+		if(object->isActive_) {
+			object->Draw();
+		}
+	}
+
+}
+
+void GameObjectManager::BackSpriteDraw() {
+
+	for(auto& backSprite : backSprites_) {
+		if(backSprite->isActive_) {
+			backSprite->Draw();
 		}
 	}
 

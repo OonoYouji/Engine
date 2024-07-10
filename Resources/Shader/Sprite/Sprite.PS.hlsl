@@ -1,7 +1,6 @@
 #include "Sprite.hlsli"
 #include "../CBuffer/Material.hlsli"
 
-
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);
 StructuredBuffer<Material> gMaterial : register(t1);

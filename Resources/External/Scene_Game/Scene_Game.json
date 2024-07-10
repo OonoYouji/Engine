@@ -11,6 +11,14 @@
         "ICO0": {
             "className": "Object3d",
             "file": "./Resources/External/Scene_Game/Objects/ICO0.json"
+        },
+        "monsterBall0": {
+            "className": "Object2d",
+            "file": "./Resources/External/Scene_Game/Objects/monsterBall0.json"
+        },
+        "uvChecker1": {
+            "className": "Object2d",
+            "file": "./Resources/External/Scene_Game/Objects/uvChecker1.json"
         }
     }
 }

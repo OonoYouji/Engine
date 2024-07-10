@@ -14,6 +14,15 @@
 /// ゲームオブジェクトの基底クラス
 /// </summary>
 class GameObject {
+public:
+	/// ===================================================
+	/// public : enum class
+	/// ===================================================
+	enum Type {
+		BackSprite,		//- 背景
+		Object3d,		//- オブジェクト
+		FrontSprite,	//- 前景
+	};
 protected:
 #pragma region JSON保存,読み込み
 	/// ---------------------------------------------------
@@ -164,6 +173,10 @@ public:
 	void SetPositionY(float y);
 	void SetPositionZ(float z);
 
+	void SetType(Type type);
+
+	Type GetType() const;
+
 	/// <summary>
 	/// worldTransformの行列更新
 	/// </summary>
@@ -212,6 +225,8 @@ protected:
 
 	///- jsonに保存するデータの集まり
 	std::unordered_map<std::string, Group> groups_;
+
+	Type type_;
 
 };
 
