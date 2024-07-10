@@ -294,6 +294,9 @@
     <Filter Include="Source\3D\Model">
       <UniqueIdentifier>{6f214a10-e8f3-4bf3-a5d4-edb3c45c2609}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader\Sprite">
+      <UniqueIdentifier>{45c2c269-a170-4771-86ed-99e39d7706de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Externals\imgui\imconfig.h">
@@ -489,6 +492,9 @@
     <None Include="Resources\Shader\Terrain\Terrain.hlsli">
       <Filter>Shader\Terrain</Filter>
     </None>
+    <None Include="Resources\Shader\Sprite\Sprite.hlsli">
+      <Filter>Shader\Sprite</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shader\Model\Model.PS.hlsl">
@@ -511,6 +517,12 @@
     </FxCompile>
     <FxCompile Include="Resources\Shader\Terrain\TerrainCollision.CS.hlsl">
       <Filter>Shader\Terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shader\Sprite\Sprite.PS.hlsl">
+      <Filter>Shader\Sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shader\Sprite\Sprite.VS.hlsl">
+      <Filter>Shader\Sprite</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

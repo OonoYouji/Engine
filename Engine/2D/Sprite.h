@@ -12,7 +12,9 @@
 
 ///- ComPtrの省略用
 using namespace Microsoft::WRL;
+
 struct VertexData;
+class DirectXCommon;
 
 
 /// <summary>
@@ -20,6 +22,10 @@ struct VertexData;
 /// </summary>
 class Sprite {
 public:
+
+	/// ===================================================
+	/// public : methods
+	/// ===================================================
 
 	Sprite();
 	~Sprite();
@@ -34,33 +40,60 @@ public:
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// ImGuiを使って編集
-	/// </summary>
-	void DebugDraw(const std::string& windowName);
+private:
+
+	/// ===================================================
+	/// private : methods
+	/// ===================================================
+
+	void CreateVertexResource();
+
+	void CreateIndexResource();
+
+	void CreateMaterialResource();
+
+	void CreateTransformaitonResource();
 
 public: ///- 
 
 	Vec2f position;
 	Vec4f color;
+	Vec2f anchor;
 
-private: ///- メンバ変数
+private:
 
+	/// ===================================================
+	/// other class : pointer
+	/// ===================================================
+
+	DirectXCommon* dxCommon_ = nullptr;
+
+
+
+	/// ===================================================
+	/// shader : buffers
+	/// ===================================================
+
+	///- 頂点データ
 	ComPtr<ID3D12Resource> vertexResource_;
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
-	ComPtr<ID3D12Resource> transformationMatrixResource_;
-	ComPtr<ID3D12Resource> materialResource_;
-
+	
+	///- インデックスデータ
 	ComPtr<ID3D12Resource> indexResource_;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView_;
 
-	WorldTransform worldTransform_;
+	///- cbvデータ
+	ComPtr<ID3D12Resource> transformationMatrixResource_;
+	ComPtr<ID3D12Resource> materialResource_;
 
 	Material* materialData_;
+	TransformMatrix* transformationMatrixData_;
+
+	WorldTransform worldTransform_;
+
 	VertexData* vertexData_;
 	uint32_t* indexData_ = nullptr;
 	std::vector<Vector4> localVertex_;
-	TransformMatrix* transformationMatrixData_;
 
 	Vec3f uvScale_;
 	Vec3f uvRotate_;

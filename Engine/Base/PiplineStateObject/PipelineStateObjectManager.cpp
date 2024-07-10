@@ -144,6 +144,40 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 	pso->Initialize(device, shaderBlob.get());
 
+	
+	/// ----------------------------------------------
+	/// ↓ Sprite
+	/// ----------------------------------------------
+
+
+	shaderBlob.reset(new ShaderBlob());
+	shaderBlob->Initialize(
+		shaderCompile_.get(),
+		L"./Resources/Shader/Sprite/Sprite.VS.hlsl", L"vs_6_0",
+		L"./Resources/Shader/Sprite/Sprite.PS.hlsl", L"ps_6_0"
+	);
+
+	pipelineStateObjects_["Sprite"] = std::make_unique<PipelineStateObject>();
+	pso = pipelineStateObjects_.at("Sprite").get();
+
+	pso->SetInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	pso->SetInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT);
+
+	pso->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV); //- worldMatrix
+	pso->SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV); //- texutre
+	pso->SetDescriptorRange(2, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV); //- material
+
+	///- vertex shader
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_VERTEX, 0);	//- worldMatrix
+	pso->SetCBV(D3D12_SHADER_VISIBILITY_VERTEX, 0);	//- viewProjectionMatrix
+
+	///- pixel shader
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_PIXEL, 0);	//- texture
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_PIXEL, 1);	//- material
+	pso->SetStaticSampler(0, D3D12_SHADER_VISIBILITY_PIXEL);
+
+	pso->Initialize(device, shaderBlob.get());
+
 
 
 	shaderBlob.reset();

@@ -20,7 +20,8 @@ void Scene_Game::Init() {
 	gameObjectManager_ = GameObjectManager::GetInstance();
 	GameObjectFactory::GetInstance()->Initialize();
 
-	//(new Object3d())->Initialize("ICO");
+	sprite_.reset(new Sprite());
+	sprite_->Initialize();
 
 	LoadFile();
 
@@ -29,17 +30,17 @@ void Scene_Game::Init() {
 void Scene_Game::Update() {
 	gameObjectManager_->Update();
 
-	ImGui::ShowDemoWindow();
-
 
 }
 
 void Scene_Game::Draw() {
 	gameObjectManager_->Draw();
 
+	sprite_->Draw();
+
 }
 
 void Scene_Game::Finalize() {
-
+	sprite_.reset();
 
 }
