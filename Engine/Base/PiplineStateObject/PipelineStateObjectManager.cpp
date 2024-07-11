@@ -179,6 +179,31 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 	pso->Initialize(device, shaderBlob.get());
 
 
+	
+	/// ----------------------------------------------
+	/// ↓ Line
+	/// ----------------------------------------------
+
+
+	shaderBlob.reset(new ShaderBlob());
+	shaderBlob->Initialize(
+		shaderCompile_.get(),
+		L"./Resources/Shader/Line/Line.VS.hlsl", L"vs_6_0",
+		L"./Resources/Shader/Line/Line.PS.hlsl", L"ps_6_0"
+	);
+
+	pipelineStateObjects_["Line"] = std::make_unique<PipelineStateObject>();
+	pso = pipelineStateObjects_.at("Line").get();
+
+	pso->SetInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	pso->SetInputElement("COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
+
+	///- vertex shader
+	pso->SetCBV(D3D12_SHADER_VISIBILITY_VERTEX, 0);	//- viewProjectionMatrix
+
+	pso->Initialize(device, shaderBlob.get());
+
+
 
 	shaderBlob.reset();
 }
