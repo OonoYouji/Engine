@@ -31,16 +31,35 @@ public:
 	/// public : methods
 	/// ===================================================
 
+	/// <summary>
+	/// インスタンス確保
+	/// </summary>
+	/// <returns></returns>
 	static LineDrawer* GetInstance();
 
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize();
 
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	void Finalize();
 
+	/// <summary>
+	/// 描画前処理
+	/// </summary>
 	void PreDraw();
 
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
 	void PostDraw();
 
+	/// <summary>
+	/// 線の描画
+	/// </summary>
 	void Draw(const Vec3f& v1, const Vec3f& v2, const Vec4f& color);
 
 private:
@@ -49,18 +68,19 @@ private:
 	/// private : methods
 	/// ===================================================
 
+	/// <summary>
+	/// 頂点バッファの生成
+	/// </summary>
+	/// <param name="vertexCount"></param>
 	void CreateVertexBuffer(size_t vertexCount);
 
+	/// <summary>
+	/// ビュープロジェクションバッファの生成
+	/// </summary>
 	void CreateViewProjectionBuffer();
 
 private:
 
-	/// ===================================================
-	/// static : objects
-	/// ===================================================
-	static const int kVertexCount_ = 2;
-	
-	
 	/// ===================================================
 	/// other class : pointer
 	/// ===================================================
@@ -78,9 +98,6 @@ private:
 
 	ComPtr<ID3D12Resource> viewProjectionBuffer_;
 	Mat4* viewProjectionData_ = nullptr;
-
-
-	int vertexUsedCount_ = 0;
 
 private:
 	LineDrawer(const LineDrawer&) = delete;

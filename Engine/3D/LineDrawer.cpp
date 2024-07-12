@@ -37,7 +37,6 @@ void LineDrawer::Finalize() {
 /// 描画前処理
 /// ===================================================
 void LineDrawer::PreDraw() {
-	vertexUsedCount_ = 0;
 	vertices_.clear();
 }
 
@@ -59,7 +58,7 @@ void LineDrawer::PostDraw() {
 
 	commandList->SetGraphicsRootConstantBufferView(0, viewProjectionBuffer_->GetGPUVirtualAddress());
 
-	commandList->DrawInstanced(static_cast<UINT>(vertexUsedCount_), 1, 0, 0);
+	commandList->DrawInstanced(static_cast<UINT>(vertices_.size()), 1, 0, 0);
 
 }
 
@@ -71,8 +70,6 @@ void LineDrawer::Draw(const Vec3f& v1, const Vec3f& v2, const Vec4f& color) {
 
 	vertices_.push_back({ { v1.x, v1.y, v1.z, 1.0f },color });
 	vertices_.push_back({ { v2.x, v2.y, v2.z, 1.0f },color });
-
-	vertexUsedCount_ += 2;
 
 }
 
