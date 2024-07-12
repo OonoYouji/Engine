@@ -81,7 +81,7 @@ void TerrainCollider::Update() {
 		}
 	} else {
 		Vec3f position = ConvertPosition(preTexcoord_);
-		pPlayer_->SetPosition(position);
+		pPlayer_->SetPos(position);
 	}
 
 	pPlayer_->UpdateMatrix();

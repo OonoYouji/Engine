@@ -45,6 +45,9 @@ void LineDrawer::PreDraw() {
 /// 描画後処理
 /// ===================================================
 void LineDrawer::PostDraw() {
+	if(vertices_.empty()) {
+		return;
+	}
 
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	PipelineStateObjectManager::GetInstance()->SetCommandList("Line", commandList);

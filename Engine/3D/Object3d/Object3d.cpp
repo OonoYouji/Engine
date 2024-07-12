@@ -57,7 +57,7 @@ void Object3d::Update() {
 	UpdateMatrix();
 	uvTransform_.UpdateMatrix();
 
-	aabbs_.clear();
+	/*aabbs_.clear();
 	int index = 0;
 	for(auto& vertex : model_->GetVertexDatas()) {
 		if(index % 3 == 0) {
@@ -71,7 +71,7 @@ void Object3d::Update() {
 		
 		index++;
 
-	}
+	}*/
 
 }
 
@@ -80,8 +80,8 @@ void Object3d::Draw() {
 		model_->Draw(worldTransform_, uvTransform_.matTransform);
 	}
 
-	for(auto& aabb : aabbs_) {
+	/*for(auto& aabb : aabbs_) {
 		aabb.Draw({1.0f, 0.0f, 0.0f, 0.0f});
-	}
+	}*/
 
 }

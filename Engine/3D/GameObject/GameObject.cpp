@@ -253,7 +253,7 @@ void GameObject::SaveFile() {
 				root[GetName()][group.first][item.first] = json::array({ v.x, v.y, v.z });
 				continue;
 			}
-			
+
 			///- Vector3
 			if(std::holds_alternative<Vec2f>(value)) {
 				Vec2f v = std::get<Vec2f>(value);
@@ -360,7 +360,7 @@ void GameObject::LoadFile(const std::string& key, const std::string& filePath) {
 					group.SetValue(itItem.key(), value);
 					continue;
 				}
-				
+
 				///- Vector2
 				if(itItem->is_array() && itItem->size() == 2) {
 					Vec2f value = { itItem->at(0), itItem->at(1) };
@@ -516,21 +516,6 @@ const WorldTransform& GameObject::GetWorldTransform() const {
 }
 
 
-
-/// ===================================================
-/// PositionのSetter
-/// ===================================================
-void GameObject::SetPosition(const Vec3f& position) { worldTransform_.translate = position; }
-void GameObject::SetPositionX(float x) { worldTransform_.translate.x = x; }
-void GameObject::SetPositionY(float y) { worldTransform_.translate.y = y; }
-void GameObject::SetPositionZ(float z) { worldTransform_.translate.z = z; }
-
-Vec3f GameObject::GetPosition() {
-	return Mat4::Transform({0.0f, 0.0f, 0.0f}, worldTransform_.matTransform);
-}
-
-
-
 /// ===================================================
 /// typeのセット
 /// ===================================================
@@ -597,5 +582,69 @@ GameObject::Group& GameObject::CreateGroup(const std::string& groupName) {
 	return groups_[groupName];
 }
 
+#pragma region SRT accessor
+void GameObject::SetPos(const Vec3f& pos) {
+	worldTransform_.translate = pos;
+}
+
+void GameObject::SetPosX(float x) {
+	worldTransform_.translate.x = x;
+}
+
+void GameObject::SetPosY(float y) {
+	worldTransform_.translate.y = y;
+}
+
+void GameObject::SetPosZ(float z) {
+	worldTransform_.translate.z = z;
+}
+
+Vec3f GameObject::GetPos() const {
+	return Mat4::Transform({ 0.0f, 0.0f, 0.0f }, worldTransform_.matTransform);
+}
 
 
+
+void GameObject::SetScale(const Vec3f& scale) {
+	worldTransform_.scale = scale;
+}
+
+void GameObject::SetScaleX(float x) {
+	worldTransform_.scale.x = x;
+}
+
+void GameObject::SetScaleY(float y) {
+	worldTransform_.scale.y = y;
+}
+
+void GameObject::SetScaleZ(float z) {
+	worldTransform_.scale.z = z;
+}
+
+const Vec3f& GameObject::GetScale() const {
+	return worldTransform_.scale;
+}
+
+
+
+void GameObject::SetRotate(const Vec3f& rotate) {
+	worldTransform_.rotate = rotate;
+}
+
+void GameObject::SetRotateX(float x) {
+	worldTransform_.rotate.x = x;
+}
+
+void GameObject::SetRotateY(float y) {
+	worldTransform_.rotate.y = y;
+}
+
+void GameObject::SetRotateZ(float z) {
+	worldTransform_.rotate.z = z;
+}
+
+const Vec3f& GameObject::GetRotate() const {
+	return worldTransform_.rotate;
+}
+
+#pragma endregion

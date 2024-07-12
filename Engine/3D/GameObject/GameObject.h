@@ -155,6 +155,30 @@ public:
 
 #pragma endregion
 
+#pragma region SRT accessor
+
+	void SetPos(const Vec3f& pos);
+	void SetPosX(float x);
+	void SetPosY(float y);
+	void SetPosZ(float z);
+
+	Vec3f GetPos() const;
+
+	void SetScale(const Vec3f& scale);
+	void SetScaleX(float x);
+	void SetScaleY(float y);
+	void SetScaleZ(float z);
+
+	const Vec3f& GetScale() const;
+
+	void SetRotate(const Vec3f& rotate);
+	void SetRotateX(float x);
+	void SetRotateY(float y);
+	void SetRotateZ(float z);
+
+	const Vec3f& GetRotate() const;;
+
+#pragma endregion
 
 
 	/// <summary>
@@ -167,13 +191,6 @@ public:
 	/// </summary>
 	/// <returns>worldTransformのconst参照</returns>
 	const WorldTransform& GetWorldTransform() const;
-
-	void SetPosition(const Vec3f& position);
-	void SetPositionX(float x);
-	void SetPositionY(float y);
-	void SetPositionZ(float z);
-
-	Vec3f GetPosition();
 
 	void SetType(Type type);
 

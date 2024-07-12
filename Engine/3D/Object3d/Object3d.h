@@ -37,6 +37,6 @@ private:
 
 	UvTransform uvTransform_;
 
-	std::list<AABB> aabbs_;
+	//std::list<AABB> aabbs_;
 
 };

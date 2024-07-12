@@ -50,17 +50,13 @@ void Scene_Game::Draw() {
 
 
 	/// ---------------------------------------------------
-	/// 3dオブジェクト
+	/// 3dオブジェクト : Line
 	/// ---------------------------------------------------
 
 	modelManager->PreDraw();
 	lineDrawer->PreDraw();
 
 	gameObjectManager_->Object3dDraw();
-
-	lineDrawer->Draw({ 0.0f,0.0f,0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f });
-	lineDrawer->Draw({ 0.0f,0.0f,0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f });
-	lineDrawer->Draw({ 0.0f,0.0f,0.0f }, { 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 1.0f });
 
 	modelManager->PostDraw();
 	lineDrawer->PostDraw();
