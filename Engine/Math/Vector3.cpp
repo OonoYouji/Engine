@@ -69,3 +69,20 @@ Vector3 Vector3::Convert4To3(const Vec4f& v) {
 		v.z / v.w
 	);
 }
+
+
+Vector3Int::Vector3Int(int x, int y, int z) {
+	this->x = x;
+	this->y = y;
+	this->z = z;
+}
+
+Vector3Int::Vector3Int(const Vector3Int& obj) {
+	*this = obj;
+}
+
+Vector3Int::Vector3Int(const Vector2Int& v, int z) {
+	this->x = v.x;
+	this->y = v.y;
+	this->z = z;
+}

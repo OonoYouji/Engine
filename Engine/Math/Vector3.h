@@ -104,6 +104,8 @@ public:
 	
 };
 
+#pragma region Vector3Float operator
+
 
 inline Vector3 Vector3::operator+(const Vector3& other) const {
 	return Vector3(
@@ -184,5 +186,130 @@ inline bool Vector3::operator!=(const Vector3& other) const {
 		|| this->z != other.z;
 }
 
+#pragma endregion
+
+
+class Vector3Int final {
+public:
+
+	Vector3Int() = default;
+	Vector3Int(int x, int y, int z);
+	Vector3Int(const Vector3Int& obj);
+
+	Vector3Int(const Vector2Int& v, int z);
+
+	~Vector3Int() = default;
+
+public:
+
+	int x, y, z;
+
+public:
+	
+	inline Vector3Int operator+(const Vector3Int& other) const;
+	inline Vector3Int operator-(const Vector3Int& other) const;
+	inline Vector3Int operator/(const Vector3Int& other) const;
+	inline Vector3Int operator*(const Vector3Int& other) const;
+	inline Vector3Int operator/(int value) const;
+	inline Vector3Int operator*(int value) const;
+
+	inline Vector3Int& operator+=(const Vector3Int& other);
+	inline Vector3Int& operator-=(const Vector3Int& other);
+	inline Vector3Int& operator*=(const Vector3Int& other);
+	inline Vector3Int& operator/=(const Vector3Int& other);
+	inline Vector3Int& operator/=(int value);
+	inline Vector3Int& operator*=(int value);
+
+	inline Vector3Int operator-() const;
+
+	inline bool operator!=(const Vector3Int& other) const;
+};
+
+
+#pragma region Vector3Int operator
+
+
+inline Vector3Int Vector3Int::operator+(const Vector3Int& other) const {
+	return Vector3Int(
+		this->x + other.x,
+		this->y + other.y,
+		this->z + other.z
+	);
+}
+inline Vector3Int Vector3Int::operator-(const Vector3Int& other) const {
+	return Vector3Int(
+		this->x - other.x,
+		this->y - other.y,
+		this->z - other.z
+	);
+}
+inline Vector3Int Vector3Int::operator/(const Vector3Int& other) const {
+	return Vector3Int(
+		this->x / other.x,
+		this->y / other.y,
+		this->z / other.z
+	);
+}
+inline Vector3Int Vector3Int::operator*(const Vector3Int& other) const {
+	return Vector3Int(
+		this->x * other.x,
+		this->y * other.y,
+		this->z * other.z
+	);
+}
+inline Vector3Int Vector3Int::operator/(int value) const {
+	return Vector3Int(
+		this->x / value,
+		this->y / value,
+		this->z / value
+	);
+}
+inline Vector3Int Vector3Int::operator*(int value) const {
+	return Vector3Int(
+		this->x * value,
+		this->y * value,
+		this->z * value
+	);
+}
+
+inline Vector3Int& Vector3Int::operator+=(const Vector3Int& other) {
+	(*this) = (*this) + other;
+	return *this;
+}
+inline Vector3Int& Vector3Int::operator-=(const Vector3Int& other) {
+	(*this) = (*this) - other;
+	return *this;
+}
+inline Vector3Int& Vector3Int::operator*=(const Vector3Int& other) {
+	(*this) = (*this) * other;
+	return *this;
+}
+inline Vector3Int& Vector3Int::operator/=(const Vector3Int& other) {
+	(*this) = (*this) / other;
+	return *this;
+}
+inline Vector3Int& Vector3Int::operator/=(int value) {
+	(*this) = (*this) / value;
+	return *this;
+}
+inline Vector3Int& Vector3Int::operator*=(int value) {
+	(*this) = (*this) * value;
+	return *this;
+}
+
+
+inline Vector3Int Vector3Int::operator-() const {
+	return (*this) * -1;
+}
+
+inline bool Vector3Int::operator!=(const Vector3Int& other) const {
+	return this->x != other.x
+		|| this->y != other.y
+		|| this->z != other.z;
+}
+
+
+#pragma endregion
 
 using Vec3f = Vector3;
+using Vec3 = Vector3Int; 

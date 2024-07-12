@@ -87,10 +87,10 @@ void Object3d::Draw() {
 		model_->Draw(worldTransform_, uvTransform_.matTransform);
 	}
 
-	for(auto& aabb : aabbs_) {
-		aabb.Draw({1.0f, 0.0f, 0.0f, 0.0f});
-	}
+	//for(auto& aabb : aabbs_) {
+	//	aabb.Draw({1.0f, 0.0f, 0.0f, 0.0f});
+	//}
 
-	aabb_.Draw();
+	//aabb_.Draw();
 
 }
