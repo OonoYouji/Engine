@@ -223,6 +223,7 @@ public:
 	inline Vector3Int operator-() const;
 
 	inline bool operator!=(const Vector3Int& other) const;
+	inline bool operator==(const Vector3Int& other) const;
 };
 
 
@@ -306,6 +307,10 @@ inline bool Vector3Int::operator!=(const Vector3Int& other) const {
 	return this->x != other.x
 		|| this->y != other.y
 		|| this->z != other.z;
+}
+
+inline bool Vector3Int::operator==(const Vector3Int& other) const {
+	return !(*this != other);
 }
 
 

@@ -6,6 +6,7 @@
 #include <cassert>
 #include <iostream>
 #include <filesystem>
+#include <unordered_map>
 
 #include <Vector4.h>
 #include <Vector3.h>
@@ -21,6 +22,17 @@
 #include <PipelineStateObjectManager.h>
 #pragma endregion
 
+namespace std {
+	template<>
+	struct hash<Vec3> {
+		std::size_t operator()(const Vec3& v) const noexcept {
+			std::size_t hx = std::hash<int>{}(v.x);
+			std::size_t hy = std::hash<int>{}(v.y);
+			std::size_t hz = std::hash<int>{}(v.z);
+			return hx ^ (hy << 1) ^ (hz << 2);
+		}
+	};
+}
 
 Model::Model() {}
 Model::~Model() {
@@ -125,6 +137,9 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 	std::vector<Vector3> normals;	//- 法線
 	std::vector<Vector2> texcoords;	//- テクスチャ座標
 	std::vector<uint32_t> indices;	//- インデックス
+
+	std::unordered_map<Vec3, uint32_t> faceData;
+
 	std::string line;
 
 
@@ -192,21 +207,29 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 					elementIndices[element] = std::stoi(index);
 				}
 
-				///- 要素へのindexから、実際の要素の値を取得して、頂点を構築する
-				Vec4f position = positions[elementIndices[0] - 1];
-				Vec2f texcoord = texcoords[elementIndices[1] - 1];
-				Vec3f normal = normals[elementIndices[2] - 1];
-				triangle[faceVertex] = { position, texcoord, normal };
-				//model.vertices_.push_back({ position, texcoord, normal });
+				Vec3 vertexIndex = {
+					static_cast<int>(elementIndices[0] - 1), //- poisiton
+					static_cast<int>(elementIndices[1] - 1), //- texcoord
+					static_cast<int>(elementIndices[2] - 1)  //- normal
+				};
 
-				indices.push_back(uint32_t(indices.size()));
+				if(faceData.find(vertexIndex) == faceData.end()) {
+					faceData[vertexIndex] = uint32_t(faceData.size());
+					model.vertices_.push_back(
+						{positions[vertexIndex.x],
+						texcoords[vertexIndex.y],
+						normals[vertexIndex.z]}
+					);
+				}
+
+				indices.push_back(faceData.at(vertexIndex));
+
+				//indices.push_back(index);
+				////model.vertices_.push_back({ position, texcoord, normal });
+				//vertex[vertexIndex] = { position, texcoord, normal };
+				//indices.push_back(uint32_t(indices.size()));
 
 			}
-
-			///- 頂点を逆順で保存する (モデルが右手座標系のため)
-			model.vertices_.push_back(triangle[2]);
-			model.vertices_.push_back(triangle[1]);
-			model.vertices_.push_back(triangle[0]);
 
 		} else if(identifier == "mtllib") {
 
@@ -224,6 +247,24 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 		}
 
 	}
+
+
+
+	for(uint32_t i = 0; i < indices.size() / 3; ++i) {
+		uint32_t startIndex = i * 3;
+
+		uint32_t index[3] = {
+			indices[startIndex + 0],
+			indices[startIndex + 1],
+			indices[startIndex + 2]
+		};
+
+		for(uint32_t j = 0; j < 3; ++j) {
+			indices[startIndex + j] = index[2 - j];
+		}
+
+	}
+
 
 	model.indices_ = indices;
 
