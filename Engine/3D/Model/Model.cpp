@@ -25,9 +25,9 @@
 Model::Model() {}
 Model::~Model() {
 
-	vertexResource_.Reset();
-	materialResource_.Reset();
-	transformMatrixResource_.Reset();
+	vertexBuffer_.Reset();
+	materialBuffer_.Reset();
+	transformBuffer_.Reset();
 
 }
 
@@ -42,89 +42,13 @@ void Model::Initialize(const std::string& directoryPath, const std::string& file
 	size_t pos = fileName.find(".obj");
 	name_ = fileName.substr(0, pos);
 
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+	dxCommon_ = DirectXCommon::GetInstance();
+	dxDescriptors_ = DxDescriptors::GetInstance();
 
-	/// ------------------------------------------
-	/// ↓ Vertex Resourceの生成
-	/// ------------------------------------------
-
-	///- 頂点リソース
-	vertexResource_ = dxCommon->CreateBufferResource(sizeof(VertexData) * vertexDatas_.size());
-
-	///- 頂点バッファビュー
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	vertexBufferView_.SizeInBytes = UINT(sizeof(VertexData) * vertexDatas_.size());
-	vertexBufferView_.StrideInBytes = sizeof(VertexData);
-
-	///- 頂点リソースにデータを書き込む
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	std::memcpy(vertexData_, vertexDatas_.data(), sizeof(VertexData) * vertexDatas_.size());
-
-
-
-	/// ------------------------------------------
-	/// ↓ Material Resourceの生成
-	/// ------------------------------------------
-
-	///- マテリアルリソース
-	materialResource_ = dxCommon->CreateBufferResource(sizeof(Material) * kMaxInstanceCount_);
-
-	///- マッピング
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	for(uint32_t index = 0; index < kMaxInstanceCount_; ++index) {
-		materialData_[index].color = Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
-		materialData_[index].enableLighting = true;
-		materialData_[index].uvTransform = Mat4::MakeIdentity();
-	}
-
-	/// ------------------------------------------
-	/// ↓ TransformMatrix Resourceの生成
-	/// ------------------------------------------
-
-	///- トランスフォームマトリクス
-	transformMatrixResource_ = dxCommon->CreateBufferResource(sizeof(TransformMatrix) * kMaxInstanceCount_);
-
-	///- マッピング
-	transformMatrixResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformMatrixDatas_));
-	for(uint32_t index = 0; index < kMaxInstanceCount_; ++index) {
-		transformMatrixDatas_[index].WVP = Mat4::MakeIdentity();
-		transformMatrixDatas_[index].World = Mat4::MakeIdentity();
-	}
-
-	///- srvの作成
-	DxDescriptors* descriptiors = DxDescriptors::GetInstance();
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC materialDesc{};
-	materialDesc.Format = DXGI_FORMAT_UNKNOWN;
-	materialDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	materialDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	materialDesc.Buffer.FirstElement = 0;
-	materialDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	materialDesc.Buffer.NumElements = kMaxInstanceCount_;
-	materialDesc.Buffer.StructureByteStride = sizeof(Material);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE materialCpuHandle = descriptiors->GetCPUDescriptorHandle();
-	materialGpuHandle_ = descriptiors->GetGPUDescriptorHandle();
-	descriptiors->AddSrvUsedCount();
-	dxCommon->GetDevice()->CreateShaderResourceView(materialResource_.Get(), &materialDesc, materialCpuHandle);
-
-
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC transformMatrixDesc{};
-	transformMatrixDesc.Format = DXGI_FORMAT_UNKNOWN;
-	transformMatrixDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	transformMatrixDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	transformMatrixDesc.Buffer.FirstElement = 0;
-	transformMatrixDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
-	transformMatrixDesc.Buffer.NumElements = kMaxInstanceCount_;
-	transformMatrixDesc.Buffer.StructureByteStride = sizeof(TransformMatrix);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE transformCpuHandle = descriptiors->GetCPUDescriptorHandle();
-	transformGpuHandle_ = descriptiors->GetGPUDescriptorHandle();
-	descriptiors->AddSrvUsedCount();
-	dxCommon->GetDevice()->CreateShaderResourceView(transformMatrixResource_.Get(), &transformMatrixDesc, transformCpuHandle);
-
-
+	CreateVertexBuffer();
+	CreateIndexBuffer();
+	CreateMaterialBuffer();
+	CreateTransformBuffer();
 
 }
 
@@ -165,10 +89,11 @@ void Model::PostDraw() {
 	PipelineStateObjectManager::GetInstance()->SetCommandList("Model", commandList);
 
 	///- 頂点情報のコピー
-	std::memcpy(vertexData_, vertexDatas_.data(), sizeof(VertexData) * vertexDatas_.size());
+	std::memcpy(vertexData_, vertices_.data(), sizeof(VertexData) * vertices_.size());
 
 	///- IASet
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	commandList->IASetVertexBuffers(0, 1, &vbv_);
+	commandList->IASetIndexBuffer(&ibv_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	DxDescriptors::GetInstance()->SetCommandListSrvHeap(commandList);
@@ -178,7 +103,7 @@ void Model::PostDraw() {
 	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(1, material_.textureName);
 	Light::GetInstance()->SetConstantBuffer(3, commandList);
 
-	commandList->DrawInstanced(UINT(vertexDatas_.size()), instanceCount_, 0, 0);
+	commandList->DrawIndexedInstanced(UINT(indices_.size()), instanceCount_, 0, 0, 0);
 }
 
 
@@ -199,6 +124,7 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 	std::vector<Vector4> positions;	//- 位置
 	std::vector<Vector3> normals;	//- 法線
 	std::vector<Vector2> texcoords;	//- テクスチャ座標
+	std::vector<uint32_t> indices;	//- インデックス
 	std::string line;
 
 
@@ -266,20 +192,21 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 					elementIndices[element] = std::stoi(index);
 				}
 
-
 				///- 要素へのindexから、実際の要素の値を取得して、頂点を構築する
 				Vec4f position = positions[elementIndices[0] - 1];
 				Vec2f texcoord = texcoords[elementIndices[1] - 1];
 				Vec3f normal = normals[elementIndices[2] - 1];
 				triangle[faceVertex] = { position, texcoord, normal };
+				//model.vertices_.push_back({ position, texcoord, normal });
 
+				indices.push_back(uint32_t(indices.size()));
 
 			}
 
 			///- 頂点を逆順で保存する (モデルが右手座標系のため)
-			model.vertexDatas_.push_back(triangle[2]);
-			model.vertexDatas_.push_back(triangle[1]);
-			model.vertexDatas_.push_back(triangle[0]);
+			model.vertices_.push_back(triangle[2]);
+			model.vertices_.push_back(triangle[1]);
+			model.vertices_.push_back(triangle[0]);
 
 		} else if(identifier == "mtllib") {
 
@@ -297,6 +224,8 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 		}
 
 	}
+
+	model.indices_ = indices;
 
 	return model;
 }
@@ -355,10 +284,110 @@ Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directory
 
 
 /// ===================================================
-/// 
+/// 頂点バッファの生成
 /// ===================================================
-void Model::SetUvTransform(const Mat4& uvTransform) {
-	materialData_->uvTransform = uvTransform;
+void Model::CreateVertexBuffer() {
+
+	///- バッファの生成
+	vertexBuffer_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertices_.size());
+
+	vbv_.BufferLocation = vertexBuffer_->GetGPUVirtualAddress();
+	vbv_.SizeInBytes = UINT(sizeof(VertexData) * vertices_.size());
+	vbv_.StrideInBytes = sizeof(VertexData);
+
+	///- 頂点リソースにデータを書き込む
+	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	std::memcpy(vertexData_, vertices_.data(), sizeof(VertexData) * vertices_.size());
+
 }
+
+
+/// ===================================================
+/// インデックスバッファの生成
+/// ===================================================
+void Model::CreateIndexBuffer() {
+
+	///- インデックスバッファの生成
+	indexBuffer_ = dxCommon_->CreateBufferResource(sizeof(uint32_t) * indices_.size());
+
+	///- ビューの初期化
+	ibv_.BufferLocation = indexBuffer_->GetGPUVirtualAddress();
+	ibv_.SizeInBytes = static_cast<UINT>(sizeof(uint32_t) * indices_.size());
+	ibv_.Format = DXGI_FORMAT_R32_UINT;
+
+	///- データのマップ
+	indexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
+	std::memcpy(indexData_, indices_.data(), sizeof(uint32_t) * indices_.size());
+
+}
+
+
+
+/// ===================================================
+/// マテリアルバッファの生成
+/// ===================================================
+void Model::CreateMaterialBuffer() {
+
+	///- バッファの生成
+	materialBuffer_ = dxCommon_->CreateBufferResource(sizeof(Material) * kMaxInstanceCount_);
+
+	///- マッピング
+	materialBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+	for(uint32_t index = 0; index < kMaxInstanceCount_; ++index) {
+		materialData_[index].color = Vec4f(1.0f, 1.0f, 1.0f, 1.0f);
+		materialData_[index].enableLighting = true;
+		materialData_[index].uvTransform = Mat4::MakeIdentity();
+	}
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC materialDesc{};
+	materialDesc.Format = DXGI_FORMAT_UNKNOWN;
+	materialDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	materialDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	materialDesc.Buffer.FirstElement = 0;
+	materialDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	materialDesc.Buffer.NumElements = kMaxInstanceCount_;
+	materialDesc.Buffer.StructureByteStride = sizeof(Material);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE materialCpuHandle = dxDescriptors_->GetCPUDescriptorHandle();
+	materialGpuHandle_ = dxDescriptors_->GetGPUDescriptorHandle();
+	dxDescriptors_->AddSrvUsedCount();
+	dxCommon_->GetDevice()->CreateShaderResourceView(materialBuffer_.Get(), &materialDesc, materialCpuHandle);
+
+}
+
+
+
+/// ===================================================
+/// 行列バッファの生成
+/// ===================================================
+void Model::CreateTransformBuffer() {
+
+	///- 行列バッファの生成
+	transformBuffer_ = dxCommon_->CreateBufferResource(sizeof(TransformMatrix) * kMaxInstanceCount_);
+
+	///- マッピング
+	transformBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&transformMatrixDatas_));
+	for(uint32_t index = 0; index < kMaxInstanceCount_; ++index) {
+		transformMatrixDatas_[index].WVP = Mat4::MakeIdentity();
+		transformMatrixDatas_[index].World = Mat4::MakeIdentity();
+	}
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC transformMatrixDesc{};
+	transformMatrixDesc.Format = DXGI_FORMAT_UNKNOWN;
+	transformMatrixDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	transformMatrixDesc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	transformMatrixDesc.Buffer.FirstElement = 0;
+	transformMatrixDesc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+	transformMatrixDesc.Buffer.NumElements = kMaxInstanceCount_;
+	transformMatrixDesc.Buffer.StructureByteStride = sizeof(TransformMatrix);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE transformCpuHandle = dxDescriptors_->GetCPUDescriptorHandle();
+	transformGpuHandle_ = dxDescriptors_->GetGPUDescriptorHandle();
+	dxDescriptors_->AddSrvUsedCount();
+	dxCommon_->GetDevice()->CreateShaderResourceView(transformBuffer_.Get(), &transformMatrixDesc, transformCpuHandle);
+
+}
+
+
 
 

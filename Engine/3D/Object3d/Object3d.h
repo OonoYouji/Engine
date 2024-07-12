@@ -4,9 +4,9 @@
 #include <list>
 
 #include <GameObject.h>
+#include <AABB.h>
 
 class Model;
-struct AABB;
 
 /// <summary>
 /// 3dモデルを表示するクラス
@@ -37,6 +37,8 @@ private:
 
 	UvTransform uvTransform_;
 
-	//std::list<AABB> aabbs_;
+	AABB aabb_;
+
+	std::list<AABB> aabbs_;
 
 };

@@ -20,11 +20,14 @@
 using namespace Microsoft::WRL;
 
 
-/// <summary>
-/// 3Dモデル
-/// </summary>
+/// ===================================================
+/// 3dモデル
+/// ===================================================
 class Model {
 private:
+	/// ===================================================
+	/// private : nested struct
+	/// ===================================================
 	struct MaterialData {
 		std::string textureFilePath;
 		std::string textureName;
@@ -33,6 +36,10 @@ public:
 
 	Model();
 	~Model();
+
+	/// ===================================================
+	/// public : methods
+	/// ===================================================
 
 	/// <summary>
 	/// 初期化
@@ -47,7 +54,6 @@ public:
 	/// <param name="worldTransform"></param>
 	void Draw(const WorldTransform& worldTransform, const Mat4& uvTransform = Mat4::MakeIdentity());
 
-
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
@@ -58,13 +64,12 @@ public:
 	/// </summary>
 	void PostDraw();
 
-
 	/// <summary>
 	/// 頂点データのGetter
 	/// </summary>
 	/// <returns></returns>
 	const std::vector<VertexData>& GetVertexDatas() const {
-		return vertexDatas_;
+		return vertices_;
 	}
 
 	/// <summary>
@@ -96,9 +101,19 @@ public:
 		materialData_->color = color;
 	}
 
-	void SetUvTransform(const Mat4& uvTransform);
+private: 
 
-	//const std::vector<VertexData> GetVertices() const { return vertexDatas_; }
+	/// ===================================================
+	/// private : methods
+	/// ===================================================
+
+	void CreateVertexBuffer();
+
+	void CreateIndexBuffer();
+
+	void CreateMaterialBuffer();
+	
+	void CreateTransformBuffer();
 
 private:
 	///- モデルの描画上限
@@ -107,21 +122,40 @@ private:
 
 	std::string name_;
 
-	std::vector<VertexData> vertexDatas_;
+
+	/// ===================================================
+	/// other class : pointer
+	/// ===================================================
+	
+	DirectXCommon* dxCommon_ = nullptr;
+	DxDescriptors* dxDescriptors_ = nullptr;
+
+
+	/// ===================================================
+	/// shader : buffers
+	/// ===================================================
+
+	std::vector<VertexData> vertices_;
 	MaterialData material_;
 
 	///- Vertex
-	ComPtr<ID3D12Resource> vertexResource_;
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+	ComPtr<ID3D12Resource> vertexBuffer_;
+	D3D12_VERTEX_BUFFER_VIEW vbv_;
 	VertexData* vertexData_ = nullptr;
 
+	///- index
+	ComPtr<ID3D12Resource> indexBuffer_;
+	D3D12_INDEX_BUFFER_VIEW ibv_;
+	std::vector<uint32_t> indices_;
+	uint32_t* indexData_ = nullptr;
+
 	///- Material
-	ComPtr<ID3D12Resource> materialResource_;
+	ComPtr<ID3D12Resource> materialBuffer_;
 	Material* materialData_;
 	D3D12_GPU_DESCRIPTOR_HANDLE materialGpuHandle_;
 
 	///- TransformMatrix
-	ComPtr<ID3D12Resource> transformMatrixResource_;
+	ComPtr<ID3D12Resource> transformBuffer_;
 	TransformMatrix* transformMatrixDatas_;
 	D3D12_GPU_DESCRIPTOR_HANDLE transformGpuHandle_;
 
