@@ -105,6 +105,8 @@ public:
 	/// <param name="commandList"></param>
 	void SetComputeCommandList(ID3D12GraphicsCommandList* commandList);
 
+	void SetTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE topolpgyType);
+
 private:
 
 	ComPtr<ID3D12RootSignature> rootSignature_;
@@ -116,6 +118,7 @@ private:
 	std::vector<D3D12_STATIC_SAMPLER_DESC> staticSamplers_;
 
 	std::vector<std::string> semanticNames_;
+	D3D12_PRIMITIVE_TOPOLOGY_TYPE topolpgyType_ = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 
 	/// <summary>
 	/// RootSignatureの生成

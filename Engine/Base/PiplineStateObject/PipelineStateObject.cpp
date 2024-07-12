@@ -112,6 +112,10 @@ void PipelineStateObject::SetComputeCommandList(ID3D12GraphicsCommandList* comma
 	commandList->SetPipelineState(pipelineState_.Get());
 }
 
+void PipelineStateObject::SetTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE topolpgyType) {
+	topolpgyType_ = topolpgyType;
+}
+
 
 void PipelineStateObject::CreateRootSignature(ID3D12Device* device) {
 	HRESULT result = S_FALSE;
@@ -203,13 +207,13 @@ void PipelineStateObject::CreatePipelineState(ID3D12Device* device, ShaderBlob* 
 	desc.BlendState = blendDesc;			//- BlendState
 	desc.RasterizerState = rasterizerDesc;  //- RasterizerState
 
-	desc.NumRenderTargets = 1;												//- 
-	desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;					//- 
-	desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;	//- 使用する形状Type
-	desc.SampleDesc.Count = 1;												//- 
-	desc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;							//- 
-	desc.DepthStencilState = depthStencilDesc;								//- 
-	desc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;							//- 
+	desc.NumRenderTargets = 1;								//- 
+	desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;	//- 
+	desc.PrimitiveTopologyType = topolpgyType_;				//- 使用する形状Type
+	desc.SampleDesc.Count = 1;								//- 
+	desc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;			//- 
+	desc.DepthStencilState = depthStencilDesc;				//- 
+	desc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;			//- 
 
 	///- 生成
 	HRESULT result = device->CreateGraphicsPipelineState(

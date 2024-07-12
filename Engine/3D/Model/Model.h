@@ -98,6 +98,8 @@ public:
 
 	void SetUvTransform(const Mat4& uvTransform);
 
+	const std::vector<VertexData> GetVertices() const { return vertexDatas_; }
+
 private:
 	///- モデルの描画上限
 	static const int kMaxInstanceCount_ = 10;

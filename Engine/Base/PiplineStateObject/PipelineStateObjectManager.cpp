@@ -200,6 +200,7 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 	///- vertex shader
 	pso->SetCBV(D3D12_SHADER_VISIBILITY_VERTEX, 0);	//- viewProjectionMatrix
+	pso->SetTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);	//- viewProjectionMatrix
 
 	pso->Initialize(device, shaderBlob.get());
 
