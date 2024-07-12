@@ -199,6 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\ShaderCompile\ShaderCompile.cpp" />
     <ClCompile Include="Engine\Base\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
+    <ClCompile Include="Engine\Collision\AABB.cpp" />
     <ClCompile Include="Engine\Collision\BaseCollider.cpp" />
     <ClCompile Include="Engine\Collision\MeshCollider.cpp" />
     <ClCompile Include="Engine\Collision\TerrainCollider.cpp" />
@@ -260,6 +261,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\ShaderCompile\ShaderCompile.h" />
     <ClInclude Include="Engine\Base\TextureManager.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />
+    <ClInclude Include="Engine\Collision\AABB.h" />
     <ClInclude Include="Engine\Collision\BaseCollider.h" />
     <ClInclude Include="Engine\Collision\MeshCollider.h" />
     <ClInclude Include="Engine\Collision\TerrainCollider.h" />

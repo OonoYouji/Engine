@@ -6,37 +6,51 @@
 #include <PipelineStateObjectManager.h>
 
 
+/// ===================================================
+/// インスタンス確保
+/// ===================================================
 LineDrawer* LineDrawer::GetInstance() {
 	static LineDrawer instance;
 	return &instance;
 }
 
+
+/// ===================================================
+/// 初期化
+/// ===================================================
 void LineDrawer::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	CreateViewProjectionBuffer();
 }
 
 
+/// ===================================================
+/// 終了処理
+/// ===================================================
 void LineDrawer::Finalize() {
 	vertexBuffer_.Reset();
 	viewProjectionBuffer_.Reset();
 }
 
 
-
+/// ===================================================
+/// 描画前処理
+/// ===================================================
 void LineDrawer::PreDraw() {
 	vertexUsedCount_ = 0;
-	vertexData_.clear();
+	vertices_.clear();
 }
 
 
-
+/// ===================================================
+/// 描画後処理
+/// ===================================================
 void LineDrawer::PostDraw() {
 
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	PipelineStateObjectManager::GetInstance()->SetCommandList("Line", commandList);
 
-	CreateVertexBuffer(vertexUsedCount_);
+	CreateVertexBuffer(vertices_.size());
 
 	*viewProjectionData_ = Engine::GetCamera()->GetVpMatrix();
 
@@ -50,33 +64,40 @@ void LineDrawer::PostDraw() {
 }
 
 
-
+/// ===================================================
+/// 描画
+/// ===================================================
 void LineDrawer::Draw(const Vec3f& v1, const Vec3f& v2, const Vec4f& color) {
 
-	vertexData_.push_back({ { v1.x, v1.y, v1.z, 1.0f },color });
-	vertexData_.push_back({ { v2.x, v2.y, v2.z, 1.0f },color });
+	vertices_.push_back({ { v1.x, v1.y, v1.z, 1.0f },color });
+	vertices_.push_back({ { v2.x, v2.y, v2.z, 1.0f },color });
 
 	vertexUsedCount_ += 2;
 
 }
 
 
-
+/// ===================================================
+/// 頂点バッファの生成
+/// ===================================================
 void LineDrawer::CreateVertexBuffer(size_t vertexCount) {
 
-	vertexBuffer_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexData_.size());
+	vertexBuffer_ = dxCommon_->CreateBufferResource(sizeof(VertexData) * vertexCount);
 
 	vbv_.BufferLocation = vertexBuffer_->GetGPUVirtualAddress(); //- リソースの先頭アドレス
-	vbv_.SizeInBytes = static_cast<UINT>(sizeof(LineDrawer::VertexData) * vertexData_.size());		 //- 使用する頂点のデータ
+	vbv_.SizeInBytes = static_cast<UINT>(sizeof(LineDrawer::VertexData) * vertexCount);		 //- 使用する頂点のデータ
 	vbv_.StrideInBytes = static_cast<UINT>(sizeof(LineDrawer::VertexData));		 //- 使用する頂点の1つ分のデータ
 
 	VertexData* vertexData = nullptr;
 	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	std::memcpy(vertexData, vertexData_.data(), sizeof(VertexData) * vertexData_.size());
-
+	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertexCount);
 
 }
 
+
+/// ===================================================
+/// ビュープロジェクションバッファの生成
+/// ===================================================
 void LineDrawer::CreateViewProjectionBuffer() {
 
 	///- resourceの生成

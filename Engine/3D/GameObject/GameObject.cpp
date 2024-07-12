@@ -128,11 +128,15 @@ void GameObject::Group::ImGuiDebug() {
 
 		///- int
 		if(std::holds_alternative<int>(second)) {
-			int* ptr = std::get_if<int>(&second);
-			ImGui::DragInt(item.first.c_str(), ptr, 1);
+			int* value = std::get_if<int>(&second);
+			int* ptr = std::get<int*>(first);
+			if(*value != *ptr) {
+				*value = *ptr;
+			}
+
+			ImGui::DragInt(item.first.c_str(), value, 1);
 			///- 値を変えたらptrにも適用する
 			if(ImGui::IsItemEdited()) {
-				int* ptr = std::get<int*>(first);
 				if(ptr) {
 					*ptr = std::get<int>(second);
 				}
@@ -142,11 +146,15 @@ void GameObject::Group::ImGuiDebug() {
 
 		///- float
 		if(std::holds_alternative<float>(second)) {
-			float* ptr = std::get_if<float>(&second);
-			ImGui::DragFloat(item.first.c_str(), ptr, 0.05f);
+			float* value = std::get_if<float>(&second);
+			float* ptr = std::get<float*>(first);
+			if(*value != *ptr) {
+				*value = *ptr;
+			}
+
+			ImGui::DragFloat(item.first.c_str(), value, 0.05f);
 			///- 値を変えたらptrにも適用する
 			if(ImGui::IsItemEdited()) {
-				float* ptr = std::get<float*>(first);
 				if(ptr) {
 					*ptr = std::get<float>(second);
 				}
@@ -156,27 +164,17 @@ void GameObject::Group::ImGuiDebug() {
 
 		///- vector3
 		if(std::holds_alternative<Vector3>(second)) {
-			Vector3* ptr = std::get_if<Vector3>(&second);
-			ImGui::DragFloat3(item.first.c_str(), &ptr->x, 0.05f);
+			Vector3* value = std::get_if<Vector3>(&second);
+			Vector3* ptr = std::get<Vector3*>(first);
+			if(*value != *ptr) {
+				*value = *ptr;
+			}
+
+			ImGui::DragFloat3(item.first.c_str(), &value->x, 0.05f);
 			///- 値を変えたらptrにも適用する
 			if(ImGui::IsItemEdited()) {
-				Vector3* ptr = std::get<Vector3*>(first);
 				if(ptr) {
 					*ptr = std::get<Vector3>(second);
-				}
-			}
-			continue;
-		}
-
-		///- vector2
-		if(std::holds_alternative<Vec2f>(second)) {
-			Vec2f* ptr = std::get_if<Vec2f>(&second);
-			ImGui::DragFloat2(item.first.c_str(), &ptr->x, 0.05f);
-			///- 値を変えたらptrにも適用する
-			if(ImGui::IsItemEdited()) {
-				Vec2f* ptr = std::get<Vec2f*>(first);
-				if(ptr) {
-					*ptr = std::get<Vec2f>(second);
 				}
 			}
 			continue;
@@ -185,11 +183,15 @@ void GameObject::Group::ImGuiDebug() {
 
 		///- bool
 		if(std::holds_alternative<bool>(second)) {
-			bool* ptr = std::get_if<bool>(&second);
-			ImGui::Checkbox(item.first.c_str(), ptr);
+			bool* value = std::get_if<bool>(&second);
+			bool* ptr = std::get<bool*>(first);
+			if(*value != *ptr) {
+				*value = *ptr;
+			}
+
+			ImGui::Checkbox(item.first.c_str(), value);
 			///- 値を変えたらptrにも適用する
 			if(ImGui::IsItemEdited()) {
-				bool* ptr = std::get<bool*>(first);
 				if(ptr) {
 					*ptr = std::get<bool>(second);
 				}
@@ -199,15 +201,15 @@ void GameObject::Group::ImGuiDebug() {
 
 		///- string
 		if(std::holds_alternative<std::string>(second)) {
-			std::string* ptr = std::get_if<std::string>(&second);
+			std::string* value = std::get_if<std::string>(&second);
 			// std::stringのバッファサイズを取得
 			static char buffer[256];
-			strcpy_s(buffer, sizeof(buffer), ptr->c_str());
+			strcpy_s(buffer, sizeof(buffer), value->c_str());
 
 			// InputTextの呼び出し
 			if(ImGui::InputText("Input Text", buffer, sizeof(buffer))) {
 				// ユーザーがテキストを編集した場合にstd::stringに新しいテキストを格納
-				*ptr = std::string(buffer);
+				*value = std::string(buffer);
 			}
 
 			continue;
@@ -522,6 +524,10 @@ void GameObject::SetPosition(const Vec3f& position) { worldTransform_.translate 
 void GameObject::SetPositionX(float x) { worldTransform_.translate.x = x; }
 void GameObject::SetPositionY(float y) { worldTransform_.translate.y = y; }
 void GameObject::SetPositionZ(float z) { worldTransform_.translate.z = z; }
+
+Vec3f GameObject::GetPosition() {
+	return Mat4::Transform({0.0f, 0.0f, 0.0f}, worldTransform_.matTransform);
+}
 
 
 

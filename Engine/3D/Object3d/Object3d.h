@@ -1,10 +1,12 @@
 #pragma once
 
 #include <string>
+#include <list>
 
 #include <GameObject.h>
 
 class Model;
+struct AABB;
 
 /// <summary>
 /// 3dモデルを表示するクラス
@@ -34,5 +36,7 @@ private:
 	std::string modelKey_;
 
 	UvTransform uvTransform_;
+
+	std::list<AABB> aabbs_;
 
 };

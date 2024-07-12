@@ -98,7 +98,7 @@ public:
 
 	void SetUvTransform(const Mat4& uvTransform);
 
-	const std::vector<VertexData> GetVertices() const { return vertexDatas_; }
+	//const std::vector<VertexData> GetVertices() const { return vertexDatas_; }
 
 private:
 	///- モデルの描画上限

@@ -286,8 +286,8 @@ Matrix4x4 Matrix4x4::MakeInverse(const Matrix4x4& m) {
 
 Matrix4x4 Matrix4x4::MakeTranspose(const Matrix4x4& m) {
 	Matrix4x4 result;
-	for (int r = 0; r < 4; r++) {
-		for (int c = 0; c < 4; c++) {
+	for(int r = 0; r < 4; r++) {
+		for(int c = 0; c < 4; c++) {
 			result.m_[r][c] = m.m_[c][r];
 		}
 	}
@@ -332,6 +332,16 @@ Vec3f Matrix4x4::Transform(const Vec4f& v, const Matrix4x4& m) {
 	result.x /= w;
 	result.y /= w;
 	result.z /= w;
+
+	return result;
+}
+
+Vec3f Matrix4x4::TransformNormal(const Vec3f& v, const Matrix4x4& m) {
+	Vec3f result{
+		v.x * m.m_[0][0] + v.y * m.m_[1][0] + v.z * m.m_[2][0],
+		v.x * m.m_[0][1] + v.y * m.m_[1][1] + v.z * m.m_[2][1],
+		v.x * m.m_[0][2] + v.y * m.m_[1][2] + v.z * m.m_[2][2]
+	};
 
 	return result;
 }

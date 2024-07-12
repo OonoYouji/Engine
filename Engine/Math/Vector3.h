@@ -99,6 +99,8 @@ public:
 	inline Vector3& operator*=(float value);
 
 	inline Vector3 operator-() const;
+
+	inline bool operator!=(const Vector3& other) const;
 	
 };
 
@@ -174,6 +176,12 @@ inline Vector3& Vector3::operator*=(float value) {
 
 inline Vector3 Vector3::operator-() const {
 	return (*this) * -1.0f;
+}
+
+inline bool Vector3::operator!=(const Vector3& other) const {
+	return this->x != other.x
+		|| this->y != other.y
+		|| this->z != other.z;
 }
 
 

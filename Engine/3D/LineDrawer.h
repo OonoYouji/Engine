@@ -74,7 +74,7 @@ private:
 	ComPtr<ID3D12Resource> vertexBuffer_;
 	D3D12_VERTEX_BUFFER_VIEW vbv_;
 
-	std::vector<LineDrawer::VertexData> vertexData_;
+	std::vector<LineDrawer::VertexData> vertices_;
 
 	ComPtr<ID3D12Resource> viewProjectionBuffer_;
 	Mat4* viewProjectionData_ = nullptr;

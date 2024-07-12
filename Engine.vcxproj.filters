@@ -172,6 +172,9 @@
     <ClCompile Include="Engine\3D\LineDrawer.cpp">
       <Filter>Source\3D</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Collision\AABB.cpp">
+      <Filter>Source\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -493,6 +496,9 @@
     </ClInclude>
     <ClInclude Include="Engine\3D\LineDrawer.h">
       <Filter>Include\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Collision\AABB.h">
+      <Filter>Include\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 
 #include <Model.h>
 #include <ModelManager.h>
+#include <AABB.h>
 
 //#include <ExternalParamManager.h>
 
@@ -55,10 +56,32 @@ void Object3d::Initialize() {
 void Object3d::Update() {
 	UpdateMatrix();
 	uvTransform_.UpdateMatrix();
+
+	aabbs_.clear();
+	int index = 0;
+	for(auto& vertex : model_->GetVertexDatas()) {
+		if(index % 3 == 0) {
+			aabbs_.push_back(AABB());
+		}
+
+		auto& back = aabbs_.back();
+		Vec3f position = Vec3f::Convert4To3(vertex.position);
+		back.ExpandToFit(Mat4::TransformNormal(position, GetWorldTransform().matTransform));
+		back.translation = GetPosition();
+		
+		index++;
+
+	}
+
 }
 
 void Object3d::Draw() {
 	if(model_) {
 		model_->Draw(worldTransform_, uvTransform_.matTransform);
 	}
+
+	for(auto& aabb : aabbs_) {
+		aabb.Draw({1.0f, 0.0f, 0.0f, 0.0f});
+	}
+
 }

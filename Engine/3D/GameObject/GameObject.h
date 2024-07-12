@@ -173,6 +173,8 @@ public:
 	void SetPositionY(float y);
 	void SetPositionZ(float z);
 
+	Vec3f GetPosition();
+
 	void SetType(Type type);
 
 	Type GetType() const;
