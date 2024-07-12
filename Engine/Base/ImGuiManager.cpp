@@ -33,7 +33,7 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 	ImGui_ImplDX12_Init(
 		dxCommon_->GetDevice(),
 		dxCommon_->GetSwapChainDesc().BufferCount,
-		dxCommon_->GetRTVDesc().Format,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 		srvHeap,
 		srvHeap->GetCPUDescriptorHandleForHeapStart(),
 		srvHeap->GetGPUDescriptorHandleForHeapStart()

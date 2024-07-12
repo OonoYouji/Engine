@@ -5,7 +5,12 @@
 #include <unordered_map>
 #include <memory>
 
+#include <TextureManager.h>
+
+#include <Object2d.h>
+
 class Model;
+class RenderTexture;
 
 /// <summary>
 /// Modelの管理クラス
@@ -20,6 +25,8 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	static ModelManager* GetInstance();
+
+	void Initialize();
 
 	void Finalize();
 
@@ -46,6 +53,10 @@ private:
 	const std::string directoryPath_ = "./Resources/Objects/";
 	std::map<std::string, std::unique_ptr<Model>> models_;
 	std::unordered_map<int, std::string> pairs_;
+
+	std::unique_ptr<RenderTexture> renderTex_;
+
+	Object2d* screen_;
 
 private:
 	ModelManager& operator=(const ModelManager&) = delete;

@@ -22,6 +22,7 @@ void Scene_Game::Init() {
 	gameObjectManager_ = GameObjectManager::GetInstance();
 	GameObjectFactory::GetInstance()->Initialize();
 	LineDrawer::GetInstance()->Initialize();
+	ModelManager::GetInstance()->Initialize();
 
 	LoadFile();
 
@@ -66,9 +67,11 @@ void Scene_Game::Draw() {
 	/// 前景
 	/// ---------------------------------------------------
 
+	DirectXCommon::GetInstance()->SetRenderTarget();
 	spriteManager->PreDraw();
 
 	gameObjectManager_->FrontSpriteDraw();
+	//modelManager->DrawModelScreen();
 
 	spriteManager->PostDraw();
 
@@ -76,5 +79,6 @@ void Scene_Game::Draw() {
 
 void Scene_Game::Finalize() {
 	LineDrawer::GetInstance()->Finalize();
+	ModelManager::GetInstance()->Finalize();
 
 }

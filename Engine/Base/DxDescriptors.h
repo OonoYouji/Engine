@@ -72,7 +72,13 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle();
 
 
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandleRTV();
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGpuHandleRTV();
+
+
 	void AddSrvUsedCount();
+	void AddRtvUsedCount();
 
 	void SetCommandListSrvHeap(ID3D12GraphicsCommandList* commandList);
 

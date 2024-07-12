@@ -85,7 +85,7 @@ void DxCommand::CreateBarrier(UINT bbIndex, D3D12_RESOURCE_STATES stateBefore, D
 	D3D12_RESOURCE_BARRIER barrier{};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = DirectXCommon::GetInstance()->GetSwapChainResource()[bbIndex].Get();
+	//barrier.Transition.pResource = DirectXCommon::GetInstance()->GetSwapChainResource()[bbIndex].Get();
 	barrier.Transition.StateBefore = stateBefore;
 	barrier.Transition.StateAfter = stateAfter;
 	commandList_->ResourceBarrier(1, &barrier);

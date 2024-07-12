@@ -19,6 +19,8 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void SetSprite(const std::string& textureName);
+
 private:
 	static int instanceId_;
 	int id_ = 0;

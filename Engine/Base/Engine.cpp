@@ -110,11 +110,12 @@ namespace {
 
 	void EngineSystem::PreDraw() {
 		directXCommon_->PreDraw();
-		ModelManager::GetInstance()->PreDraw();
+		//ModelManager::GetInstance()->PreDraw();
 	}
 
 	void EngineSystem::EndFrame() {
 
+		directXCommon_->SetRenderTarget();
 		imGuiManager_->EndFrame();
 		directXCommon_->PostDraw();
 

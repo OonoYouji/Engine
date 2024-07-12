@@ -196,6 +196,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\PiplineStateObject\PipelineStateObject.cpp" />
     <ClCompile Include="Engine\Base\PiplineStateObject\PipelineStateObjectManager.cpp" />
     <ClCompile Include="Engine\Base\PiplineStateObject\ShaderBlob.cpp" />
+    <ClCompile Include="Engine\Base\RenderTexture.cpp" />
     <ClCompile Include="Engine\Base\ShaderCompile\ShaderCompile.cpp" />
     <ClCompile Include="Engine\Base\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
@@ -258,6 +259,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\PiplineStateObject\PipelineStateObject.h" />
     <ClInclude Include="Engine\Base\PiplineStateObject\PipelineStateObjectManager.h" />
     <ClInclude Include="Engine\Base\PiplineStateObject\ShaderBlob.h" />
+    <ClInclude Include="Engine\Base\RenderTexture.h" />
     <ClInclude Include="Engine\Base\ShaderCompile\ShaderCompile.h" />
     <ClInclude Include="Engine\Base\TextureManager.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />

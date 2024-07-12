@@ -7,6 +7,7 @@
 #include <ImGuiManager.h>
 
 #include <Model.h>
+#include <RenderTexture.h>
 #pragma endregion
 
 
@@ -20,12 +21,23 @@ ModelManager* ModelManager::GetInstance() {
 }
 
 
+void ModelManager::Initialize() {
+	renderTex_.reset(new RenderTexture());
+	renderTex_->InitializeOffScreen(1280, 720);
+	screen_ = new Object2d();
+	screen_->Initialize();
+	screen_->SetType(GameObject::Type::FrontSprite);
+	screen_->SetScale({ 640.0f, 360.0f, 1.0f });
+}
+
+
 
 /// ===================================================
 /// 終了処理
 /// ===================================================
 void ModelManager::Finalize() {
 	models_.clear();
+	renderTex_.reset();
 }
 
 
@@ -34,6 +46,11 @@ void ModelManager::Finalize() {
 /// 描画前処理
 /// ===================================================
 void ModelManager::PreDraw() {
+
+	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	renderTex_->SetRenderTarget();
+	renderTex_->Clear({1.0f, 0.0f, 0.0f, 1.0f});
+
 	for(auto& model : models_) {
 		model.second->PreDraw();
 	}
@@ -45,9 +62,19 @@ void ModelManager::PreDraw() {
 /// 描画後処理
 /// ===================================================
 void ModelManager::PostDraw() {
+
 	for(auto& model : models_) {
 		model.second->PostDraw();
 	}
+
+
+
+	renderTex_->CopyBuffer();
+	TextureManager::GetInstance()->SetNewTexture("modelScreen", renderTex_->GetTexture());
+	screen_->SetSprite("modelScreen");
+
+	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
 }
 
 /// ===================================================
@@ -72,6 +99,7 @@ Model* ModelManager::GetModelPtr(const std::string& key) {
 	///- ポインタを返す
 	return models_.at(key).get();
 }
+
 
 
 

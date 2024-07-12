@@ -22,7 +22,7 @@ void DxDescriptors::Initialize() {
 
 	///- RTV Initialize
 	rtvDescriptorHeap_ = nullptr;
-	rtvDescriptorHeap_ = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	rtvDescriptorHeap_ = CreateDescriptorHeap(dxCommon->GetDevice(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 12, false);
 	assert(rtvDescriptorHeap_);
 
 	///- SRV Initialize
@@ -104,8 +104,20 @@ D3D12_GPU_DESCRIPTOR_HANDLE DxDescriptors::GetGPUDescriptorHandle() {
 	return GetGPUDescriptorHandle(srvDescriptorHeap_.Get(), descriptorSRV_, srvUsedCount_);
 }
 
+D3D12_CPU_DESCRIPTOR_HANDLE DxDescriptors::GetCpuHandleRTV() {
+	return GetCPUDescriptorHandle(rtvDescriptorHeap_.Get(), descriptorRTV_, rtvUsedCount_);
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE DxDescriptors::GetGpuHandleRTV() {
+	return GetGPUDescriptorHandle(rtvDescriptorHeap_.Get(), descriptorRTV_, rtvUsedCount_);
+}
+
 void DxDescriptors::AddSrvUsedCount() {
 	srvUsedCount_++;
+}
+
+void DxDescriptors::AddRtvUsedCount() {
+	rtvUsedCount_++;
 }
 
 void DxDescriptors::SetCommandListSrvHeap(ID3D12GraphicsCommandList* commandList) {

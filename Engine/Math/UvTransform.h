@@ -18,9 +18,9 @@ struct UvTransform final {
 	/// </summary>
 	void UpdateMatrix();
 
-	Vec2f scale;
-	float rotate;
-	Vec2f tranalate;
+	Vec2f scale = { 1.0f, 1.0f };
+	float rotate = 0.0f;
+	Vec2f tranalate = { 0.0f,0.0f };
 
 	Mat4 matTransform;
 

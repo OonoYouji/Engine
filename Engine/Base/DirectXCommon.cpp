@@ -17,6 +17,7 @@
 #include <PipelineStateObject.h>
 #include <PipelineStateObjectManager.h>
 #include <Vector4.h>
+#include <RenderTexture.h>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -86,9 +87,7 @@ void DirectXCommon::Finalize() {
 
 	CloseHandle(fenceEvent_);
 	fence_.Reset();
-	for(UINT i = 0; i < 2; i++) {
-		swapChainResource_[i].Reset();
-	}
+	renderTextures_.clear();
 	swapChain_.Reset();
 
 	///- Commandの解放
@@ -270,42 +269,12 @@ void DirectXCommon::InitializeSwapChain() {
 /// ↓ RTVを初期化
 /// ---------------------------
 void DirectXCommon::InitialiezRenderTarget() {
-	HRESULT result = S_FALSE;
-
-	/// ---------------------------
-	/// ↓ SwapChainResourceを生成
-	/// ---------------------------
-	swapChainResource_.resize(2);
-	for(size_t i = 0; i < 2; i++) {
-		swapChainResource_[i] = nullptr;
+	
+	renderTextures_.resize(2);
+	for(uint32_t index = 0; index < 2; index++) {
+		renderTextures_[index].reset(new RenderTexture());
+		renderTextures_[index]->Initialize(UINT(index));
 	}
-
-	///- 取得出来なければ起動できない
-	for(UINT i = 0; i < 2; i++) {
-		result = swapChain_->GetBuffer(i, IID_PPV_ARGS(&swapChainResource_[i]));
-		assert(SUCCEEDED(result));
-	}
-
-
-	/// ---------------------------
-	/// ↓ RTVの設定
-	/// ---------------------------
-
-	rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	//rtvDesc_.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	rtvDesc_.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-
-	///- ディスクリプタの先頭を取得
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandl = DxDescriptors::GetInstance()->GetRTVHeap()->GetCPUDescriptorHandleForHeapStart();
-
-	///- rtvHandleの生成
-	rtvHandles_[0] = rtvStartHandl;
-	device_->CreateRenderTargetView(swapChainResource_[0].Get(), &rtvDesc_, rtvHandles_[0]);
-
-	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(
-		D3D12_DESCRIPTOR_HEAP_TYPE_RTV
-	);
-	device_->CreateRenderTargetView(swapChainResource_[1].Get(), &rtvDesc_, rtvHandles_[1]);
 
 }
 
@@ -422,27 +391,10 @@ void DirectXCommon::CommnadExecuteAndWait() {
 	command_->ResetCommandList();
 }
 
-
-
-/// ---------------------------
-/// ↓ 画面を一定の色で染める
-/// ---------------------------
-void DirectXCommon::ClearRenderTarget() {
+void DirectXCommon::SetRenderTarget() {
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
-
-	///- 描画先のRTVを設定する
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = DxDescriptors::GetInstance()->GetDSVHeap()->GetCPUDescriptorHandleForHeapStart();
-	command_->GetList()->OMSetRenderTargets(
-		1, &rtvHandles_[bbIndex], false, &dsvHandle
-	);
-
-	///- 指定した色で画面をクリア
-	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
-	command_->GetList()->ClearRenderTargetView(
-		rtvHandles_[bbIndex], clearColor, 0, nullptr
-	);
+	renderTextures_[bbIndex]->SetRenderTarget();
 }
-
 
 
 /// ---------------------------
@@ -519,10 +471,9 @@ void DirectXCommon::PreDraw() {
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	///- 書き込み用にバリアーを貼る
-	command_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-	///- 画面を一定の色で染める
-	ClearRenderTarget();
+	renderTextures_[bbIndex]->CreateBarrier(D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	renderTextures_[bbIndex]->SetRenderTarget();
+	renderTextures_[bbIndex]->Clear({ 0.1f,0.25f,0.5f,1.0f });
 
 	///- viewport; scissorRectを設定
 	commandList->RSSetViewports(1, &viewport_);
@@ -535,19 +486,12 @@ void DirectXCommon::PreDraw() {
 /// ↓ 描画後処理
 /// ---------------------------
 void DirectXCommon::PostDraw() {
-	HRESULT result = S_FALSE;
 	UINT bbIndex = swapChain_->GetCurrentBackBufferIndex();
-	ID3D12GraphicsCommandList* commandList = command_->GetList();
 
 	///- 描画用にバリアーを貼る
-	command_->CreateBarrier(bbIndex, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	renderTextures_[bbIndex]->CreateBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-
-	/////- Commandを閉じる
-	//result = commandList->Close();
-	//assert(SUCCEEDED(result));
-
-	///- コマンドをキックする
+	///- コマンドのクローズとキック
 	command_->Close();
 
 	///- GPUとOSに画面の交換を行うように通知する

@@ -27,6 +27,7 @@ void Sprite::Initialize(const std::string& textureName) {
 	dxDescriptors_ = DxDescriptors::GetInstance();
 
 	textureName_ = textureName;
+	texture_ = TextureManager::GetInstance()->GetSrvTexture(textureName_);
 
 	position = { 0.0f,0.0f };
 	color = { 1.0f,1.0f,1.0f,1.0f };
@@ -104,7 +105,9 @@ void Sprite::PostDraw() {
 	commandList->SetGraphicsRootConstantBufferView(1, viewProjectionResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(3, materialGpuHandle_);
 
-	TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, textureName_);
+	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, textureName_);
+	commandList->SetGraphicsRootDescriptorTable(2, texture_.handleGPU);
+
 
 	///- DrawCall
 	commandList->DrawIndexedInstanced(6, instanceCount_, 0, 0, 0);

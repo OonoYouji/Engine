@@ -215,6 +215,8 @@ void GameObject::Group::ImGuiDebug() {
 			continue;
 		}
 	}
+
+
 }
 
 

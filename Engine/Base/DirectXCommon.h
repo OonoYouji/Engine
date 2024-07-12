@@ -26,6 +26,7 @@ class ShaderCompile;
 class ShaderBlob;
 class PipelineStateObject;
 class PipelineStateObjectManager;
+class RenderTexture;
 
 
 /// -------------------------
@@ -54,19 +55,13 @@ private:
 	ComPtr<IDXGISwapChain4> swapChain_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc_;
-	std::vector<ComPtr<ID3D12Resource>>swapChainResource_;
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles_[2];
+	std::vector<std::unique_ptr<RenderTexture>> renderTextures_;
 
-	///- エラー放置ダメ、ゼッタイ
 	ComPtr<ID3D12Debug1> debugController_;
 
-	///- 完璧な画面クリアを目指す
 	ComPtr<ID3D12Fence> fence_;
 	uint64_t fenceValue_;
 	HANDLE fenceEvent_;
-
-
 
 	D3D12_VIEWPORT viewport_;
 	Matrix4x4 viewportMatrix_;
@@ -90,8 +85,6 @@ private:
 	void InitializeFence();
 
 	void InitializeViewport();
-
-	void ClearRenderTarget();
 
 	ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(int32_t width, int32_t height);
 
@@ -134,14 +127,11 @@ public:
 	ID3D12Device* GetDevice() { return device_.Get(); }
 
 	const DXGI_SWAP_CHAIN_DESC1& GetSwapChainDesc() const { return swapChainDesc_; }
-
-	const D3D12_RENDER_TARGET_VIEW_DESC& GetRTVDesc() const { return rtvDesc_; }
+	IDXGISwapChain4* GetSwapChain() const { return swapChain_.Get(); }
 
 	ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes, D3D12_HEAP_TYPE heapType = D3D12_HEAP_TYPE_UPLOAD);
 	
 	const Matrix4x4& GetViewportMatrix() const { return viewportMatrix_; }
-
-	std::vector<ComPtr<ID3D12Resource>> GetSwapChainResource() { return swapChainResource_; }
 
 	void ClearDepthBuffer();
 
@@ -149,6 +139,8 @@ public:
 	/// CommandListの実行と待機
 	/// </summary>
 	void CommnadExecuteAndWait();
+
+	void SetRenderTarget();
 
 private:
 

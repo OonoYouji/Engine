@@ -88,6 +88,8 @@ public:
 
 	ID3D12Resource* GetUavTextureResource(const std::string& name);
 
+	void SetNewTexture(const std::string& name, const Texture& texture);
+
 private:
 
 	/// <summary>

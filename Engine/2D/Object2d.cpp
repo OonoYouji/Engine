@@ -16,6 +16,7 @@ Object2d::Object2d() {
 Object2d::~Object2d() {}
 
 
+
 /// ===================================================
 /// 初期化
 /// ===================================================
@@ -57,4 +58,9 @@ void Object2d::Update() {
 /// ===================================================
 void Object2d::Draw() {
 	sprite_->Draw(worldTransform_, uvTransform_.matTransform);
+}
+
+void Object2d::SetSprite(const std::string& textureName) {
+	textureName_ = textureName;
+	sprite_ = SpriteManager::GetInstance()->GetSpritePtr(textureName_);
 }

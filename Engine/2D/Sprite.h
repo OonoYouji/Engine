@@ -12,6 +12,7 @@
 #include "Vector2.h"
 
 #include <CBuffer.h>
+#include <TextureManager.h>
 
 ///- ComPtrの省略用
 using namespace Microsoft::WRL;
@@ -130,5 +131,7 @@ private:
 
 	const int kMaxInstanceCount_ = 10;
 	int instanceCount_;
+
+	TextureManager::Texture texture_;
 
 };
