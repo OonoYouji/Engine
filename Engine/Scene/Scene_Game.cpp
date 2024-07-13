@@ -26,7 +26,7 @@ void Scene_Game::Init() {
 
 	Object3d* object = new Object3d();
 	object->Initialize("Background");
-	object->SetType(GameObject::Type::BackSprite);
+	object->SetType(GameObject::Type::FrontSprite);
 
 	LoadFile();
 
@@ -42,12 +42,13 @@ void Scene_Game::Draw() {
 	ModelManager* modelManager = ModelManager::GetInstance();
 	SpriteManager* spriteManager = SpriteManager::GetInstance();
 	LineDrawer* lineDrawer = LineDrawer::GetInstance();
+	DirectXCommon* dxCommon_ = DirectXCommon::GetInstance();
 
 	/// ---------------------------------------------------
 	/// 背景
 	/// ---------------------------------------------------
 
-	DirectXCommon::GetInstance()->SetRenderTarget();
+	dxCommon_->SetRenderTarget();
 	spriteManager->PreDraw();
 	modelManager->PreDraw();
 
@@ -56,6 +57,7 @@ void Scene_Game::Draw() {
 	spriteManager->PostDraw();
 	modelManager->PostDraw();
 
+	dxCommon_->ClearDepthBuffer();
 
 	/// ---------------------------------------------------
 	/// 3dオブジェクト : Line
@@ -71,12 +73,13 @@ void Scene_Game::Draw() {
 	modelManager->CopySRV();
 	lineDrawer->PostDraw();
 
+	dxCommon_->ClearDepthBuffer();
 
 	/// ---------------------------------------------------
 	/// 前景
 	/// ---------------------------------------------------
 
-	DirectXCommon::GetInstance()->SetRenderTarget();
+	dxCommon_->SetRenderTarget();
 	spriteManager->PreDraw();
 	modelManager->PreDraw();
 

@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include <Matrix4x4.h>
+
 Matrix3x3::Matrix3x3(float aa, float ab, float ac, float ba, float bb, float bc, float ca, float cb, float cc) {
 
 	this->m[0][0] = aa;
@@ -45,8 +47,8 @@ Matrix3x3 Matrix3x3::MakeRotate(float rotate) {
 
 Matrix3x3 Matrix3x3::MakeTranslate(const Vec2f& translate) {
 	return Matrix3x3(
-		0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
 		translate.x, translate.y, 1.0f
 	);
 }
@@ -56,4 +58,13 @@ Matrix3x3 Matrix3x3::MakeAffine(const Vec2f& scale, float rotate, const Vec2f& t
 	Mat3 R = MakeRotate(rotate);
 	Mat3 T = MakeTranslate(translate);
 	return S * R * T;
+}
+
+Matrix4x4 Matrix3x3::CopyMatrix(const Matrix3x3& m) {
+	return {
+		m.m[0][0],m.m[0][1],m.m[0][2],0.0f,
+		m.m[1][0],m.m[1][1],m.m[1][2],0.0f,
+		m.m[2][0],m.m[2][1],m.m[2][2],0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f
+	};
 }

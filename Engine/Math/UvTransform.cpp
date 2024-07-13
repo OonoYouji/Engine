@@ -1,5 +1,6 @@
 #include "UvTransform.h"
 
+#include <Matrix3x3.h>
 
 /// ===================================================
 /// 初期化
@@ -17,9 +18,6 @@ void UvTransform::Initilize() {
 /// 行列の更新
 /// ===================================================
 void UvTransform::UpdateMatrix() {
-	matTransform = Mat4::MakeAffine(
-		{ scale.x, scale.y, 1.0f },
-		{ 0.0f, 0.0f ,rotate },
-		{ tranalate.x, tranalate.y, 0.0f }
-	);
+	Mat3 matrix = Mat3::MakeAffine(scale, rotate, tranalate);
+	matTransform = Mat3::CopyMatrix(matrix);
 }

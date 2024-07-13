@@ -2,6 +2,8 @@
 
 #include <Vector2.h>
 
+class Matrix4x4;
+
 /// <summary>
 /// 3x3行列
 /// </summary>
@@ -29,6 +31,7 @@ public:
 
 	static Matrix3x3 MakeAffine(const Vec2f& scale, float rotate, const Vec2f& translate);
 
+	static Matrix4x4 CopyMatrix(const Matrix3x3& m);
 
 	inline Matrix3x3 operator* (const Matrix3x3& other) const;
 	inline Matrix3x3& operator*= (const Matrix3x3& other);

@@ -180,6 +180,24 @@ void GameObject::Group::ImGuiDebug() {
 			continue;
 		}
 
+		///- vector2
+		if(std::holds_alternative<Vec2f>(second)) {
+			Vec2f* value = std::get_if<Vec2f>(&second);
+			Vec2f* ptr = std::get<Vec2f*>(first);
+			if(*value != *ptr) {
+				*value = *ptr;
+			}
+
+			ImGui::DragFloat2(item.first.c_str(), &value->x, 0.05f);
+			///- 値を変えたらptrにも適用する
+			if(ImGui::IsItemEdited()) {
+				if(ptr) {
+					*ptr = std::get<Vec2f>(second);
+				}
+			}
+			continue;
+		}
+
 
 		///- bool
 		if(std::holds_alternative<bool>(second)) {

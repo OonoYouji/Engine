@@ -54,6 +54,5 @@ void SpriteManager::PostDraw() {
 		sprite.second->PostDraw();
 	}
 
-	DirectXCommon::GetInstance()->ClearDepthBuffer();
-
+	
 }

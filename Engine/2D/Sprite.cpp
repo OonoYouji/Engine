@@ -91,6 +91,8 @@ void Sprite::PreDraw() {
 /// 描画後処理
 /// ===================================================
 void Sprite::PostDraw() {
+	if(!instanceCount_) { return; }
+
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
 	///- 使用するpipelineの設定

@@ -36,6 +36,9 @@ public:
 
 	inline Vector2& operator= (const Vector2& other);
 
+	inline bool operator!= (const Vector2& other);
+	inline bool operator== (const Vector2& other);
+
 };
 
 
@@ -114,6 +117,15 @@ inline Vector2& Vector2::operator=(const Vector2& other) {
 	this->x = other.x;
 	this->y = other.y;
 	return *this;
+}
+
+inline bool Vector2::operator!=(const Vector2& other) {
+	return this->x != other.x 
+		|| this->y != other.y;
+}
+
+inline bool Vector2::operator==(const Vector2& other) {
+	return !(*this != other);
 }
 
 

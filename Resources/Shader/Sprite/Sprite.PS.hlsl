@@ -9,7 +9,9 @@ StructuredBuffer<Material> gMaterial : register(t1);
 PSOutput main(VSOutput input) {
 	PSOutput output;
 
-	float3 texcoord = mul(float3(input.texcoord, 0.0f), (float3x3) gMaterial[input.instanceId].uvTransform);
+	float3x3 uvTransform = (float3x3)gMaterial[input.instanceId].uvTransform;
+
+	float3 texcoord = mul(float3(input.texcoord, 1.0f), uvTransform);
 	float4 textureColor = gTexture.Sample(gSampler, texcoord.xy);
 
 	output.color = gMaterial[input.instanceId].color * textureColor;

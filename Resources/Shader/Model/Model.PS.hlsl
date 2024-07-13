@@ -21,7 +21,7 @@ ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 PSOutput main(VSOutput input) {
 	PSOutput output;
 
-	float3 texcoord = mul(float3(input.texcoord, 0.0f), (float3x3) gMaterial[input.instanceId].uvTransform);
+	float3 texcoord = mul(float3(input.texcoord, 1.0f), (float3x3) gMaterial[input.instanceId].uvTransform);
 	float4 textureColor = gTexture.Sample(gSampler, texcoord.xy);
 
 	///- Lightingする場合
