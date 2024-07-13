@@ -26,12 +26,12 @@ public:
 	/// public : methods
 	/// ===================================================
 
-	void Initialize(UINT buffer);
-	void InitializeOffScreen(UINT width, UINT height);
+	void Initialize(UINT buffer, const Vector4& clearColor);
+	void InitializeOffScreen(UINT width, UINT height, const Vector4& clearColor);
 
 	void SetRenderTarget();
 
-	void Clear(const Vec4f& color);
+	void Clear();
 
 	void CreateBarrier(D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
 
@@ -75,6 +75,7 @@ private:
 	TextureManager::Texture texture_;
 
 	UINT width_, height_;
+	Vector4 clearColor_{};
 
 
 };

@@ -23,7 +23,7 @@ ModelManager* ModelManager::GetInstance() {
 
 void ModelManager::Initialize() {
 	renderTex_.reset(new RenderTexture());
-	renderTex_->InitializeOffScreen(1280, 720);
+	renderTex_->InitializeOffScreen(1280, 720, { 0.0f, 0.0f, 0.0f, 1.0f });
 	screen_ = new Object2d();
 	screen_->Initialize();
 	screen_->SetType(GameObject::Type::FrontSprite);
@@ -92,7 +92,7 @@ void ModelManager::RTVClear() {
 
 	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	renderTex_->SetRenderTarget();
-	renderTex_->Clear({ 0.0f, 0.0f, 0.0f, 1.0f });
+	renderTex_->Clear();
 
 }
 

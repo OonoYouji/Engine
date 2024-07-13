@@ -273,7 +273,7 @@ void DirectXCommon::InitialiezRenderTarget() {
 	renderTextures_.resize(2);
 	for(uint32_t index = 0; index < 2; index++) {
 		renderTextures_[index].reset(new RenderTexture());
-		renderTextures_[index]->Initialize(UINT(index));
+		renderTextures_[index]->Initialize(UINT(index), { 0.1f,0.25f,0.5f,1.0f });
 	}
 
 }
@@ -473,7 +473,7 @@ void DirectXCommon::PreDraw() {
 	///- 書き込み用にバリアーを貼る
 	renderTextures_[bbIndex]->CreateBarrier(D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 	renderTextures_[bbIndex]->SetRenderTarget();
-	renderTextures_[bbIndex]->Clear({ 0.1f,0.25f,0.5f,1.0f });
+	renderTextures_[bbIndex]->Clear();
 
 	///- viewport; scissorRectを設定
 	commandList->RSSetViewports(1, &viewport_);

@@ -13,10 +13,12 @@ RenderTexture::RenderTexture() {}
 RenderTexture::~RenderTexture() {}
 
 
-void RenderTexture::Initialize(UINT buffer) {
+void RenderTexture::Initialize(UINT buffer, const Vector4& clearColor) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	dxDescriptors_ = DxDescriptors::GetInstance();
 	dxCommand_ = DxCommand::GetInstance();
+
+	clearColor_ = clearColor;
 
 	auto hr = dxCommon_->GetSwapChain()->GetBuffer(buffer, IID_PPV_ARGS(&targetBuffer_));
 	assert(SUCCEEDED(hr));
@@ -24,13 +26,15 @@ void RenderTexture::Initialize(UINT buffer) {
 	CreateRenderTargetBuffer();
 }
 
-void RenderTexture::InitializeOffScreen(UINT width, UINT height) {
+void RenderTexture::InitializeOffScreen(UINT width, UINT height, const Vector4& clearColor) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	dxDescriptors_ = DxDescriptors::GetInstance();
 	dxCommand_ = DxCommand::GetInstance();
 
 	width_ = width;
 	height_ = height;
+
+	clearColor_ = clearColor;
 
 	CreateOffScreenBuffer();
 	CreateRenderTargetBuffer();
@@ -46,10 +50,10 @@ void RenderTexture::SetRenderTarget() {
 
 }
 
-void RenderTexture::Clear(const Vec4f& color) {
+void RenderTexture::Clear() {
 	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
 
-	float clearColor[] = { color.x, color.y, color.z, color.w };
+	float clearColor[] = { clearColor_.x, clearColor_.y, clearColor_.z, clearColor_.w };
 	commandList->ClearRenderTargetView(
 		cpuHandle_, clearColor, 0, nullptr
 	);
@@ -108,10 +112,10 @@ void RenderTexture::CreateOffScreenBuffer() {
 	CD3DX12_HEAP_PROPERTIES heapProperticse(D3D12_HEAP_TYPE_DEFAULT);
 	D3D12_CLEAR_VALUE clearValue{};
 	clearValue.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	clearValue.Color[0] = 0.0f;
-	clearValue.Color[1] = 0.0f;
-	clearValue.Color[2] = 0.0f;
-	clearValue.Color[3] = 1.0f;
+	clearValue.Color[0] = clearColor_.x;
+	clearValue.Color[1] = clearColor_.y;
+	clearValue.Color[2] = clearColor_.z;
+	clearValue.Color[3] = clearColor_.w;
 
 	// リソースの作成
 	HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
