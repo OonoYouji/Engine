@@ -97,6 +97,8 @@ void Model::PreDraw() {
 /// 描画語処理
 /// ===================================================
 void Model::PostDraw() {
+	if(!instanceCount_) { return; }
+
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	PipelineStateObjectManager::GetInstance()->SetCommandList("Model", commandList);
 

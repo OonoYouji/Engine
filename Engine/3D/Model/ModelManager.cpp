@@ -47,10 +47,6 @@ void ModelManager::Finalize() {
 /// ===================================================
 void ModelManager::PreDraw() {
 
-	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	renderTex_->SetRenderTarget();
-	renderTex_->Clear({1.0f, 0.0f, 0.0f, 1.0f});
-
 	for(auto& model : models_) {
 		model.second->PreDraw();
 	}
@@ -66,15 +62,7 @@ void ModelManager::PostDraw() {
 	for(auto& model : models_) {
 		model.second->PostDraw();
 	}
-
-
-
-	renderTex_->CopyBuffer();
-	TextureManager::GetInstance()->SetNewTexture("modelScreen", renderTex_->GetTexture());
-	screen_->SetSprite("modelScreen");
-
-	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-
+	
 }
 
 /// ===================================================
@@ -98,6 +86,23 @@ Model* ModelManager::GetModelPtr(const std::string& key) {
 
 	///- ポインタを返す
 	return models_.at(key).get();
+}
+
+void ModelManager::RTVClear() {
+
+	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	renderTex_->SetRenderTarget();
+	renderTex_->Clear({ 0.0f, 0.0f, 0.0f, 1.0f });
+
+}
+
+void ModelManager::CopySRV() {
+	renderTex_->CopyBuffer();
+	TextureManager::GetInstance()->SetNewTexture("modelScreen", renderTex_->GetTexture());
+	screen_->SetSprite("modelScreen");
+
+	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+
 }
 
 

@@ -44,6 +44,10 @@ public:
 
 	Model* GetModelPtr(const std::string& key);
 
+	void RTVClear();
+
+	void CopySRV();
+
 private:
 
 	Model* Create(const std::string& fileName);

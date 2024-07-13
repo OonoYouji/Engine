@@ -33,6 +33,11 @@ PSOutput main(VSOutput input) {
 		///- Lightingしない場合
 		output.color = gMaterial[input.instanceId].color * textureColor;
 	}
+	
+	output.color.a = gMaterial[input.instanceId].color.a * textureColor.a;
+	if (output.color.a == 0.0f) {
+		discard;
+	}
 
 	return output;
 }

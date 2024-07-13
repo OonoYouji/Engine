@@ -51,5 +51,9 @@ PSOutput main(VSOutput input) {
 		output.color = input.color;
 	}
 
+	if (output.color.a == 0.0f) {
+		discard;
+	}
+
 	return output;
 }

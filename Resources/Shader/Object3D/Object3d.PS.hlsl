@@ -34,6 +34,11 @@ PSOutput main(VSOutput input) {
 		output.color = gMaterial.color * textureColor;
 	}
 
+	output.color.a = gMaterial.color.a * textureColor.a;
+	if (output.color.a == 0.0f) {
+		discard;
+	}
+
 	return output;
 }
 
