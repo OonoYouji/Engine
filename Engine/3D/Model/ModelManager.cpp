@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include <ModelManager.h>
 
 #pragma region Include
@@ -24,7 +23,7 @@ ModelManager* ModelManager::GetInstance() {
 
 void ModelManager::Initialize() {
 	renderTex_.reset(new RenderTexture());
-	renderTex_->InitializeOffScreen(1280, 720, { 0.0f, 0.0f, 0.0f, 1.0f });
+	renderTex_->Initialize(1280, 720, { 0.0f, 0.0f, 0.0f, 1.0f });
 	screen_ = new Object2d();
 	screen_->Initialize();
 	screen_->SetType(GameObject::Type::FrontSprite);
@@ -98,53 +97,12 @@ void ModelManager::RTVClear() {
 }
 
 void ModelManager::CopySRV() {
-	renderTex_->CopyBuffer();
 	TextureManager::GetInstance()->SetNewTexture("modelScreen", renderTex_->GetTexture());
 	screen_->SetSprite("modelScreen");
 
 	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-	ImTextureID id = ImTextureID(renderTex_->GetTexture().handleGPU.ptr);
-
-	ImGui::Begin("Scene");
-	ImVec2 max = ImGui::GetWindowContentRegionMax();
-	ImVec2 min = ImGui::GetWindowContentRegionMin();
-	ImVec2 winSize = {
-		max.x - min.x,
-		max.y - min.y
-	};
-
-
-
-	///- 大きさの調整
-	ImVec2 texSize = winSize;
-	if(texSize.x <= texSize.y) {
-		///- x優先
-		texSize.y = (texSize.x / 16.0f) * 9.0f;
-	} else {
-		///- y優先
-		float x = (texSize.y / 9.0f) * 16.0f;
-		if(x < texSize.x) {
-			texSize.x = x;
-		} else {
-			texSize.y = (texSize.x / 16.0f) * 9.0f;
-		}
-	}
-
-	ImVec2 texPos = {
-		winSize.x * 0.5f,
-		winSize.y * 0.5f
-	};
-
-	texPos.y -= texSize.y / 2.0f;
-	texPos.x -= texSize.x / 2.0f;
-
-	texPos.x = std::max(texPos.x, min.x);
-	texPos.y = std::max(texPos.y, min.y);
-
-	ImGui::SetCursorPos(texPos);
-	ImGui::Image(id, texSize);
-	ImGui::End();
+	renderTex_->ImGuiImage();
 
 }
 

@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "RenderTexture.h"
 
 #include <d3dx12.h>
@@ -6,14 +7,17 @@
 #include <DxDescriptors.h>
 #include <DxCommand.h>
 #include <TextureManager.h>
+#include <ImGuiManager.h>
 
 
 
 RenderTexture::RenderTexture() {}
 RenderTexture::~RenderTexture() {}
 
-
-void RenderTexture::Initialize(UINT buffer, const Vector4& clearColor) {
+/// ===================================================
+/// スワップチェーンのバッファ用に初期化
+/// ===================================================
+void RenderTexture::InitializeSwapChain(UINT buffer, const Vector4& clearColor) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	dxDescriptors_ = DxDescriptors::GetInstance();
 	dxCommand_ = DxCommand::GetInstance();
@@ -26,7 +30,11 @@ void RenderTexture::Initialize(UINT buffer, const Vector4& clearColor) {
 	CreateRenderTargetBuffer();
 }
 
-void RenderTexture::InitializeOffScreen(UINT width, UINT height, const Vector4& clearColor) {
+
+/// ===================================================
+/// offscreen用に初期化
+/// ===================================================
+void RenderTexture::Initialize(UINT width, UINT height, const Vector4& clearColor) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	dxDescriptors_ = DxDescriptors::GetInstance();
 	dxCommand_ = DxCommand::GetInstance();
@@ -42,6 +50,9 @@ void RenderTexture::InitializeOffScreen(UINT width, UINT height, const Vector4& 
 }
 
 
+/// ===================================================
+/// commandListにRTVを設定
+/// ===================================================
 void RenderTexture::SetRenderTarget() {
 	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
 
@@ -50,6 +61,10 @@ void RenderTexture::SetRenderTarget() {
 
 }
 
+
+/// ===================================================
+/// RTVの色をクリア
+/// ===================================================
 void RenderTexture::Clear() {
 	ID3D12GraphicsCommandList* commandList = dxCommand_->GetList();
 
@@ -57,8 +72,14 @@ void RenderTexture::Clear() {
 	commandList->ClearRenderTargetView(
 		cpuHandle_, clearColor, 0, nullptr
 	);
+
+	dxCommon_->ClearDepthBuffer();
 }
 
+
+/// ===================================================
+/// バリアーの生成
+/// ===================================================
 void RenderTexture::CreateBarrier(D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after) {
 
 	if(currentState_ != before) {
@@ -82,6 +103,9 @@ void RenderTexture::CreateBarrier(D3D12_RESOURCE_STATES before, D3D12_RESOURCE_S
 }
 
 
+/// ===================================================
+/// RTVの生成
+/// ===================================================
 void RenderTexture::CreateRenderTargetBuffer() {
 
 	D3D12_RENDER_TARGET_VIEW_DESC desc{};
@@ -95,6 +119,10 @@ void RenderTexture::CreateRenderTargetBuffer() {
 
 }
 
+
+/// ===================================================
+/// オフスクリーン用のバッファに生成
+/// ===================================================
 void RenderTexture::CreateOffScreenBuffer() {
 
 	cpuHandle_ = dxDescriptors_->GetCpuHandleRTV();
@@ -131,6 +159,10 @@ void RenderTexture::CreateOffScreenBuffer() {
 
 }
 
+
+/// ===================================================
+/// SRVの生成
+/// ===================================================
 void RenderTexture::CreateSRV() {
 
 	texture_.handleCPU = dxDescriptors_->GetCPUDescriptorHandle();
@@ -151,13 +183,69 @@ void RenderTexture::CreateSRV() {
 }
 
 
-
-void RenderTexture::CopyBuffer() {
-
-	//texture_.resource = targetBuffer_;
-
-}
-
+/// ===================================================
+/// textureのゲッタ
+/// ===================================================
 const TextureManager::Texture& RenderTexture::GetTexture() const {
 	return texture_;
+}
+
+
+/// ===================================================
+/// ImGui::Image()で作成したテクスチャの描画
+/// ===================================================
+void RenderTexture::ImGuiImage() {
+#ifdef _DEBUG
+	ImGui::Begin(name_.c_str());
+
+
+	ImVec2 max = ImGui::GetWindowContentRegionMax();
+	ImVec2 min = ImGui::GetWindowContentRegionMin();
+	ImVec2 winSize = {
+		max.x - min.x,
+		max.y - min.y
+	};
+
+
+
+	///- 大きさの調整
+	ImVec2 texSize = winSize;
+	if(texSize.x <= texSize.y) {
+		///- x優先
+		texSize.y = (texSize.x / 16.0f) * 9.0f;
+	} else {
+		///- y優先
+		float x = (texSize.y / 9.0f) * 16.0f;
+		if(x < texSize.x) {
+			texSize.x = x;
+		} else {
+			texSize.y = (texSize.x / 16.0f) * 9.0f;
+		}
+	}
+
+	ImVec2 texPos = {
+		winSize.x * 0.5f,
+		winSize.y * 0.5f
+	};
+
+	texPos.y -= texSize.y / 2.0f;
+	texPos.x -= texSize.x / 2.0f;
+
+	texPos.x = std::max(texPos.x, min.x);
+	texPos.y = std::max(texPos.y, min.y);
+
+	ImGui::SetCursorPos(texPos);
+
+	ImTextureID id = ImTextureID(GetTexture().handleGPU.ptr);
+	ImGui::Image(id, texSize);
+	ImGui::End();
+#endif // DEBUG
+}
+
+
+/// ===================================================
+/// 名前のセット
+/// ===================================================
+void RenderTexture::SetName(const std::string& name) {
+	name_ = name;
 }

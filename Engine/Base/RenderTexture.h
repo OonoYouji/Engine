@@ -26,8 +26,8 @@ public:
 	/// public : methods
 	/// ===================================================
 
-	void Initialize(UINT buffer, const Vector4& clearColor);
-	void InitializeOffScreen(UINT width, UINT height, const Vector4& clearColor);
+	void InitializeSwapChain(UINT buffer, const Vector4& clearColor);
+	void Initialize(UINT width, UINT height, const Vector4& clearColor);
 
 	void SetRenderTarget();
 
@@ -35,9 +35,11 @@ public:
 
 	void CreateBarrier(D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after);
 
-	void CopyBuffer();
-
 	const TextureManager::Texture& GetTexture() const;
+
+	void ImGuiImage();
+
+	void SetName(const std::string& name);
 
 private:
 
@@ -77,5 +79,6 @@ private:
 	UINT width_, height_;
 	Vector4 clearColor_{};
 
-
+	std::string name_ = "NONE";
+	
 };
