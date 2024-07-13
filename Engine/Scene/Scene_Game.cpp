@@ -7,6 +7,7 @@
 #include <ModelManager.h>
 #include <SpriteManager.h>
 #include <LineDrawer.h>
+#include <ImGuiManager.h>
 
 #include <Object2d.h>
 
@@ -88,6 +89,8 @@ void Scene_Game::Draw() {
 
 	spriteManager->PostDraw();
 	modelManager->PostDraw();
+
+	
 
 }
 
