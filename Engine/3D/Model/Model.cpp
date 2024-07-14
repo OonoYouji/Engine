@@ -102,9 +102,6 @@ void Model::PostDraw() {
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 	PipelineStateObjectManager::GetInstance()->SetCommandList("Model", commandList);
 
-	///- 頂点情報のコピー
-	std::memcpy(vertexData_, vertices_.data(), sizeof(VertexData) * vertices_.size());
-
 	///- IASet
 	commandList->IASetVertexBuffers(0, 1, &vbv_);
 	commandList->IASetIndexBuffer(&ibv_);
@@ -218,9 +215,9 @@ Model Model::LoadObjFile(const std::string& directoryPath, const std::string& fi
 				if(faceData.find(vertexIndex) == faceData.end()) {
 					faceData[vertexIndex] = uint32_t(faceData.size());
 					model.vertices_.push_back(
-						{positions[vertexIndex.x],
+						{ positions[vertexIndex.x],
 						texcoords[vertexIndex.y],
-						normals[vertexIndex.z]}
+						normals[vertexIndex.z] }
 					);
 				}
 
@@ -339,8 +336,9 @@ void Model::CreateVertexBuffer() {
 	vbv_.StrideInBytes = sizeof(VertexData);
 
 	///- 頂点リソースにデータを書き込む
-	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	std::memcpy(vertexData_, vertices_.data(), sizeof(VertexData) * vertices_.size());
+	VertexData* vertexData = nullptr;
+	vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	std::memcpy(vertexData, vertices_.data(), sizeof(VertexData) * vertices_.size());
 
 }
 
@@ -359,8 +357,9 @@ void Model::CreateIndexBuffer() {
 	ibv_.Format = DXGI_FORMAT_R32_UINT;
 
 	///- データのマップ
-	indexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&indexData_));
-	std::memcpy(indexData_, indices_.data(), sizeof(uint32_t) * indices_.size());
+	uint32_t* indexData = nullptr;
+	indexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+	std::memcpy(indexData, indices_.data(), sizeof(uint32_t) * indices_.size());
 
 }
 

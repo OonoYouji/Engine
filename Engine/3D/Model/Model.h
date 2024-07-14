@@ -32,6 +32,7 @@ private:
 		std::string textureFilePath;
 		std::string textureName;
 	};
+
 public:
 
 	Model();
@@ -141,13 +142,11 @@ private:
 	///- Vertex
 	ComPtr<ID3D12Resource> vertexBuffer_;
 	D3D12_VERTEX_BUFFER_VIEW vbv_;
-	VertexData* vertexData_ = nullptr;
 
 	///- index
 	ComPtr<ID3D12Resource> indexBuffer_;
 	D3D12_INDEX_BUFFER_VIEW ibv_;
 	std::vector<uint32_t> indices_;
-	uint32_t* indexData_ = nullptr;
 
 	///- Material
 	ComPtr<ID3D12Resource> materialBuffer_;

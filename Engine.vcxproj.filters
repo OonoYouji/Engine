@@ -178,6 +178,9 @@
     <ClCompile Include="Engine\Base\RenderTexture.cpp">
       <Filter>Source\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3D\Model\Mesh.cpp">
+      <Filter>Source\3D\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -505,6 +508,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Base\RenderTexture.h">
       <Filter>Include\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Model\Mesh.h">
+      <Filter>Include\3D\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -36,5 +36,4 @@ private:
 	GameObjectManager* gameObjectManager_ = nullptr;
 
 
-
 };
