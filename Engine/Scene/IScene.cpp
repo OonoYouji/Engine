@@ -21,6 +21,11 @@
 #include <DirectXCommon.h>
 
 #include <ImGuiManager.h>
+#include <SpriteManager.h>
+#include <ModelManager.h>
+
+#include <Sprite.h>
+#include <Object2d.h>
 #pragma endregion
 
 using json = nlohmann::json;
@@ -31,6 +36,7 @@ using json = nlohmann::json;
 namespace {
 
 	const std::string kDirectoryPath = "./Resources/External/";
+	
 
 } ///- namespace
 
@@ -177,16 +183,27 @@ void IScene::ImGuiDraw() {
 	DxCommand::GetInstance()->ResetCommandList();
 
 
-	renderTexs_[kScreen]->CreateBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+	renderTexs_[kScreen]->CreateBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+
+
+
+
+	BeginRenderTarget(kImGui);
+	std::string name = CreateName(this) + "_Scene";
+	TextureManager::GetInstance()->SetNewTexture(name, renderTexs_[kScreen]->GetTexture());
+	screen_->SetSprite(name);
+
+	SpriteManager::GetInstance()->PreDraw();
+	screen_->Draw();
+	SpriteManager::GetInstance()->PostDraw();
+	
+	EndRenderTarget(kImGui);
 
 
 	for(auto& tex : renderTexs_) {
 		tex->ImGuiImage();
 	}
-
-
-	renderTexs_[kScreen]->CreateBarrier(D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_GENERIC_READ);
-
 
 
 #endif // _DEBUG
@@ -195,6 +212,14 @@ void IScene::ImGuiDraw() {
 
 
 void IScene::InitializeRenderTex(IScene* thisScene) {
+
+	screen_ = new Object2d();
+	screen_->Initialize();
+	screen_->SetType(GameObject::None);
+	screen_->SetScale({
+		static_cast<float>(WinApp::kWindowWidth_),
+		static_cast<float>(WinApp::kWindowHeigth_),
+		1.0f });
 
 	for(auto& tex : renderTexs_) {
 		tex = new RenderTexture();
@@ -205,12 +230,20 @@ void IScene::InitializeRenderTex(IScene* thisScene) {
 	renderTexs_[kScreen]->SetName(CreateName(thisScene));
 
 	renderTexs_[kFront]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
-	renderTexs_[kFront]->SetName(CreateName(thisScene) + "Front");
+	renderTexs_[kFront]->SetName(CreateName(thisScene) + "_Front");
 
 	renderTexs_[k3dObject]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
-	renderTexs_[k3dObject]->SetName(CreateName(thisScene) + "3dObject");
+	renderTexs_[k3dObject]->SetName(CreateName(thisScene) + "_3dObject");
 
 	renderTexs_[kBack]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
-	renderTexs_[kBack]->SetName(CreateName(thisScene) + "Back");
+	renderTexs_[kBack]->SetName(CreateName(thisScene) + "_Back");
+
+	renderTexs_[kImGui]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 1.0f,0.25f,0.5f,1.0f });
+	renderTexs_[kImGui]->SetName(CreateName(thisScene) + "_ImGui");
+
+
+	std::string name = CreateName(this) + "_Scene";
+	TextureManager::GetInstance()->SetNewTexture(name, renderTexs_[kScreen]->GetTexture());
+	screen_->SetSprite(name);
 
 }

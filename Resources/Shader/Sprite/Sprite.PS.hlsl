@@ -15,9 +15,9 @@ PSOutput main(VSOutput input) {
 	float4 textureColor = gTexture.Sample(gSampler, texcoord.xy);
 
 	output.color = gMaterial[input.instanceId].color * textureColor;
-	if (output.color.a == 0.0f) {
-		discard;
-	}
+	//if (output.color.a == 0.0f) {
+	//	discard;
+	//}
 
 	return output;
 }

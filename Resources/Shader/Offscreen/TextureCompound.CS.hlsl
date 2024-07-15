@@ -16,6 +16,10 @@ void main(uint3 DTid : SV_DispatchThreadID) {
 	float4 outputColor = obj * obj.a + back * (1 - obj.a);
 	outputColor = front * front.a + outputColor * (1 - front.a);
 
+	if (outputColor.a == 0.0f) {
+		gOutputTexture[DTid.xy] = float4(0.1f, 0.25f, 0.5f, 1.0f);
+		return;
+	}
 	
 	gOutputTexture[DTid.xy] = outputColor;
 }

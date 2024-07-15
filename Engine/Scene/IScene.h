@@ -3,7 +3,8 @@
 #include <GameObject.h>
 
 class RenderTexture;
-class Sprite;
+class Sprite; 
+class Object2d;
 
 class IScene {
 public: 
@@ -12,6 +13,7 @@ public:
 		k3dObject = GameObject::Type::Object3d,
 		kFront = GameObject::Type::FrontSprite,
 		kScreen,
+		kImGui,
 		Count,
 	};
 public:
@@ -40,5 +42,5 @@ protected:
 protected:
 
 	RenderTexture* renderTexs_[Count]{};
-
+	Object2d* screen_ = nullptr;
 };

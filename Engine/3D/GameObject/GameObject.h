@@ -22,6 +22,7 @@ public:
 		BackSprite,		//- 背景
 		Object3d,		//- オブジェクト
 		FrontSprite,	//- 前景
+		None,
 	};
 protected:
 #pragma region JSON保存,読み込み

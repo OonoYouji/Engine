@@ -67,12 +67,9 @@ void RenderTexture::InitializeUAV(UINT width, UINT height, const Vector4& clearC
 
 	clearColor_ = clearColor;
 
-	//CreateBarrier(currentState_, D3D12_RESOURCE_STATE_GENERIC_READ);
-	//CreateRenderTargetBuffer();
 	CreateUAV();
 	CreateSRV();
 	CreateBarrier(currentState_, D3D12_RESOURCE_STATE_GENERIC_READ);
-	//gpuHandle_ = std::move(texture_.handleGPU);
 	
 }
 

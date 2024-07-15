@@ -21,6 +21,8 @@ public:
 
 	void SetSprite(const std::string& textureName);
 
+	Sprite* GetSprite() const { return sprite_; }
+
 private:
 	static int instanceId_;
 	int id_ = 0;

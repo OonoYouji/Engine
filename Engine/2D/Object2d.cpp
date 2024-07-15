@@ -40,6 +40,9 @@ void Object2d::Initialize() {
 	SetName(textureName_ + std::to_string(id_));
 
 	sprite_ = SpriteManager::GetInstance()->GetSpritePtr(textureName_);
+	
+	UpdateMatrix();
+	uvTransform_.UpdateMatrix();
 
 }
 

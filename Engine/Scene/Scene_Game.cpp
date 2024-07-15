@@ -37,6 +37,11 @@ void Scene_Game::Init() {
 	object2->Initialize("ICO");
 	object2->SetType(GameObject::Type::BackSprite);
 
+	Object2d* sprite = new Object2d();
+	sprite->Initialize();
+	sprite->SetSprite("uvChecker");
+	sprite->SetScale({ 640.0f,360.0f, 1.0f });
+
 	LoadFile();
 
 }

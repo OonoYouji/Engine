@@ -70,9 +70,7 @@ void ImGuiManager::BeginFrame() {
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
-	ID3D12DescriptorHeap* descriptorHeap[] = { DxDescriptors::GetInstance()->GetSRVHeap() };
-	DxCommand::GetInstance()->GetList()->SetDescriptorHeaps(1, descriptorHeap);
-
+	DxDescriptors::GetInstance()->SetCommandListSrvHeap(DxCommand::GetInstance()->GetList());
 
 
 

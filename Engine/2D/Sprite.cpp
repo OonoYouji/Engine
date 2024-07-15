@@ -67,10 +67,10 @@ void Sprite::Draw(const WorldTransform& worldTransform, const Mat4& uvTransfrom)
 	worldMatrixData_[instanceCount_] = worldTransform.matTransform;
 
 	///- 頂点データに中心点のプラスして書き込む
-	for(uint32_t index = 0; index < 4; index++) {
+	/*for(uint32_t index = 0; index < 4; index++) {
 		Vec4f pos = { position.x, position.y, 0.0f, 0.0f };
 		vertexData_[index].position = localVertex_[index] + pos;
-	}
+	}*/
 	
 	instanceCount_++;
 	
@@ -103,6 +103,8 @@ void Sprite::PostDraw() {
 	commandList->IASetIndexBuffer(&indexBufferView_);
 	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	DxDescriptors::GetInstance()->SetCommandListSrvHeap(commandList);
+	
 	commandList->SetGraphicsRootDescriptorTable(0, worldMatrixGpuHandle_);
 	commandList->SetGraphicsRootConstantBufferView(1, viewProjectionResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(3, materialGpuHandle_);
