@@ -14,6 +14,13 @@
 #include <GameObjectFactory.h>
 #include <CreateName.h>
 #include <RenderTexture.h>
+
+#include <PipelineStateObjectManager.h>
+#include <DxCommand.h>
+#include <DxDescriptors.h>
+#include <DirectXCommon.h>
+
+#include <ImGuiManager.h>
 #pragma endregion
 
 using json = nlohmann::json;
@@ -148,7 +155,41 @@ void IScene::EndRenderTarget(Target target) {
 
 
 void IScene::ImGuiDraw() {
+#ifdef _DEBUG
 
+	renderTexs_[kScreen]->CreateBarrier(D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
+
+
+	PipelineStateObjectManager::GetInstance()->SetComputeCommandList("TextureCompound", commandList);
+
+	DxDescriptors::GetInstance()->SetCommandListSrvHeap(commandList);
+
+	commandList->SetComputeRootDescriptorTable(0, renderTexs_[kBack]->GetTexture().handleGPU);
+	commandList->SetComputeRootDescriptorTable(1, renderTexs_[k3dObject]->GetTexture().handleGPU);
+	commandList->SetComputeRootDescriptorTable(2, renderTexs_[kFront]->GetTexture().handleGPU);
+	commandList->SetComputeRootDescriptorTable(3, renderTexs_[kScreen]->GetTexture().handleGPU);
+
+	commandList->Dispatch((1280 + 15) / 16, (720 + 15) / 16, 1);
+
+	DxCommand::GetInstance()->Close();
+	DirectXCommon::GetInstance()->WaitExecution();
+	DxCommand::GetInstance()->ResetCommandList();
+
+
+	renderTexs_[kScreen]->CreateBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
+
+
+	for(auto& tex : renderTexs_) {
+		tex->ImGuiImage();
+	}
+
+
+	renderTexs_[kScreen]->CreateBarrier(D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+
+
+#endif // _DEBUG
 }
 
 
@@ -160,16 +201,16 @@ void IScene::InitializeRenderTex(IScene* thisScene) {
 		tex->SetSceneLink(thisScene);
 	}
 
-	renderTexs_[kScreen]->Initialize(WinApp::kWindowHeigth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,1.0f });
+	renderTexs_[kScreen]->InitializeUAV(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,1.0f });
 	renderTexs_[kScreen]->SetName(CreateName(thisScene));
 
-	renderTexs_[kFront]->Initialize(WinApp::kWindowHeigth_, WinApp::kWindowHeigth_, { 0.0f, 0.0f, 0.0f, 0.0f });
+	renderTexs_[kFront]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
 	renderTexs_[kFront]->SetName(CreateName(thisScene) + "Front");
 
-	renderTexs_[k3dObject]->Initialize(WinApp::kWindowHeigth_, WinApp::kWindowHeigth_, { 0.0f, 0.0f, 0.0f, 0.0f });
+	renderTexs_[k3dObject]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
 	renderTexs_[k3dObject]->SetName(CreateName(thisScene) + "3dObject");
 
-	renderTexs_[kBack]->Initialize(WinApp::kWindowHeigth_, WinApp::kWindowHeigth_, { 0.0f, 0.0f, 0.0f, 0.0f });
+	renderTexs_[kBack]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
 	renderTexs_[kBack]->SetName(CreateName(thisScene) + "Back");
 
 }

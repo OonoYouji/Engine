@@ -112,7 +112,19 @@ D3D12_GPU_DESCRIPTOR_HANDLE DxDescriptors::GetGpuHandleRTV() {
 	return GetGPUDescriptorHandle(rtvDescriptorHeap_.Get(), descriptorRTV_, rtvUsedCount_);
 }
 
+D3D12_CPU_DESCRIPTOR_HANDLE DxDescriptors::GetCpuHandleUAV() {
+	return GetCPUDescriptorHandle(srvDescriptorHeap_.Get(), descriptorSRV_, srvUsedCount_);
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE DxDescriptors::GetGpuHandleUAV() {
+	return GetGPUDescriptorHandle(srvDescriptorHeap_.Get(), descriptorSRV_, srvUsedCount_);
+}
+
 void DxDescriptors::AddSrvUsedCount() {
+	srvUsedCount_++;
+}
+
+void DxDescriptors::AddUavUsedCount() {
 	srvUsedCount_++;
 }
 

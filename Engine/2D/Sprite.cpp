@@ -107,14 +107,10 @@ void Sprite::PostDraw() {
 	commandList->SetGraphicsRootConstantBufferView(1, viewProjectionResource_->GetGPUVirtualAddress());
 	commandList->SetGraphicsRootDescriptorTable(3, materialGpuHandle_);
 
-	//TextureManager::GetInstance()->SetGraphicsRootDescriptorTable(2, textureName_);
 	commandList->SetGraphicsRootDescriptorTable(2, texture_.handleGPU);
-
 
 	///- DrawCall
 	commandList->DrawIndexedInstanced(6, instanceCount_, 0, 0, 0);
-
-
 
 }
 

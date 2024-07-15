@@ -111,6 +111,7 @@ void ImGuiManager::EndFrame() {
 
 
 
+	DxDescriptors::GetInstance()->SetCommandListSrvHeap(DxCommand::GetInstance()->GetList());
 
 
 	ImGui::Render();

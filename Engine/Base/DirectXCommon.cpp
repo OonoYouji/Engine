@@ -210,7 +210,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 		//- エラー
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 		//- 警告
-		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+		//infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
 		///- エラーと警告の抑制
 		D3D12_MESSAGE_ID denyIds[] = {

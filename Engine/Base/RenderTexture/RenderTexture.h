@@ -29,7 +29,8 @@ public:
 
 	void InitializeSwapChain(UINT buffer, const Vector4& clearColor);
 	void Initialize(UINT width, UINT height, const Vector4& clearColor);
-
+	void InitializeUAV(UINT width, UINT height, const Vector4& clearColor);
+		
 	void SetRenderTarget();
 
 	void Clear();
@@ -56,6 +57,7 @@ private:
 
 	void CreateSRV();
 
+	void CreateUAV();
 
 private:
 
@@ -72,10 +74,13 @@ private:
 
 	ComPtr<ID3D12Resource> targetBuffer_;
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle_{};
+	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandleUAV_{};
 	D3D12_RESOURCE_STATES currentState_{};
 
 	D3D12_CPU_DESCRIPTOR_HANDLE srvCpuHandle_{};
 	D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle_{};
+
+	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle_{};
 
 	TextureManager::Texture texture_;
 

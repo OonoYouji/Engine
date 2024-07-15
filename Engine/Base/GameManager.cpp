@@ -115,23 +115,20 @@ namespace {
 
 			auto& scene = scene_.front();
 
-
 			scene->BeginRenderTarget(IScene::kBack);
 			scene->BackDraw();
 			scene->EndRenderTarget(IScene::kBack);
-			dxCommon->ClearDepthBuffer();
-
 
 			scene->BeginRenderTarget(IScene::k3dObject);
 			scene->ObjectDraw();
 			scene->EndRenderTarget(IScene::k3dObject);
-			dxCommon->ClearDepthBuffer();
-
 
 			scene->BeginRenderTarget(IScene::kFront);
 			scene->FrontDraw();
 			scene->EndRenderTarget(IScene::kFront);
-			dxCommon->ClearDepthBuffer();
+
+
+			scene->ImGuiDraw();
 
 		}
 

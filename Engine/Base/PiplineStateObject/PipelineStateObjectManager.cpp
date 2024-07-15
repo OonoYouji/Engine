@@ -206,6 +206,34 @@ void PipelineStateObjectManager::Initialize(ID3D12Device* device) {
 
 
 
+	/// ----------------------------------------------
+	/// ↓ offscreeen : TextureCompound CS
+	/// ----------------------------------------------
+
+
+	shaderBlob.reset(new ShaderBlob());
+	shaderBlob->InitializeCS(
+		shaderCompile_.get(),
+		L"./Resources/Shader/Offscreen/TextureCompound.CS.hlsl",
+		L"cs_6_6"
+	);
+
+	pipelineStateObjects_["TextureCompound"] = std::make_unique<PipelineStateObject>();
+	pso = pipelineStateObjects_.at("TextureCompound").get();
+
+	pso->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV); ///- front tex
+	pso->SetDescriptorRange(1, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV); ///- back tex
+	pso->SetDescriptorRange(2, 1, D3D12_DESCRIPTOR_RANGE_TYPE_SRV); ///- back tex
+	pso->SetDescriptorRange(0, 1, D3D12_DESCRIPTOR_RANGE_TYPE_UAV); ///- uavTexture
+
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_ALL, 0); ///- front tex
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_ALL, 1); ///- back tex
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_ALL, 2); ///- back tex
+	pso->SetDescriptorTable(D3D12_SHADER_VISIBILITY_ALL, 3); ///- uavTexture
+
+	pso->InitializeComputeShaderVer(device, shaderBlob.get());
+
+
 	shaderBlob.reset();
 }
 

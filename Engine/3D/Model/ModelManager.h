@@ -44,10 +44,6 @@ public:
 
 	Model* GetModelPtr(const std::string& key);
 
-	void RTVClear();
-
-	void CopySRV();
-
 private:
 
 	Model* Create(const std::string& fileName);
@@ -57,10 +53,6 @@ private:
 	const std::string directoryPath_ = "./Resources/Objects/";
 	std::map<std::string, std::unique_ptr<Model>> models_;
 	std::unordered_map<int, std::string> pairs_;
-
-	RenderTexture* renderTex_;
-
-	Object2d* screen_;
 
 private:
 	ModelManager& operator=(const ModelManager&) = delete;

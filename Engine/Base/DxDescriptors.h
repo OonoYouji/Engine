@@ -75,9 +75,14 @@ public:
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandleRTV();
 
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGpuHandleRTV();
+	
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandleUAV();
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGpuHandleUAV();
 
 
 	void AddSrvUsedCount();
+	void AddUavUsedCount();
 	void AddRtvUsedCount();
 
 	void SetCommandListSrvHeap(ID3D12GraphicsCommandList* commandList);
@@ -100,7 +105,6 @@ private: ///- member obejct
 
 	uint32_t srvUsedCount_ = 0;
 	uint32_t rtvUsedCount_ = 0;
-	uint32_t uavUsedCount_ = 0;
 
 private: ///- member method
 

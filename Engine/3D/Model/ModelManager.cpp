@@ -22,12 +22,6 @@ ModelManager* ModelManager::GetInstance() {
 
 
 void ModelManager::Initialize() {
-	renderTex_ = new RenderTexture();
-	renderTex_->Initialize(1280, 720, { 0.0f, 0.0f, 0.0f, 1.0f });
-	screen_ = new Object2d();
-	screen_->Initialize();
-	screen_->SetType(GameObject::Type::FrontSprite);
-	screen_->SetScale({ 640.0f, 360.0f, 1.0f });
 }
 
 
@@ -86,25 +80,6 @@ Model* ModelManager::GetModelPtr(const std::string& key) {
 	///- ポインタを返す
 	return models_.at(key).get();
 }
-
-void ModelManager::RTVClear() {
-
-	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	renderTex_->SetRenderTarget();
-	renderTex_->Clear();
-
-}
-
-void ModelManager::CopySRV() {
-	TextureManager::GetInstance()->SetNewTexture("modelScreen", renderTex_->GetTexture());
-	screen_->SetSprite("modelScreen");
-
-	renderTex_->CreateBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-
-	renderTex_->ImGuiImage();
-
-}
-
 
 
 

@@ -51,6 +51,29 @@ void RenderTexture::Initialize(UINT width, UINT height, const Vector4& clearColo
 	CreateOffScreenBuffer();
 	CreateRenderTargetBuffer();
 	CreateSRV();
+
+}
+
+
+
+void RenderTexture::InitializeUAV(UINT width, UINT height, const Vector4& clearColor) {
+
+	dxCommon_ = DirectXCommon::GetInstance();
+	dxDescriptors_ = DxDescriptors::GetInstance();
+	dxCommand_ = DxCommand::GetInstance();
+
+	width_ = width;
+	height_ = height;
+
+	clearColor_ = clearColor;
+
+	//CreateBarrier(currentState_, D3D12_RESOURCE_STATE_GENERIC_READ);
+	//CreateRenderTargetBuffer();
+	CreateUAV();
+	CreateSRV();
+	CreateBarrier(currentState_, D3D12_RESOURCE_STATE_GENERIC_READ);
+	//gpuHandle_ = std::move(texture_.handleGPU);
+	
 }
 
 
@@ -187,6 +210,59 @@ void RenderTexture::CreateSRV() {
 }
 
 
+
+/// ===================================================
+/// UAVの生成
+/// ===================================================
+void RenderTexture::CreateUAV() {
+
+	// オフスクリーンテクスチャの作成
+	D3D12_RESOURCE_DESC textureDesc = {};
+	textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	textureDesc.Alignment = 0;
+	textureDesc.Width = 1280;
+	textureDesc.Height = 720;
+	textureDesc.DepthOrArraySize = 1;
+	textureDesc.MipLevels = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	textureDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+
+	D3D12_HEAP_PROPERTIES heapProperties = {};
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&textureDesc,
+		D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+		nullptr,
+		IID_PPV_ARGS(&targetBuffer_)
+	);
+
+	currentState_ = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+
+
+	assert(SUCCEEDED(hr));
+
+
+	D3D12_UNORDERED_ACCESS_VIEW_DESC desc{};
+	desc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE2D;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.Texture2D.MipSlice = 0;
+
+
+	cpuHandleUAV_ = dxDescriptors_->GetCpuHandleUAV();
+	gpuHandle_ = dxDescriptors_->GetGpuHandleUAV();
+	dxDescriptors_->AddUavUsedCount();
+
+	dxCommon_->GetDevice()->CreateUnorderedAccessView(targetBuffer_.Get(), nullptr, &desc, cpuHandleUAV_);
+
+}
+
+
 /// ===================================================
 /// textureのゲッタ
 /// ===================================================
@@ -200,7 +276,10 @@ const TextureManager::Texture& RenderTexture::GetTexture() const {
 /// ===================================================
 void RenderTexture::ImGuiImage() {
 #ifdef _DEBUG
-	ImGui::Begin(name_.c_str());
+	if(!ImGui::Begin(name_.c_str())) {
+		ImGui::End();
+		return;
+	}
 
 
 	ImVec2 max = ImGui::GetWindowContentRegionMax();
