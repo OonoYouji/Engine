@@ -29,8 +29,10 @@ public:
 
 	void Init() override;
 	void Update() override;
-	void Draw() override;
-	void Finalize() override;
+
+	void BackDraw() override;
+	void ObjectDraw() override;
+	void FrontDraw() override;
 
 private:
 	GameObjectManager* gameObjectManager_ = nullptr;

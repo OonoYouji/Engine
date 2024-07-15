@@ -253,3 +253,7 @@ void RenderTexture::ImGuiImage() {
 void RenderTexture::SetName(const std::string& name) {
 	name_ = name;
 }
+
+void RenderTexture::SetSceneLink(IScene* link) {
+	sceneLink_ = link;
+}

@@ -8,10 +8,12 @@
 #include <filesystem>
 #include <fstream>
 
+#include <WinApp.h>
+
 #include <GameObjectManager.h>
 #include <GameObjectFactory.h>
 #include <CreateName.h>
-//#include <ExternalParamManager.h>
+#include <RenderTexture.h>
 #pragma endregion
 
 using json = nlohmann::json;
@@ -114,11 +116,11 @@ void IScene::LoadFile() {
 			if(!gom->Find(key)) {
 
 				GameObject* object = GameObjectFactory::GetInstance()->CreateGameObject(className);
-				
+
 				object->CreateObejct(key);
 				object->LoadFile(key, file);
 				object->Initialize();
-				
+
 
 			}
 
@@ -126,5 +128,48 @@ void IScene::LoadFile() {
 
 	}
 
+
+}
+
+
+
+void IScene::BeginRenderTarget(Target target) {
+	renderTexs_[target]->CreateBarrier(D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	renderTexs_[target]->SetRenderTarget();
+	renderTexs_[target]->Clear();
+}
+
+
+
+void IScene::EndRenderTarget(Target target) {
+	renderTexs_[target]->CreateBarrier(D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+}
+
+
+
+void IScene::ImGuiDraw() {
+
+}
+
+
+
+void IScene::InitializeRenderTex(IScene* thisScene) {
+
+	for(auto& tex : renderTexs_) {
+		tex = new RenderTexture();
+		tex->SetSceneLink(thisScene);
+	}
+
+	renderTexs_[kScreen]->Initialize(WinApp::kWindowHeigth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,1.0f });
+	renderTexs_[kScreen]->SetName(CreateName(thisScene));
+
+	renderTexs_[kFront]->Initialize(WinApp::kWindowHeigth_, WinApp::kWindowHeigth_, { 0.0f, 0.0f, 0.0f, 0.0f });
+	renderTexs_[kFront]->SetName(CreateName(thisScene) + "Front");
+
+	renderTexs_[k3dObject]->Initialize(WinApp::kWindowHeigth_, WinApp::kWindowHeigth_, { 0.0f, 0.0f, 0.0f, 0.0f });
+	renderTexs_[k3dObject]->SetName(CreateName(thisScene) + "3dObject");
+
+	renderTexs_[kBack]->Initialize(WinApp::kWindowHeigth_, WinApp::kWindowHeigth_, { 0.0f, 0.0f, 0.0f, 0.0f });
+	renderTexs_[kBack]->SetName(CreateName(thisScene) + "Back");
 
 }

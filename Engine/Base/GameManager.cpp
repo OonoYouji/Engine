@@ -5,13 +5,22 @@
 
 #include <FrameTimer.h>
 
-template<class T>
-void SafeDelete(T* t) {
-	delete t;
-	t = nullptr;
-}
 
 namespace {
+
+	template<class T>
+	void SafeDelete(T* t) {
+		delete t;
+		t = nullptr;
+	}
+
+
+
+	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+
+
+
+
 
 	/// <summary>
 	/// ゲームループなどやシーンの管理
@@ -86,13 +95,13 @@ namespace {
 	void GameManagerSystem::Update() {
 
 		/// 遷移処理があるのみ更新を行う
-		if (transition_) {
+		if(transition_) {
 			TransitionUpdate();
 			return;
 		}
 
 		/// シーンの更新;
-		if (!scene_.empty()) { scene_.front()->Update(); }
+		if(!scene_.empty()) { scene_.front()->Update(); }
 
 	}
 
@@ -102,8 +111,32 @@ namespace {
 	void GameManagerSystem::Draw() {
 
 		/// シーンの描画処理; 遷移の描画処理
-		if (!scene_.empty()) { scene_.front()->Draw(); }
-		if (transition_) { transition_->Draw(); }
+		if(!scene_.empty()) {
+
+			auto& scene = scene_.front();
+
+
+			scene->BeginRenderTarget(IScene::kBack);
+			scene->BackDraw();
+			scene->EndRenderTarget(IScene::kBack);
+			dxCommon->ClearDepthBuffer();
+
+
+			scene->BeginRenderTarget(IScene::k3dObject);
+			scene->ObjectDraw();
+			scene->EndRenderTarget(IScene::k3dObject);
+			dxCommon->ClearDepthBuffer();
+
+
+			scene->BeginRenderTarget(IScene::kFront);
+			scene->FrontDraw();
+			scene->EndRenderTarget(IScene::kFront);
+			dxCommon->ClearDepthBuffer();
+
+		}
+
+
+		if(transition_) { transition_->Draw(); }
 
 	}
 
@@ -111,8 +144,7 @@ namespace {
 	/// 終了処理
 	/// </summary>
 	void GameManagerSystem::Finalize() {
-		while (!scene_.empty()) {
-			scene_.front()->Finalize();
+		while(!scene_.empty()) {
 			scene_.pop_front();
 		}
 		SafeDelete(transition_);
@@ -120,7 +152,7 @@ namespace {
 
 	void GameManagerSystem::Run() {
 		// ウィンドウの×ボタンが押されるまでループ
-		while (!Engine::ProcessMessage()) {
+		while(!Engine::ProcessMessage()) {
 			// フレームの開始
 			FrameTimer::GetInstance()->Begin();
 			Engine::BeginFrame();
@@ -137,7 +169,7 @@ namespace {
 			FrameTimer::GetInstance()->End();
 			Engine::EndFrame();
 
-			if (isFinished_) {
+			if(isFinished_) {
 				break;
 			}
 		}
@@ -148,9 +180,9 @@ namespace {
 		/// 遷移の更新
 		transition_->Update();
 
-		if (transition_->GetTriggerIsReturn()) {
+		if(transition_->GetTriggerIsReturn()) {
 			// frontのsceneに変更
-			if (isKeep_) {
+			if(isKeep_) {
 				/// 現在のsceneとkeepするsceneの2つ
 				PopBack(2);
 			} else {
@@ -160,7 +192,7 @@ namespace {
 		}
 
 		// 遷移が終わったら消去
-		if (transition_->GetIsEnd()) {
+		if(transition_->GetIsEnd()) {
 			SafeDelete(transition_);
 			return;
 		}
@@ -169,34 +201,32 @@ namespace {
 	void GameManagerSystem::SetNextScene(IScene* next, bool isKeep, ITransition* transition) {
 
 		/// 引数の遷移に変更
-		if (transition_) { SafeDelete(transition_); }
+		if(transition_) { SafeDelete(transition_); }
 		transition_ = transition;
 
 		isKeep_ = isKeep;
 		scene_.push_front(next);
 
-		if (!isKeep_ && !transition_) {
+		if(!isKeep_ && !transition_) {
 			PopBack(1);
 		}
 
 	}
 
 	void GameManagerSystem::PopBack(int index) {
-		while (scene_.size() > index) {
-			scene_.back()->Finalize();
+		while(scene_.size() > index) {
 			scene_.pop_back();
 		}
 	}
 
 	void GameManagerSystem::PopFront(int index) {
-		while (scene_.size() > index) {
-			scene_.front()->Finalize();
+		while(scene_.size() > index) {
 			scene_.pop_front();
 		}
 	}
 
 	void GameManagerSystem::PopScene(PopAround around, int index) {
-		if (around == kBack) {
+		if(around == kBack) {
 			PopBack(index);
 		} else {
 			PopFront(index);

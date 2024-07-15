@@ -330,6 +330,9 @@
     <Filter Include="Source\Base\RenderTexture">
       <UniqueIdentifier>{8dbdd982-bff1-4828-8385-0899ff28bff1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader\Offscreen">
+      <UniqueIdentifier>{af4c7d13-fd7c-40e4-bdc5-a83379718e09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Externals\imgui\imconfig.h">
@@ -589,6 +592,9 @@
     </FxCompile>
     <FxCompile Include="Resources\Shader\Line\Line.VS.hlsl">
       <Filter>Shader\Line</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shader\Offscreen\TextureCompound.CS.hlsl">
+      <Filter>Shader\Offscreen</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

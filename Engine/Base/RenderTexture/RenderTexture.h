@@ -11,6 +11,7 @@ using namespace Microsoft::WRL;
 class DxDescriptors;
 class DirectXCommon;
 class DxCommand;
+class IScene;
 
 
 /// ===================================================
@@ -40,6 +41,8 @@ public:
 	void ImGuiImage();
 
 	void SetName(const std::string& name);
+
+	void SetSceneLink(IScene* link);
 
 private:
 
@@ -80,5 +83,6 @@ private:
 	Vector4 clearColor_{};
 
 	std::string name_ = "NONE";
+	IScene* sceneLink_ = nullptr;
 	
 };

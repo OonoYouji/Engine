@@ -199,6 +199,7 @@ void PipelineStateObject::CreatePipelineState(ID3D12Device* device, ShaderBlob* 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC desc{};
 	desc.pRootSignature = rootSignature_.Get();	//- RootSignature
 	desc.InputLayout = inputLayoutDesc;			//- InputLayout
+	//desc.NumRenderTargets = 4;
 
 	///- Shaderの設定
 	desc.VS = {
