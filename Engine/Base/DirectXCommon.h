@@ -55,7 +55,7 @@ private:
 	ComPtr<IDXGISwapChain4> swapChain_;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc_;
 
-	std::vector<std::unique_ptr<RenderTexture>> renderTextures_;
+	std::vector<RenderTexture*> renderTextures_;
 
 	ComPtr<ID3D12Debug1> debugController_;
 

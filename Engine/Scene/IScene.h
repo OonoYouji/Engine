@@ -1,6 +1,8 @@
 #pragma once 
 
 
+class RenderTexture;
+
 class IScene {
 public:
 
@@ -13,5 +15,7 @@ public:
 
 	void SaveFile();
 	void LoadFile();
+
+	RenderTexture* renderTex_ = nullptr;
 
 };

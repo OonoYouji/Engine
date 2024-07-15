@@ -19,6 +19,7 @@
 #include <ModelManager.h>
 #include <GameObjectManager.h>
 #include <SpriteManager.h>
+#include <RenderTextureManager.h>
 #include <FrameTimer.h>
 
 
@@ -221,6 +222,7 @@ void Engine::Finalize() {
 
 	SpriteManager::GetInstance()->Finalize();
 	sTextureManager_->Finalize();
+	RenderTextureManager::GetInstance()->Finalize();
 
 	PipelineStateObjectManager::GetInstance()->Finalize();
 

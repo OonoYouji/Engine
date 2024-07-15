@@ -121,7 +121,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engine/External;$(ProjectDir)Engine/Audio;$(ProjectDir)Engine/Input;$(ProjectDir)Engine/Collision;$(ProjectDir)Engine/3D/GameObject;$(ProjectDir)Engine/3D/Entity;$(ProjectDir)Engine/3D/Object3d;$(ProjectDir)Engine/3D/Polygon3d;$(ProjectDir)Engine/3D/Model;$(ProjectDir)Engine/3D;$(ProjectDir)Engine/2D;$(ProjectDir)Engine/SceneTransition;$(ProjectDir)Engine/Scene;$(ProjectDir)Engine/Shader;$(ProjectDir)Engine/Math;$(ProjectDir)Engine/Base/CBuffer;$(ProjectDir)Engine/Base/ShaderCompile;$(ProjectDir)Engine/Base/PiplineStateObject;$(ProjectDir)Engine/Base;$(ProjectDir)Engine/Config;$(ProjectDir)Engine/IO;$(ProjectDir)Engine/Lib;$(ProjectDir)Engine;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine/External;$(ProjectDir)Engine/Audio;$(ProjectDir)Engine/Input;$(ProjectDir)Engine/Collision;$(ProjectDir)Engine/3D/GameObject;$(ProjectDir)Engine/3D/Entity;$(ProjectDir)Engine/3D/Object3d;$(ProjectDir)Engine/3D/Polygon3d;$(ProjectDir)Engine/3D/Model;$(ProjectDir)Engine/3D;$(ProjectDir)Engine/2D;$(ProjectDir)Engine/SceneTransition;$(ProjectDir)Engine/Scene;$(ProjectDir)Engine/Shader;$(ProjectDir)Engine/Math;$(ProjectDir)Engine/Base/RenderTexture;$(ProjectDir)Engine/Base/CBuffer;$(ProjectDir)Engine/Base/ShaderCompile;$(ProjectDir)Engine/Base/PiplineStateObject;$(ProjectDir)Engine/Base;$(ProjectDir)Engine/Config;$(ProjectDir)Engine/IO;$(ProjectDir)Engine/Lib;$(ProjectDir)Engine;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -149,7 +149,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engine/External;$(ProjectDir)Engine/Audio;$(ProjectDir)Engine/Input;$(ProjectDir)Engine/Collision;$(ProjectDir)Engine/3D/GameObject;$(ProjectDir)Engine/3D/Entity;$(ProjectDir)Engine/3D/Object3d;$(ProjectDir)Engine/3D/Polygon3d;$(ProjectDir)Engine/3D/Model;$(ProjectDir)Engine/3D;$(ProjectDir)Engine/2D;$(ProjectDir)Engine/SceneTransition;$(ProjectDir)Engine/Scene;$(ProjectDir)Engine/Shader;$(ProjectDir)Engine/Math;$(ProjectDir)Engine/Base/CBuffer;$(ProjectDir)Engine/Base/ShaderCompile;$(ProjectDir)Engine/Base/PiplineStateObject;$(ProjectDir)Engine/Base;$(ProjectDir)Engine/Config;$(ProjectDir)Engine/IO;$(ProjectDir)Engine/Lib;$(ProjectDir)Engine;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine/External;$(ProjectDir)Engine/Audio;$(ProjectDir)Engine/Input;$(ProjectDir)Engine/Collision;$(ProjectDir)Engine/3D/GameObject;$(ProjectDir)Engine/3D/Entity;$(ProjectDir)Engine/3D/Object3d;$(ProjectDir)Engine/3D/Polygon3d;$(ProjectDir)Engine/3D/Model;$(ProjectDir)Engine/3D;$(ProjectDir)Engine/2D;$(ProjectDir)Engine/SceneTransition;$(ProjectDir)Engine/Scene;$(ProjectDir)Engine/Shader;$(ProjectDir)Engine/Math;$(ProjectDir)Engine/Base/RenderTexture;$(ProjectDir)Engine/Base/CBuffer;$(ProjectDir)Engine/Base/ShaderCompile;$(ProjectDir)Engine/Base/PiplineStateObject;$(ProjectDir)Engine/Base;$(ProjectDir)Engine/Config;$(ProjectDir)Engine/IO;$(ProjectDir)Engine/Lib;$(ProjectDir)Engine;$(ProjectDir)Externals/opencv/build/include;$(ProjectDir)Externals/opencv/build/include/opencv2;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -197,7 +197,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\PiplineStateObject\PipelineStateObject.cpp" />
     <ClCompile Include="Engine\Base\PiplineStateObject\PipelineStateObjectManager.cpp" />
     <ClCompile Include="Engine\Base\PiplineStateObject\ShaderBlob.cpp" />
-    <ClCompile Include="Engine\Base\RenderTexture.cpp" />
+    <ClCompile Include="Engine\Base\RenderTexture\RenderTexture.cpp" />
+    <ClCompile Include="Engine\Base\RenderTexture\RenderTextureManager.cpp" />
     <ClCompile Include="Engine\Base\ShaderCompile\ShaderCompile.cpp" />
     <ClCompile Include="Engine\Base\TextureManager.cpp" />
     <ClCompile Include="Engine\Base\WinApp.cpp" />
@@ -261,7 +262,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\PiplineStateObject\PipelineStateObject.h" />
     <ClInclude Include="Engine\Base\PiplineStateObject\PipelineStateObjectManager.h" />
     <ClInclude Include="Engine\Base\PiplineStateObject\ShaderBlob.h" />
-    <ClInclude Include="Engine\Base\RenderTexture.h" />
+    <ClInclude Include="Engine\Base\RenderTexture\RenderTexture.h" />
+    <ClInclude Include="Engine\Base\RenderTexture\RenderTextureManager.h" />
     <ClInclude Include="Engine\Base\ShaderCompile\ShaderCompile.h" />
     <ClInclude Include="Engine\Base\TextureManager.h" />
     <ClInclude Include="Engine\Base\WinApp.h" />

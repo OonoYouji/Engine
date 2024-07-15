@@ -58,7 +58,7 @@ private:
 	std::map<std::string, std::unique_ptr<Model>> models_;
 	std::unordered_map<int, std::string> pairs_;
 
-	std::unique_ptr<RenderTexture> renderTex_;
+	RenderTexture* renderTex_;
 
 	Object2d* screen_;
 

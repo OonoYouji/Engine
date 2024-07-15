@@ -1,5 +1,5 @@
 #define NOMINMAX
-#include "RenderTexture.h"
+#include <RenderTexture.h>
 
 #include <d3dx12.h>
 
@@ -9,9 +9,13 @@
 #include <TextureManager.h>
 #include <ImGuiManager.h>
 
+#include <RenderTextureManager.h>
 
 
-RenderTexture::RenderTexture() {}
+
+RenderTexture::RenderTexture() {
+	RenderTextureManager::GetInstance()->AddRenderTexture(this);
+}
 RenderTexture::~RenderTexture() {}
 
 /// ===================================================

@@ -87,7 +87,7 @@ void DirectXCommon::Finalize() {
 
 	CloseHandle(fenceEvent_);
 	fence_.Reset();
-	renderTextures_.clear();
+	//renderTextures_.clear();
 	swapChain_.Reset();
 
 	///- Commandの解放
@@ -272,7 +272,7 @@ void DirectXCommon::InitialiezRenderTarget() {
 	
 	renderTextures_.resize(2);
 	for(uint32_t index = 0; index < 2; index++) {
-		renderTextures_[index].reset(new RenderTexture());
+		renderTextures_[index] = new RenderTexture();
 		renderTextures_[index]->InitializeSwapChain(UINT(index), { 0.1f,0.25f,0.5f,1.0f });
 	}
 

@@ -22,7 +22,7 @@ ModelManager* ModelManager::GetInstance() {
 
 
 void ModelManager::Initialize() {
-	renderTex_.reset(new RenderTexture());
+	renderTex_ = new RenderTexture();
 	renderTex_->Initialize(1280, 720, { 0.0f, 0.0f, 0.0f, 1.0f });
 	screen_ = new Object2d();
 	screen_->Initialize();
@@ -37,7 +37,6 @@ void ModelManager::Initialize() {
 /// ===================================================
 void ModelManager::Finalize() {
 	models_.clear();
-	renderTex_.reset();
 }
 
 
