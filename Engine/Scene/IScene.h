@@ -35,6 +35,8 @@ public:
 
 	void ImGuiDraw();
 
+	void CopyScreen();
+
 protected:
 
 	void InitializeRenderTex(IScene* thisScene);

@@ -126,10 +126,11 @@ namespace {
 			scene->BeginRenderTarget(IScene::kFront);
 			scene->FrontDraw();
 			scene->EndRenderTarget(IScene::kFront);
-
+			
 
 			scene->ImGuiDraw();
 
+			scene->CopyScreen();
 		}
 
 

@@ -149,8 +149,8 @@ void RenderTexture::CreateRenderTargetBuffer() {
 /// ===================================================
 void RenderTexture::CreateOffScreenBuffer() {
 
-	cpuHandle_ = dxDescriptors_->GetCpuHandleRTV();
-	dxDescriptors_->AddRtvUsedCount();
+	/*cpuHandle_ = dxDescriptors_->GetCpuHandleRTV();
+	dxDescriptors_->AddRtvUsedCount();*/
 
 	// 適切なサイズやフォーマットでテクスチャリソースを作成する例
 	CD3DX12_RESOURCE_DESC textureDesc(

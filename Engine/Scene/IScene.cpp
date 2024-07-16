@@ -163,6 +163,25 @@ void IScene::EndRenderTarget(Target target) {
 void IScene::ImGuiDraw() {
 #ifdef _DEBUG
 
+	
+
+	BeginRenderTarget(IScene::kImGui);
+
+	SpriteManager::GetInstance()->PreDraw();
+	screen_->Draw();
+	SpriteManager::GetInstance()->PostDraw();
+	
+	EndRenderTarget(IScene::kImGui);
+
+	for(auto& tex : renderTexs_) {
+		tex->ImGuiImage();
+	}
+
+
+#endif // _DEBUG
+}
+
+void IScene::CopyScreen() {
 	renderTexs_[kScreen]->CreateBarrier(D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 	ID3D12GraphicsCommandList* commandList = DxCommand::GetInstance()->GetList();
 
@@ -186,27 +205,6 @@ void IScene::ImGuiDraw() {
 	renderTexs_[kScreen]->CreateBarrier(D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 
-
-
-
-	BeginRenderTarget(kImGui);
-	std::string name = CreateName(this) + "_Scene";
-	TextureManager::GetInstance()->SetNewTexture(name, renderTexs_[kScreen]->GetTexture());
-	screen_->SetSprite(name);
-
-	SpriteManager::GetInstance()->PreDraw();
-	screen_->Draw();
-	SpriteManager::GetInstance()->PostDraw();
-	
-	EndRenderTarget(kImGui);
-
-
-	for(auto& tex : renderTexs_) {
-		tex->ImGuiImage();
-	}
-
-
-#endif // _DEBUG
 }
 
 
@@ -238,7 +236,7 @@ void IScene::InitializeRenderTex(IScene* thisScene) {
 	renderTexs_[kBack]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
 	renderTexs_[kBack]->SetName(CreateName(thisScene) + "_Back");
 
-	renderTexs_[kImGui]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 1.0f,0.25f,0.5f,1.0f });
+	renderTexs_[kImGui]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,1.0f });
 	renderTexs_[kImGui]->SetName(CreateName(thisScene) + "_ImGui");
 
 
