@@ -28,7 +28,7 @@ public:
 	/// ===================================================
 
 	void InitializeSwapChain(UINT buffer, const Vector4& clearColor);
-	void Initialize(UINT width, UINT height, const Vector4& clearColor);
+	void Initialize(UINT width, UINT height, const Vector4& clearColor, DXGI_FORMAT srvFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
 	void InitializeUAV(UINT width, UINT height, const Vector4& clearColor);
 		
 	void SetRenderTarget();
@@ -55,7 +55,7 @@ private:
 
 	void CreateOffScreenBuffer();
 
-	void CreateSRV();
+	void CreateSRV(DXGI_FORMAT format);
 
 	void CreateUAV();
 

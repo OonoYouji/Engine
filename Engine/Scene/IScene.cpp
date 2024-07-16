@@ -173,9 +173,7 @@ void IScene::ImGuiDraw() {
 	
 	EndRenderTarget(IScene::kImGui);
 
-	for(auto& tex : renderTexs_) {
-		tex->ImGuiImage();
-	}
+	renderTexs_[kImGui]->ImGuiImage();
 
 
 #endif // _DEBUG
@@ -225,7 +223,7 @@ void IScene::InitializeRenderTex(IScene* thisScene) {
 	}
 
 	renderTexs_[kScreen]->InitializeUAV(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,1.0f });
-	renderTexs_[kScreen]->SetName(CreateName(thisScene));
+	renderTexs_[kScreen]->SetName(CreateName(thisScene) + "_Scene");
 
 	renderTexs_[kFront]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
 	renderTexs_[kFront]->SetName(CreateName(thisScene) + "_Front");
@@ -236,8 +234,8 @@ void IScene::InitializeRenderTex(IScene* thisScene) {
 	renderTexs_[kBack]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,0.0f });
 	renderTexs_[kBack]->SetName(CreateName(thisScene) + "_Back");
 
-	renderTexs_[kImGui]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,1.0f });
-	renderTexs_[kImGui]->SetName(CreateName(thisScene) + "_ImGui");
+	renderTexs_[kImGui]->Initialize(WinApp::kWindowWidth_, WinApp::kWindowHeigth_, { 0.1f,0.25f,0.5f,1.0f }, DXGI_FORMAT_R8G8B8A8_UNORM);
+	renderTexs_[kImGui]->SetName(CreateName(thisScene));
 
 
 	std::string name = CreateName(this) + "_Scene";

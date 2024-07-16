@@ -38,7 +38,7 @@ void RenderTexture::InitializeSwapChain(UINT buffer, const Vector4& clearColor) 
 /// ===================================================
 /// offscreen用に初期化
 /// ===================================================
-void RenderTexture::Initialize(UINT width, UINT height, const Vector4& clearColor) {
+void RenderTexture::Initialize(UINT width, UINT height, const Vector4& clearColor, DXGI_FORMAT srvFormat) {
 	dxCommon_ = DirectXCommon::GetInstance();
 	dxDescriptors_ = DxDescriptors::GetInstance();
 	dxCommand_ = DxCommand::GetInstance();
@@ -50,10 +50,9 @@ void RenderTexture::Initialize(UINT width, UINT height, const Vector4& clearColo
 
 	CreateOffScreenBuffer();
 	CreateRenderTargetBuffer();
-	CreateSRV();
+	CreateSRV(srvFormat);
 
 }
-
 
 
 void RenderTexture::InitializeUAV(UINT width, UINT height, const Vector4& clearColor) {
@@ -68,7 +67,7 @@ void RenderTexture::InitializeUAV(UINT width, UINT height, const Vector4& clearC
 	clearColor_ = clearColor;
 
 	CreateUAV();
-	CreateSRV();
+	CreateSRV(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
 	CreateBarrier(currentState_, D3D12_RESOURCE_STATE_GENERIC_READ);
 	
 }
@@ -149,9 +148,6 @@ void RenderTexture::CreateRenderTargetBuffer() {
 /// ===================================================
 void RenderTexture::CreateOffScreenBuffer() {
 
-	/*cpuHandle_ = dxDescriptors_->GetCpuHandleRTV();
-	dxDescriptors_->AddRtvUsedCount();*/
-
 	// 適切なサイズやフォーマットでテクスチャリソースを作成する例
 	CD3DX12_RESOURCE_DESC textureDesc(
 		D3D12_RESOURCE_DIMENSION_TEXTURE2D, 0,
@@ -187,14 +183,14 @@ void RenderTexture::CreateOffScreenBuffer() {
 /// ===================================================
 /// SRVの生成
 /// ===================================================
-void RenderTexture::CreateSRV() {
+void RenderTexture::CreateSRV(DXGI_FORMAT format) {
 
 	texture_.handleCPU = dxDescriptors_->GetCPUDescriptorHandle();
 	texture_.handleGPU = dxDescriptors_->GetGPUDescriptorHandle();
 	dxDescriptors_->AddSrvUsedCount();
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // RTVと同じフォーマット
+	srvDesc.Format = format;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Texture2D.MipLevels = 1;
