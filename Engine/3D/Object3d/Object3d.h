@@ -6,6 +6,8 @@
 #include <GameObject.h>
 #include <AABB.h>
 
+#include <CBuffer.h>
+
 class Model;
 
 /// <summary>
@@ -35,6 +37,7 @@ private:
 	Model* model_;
 	std::string modelKey_;
 
+	Material material_;
 	UvTransform uvTransform_;
 
 	AABB aabb_;

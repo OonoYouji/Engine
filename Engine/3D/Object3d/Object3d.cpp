@@ -49,6 +49,13 @@ void Object3d::Initialize() {
 		model_ = ModelManager::GetInstance()->GetModelPtr(modelKey_);
 	}
 
+	material_.color = { 1,1,1,1 };
+	material_.enableLighting = 1;
+	material_.uvTransform = uvTransform_.matTransform;
+
+
+	Group& material = CreateGroup("Material");
+	material.SetPtr("Lighting", &material_.enableLighting);
 
 }
 
@@ -80,11 +87,15 @@ void Object3d::Update() {
 
 	}
 
+	
+	material_.uvTransform = uvTransform_.matTransform;
+
+
 }
 
 void Object3d::Draw() {
 	if(model_) {
-		model_->Draw(worldTransform_, uvTransform_.matTransform);
+		model_->Draw(worldTransform_, material_);
 	}
 
 	//for(auto& aabb : aabbs_) {

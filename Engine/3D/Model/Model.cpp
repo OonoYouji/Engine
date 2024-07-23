@@ -85,6 +85,25 @@ void Model::Draw(const WorldTransform& worldTransform, const Mat4& uvTransform) 
 }
 
 
+
+/// ===================================================
+/// 描画処理
+/// ===================================================
+void Model::Draw(const WorldTransform& worldTransform, const Material& material) {
+	///- 描画数が上限を超えた
+	if(instanceCount_ >= kMaxInstanceCount_) {
+		assert(false);
+	}
+
+	///- 構造体のデータを設定
+	transformMatrixDatas_[instanceCount_].World = worldTransform.matTransform;
+	transformMatrixDatas_[instanceCount_].WVP = worldTransform.matTransform * Engine::GetCamera()->GetVpMatrix();
+	materialData_[instanceCount_] = material;
+
+	instanceCount_++;
+}
+
+
 /// ===================================================
 /// 描画前処理
 /// ===================================================

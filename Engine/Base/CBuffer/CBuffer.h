@@ -38,11 +38,17 @@ struct Polygon3dVertexData {
 /// </summary>
 struct Material {
 	Vec4f color;
-	int32_t enableLighting;
+	int enableLighting;
 private:
 	float p[3];
 public:
 	Mat4 uvTransform;
+};
+
+enum LIGHTING {
+	NONE,			///- ライティングしない
+	LAMBERT,		///- ランバート反射
+	HALF_LAMBERT	///- ハーフランバート
 };
 
 

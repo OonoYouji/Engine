@@ -54,6 +54,7 @@ public:
 	/// </summary>
 	/// <param name="worldTransform"></param>
 	void Draw(const WorldTransform& worldTransform, const Mat4& uvTransform = Mat4::MakeIdentity());
+	void Draw(const WorldTransform& worldTransform, const Material& material);
 
 	/// <summary>
 	/// 描画前処理
