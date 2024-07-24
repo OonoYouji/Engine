@@ -3,6 +3,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <wrl/client.h>
+#include <Xinput.h>
 
 #include <cmath>
 
@@ -11,6 +12,23 @@
 using namespace Microsoft::WRL;
 class WinApp;
 
+
+enum GAMEPAD_STATE {
+	BUTTON_UP      = XINPUT_GAMEPAD_DPAD_UP,
+	BUTTON_DOWN    = XINPUT_GAMEPAD_DPAD_DOWN,
+	BUTTON_LEFT    = XINPUT_GAMEPAD_DPAD_LEFT,
+	BUTTON_RIGHT   = XINPUT_GAMEPAD_DPAD_RIGHT,
+	BUTTON_BACK    = XINPUT_GAMEPAD_BACK,
+	BUTTON_START   = XINPUT_GAMEPAD_START,
+	BUTTON_L_STICK = XINPUT_GAMEPAD_LEFT_THUMB,
+	BUTTON_R_STICK = XINPUT_GAMEPAD_RIGHT_THUMB,
+	BUTTON_LB      = XINPUT_GAMEPAD_LEFT_SHOULDER,
+	BUTTON_RB      = XINPUT_GAMEPAD_RIGHT_SHOULDER,
+	BUTTON_A       = XINPUT_GAMEPAD_A,
+	BUTTON_B       = XINPUT_GAMEPAD_B,
+	BUTTON_X       = XINPUT_GAMEPAD_X,
+	BUTTON_Y       = XINPUT_GAMEPAD_Y,
+};
 
 /// <summary>
 /// 入力処理を行うクラス
@@ -59,7 +77,11 @@ private:
 
 	DIMOUSESTATE2 mouseState_;
 	Vec2f mousePosition_;
-	
+
+	XINPUT_STATE gamePad_;
+	XINPUT_STATE preGamePad_;
+	bool isGamePadActive_{};
+
 private:
 
 	InputManager() = default;
@@ -87,6 +109,17 @@ public:
 		return Vec2f(static_cast<float>(manager_->mouseState_.lX), static_cast<float>(manager_->mouseState_.lY));
 	}
 	static float  MouseWheel() { return static_cast<float>(manager_->mouseState_.lZ); }
+
+	static bool PressGamePad(GAMEPAD_STATE state);
+	static bool TriggerGamePad(GAMEPAD_STATE state);
+	static bool ReleaseGamePad(GAMEPAD_STATE state);
+
+	static bool PressGamePadLT(int* const value);
+	static bool PressGamePadRT(int* const value);
+	
+	static Vec2f GamePad_L_Stick();
+	static Vec2f GamePad_R_Stick();
+	
 private:
 
 	static InputManager* manager_;

@@ -2,8 +2,10 @@
 
 #pragma comment (lib, "dinput8.lib")
 #pragma comment (lib, "dxguid.lib")
+#pragma comment (lib, "Xinput.lib")
 
 #include <cassert>
+#include <iostream>
 
 #include "ImGuiManager.h"
 #include <WinApp.h>
@@ -108,6 +110,13 @@ void InputManager::Begin() {
 		static_cast<float>(mousePos.y)
 	};
 
+
+	//ZeroMemory(&gamePad_, sizeof(XINPUT_STATE));
+	preGamePad_ = gamePad_;
+	isGamePadActive_ = XInputGetState(0, &gamePad_) == ERROR_SUCCESS;
+
+
+
 	DebugDraw(true);
 }
 
@@ -155,6 +164,88 @@ void InputManager::DebugDraw([[maybe_unused]] bool isDraw) {
 		ImGui::TreePop();
 	}
 
+	/// --------------------------------
+	/// ↓ GamePad
+	/// --------------------------------
+
+	if(ImGui::TreeNodeEx("GamePad", true)) {
+
+		GAMEPAD_STATE buttons[] = {
+			BUTTON_UP, BUTTON_DOWN, BUTTON_LEFT, BUTTON_RIGHT,
+			BUTTON_BACK, BUTTON_START,
+			BUTTON_L_STICK, BUTTON_R_STICK,
+			BUTTON_LB, BUTTON_RB,
+			BUTTON_A, BUTTON_B, BUTTON_X, BUTTON_Y
+		};
+
+		for(GAMEPAD_STATE state : buttons) {
+			if(Input::PressGamePad(state)) {
+				ImGui::Text("Key: %d", state);
+			}
+		}
+
+		static int value = 0;
+		if(Input::PressGamePadLT(&value)) {
+			ImGui::Text("Key: LT, %d", value);
+		}
+
+		if(Input::PressGamePadRT(&value)) {
+			ImGui::Text("Key: RT, %d", value);
+		}
+
+		Vec2f lStickDir = Input::GamePad_L_Stick();
+		Vec2f rStickDir = Input::GamePad_R_Stick();
+		ImGui::Text("Lstick direction: %0.2f, %0.2f", lStickDir.x, lStickDir.y);
+		ImGui::Text("Rstick direction: %0.2f, %0.2f", rStickDir.x, rStickDir.y);
+
+		ImGui::TreePop();
+	}
+
 	ImGui::End();
 #endif // _DEBUG
+}
+
+
+bool Input::PressGamePad(GAMEPAD_STATE state) {
+	return (manager_->gamePad_.Gamepad.wButtons & (state)) == (state);
+}
+
+bool Input::TriggerGamePad(GAMEPAD_STATE state) {
+	return PressKey(state) && !((manager_->preGamePad_.Gamepad.wButtons & (state)) == (state));
+}
+
+bool Input::ReleaseGamePad(GAMEPAD_STATE state) {
+	return !PressKey(state) && ((manager_->preGamePad_.Gamepad.wButtons & (state)) == (state));
+}
+
+bool Input::PressGamePadLT(int* const value) {
+	const BYTE kThreshold = 30;
+	if(value) {
+		*value = manager_->gamePad_.Gamepad.bLeftTrigger;
+	}
+	return (manager_->gamePad_.Gamepad.bLeftTrigger > kThreshold);
+}
+
+bool Input::PressGamePadRT(int* const value) {
+	const BYTE kThreshold = 30;
+	if(value) {
+		*value = manager_->gamePad_.Gamepad.bRightTrigger;
+	}
+	return (manager_->gamePad_.Gamepad.bRightTrigger > kThreshold);
+}
+
+Vec2f Input::GamePad_L_Stick() {
+	//const float kMaxAxis = 32767.0f;
+	return Vec2f(
+		float(manager_->gamePad_.Gamepad.sThumbLX) ,
+		float(manager_->gamePad_.Gamepad.sThumbLY) 
+	);
+}
+
+Vec2f Input::GamePad_R_Stick() {
+	//const float kMaxAxis = 32767.0f;
+	return Vec2f(
+		float(manager_->gamePad_.Gamepad.sThumbRX),
+		float(manager_->gamePad_.Gamepad.sThumbRY)
+	);
 }
