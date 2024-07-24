@@ -26,7 +26,7 @@ void FrameTimer::End() {
 	auto end = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<float, std::milli> duration = end - frameStart_;
 
-	float frameTimeSecond = duration.count() / 100.0f;
+	float frameTimeSecond = duration.count() / 1000.0f;
 	float fps = 1.0f / frameTimeSecond;
 
 	ImGui::Begin("FrameTimer");

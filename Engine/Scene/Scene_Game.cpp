@@ -29,14 +29,6 @@ void Scene_Game::Init() {
 	LineDrawer::GetInstance()->Initialize();
 	ModelManager::GetInstance()->Initialize();
 
-	Object3d* object = new Object3d();
-	object->Initialize("Background");
-	object->SetType(GameObject::Type::FrontSprite);
-	
-	Object3d* object2 = new Object3d();
-	object2->Initialize("ICO");
-	object2->SetType(GameObject::Type::BackSprite);
-
 	Object2d* sprite = new Object2d();
 	sprite->Initialize();
 	sprite->SetSprite("uvChecker");

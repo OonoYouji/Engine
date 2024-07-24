@@ -65,5 +65,6 @@ void Object2d::Draw() {
 
 void Object2d::SetSprite(const std::string& textureName) {
 	textureName_ = textureName;
+	SetName(textureName_ + std::to_string(id_));
 	sprite_ = SpriteManager::GetInstance()->GetSpritePtr(textureName_);
 }

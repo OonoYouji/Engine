@@ -220,6 +220,11 @@ void GameObject::Group::ImGuiDebug() {
 		///- string
 		if(std::holds_alternative<std::string>(second)) {
 			std::string* value = std::get_if<std::string>(&second);
+			std::string* ptr = std::get<std::string*>(first);
+			if(*value != *ptr) {
+				*value = *ptr;
+			}
+
 			// std::stringのバッファサイズを取得
 			static char buffer[256];
 			strcpy_s(buffer, sizeof(buffer), value->c_str());
