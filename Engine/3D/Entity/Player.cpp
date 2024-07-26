@@ -23,6 +23,7 @@ void Player::Initialize() {
 	model_ = ModelManager::GetInstance()->GetModelPtr("SampleObject");
 
 	worldTransform_.Initialize();
+	SetType(Type::Object3d);
 
 	GameObject::CreateTransformGroup();
 }
@@ -64,8 +65,9 @@ float Player::GetDiffHeight() {
 }
 
 void Player::Move() {
-	velocity_.x = static_cast<float>(Input::PressKey(DIK_D) - Input::PressKey(DIK_A));
-	velocity_.z = static_cast<float>(Input::PressKey(DIK_W) - Input::PressKey(DIK_S));
+	Vec2f input = Input::GamePad_L_Stick();
+	velocity_.x = input.x;
+	velocity_.z = input.y;
 
 	velocity_ = Vec3f::Normalize(velocity_);
 	velocity_ *= kSpeed_;

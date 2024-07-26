@@ -180,7 +180,22 @@ void InputManager::DebugDraw([[maybe_unused]] bool isDraw) {
 
 		for(GAMEPAD_STATE state : buttons) {
 			if(Input::PressGamePad(state)) {
-				ImGui::Text("Key: %d", state);
+				switch(state) {
+				case BUTTON_UP:		 ImGui::Text("Key: UP");		break;
+				case BUTTON_DOWN:	 ImGui::Text("Key: Down");		break;
+				case BUTTON_LEFT:	 ImGui::Text("Key: Left");		break;
+				case BUTTON_RIGHT:	 ImGui::Text("Key: Right");		break;
+				case BUTTON_BACK:	 ImGui::Text("Key: Back");		break;
+				case BUTTON_START:	 ImGui::Text("Key: Start");		break;
+				case BUTTON_L_STICK: ImGui::Text("Key: L_Stick");	break;
+				case BUTTON_R_STICK: ImGui::Text("Key: R_Stick");	break;
+				case BUTTON_LB:		 ImGui::Text("Key: LB");		break;
+				case BUTTON_RB:		 ImGui::Text("Key: RB");		break;
+				case BUTTON_A:		 ImGui::Text("Key: A");			break;
+				case BUTTON_B:		 ImGui::Text("Key: B");			break;
+				case BUTTON_X:		 ImGui::Text("Key: X");			break;
+				case BUTTON_Y:		 ImGui::Text("Key: Y");			break;
+				}
 			}
 		}
 
@@ -195,8 +210,8 @@ void InputManager::DebugDraw([[maybe_unused]] bool isDraw) {
 
 		Vec2f lStickDir = Input::GamePad_L_Stick();
 		Vec2f rStickDir = Input::GamePad_R_Stick();
-		ImGui::Text("Lstick direction: %0.2f, %0.2f", lStickDir.x, lStickDir.y);
-		ImGui::Text("Rstick direction: %0.2f, %0.2f", rStickDir.x, rStickDir.y);
+		ImGui::Text("L_stick direction: %0.2f, %0.2f", lStickDir.x, lStickDir.y);
+		ImGui::Text("R_stick direction: %0.2f, %0.2f", rStickDir.x, rStickDir.y);
 
 		ImGui::TreePop();
 	}
@@ -237,8 +252,8 @@ bool Input::PressGamePadRT(int* const value) {
 Vec2f Input::GamePad_L_Stick() {
 	//const float kMaxAxis = 32767.0f;
 	return Vec2f(
-		float(manager_->gamePad_.Gamepad.sThumbLX) ,
-		float(manager_->gamePad_.Gamepad.sThumbLY) 
+		float(manager_->gamePad_.Gamepad.sThumbLX),
+		float(manager_->gamePad_.Gamepad.sThumbLY)
 	);
 }
 

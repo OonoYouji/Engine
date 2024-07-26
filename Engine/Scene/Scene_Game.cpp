@@ -34,6 +34,8 @@ void Scene_Game::Init() {
 	sprite->SetSprite("uvChecker");
 	sprite->SetScale({ 640.0f,360.0f, 1.0f });
 
+	(new Player)->Initialize();
+
 	LoadFile();
 
 }
