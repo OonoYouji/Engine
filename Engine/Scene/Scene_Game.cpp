@@ -35,6 +35,10 @@ void Scene_Game::Init() {
 	sprite->SetScale({ 640.0f,360.0f, 1.0f });
 
 	(new Player)->Initialize();
+	
+	audio_ = Audio::GetInstance();
+	audio_->Initialize();
+	audio_->Load("Alarm01.wav", "Alarm01");
 
 	LoadFile();
 
@@ -99,4 +103,5 @@ void Scene_Game::FrontDraw() {
 	spriteManager->PostDraw();
 	modelManager->PostDraw();
 
+	audio_->PlayAudio("Alarm01");
 }

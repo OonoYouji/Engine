@@ -36,6 +36,5 @@ public:
 
 private:
 	GameObjectManager* gameObjectManager_ = nullptr;
-
-
+	Audio* audio_ = nullptr;
 };

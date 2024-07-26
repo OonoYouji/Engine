@@ -123,17 +123,14 @@ SoundData Audio::SoundLoadWave(const char* fileName) {
 	soundData.wfex = format.fmt;
 	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
 	soundData.bufferSize = data.size;
+	result = xAudio2_->CreateSourceVoice(&soundData.pSourceVoice, &soundData.wfex);
+	assert(SUCCEEDED(result));
 
 	return soundData;
 }
 
 void Audio::SoundPlayAudio(const SoundData& soundData) {
 	HRESULT result = S_FALSE;
-
-	///- 波形フォーマットを元にSourceVoiceの生成
-	IXAudio2SourceVoice* pSourceVoice = nullptr;
-	result = xAudio2_->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
-	assert(SUCCEEDED(result));
 
 	///- 再生する波形データの設定
 	XAUDIO2_BUFFER buffer{};
@@ -142,8 +139,12 @@ void Audio::SoundPlayAudio(const SoundData& soundData) {
 	buffer.Flags = XAUDIO2_END_OF_STREAM;
 
 	///- 波形データの再生
-	pSourceVoice->SubmitSourceBuffer(&buffer);
-	pSourceVoice->Start();
+	XAUDIO2_VOICE_STATE state{};
+	soundData.pSourceVoice->GetState(&state);
+	if(state.BuffersQueued > 0) { return; }
+
+	soundData.pSourceVoice->SubmitSourceBuffer(&buffer);
+	soundData.pSourceVoice->Start();
 
 }
 
